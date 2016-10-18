@@ -1,0 +1,26 @@
+{
+  "version": "1.0.0-*",
+  "buildOptions": {
+    "emitEntryPoint": true
+  },
+
+  "dependencies": {
+    "CondenserDotNet.Client": "1.0.0-*",
+    "Microsoft.AspNetCore.Hosting": "1.1.0-alpha1-21955",
+    "Microsoft.AspNetCore.Http.Abstractions": "1.1.0-alpha1-21955",
+    "Microsoft.AspNetCore.Mvc": "1.0.0",
+    "Microsoft.AspNetCore.Server.Kestrel": "1.1.0-alpha1-21955",
+    "Microsoft.Extensions.DependencyInjection.Abstractions": "1.1.0-alpha1-21955",
+    "Microsoft.NETCore.App": {
+      "type": "platform",
+      "version": "1.0.0"
+    },
+    "System.Net.Http": "4.1.0"
+  },
+
+  "frameworks": {
+    "netcoreapp1.0": {
+      "imports": "dnxcore50"
+    }
+  }
+}
