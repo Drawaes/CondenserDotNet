@@ -1,0 +1,27 @@
+os: Visual Studio 2015
+build: off
+
+before_test:
+  - dotnet --info
+  - dotnet restore
+
+test_script:
+  # Build sample
+  - dotnet test test/CondenserTests
+  
+after_test:
+  # Build and pack source
+  - dotnet pack -c Release src/CondenserDotNet.Client --version-suffix %APPVEYOR_BUILD_NUMBER%
+  - dotnet pack -c Release src/CondenserDotNet.Host --version-suffix %APPVEYOR_BUILD_NUMBER%
+
+artifacts:
+  path: '**/*.nupkg'
+
+deploy:  
+- provider: NuGet
+  server: https://www.myget.org/F/condenserdotnet/api/v2/package
+  api_key:
+    secure: 5mBb0A2rlwk1Iq6FEo94XSORm9etc3xPn0oLZ8dIJ6Hmm1G7quqf+Bz6fm+ft+FK
+  skip_symbols: true
+  on:
+    branch: master
