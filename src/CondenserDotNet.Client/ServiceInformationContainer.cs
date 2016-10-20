@@ -9,33 +9,34 @@ using Newtonsoft.Json;
 
 namespace CondenserDotNet.Client
 {
-    class ServiceInformationContainer
+    public class ServiceInformationContainer
     {
-        ManualResetEvent _loadedHandle = new ManualResetEvent(false);
         static int seed = Environment.TickCount;
         static readonly ThreadLocal<Random> random = new ThreadLocal<Random>(() => new Random(Interlocked.Increment(ref seed)));
 
-        HttpClient _client;
-        string _requestString;
-        JsonSerializerSettings _settings;
-        CancellationToken _token;
+        private HttpClient _client;
+        private string _requestString;
+        private JsonSerializerSettings _settings;
+        private CancellationToken _token;
+        private string _serviceName;
+        private Task _loadedTask;
+        private Dictionary<InformationService, List<Version>> _serviceListings = new Dictionary<InformationService, List<Version>>();
 
-        public ServiceInformationContainer(string serviceName, HttpClient client, JsonSerializerSettings settings)
+        internal ServiceInformationContainer(string serviceName, HttpClient client, JsonSerializerSettings settings)
         {
-            ServiceName = serviceName;
+            _serviceName = serviceName;
             _client = client;
             _requestString = $"/v1/health/service/{serviceName}";
             _settings = settings;
-            CheckForUpdates();
+            _loadedTask = CheckForUpdates();
         }
 
-        public string ServiceName { get; private set; }
-        Dictionary<InformationService, List<Version>> _serviceListings = new Dictionary<InformationService, List<Version>>();
-        
-        public Tuple<string, int> GetServiceInstance(Version minVersion = null, Version maxVersion = null, Version exactVersion = null, int msTimeout = Timeout.Infinite)
+        public string ServiceName => _serviceName;
+        public CancellationToken Token => _token;
+                
+        public async Task<Tuple<string, int>> GetServiceInstance(Version minVersion = null, Version maxVersion = null, Version exactVersion = null, int msTimeout = Timeout.Infinite)
         {
-            if (!_loadedHandle.WaitOne(msTimeout))
-                throw new TimeoutException("Waited for the service list to be retrieved");
+            await _loadedTask;
 
             var listOfServices = _serviceListings.AsEnumerable();
 
@@ -85,7 +86,6 @@ namespace CondenserDotNet.Client
                 dictionary.Add(obj.Service, versions);
             }
             Volatile.Write(ref _serviceListings ,dictionary);
-            _loadedHandle.Set();
             if (!_token.IsCancellationRequested)
             {
                 CheckForUpdates(waitTime.FirstOrDefault());

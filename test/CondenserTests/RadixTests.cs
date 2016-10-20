@@ -20,11 +20,8 @@ namespace CondenserTests
             tree.AddServiceToRoute("/test1/test2/test3/test4/test5/test6", service);
 
             tree.Compress();
-
-
-
+            
             //Time to split the tree it should be 5 long at the moment but this should make it 2 long and then split
-
             tree.AddServiceToRoute("/test1/test2/test10/test6/test4/test6", service);
 
             var topNode = tree.GetTopNode();
@@ -66,8 +63,6 @@ namespace CondenserTests
             var returnservice = tree.GetServiceFromRoute("/test1/test2/test3/test4/test5/test7",out matchedpath);
             Assert.Equal("/test1/test2/test3/test4/test5", matchedpath);
             Assert.Equal(returnservice.ServiceId, service.ServiceId);
-
-
         }
     }
 }
