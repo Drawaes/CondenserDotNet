@@ -88,7 +88,9 @@ namespace CondenserDotNet.Client
             Volatile.Write(ref _serviceListings ,dictionary);
             if (!_token.IsCancellationRequested)
             {
+#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
                 CheckForUpdates(waitTime.FirstOrDefault());
+#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             }
         }
     }

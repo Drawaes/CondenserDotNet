@@ -33,7 +33,7 @@ namespace CondenserDotNet.Host
         public string[] Routes { get; private set; }
         public string ServiceId { get; private set; }
 
-        private bool disposed = false;
+        //private bool disposed = false;
 
         public async Task CallService(HttpContext context)
         {
@@ -115,20 +115,20 @@ namespace CondenserDotNet.Host
 
                 return true;
             }
-            var consulService = obj as Consul.ServiceEntry;
-            if(consulService != null)
-            {
-                if(consulService.Service.ID != ServiceId)
-                    return false;
-                if(consulService.Service.Port != Port)
-                    return false;
-                if(consulService.Service.Address != Address)
-                    return false;
-                if(!consulService.Service.Tags.Where(t => !t.StartsWith("url=")).SequenceEqual(Tags))
-                    return false;
+            //var consulService = obj as Consul.ServiceEntry;
+            //if(consulService != null)
+            //{
+            //    if(consulService.Service.ID != ServiceId)
+            //        return false;
+            //    if(consulService.Service.Port != Port)
+            //        return false;
+            //    if(consulService.Service.Address != Address)
+            //        return false;
+            //    if(!consulService.Service.Tags.Where(t => !t.StartsWith("url=")).SequenceEqual(Tags))
+            //        return false;
 
-                return true;
-            }
+            //    return true;
+            //}
 
             return false;
         }

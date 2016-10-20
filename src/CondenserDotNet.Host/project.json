@@ -1,11 +1,11 @@
 {
   "version": "1.0.0-*",
   "buildOptions": {
+    "warningsAsErrors": true,
     "emitEntryPoint": true
   },
 
   "dependencies": {
-    "Consul": "0.7.0-rc1",
     "Microsoft.AspNetCore.Hosting": "1.0.0",
     "Microsoft.AspNetCore.Hosting.Abstractions": "1.0.0",
     "Microsoft.AspNetCore.Routing": "1.0.0",
@@ -16,12 +16,14 @@
     "Microsoft.NETCore.App": {
       "type": "platform",
       "version": "1.0.0"
+    },
+    "CondenserDotNet.Client": {
+      "target": "project"
     }
   },
 
   "frameworks": {
     "netcoreapp1.0": {
-      "imports": "dnxcore50"
     }
   }
 }
