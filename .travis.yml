@@ -67,3 +67,4 @@ script:
   - ../consul agent -server -bootstrap-expect 1 -data-dir /tmp/consul &
   # Build sample
   - dotnet test test/CondenserTests
+  - dotnet test test/Condenser.Tests.Integration
