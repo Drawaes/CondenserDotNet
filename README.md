@@ -2,6 +2,8 @@
 [![Xplat Build status](https://travis-ci.org/Drawaes/CondenserDotNet.svg?branch=master)](https://travis-ci.org/Drawaes/CondenserDotNet)
 
 # CondenserDotNet
+
+[![Join the chat at https://gitter.im/CondenserDotNet/Lobby](https://badges.gitter.im/CondenserDotNet/Lobby.svg)](https://gitter.im/CondenserDotNet/Lobby?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 API Condenser / Reverse Proxy using Kestrel and Consul, Including light weight consul lib
 
 A set of consul clients for .net that is simple and integrates with an API proxy
