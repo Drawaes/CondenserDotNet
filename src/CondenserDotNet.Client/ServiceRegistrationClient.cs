@@ -25,7 +25,11 @@ namespace CondenserDotNet.Client
         private int _checkTimespanSeconds;
         private int _checkTimeToLiveSeconds;
         private bool _hasSwagger = false;
-        private Service service = new Service();
+        private Service _service = new Service();
+        private string _leaderKey;
+        private Leader _leader;
+        
+        public Leader Leader => _leader;
 
         #region Service Setup
         public ServiceRegistrationClient Config(string serviceName = null, string serviceId = null, int port = -1, string address = null)
@@ -125,8 +129,18 @@ namespace CondenserDotNet.Client
             return this;
         }
 
-        #endregion
+        public ServiceRegistrationClient AddLeaderElectionKey(string keyPath)
+        {
+            if(_started)
+            {
+                throw new InvalidOperationException("The service has already started, you cannot change the settings you need to use a new service registration");
+            }
+            _leaderKey = keyPath;
 
+            return this;
+        }
+        #endregion
+        
         public async Task RegisterServiceAsync()
         {
             if (string.IsNullOrWhiteSpace(_serviceName))
@@ -147,27 +161,32 @@ namespace CondenserDotNet.Client
                 _address = Dns.GetHostName();
             }
 
-            service.Address = _address;
-            service.EnableTagOverride = false;
-            service.ID = _serviceId;
-            service.Name = _serviceName;
-            service.Port = _port;
-            service.Tags = Enumerable.Concat(_versions.Select(v => $"version={v.ToString()}"), _urls.Select(u => $"url={u}")).Concat(Enumerable.Repeat($"swagger={_hasSwagger}",1)).ToArray();
+            _service.Address = _address;
+            _service.EnableTagOverride = false;
+            _service.ID = _serviceId;
+            _service.Name = _serviceName;
+            _service.Port = _port;
+            _service.Tags = Enumerable.Concat(_versions.Select(v => $"version={v.ToString()}"), _urls.Select(u => $"url={u}")).Concat(Enumerable.Repeat($"swagger={_hasSwagger}",1)).ToArray();
             if (_hasCheck)
             {
-                service.Check = new HttpCheck()
+                _service.Check = new HttpCheck()
                 {
                     HTTP = $"http://{_address}:{_port}/{_checkRelativePath}",
                     Interval = $"{_checkTimespanSeconds}s",
                 };
             }
-            var content = new StringContent(JsonConvert.SerializeObject(service, _jsonSettings), System.Text.Encoding.UTF8, "application/json");
+            var content = new StringContent(JsonConvert.SerializeObject(_service, _jsonSettings), System.Text.Encoding.UTF8, "application/json");
 
             var registerResult = await _httpClient.PutAsync("/v1/agent/service/register", content);
 
             if (registerResult.StatusCode != HttpStatusCode.OK)
             {
                 throw new InvalidOperationException("Unable to register the service with consul");
+            }
+
+            if (!string.IsNullOrEmpty(_leaderKey))
+            {
+                _leader = new Leader(_leaderKey,_serviceId);
             }
 
             _started = true;

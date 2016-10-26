@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 
 namespace CondenserDotNet.Host
@@ -11,22 +12,21 @@ namespace CondenserDotNet.Host
         //QueryResult<Dictionary<string,string[]>> _lastServiceCall;
         //Task _runConsul;
         private CustomRouter _router;
-
+        HttpClient _client;
+        Uri _healthCheckUri;
         //Dictionary<string, Service> _currentServices = new Dictionary<string, Service>();
 
         public ConsulHandler(CustomRouter router)
         {
+            _healthCheckUri = new Uri("localhost:8500/v1/health/state/any");
+            _client = new HttpClient();
             _router = router;
-            //_consul = new ConsulClient();
-
-            //_lastServiceCall = _consul.Catalog.Services().Result;
-
-            //_runConsul = new Task(() => KeepCheckingConsul());
-            //_runConsul.Start();
+            KeepCheckingConsul();
         }
 
-        private void KeepCheckingConsul()
+        private async void KeepCheckingConsul()
         {
+            var queryResult = await _client.GetStringAsync(_healthCheckUri);
             //QueryOptions qOptions = new QueryOptions();
             //qOptions.WaitTime = new TimeSpan(0, 30, 0);
             //while (true)
