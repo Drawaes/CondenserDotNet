@@ -22,7 +22,7 @@ namespace Condenser.Tests.Integration
             var regClient1 = new CondenserDotNet.Client.ServiceRegistrationClient();
             regClient1.Config(serviceName: "TestService1", serviceId: "ServiceId1", address: "localhost", port: 8888);
             regClient1.AddUrls("api/testurl");
-            regClient1.AddHealthCheck("/health",2,2);
+            regClient1.AddHealthCheck("/health", 2, 2);
             regClient1.AddLeaderElectionKey("/electionKey/Test");
             await regClient1.RegisterServiceAsync();
 
@@ -38,30 +38,24 @@ namespace Condenser.Tests.Integration
             regClient2.AddHealthCheck("/health", 2, 2);
             await regClient2.RegisterServiceAsync();
 
-            //Because this is a closure it will be false if the awaiter finishes before the leader election does
-            bool shouldBeLeader = false;
+            //By using a clouser this should be true by the time the completion gets called
+            var shouldBeLeader = false;
             var wait = new ManualResetEvent(false);
 
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-            Task.Run(async () =>
+            regClient2.Leader.OnCompleted(() =>
             {
-                await regClient2.Leader;
                 Assert.True(shouldBeLeader);
                 wait.Set();
-             });
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            });
 
             //Delay for a a couple of health checks
             await Task.Delay(5000);
 
-            //Now we can release the leader
+            //Close the first client
+            server1.Dispose();
             shouldBeLeader = true;
 
-            ////Close the first client
-            server1.Dispose();
-
-            //Now we wait for the second to become leader for 5 seconds or blow up because it should have happened
-            Assert.True(wait.WaitOne(15000));
+            Assert.True(wait.WaitOne(10000));
         }
 
         private class MiniServer
@@ -89,7 +83,7 @@ namespace Condenser.Tests.Integration
         {
             public void Configure(IApplicationBuilder app)
             {
-                app.Run( state => state.Response.WriteAsync("Hello from ASP.NET Core!"));
+                app.Run(state => state.Response.WriteAsync("Hello from ASP.NET Core!"));
             }
         }
     }

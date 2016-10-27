@@ -19,7 +19,7 @@ namespace CondenserDotNet.Client
         private string _keyname;
         private string _serviceId;
         private CancellationToken _cancel = new CancellationToken(false);
-        private static readonly Action _completedSentinel = delegate { };
+        private ManualResetEvent _isLeader = new ManualResetEvent(false);
         private Action _continuation;
 
         public Leader(string keyname, string serviceId)
@@ -39,7 +39,7 @@ namespace CondenserDotNet.Client
             StartSession();
         }
 
-        public bool IsCompleted => ReferenceEquals(_completedSentinel, Volatile.Read(ref _continuation));
+        public bool IsCompleted => _isLeader.WaitOne(0);
         // utility method for people who don't feel comfortable with `await obj;` and prefer `await obj.WaitAsync();`
         public Leader WaitAsync() => this;
         public void GetResult() { }
@@ -47,9 +47,9 @@ namespace CondenserDotNet.Client
 
         private void Set()
         {
-            Action continuation = Interlocked.Exchange(ref _continuation, _completedSentinel);
-
-            if (continuation != null && !ReferenceEquals(continuation, _completedSentinel))
+            _isLeader.Set();
+            var continuation = Interlocked.Exchange(ref _continuation,null);
+            if (continuation != null)
             {
                 ThreadPool.QueueUserWorkItem(state => ((Action)state).Invoke(), continuation);
             }
@@ -57,7 +57,7 @@ namespace CondenserDotNet.Client
 
         private void Reset()
         {
-            Volatile.Write(ref _continuation, null);
+            _isLeader.Reset();
         }
 
         private async void StartSession()
@@ -120,7 +120,6 @@ namespace CondenserDotNet.Client
                         Reset();
                         if (string.IsNullOrWhiteSpace(keyInfo?.Session))
                         {
-                            currentIndex = null;
                             //No one owns it so try again
                             break;
                         }
@@ -133,16 +132,15 @@ namespace CondenserDotNet.Client
         {
             if (continuation != null)
             {
-                var oldValue = Interlocked.CompareExchange(ref _continuation, continuation, null);
-
-                if (ReferenceEquals(oldValue, _completedSentinel))
+                if (_isLeader.WaitOne(0))
                 {
-                    // already complete; calback sync
+                    // already complete; callback sync
                     continuation.Invoke();
+                    return;
                 }
-                else if (oldValue != null)
+                else
                 {
-                    throw new InvalidOperationException();
+                    Volatile.Write(ref _continuation, continuation);
                 }
             }
         }

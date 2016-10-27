@@ -15,6 +15,7 @@ namespace CondenserDotNet.Client
         protected static HttpClient _httpClient;
         bool _disposed = false;
         protected JsonSerializerSettings _jsonSettings;
+
         public ClientBase() :this("127.0.0.1", 8500) { }
         public ClientBase(int agentPort) :this("127.0.0.1", agentPort) { }
         public ClientBase(string agentAddress) :this(agentAddress, 8500) { }
