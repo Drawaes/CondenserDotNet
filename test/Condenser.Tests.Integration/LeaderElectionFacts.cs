@@ -66,7 +66,7 @@ namespace Condenser.Tests.Integration
             {
                 _host = new WebHostBuilder()
                 .UseKestrel()
-                .UseUrls($"http://*:{port}")
+                .UseUrls($"http://localhost:{port}")
                 .UseStartup<DummyHealthServer>()
                 .Build();
 
