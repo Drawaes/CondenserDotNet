@@ -11,6 +11,7 @@ namespace CondenserDotNet.Client
 {
     public abstract class ClientBase :IDisposable
     {
+        internal const string ConsulIndexHeader = "X-Consul-Index";
         protected static HttpClient _httpClient;
         bool _disposed = false;
         protected JsonSerializerSettings _jsonSettings;

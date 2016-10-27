@@ -9,6 +9,5 @@ namespace CondenserDotNet.Client.DataContracts
     {
         public string HTTP { get;set;}
         public string Interval { get;set;}
-        public string TTL { get;set;}
     }
 }

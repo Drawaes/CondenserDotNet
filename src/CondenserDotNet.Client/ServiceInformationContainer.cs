@@ -67,7 +67,7 @@ namespace CondenserDotNet.Client
         {
             var result = await _client.GetAsync(_requestString + $"?index={index}", _token);
             IEnumerable<string> waitTime = null;
-            result.Headers.TryGetValues("X-Consul-Index", out waitTime);
+            result.Headers.TryGetValues(ClientBase.ConsulIndexHeader, out waitTime);
             var stringResult = await result.Content.ReadAsStringAsync();
             var objects = JsonConvert.DeserializeObject<InformationServiceSet[]>(stringResult);
             var dictionary = new Dictionary<InformationService, List<Version>>();

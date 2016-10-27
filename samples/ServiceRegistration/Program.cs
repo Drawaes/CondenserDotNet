@@ -19,11 +19,13 @@ namespace ServiceRegistration
 
             var regClient = new ServiceRegistrationClient();
             regClient
-                .Config(serviceName: "timsService", port:7777, address: "localhost")
-                .AddSupportedVersions(new Version(1,0,0))
+                .Config(serviceName: "timsService", port: 7777, address: "localhost")
+                .AddSupportedVersions(new Version(1, 0, 0))
                 .AddHealthCheck("Health", 10, 20)
                 .AddLeaderElectionKey("/test/leaderElection");
-            regClient.RegisterServiceAsync();
+            regClient.RegisterServiceAsync().Wait();
+
+            regClient.Leader.WaitAsync().OnCompleted(() => Console.WriteLine("I am leader!"));
 
             var host = new WebHostBuilder()
                 .UseKestrel()
@@ -32,6 +34,7 @@ namespace ServiceRegistration
                 .Build();
 
             host.Run();
+                       
         }
     }
 }

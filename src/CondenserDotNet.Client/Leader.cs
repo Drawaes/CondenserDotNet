@@ -1,20 +1,26 @@
-﻿using System;
+﻿/*Thanks and credit to the idea of a reseting awaitor goes to Marc Gravel and his work on channels*/
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using System.Threading.Tasks;
 using CondenserDotNet.Client.DataContracts;
 using Newtonsoft.Json;
 
 namespace CondenserDotNet.Client
 {
-    public class Leader : ClientBase
+    public class Leader : ClientBase, INotifyCompletion
     {
         private Guid _sessionKey = Guid.NewGuid();
         private string _sessionCreateString;
         private static readonly string _sessionCreateQueryString = "/v1/session/create";
         private string _keyname;
         private string _serviceId;
+        private CancellationToken _cancel = new CancellationToken(false);
+        private static readonly Action _completedSentinel = delegate { };
+        private Action _continuation;
 
         public Leader(string keyname, string serviceId)
         {
@@ -25,12 +31,33 @@ namespace CondenserDotNet.Client
             {
                 Behavior = "release",
                 Checks = new string[] { "serfHealth", $"service:{serviceId}" },
-                LockDelay = "2s",
+                //LockDelay = "0s",
                 Name = $"{_serviceId}:LeaderElection",
             };
             _sessionCreateString = JsonConvert.SerializeObject(sessionCreate);
 
             StartSession();
+        }
+
+        public bool IsCompleted => ReferenceEquals(_completedSentinel, Volatile.Read(ref _continuation));
+        // utility method for people who don't feel comfortable with `await obj;` and prefer `await obj.WaitAsync();`
+        public Leader WaitAsync() => this;
+        public void GetResult() { }
+        public Leader GetAwaiter() => this;
+
+        private void Set()
+        {
+            Action continuation = Interlocked.Exchange(ref _continuation, _completedSentinel);
+
+            if (continuation != null && !ReferenceEquals(continuation, _completedSentinel))
+            {
+                ThreadPool.QueueUserWorkItem(state => ((Action)state).Invoke(), continuation);
+            }
+        }
+
+        private void Reset()
+        {
+            Volatile.Write(ref _continuation, null);
         }
 
         private async void StartSession()
@@ -42,21 +69,82 @@ namespace CondenserDotNet.Client
                 sessionCreateReturn = await _httpClient.PutAsync(_sessionCreateQueryString, createSessionPayload);
                 if (sessionCreateReturn.IsSuccessStatusCode)
                 {
-                    break;
+                    //Now try to get the lock
+                    var sessionResponse = JsonConvert.DeserializeObject<SessionCreateResponse>(await sessionCreateReturn.Content.ReadAsStringAsync());
+                    await TryToBecomeLeader(sessionResponse.Id);
                 }
-                //Failed do something for the retry
-                await Task.Delay(5000);
+                //Failed to get a session, probably because our health checks are failing, so back off and try again
+                await Task.Delay(500);
             }
-
-            var sessionResponse = JsonConvert.DeserializeObject<SessionCreateResponse>(await sessionCreateReturn.Content.ReadAsStringAsync());
-
-            //Now try to get the lock
-
-            var putSession = new StringContent(_serviceId, System.Text.Encoding.UTF8);
-            var lockResponse = await _httpClient.PutAsync($"/v1/kv/{_keyname}?acquire={sessionResponse.Id}", putSession);
-            var responseValue = await lockResponse.Content.ReadAsStringAsync();
         }
 
-        //public Task
+        private async Task TryToBecomeLeader(string sessionId)
+        {
+            while (true)
+            {
+                string currentIndex = null;
+                var putSession = new StringContent(_serviceId, System.Text.Encoding.UTF8);
+                var lockResponse = await _httpClient.PutAsync($"/v1/kv/{_keyname}?acquire={sessionId}", putSession, _cancel);
+                if (!lockResponse.IsSuccessStatusCode)
+                {
+                    //We got an error, we need to reaquire our session at this point
+                    Reset();
+                    break;
+                }
+                var responseValue = bool.Parse(await lockResponse.Content.ReadAsStringAsync());
+                if(responseValue)
+                {
+                    Set();
+                }
+                else
+                {
+                    Reset();
+                }
+
+                while (true)
+                {
+                    string queryString = $"/v1/kv/{_keyname}?" + currentIndex != null ? $"index={currentIndex}&wait=300s" : "";
+                    //Now get the key info
+                    var getResponse = await _httpClient.GetAsync(queryString, _cancel);
+                    var keyString = await getResponse.Content.ReadAsStringAsync();
+                    var keyInfo = JsonConvert.DeserializeObject<FullKeyInfo[]>(keyString)?.FirstOrDefault();
+                    IEnumerable<string> waitTime = null;
+                    getResponse.Headers.TryGetValues(ConsulIndexHeader, out waitTime);
+                    currentIndex = waitTime?.FirstOrDefault();
+                    if (keyInfo?.Session == sessionId)
+                    {
+                        Set();
+                    }
+                    else
+                    {
+                        Reset();
+                        if (string.IsNullOrWhiteSpace(keyInfo?.Session))
+                        {
+                            currentIndex = null;
+                            //No one owns it so try again
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        public void OnCompleted(Action continuation)
+        {
+            if (continuation != null)
+            {
+                var oldValue = Interlocked.CompareExchange(ref _continuation, continuation, null);
+
+                if (ReferenceEquals(oldValue, _completedSentinel))
+                {
+                    // already complete; calback sync
+                    continuation.Invoke();
+                }
+                else if (oldValue != null)
+                {
+                    throw new InvalidOperationException();
+                }
+            }
+        }
     }
 }

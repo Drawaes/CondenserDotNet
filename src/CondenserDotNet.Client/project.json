@@ -4,7 +4,8 @@
   "dependencies": {
     "NETStandard.Library": "1.6.0",
     "Newtonsoft.Json": "9.0.1",
-    "System.Net.NameResolution": "4.0.0"
+    "System.Net.NameResolution": "4.0.0",
+    "System.Threading.ThreadPool": "4.0.10"
   },
 
   "frameworks": {

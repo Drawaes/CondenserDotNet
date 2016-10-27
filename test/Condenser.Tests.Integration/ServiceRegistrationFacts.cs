@@ -6,7 +6,7 @@ using Xunit;
 
 namespace Condenser.Tests.Integration
 {
-    public class ServiceRegistrationTests
+    public class ServiceRegistrationFacts
     {
         [Fact]
         public async Task TestSingleRegisterAndRetrieve()
