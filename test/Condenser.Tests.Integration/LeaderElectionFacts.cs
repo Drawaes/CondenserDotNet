@@ -20,7 +20,7 @@ namespace Condenser.Tests.Integration
             var server2 = new MiniServer(9999);
 
             var regClient1 = new CondenserDotNet.Client.ServiceRegistrationClient();
-            regClient1.Config(serviceName: "TestService1", serviceId: "ServiceId1", address: "localhost", port: 8888);
+            regClient1.Config(serviceName: "TestService1", serviceId: "ServiceId1", address: "127.0.0.1", port: 8888);
             regClient1.AddUrls("api/testurl");
             regClient1.AddHealthCheck("/health", 2, 2);
             regClient1.AddLeaderElectionKey("/electionKey/Test");
@@ -32,7 +32,7 @@ namespace Condenser.Tests.Integration
             //Next we setup the second service
 
             var regClient2 = new CondenserDotNet.Client.ServiceRegistrationClient();
-            regClient2.Config(serviceName: "TestService1", serviceId: "ServiceId2", address: "localhost", port: 9999);
+            regClient2.Config(serviceName: "TestService1", serviceId: "ServiceId2", address: "127.0.0.1", port: 9999);
             regClient2.AddUrls("api/testurl");
             regClient2.AddLeaderElectionKey("/electionKey/Test");
             regClient2.AddHealthCheck("/health", 2, 2);
@@ -66,7 +66,7 @@ namespace Condenser.Tests.Integration
             {
                 _host = new WebHostBuilder()
                 .UseKestrel()
-                .UseUrls($"http://localhost:{port}")
+                .UseUrls($"http://127.0.0.1:{port}")
                 .UseStartup<DummyHealthServer>()
                 .Build();
 
