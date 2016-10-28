@@ -62,30 +62,37 @@ namespace CondenserDotNet.Client
 
         private async void StartSession()
         {
-            HttpResponseMessage sessionCreateReturn;
-            while (true)
+            try
             {
-                if(_cancel.IsCancellationRequested)
+                HttpResponseMessage sessionCreateReturn;
+                while (true)
                 {
-                    return;
-                }
-                var createSessionPayload = new StringContent(_sessionCreateString, System.Text.Encoding.UTF8, "application/json");
-                sessionCreateReturn = await _httpClient.PutAsync(_sessionCreateQueryString, createSessionPayload, _cancel.Token);
-                if (sessionCreateReturn.IsSuccessStatusCode)
-                {
-                    //Now try to get the lock
-                    var sessionResponse = JsonConvert.DeserializeObject<SessionCreateResponse>(await sessionCreateReturn.Content.ReadAsStringAsync());
-                    try
+                    if (_cancel.IsCancellationRequested)
                     {
-                        await TryToBecomeLeader(sessionResponse.Id);
+                        return;
                     }
-                    catch(Exception ex)
+                    var createSessionPayload = new StringContent(_sessionCreateString, System.Text.Encoding.UTF8, "application/json");
+                    sessionCreateReturn = await _httpClient.PutAsync(_sessionCreateQueryString, createSessionPayload, _cancel.Token);
+                    if (sessionCreateReturn.IsSuccessStatusCode)
                     {
-                        Console.WriteLine($"Error trying to become a leader {ex}");
+                        //Now try to get the lock
+                        var sessionResponse = JsonConvert.DeserializeObject<SessionCreateResponse>(await sessionCreateReturn.Content.ReadAsStringAsync());
+                        try
+                        {
+                            await TryToBecomeLeader(sessionResponse.Id);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Error trying to become a leader {ex}");
+                        }
                     }
+                    //Failed to get a session, probably because our health checks are failing, so back off and try again
+                    await Task.Delay(500);
                 }
-                //Failed to get a session, probably because our health checks are failing, so back off and try again
-                await Task.Delay(500);
+            }
+            catch
+            {
+                Reset();
             }
         }
 
