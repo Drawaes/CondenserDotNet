@@ -22,7 +22,7 @@ namespace Condenser.Tests.Integration
             var regClient1 = new CondenserDotNet.Client.ServiceRegistrationClient();
             regClient1.Config(serviceName: "TestService1", serviceId: "ServiceId1", address: "127.0.0.1", port: 8888);
             regClient1.AddUrls("api/testurl");
-            regClient1.AddHealthCheck("/health", 2, 2);
+            regClient1.AddHealthCheck("/health", 1, 1);
             regClient1.AddLeaderElectionKey("/electionKey/Test");
             await regClient1.RegisterServiceAsync();
 
@@ -35,7 +35,7 @@ namespace Condenser.Tests.Integration
             regClient2.Config(serviceName: "TestService1", serviceId: "ServiceId2", address: "127.0.0.1", port: 9999);
             regClient2.AddUrls("api/testurl");
             regClient2.AddLeaderElectionKey("/electionKey/Test");
-            regClient2.AddHealthCheck("/health", 2, 2);
+            regClient2.AddHealthCheck("/health", 1, 1);
             await regClient2.RegisterServiceAsync();
 
             //By using a clouser this should be true by the time the completion gets called
@@ -49,13 +49,13 @@ namespace Condenser.Tests.Integration
             });
 
             //Delay for a a couple of health checks
-            await Task.Delay(5000);
+            await Task.Delay(2000);
 
             //Close the first client
             server1.Dispose();
             shouldBeLeader = true;
 
-            Assert.True(wait.WaitOne(10000));
+            Assert.True(wait.WaitOne(20000));
         }
 
         private class MiniServer
