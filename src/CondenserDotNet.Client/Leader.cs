@@ -106,6 +106,11 @@ namespace CondenserDotNet.Client
                     string queryString = $"/v1/kv/{_keyname}?" + currentIndex != null ? $"index={currentIndex}&wait=300s" : "";
                     //Now get the key info
                     var getResponse = await _httpClient.GetAsync(queryString, _cancel);
+                    if(!getResponse.IsSuccessStatusCode)
+                    {
+                        Reset();
+                        break;
+                    }
                     var keyString = await getResponse.Content.ReadAsStringAsync();
                     var keyInfo = JsonConvert.DeserializeObject<FullKeyInfo[]>(keyString)?.FirstOrDefault();
                     IEnumerable<string> waitTime = null;
