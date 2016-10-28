@@ -56,9 +56,9 @@ namespace CondenserDotNet.Client
 
         ~ClientBase()
         {
-#if DEBUG
-            Debug.Assert(true, "The service registration client was garbage collected but should have been disposed first");
-#endif
+//#if DEBUG
+//            Debug.Assert(true, "The service registration client was garbage collected but should have been disposed first");
+//#endif
             Dispose(false);
         }
         #endregion
