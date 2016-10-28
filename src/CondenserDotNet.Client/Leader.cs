@@ -48,7 +48,7 @@ namespace CondenserDotNet.Client
         private void Set()
         {
             _isLeader.Set();
-            var continuation = Interlocked.Exchange(ref _continuation,null);
+            var continuation = Interlocked.Exchange(ref _continuation, null);
             if (continuation != null)
             {
                 ThreadPool.QueueUserWorkItem(state => ((Action)state).Invoke(), continuation);
@@ -71,7 +71,14 @@ namespace CondenserDotNet.Client
                 {
                     //Now try to get the lock
                     var sessionResponse = JsonConvert.DeserializeObject<SessionCreateResponse>(await sessionCreateReturn.Content.ReadAsStringAsync());
-                    await TryToBecomeLeader(sessionResponse.Id);
+                    try
+                    {
+                        await TryToBecomeLeader(sessionResponse.Id);
+                    }
+                    catch(Exception ex)
+                    {
+                        Console.WriteLine($"Error trying to become a leader {ex}");
+                    }
                 }
                 //Failed to get a session, probably because our health checks are failing, so back off and try again
                 await Task.Delay(500);
@@ -92,7 +99,7 @@ namespace CondenserDotNet.Client
                     break;
                 }
                 var responseValue = bool.Parse(await lockResponse.Content.ReadAsStringAsync());
-                if(responseValue)
+                if (responseValue)
                 {
                     Set();
                 }
@@ -106,7 +113,7 @@ namespace CondenserDotNet.Client
                     string queryString = $"/v1/kv/{_keyname}?" + currentIndex != null ? $"index={currentIndex}&wait=300s" : "";
                     //Now get the key info
                     var getResponse = await _httpClient.GetAsync(queryString, _cancel);
-                    if(!getResponse.IsSuccessStatusCode)
+                    if (!getResponse.IsSuccessStatusCode)
                     {
                         Reset();
                         break;
@@ -132,7 +139,7 @@ namespace CondenserDotNet.Client
                 }
             }
         }
-
+        
         public void OnCompleted(Action continuation)
         {
             if (continuation != null)
