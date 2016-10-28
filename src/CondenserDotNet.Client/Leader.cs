@@ -31,7 +31,7 @@ namespace CondenserDotNet.Client
             {
                 Behavior = "release",
                 Checks = new string[] { "serfHealth", $"service:{serviceId}" },
-                //LockDelay = "0s",
+                LockDelay = "0s",
                 Name = $"{_serviceId}:LeaderElection",
             };
             _sessionCreateString = JsonConvert.SerializeObject(sessionCreate);
