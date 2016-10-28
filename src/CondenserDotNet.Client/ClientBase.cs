@@ -9,19 +9,17 @@ using Newtonsoft.Json.Serialization;
 
 namespace CondenserDotNet.Client
 {
-    public abstract class ClientBase :IDisposable
+    public abstract class ClientBase : IDisposable
     {
         protected static HttpClient _httpClient;
         bool _disposed = false;
-        protected JsonSerializerSettings _jsonSettings;
+        
         public ClientBase() :this("127.0.0.1", 8500) { }
         public ClientBase(int agentPort) :this("127.0.0.1", agentPort) { }
         public ClientBase(string agentAddress) :this(agentAddress, 8500) { }
         public ClientBase(string agentAddress, int agentPort)
         {
-            _httpClient = new HttpClient();
-            _httpClient.BaseAddress = new Uri($"http://{agentAddress}:{agentPort}");
-            _jsonSettings = new JsonSerializerSettings { ContractResolver = new DefaultContractResolver(), NullValueHandling = NullValueHandling.Ignore };
+            
         }
 
         protected void CheckDisposed()
@@ -54,9 +52,6 @@ namespace CondenserDotNet.Client
 
         ~ClientBase()
         {
-#if DEBUG
-            Debug.Assert(true, "The service registration client was garbage collected but should have been disposed first");
-#endif
             Dispose(false);
         }
         #endregion
