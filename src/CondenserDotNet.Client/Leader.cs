@@ -18,7 +18,7 @@ namespace CondenserDotNet.Client
         private static readonly string _sessionCreateQueryString = "/v1/session/create";
         private string _keyname;
         private string _serviceId;
-        private CancellationToken _cancel = new CancellationToken(false);
+        private CancellationTokenSource _cancel = new CancellationTokenSource();
         private ManualResetEvent _isLeader = new ManualResetEvent(false);
         private Action _continuation;
 
@@ -65,8 +65,12 @@ namespace CondenserDotNet.Client
             HttpResponseMessage sessionCreateReturn;
             while (true)
             {
+                if(_cancel.IsCancellationRequested)
+                {
+                    return;
+                }
                 var createSessionPayload = new StringContent(_sessionCreateString, System.Text.Encoding.UTF8, "application/json");
-                sessionCreateReturn = await _httpClient.PutAsync(_sessionCreateQueryString, createSessionPayload);
+                sessionCreateReturn = await _httpClient.PutAsync(_sessionCreateQueryString, createSessionPayload, _cancel.Token);
                 if (sessionCreateReturn.IsSuccessStatusCode)
                 {
                     //Now try to get the lock
@@ -91,7 +95,7 @@ namespace CondenserDotNet.Client
             {
                 string currentIndex = null;
                 var putSession = new StringContent(_serviceId, System.Text.Encoding.UTF8);
-                var lockResponse = await _httpClient.PutAsync($"/v1/kv/{_keyname}?acquire={sessionId}", putSession, _cancel);
+                var lockResponse = await _httpClient.PutAsync($"/v1/kv/{_keyname}?acquire={sessionId}", putSession, _cancel.Token);
                 if (!lockResponse.IsSuccessStatusCode)
                 {
                     //We got an error, we need to reaquire our session at this point
@@ -112,7 +116,7 @@ namespace CondenserDotNet.Client
                 {
                     string queryString = $"/v1/kv/{_keyname}?" + currentIndex != null ? $"index={currentIndex}&wait=300s" : "";
                     //Now get the key info
-                    var getResponse = await _httpClient.GetAsync(queryString, _cancel);
+                    var getResponse = await _httpClient.GetAsync(queryString, _cancel.Token);
                     if (!getResponse.IsSuccessStatusCode)
                     {
                         Reset();
@@ -155,6 +159,12 @@ namespace CondenserDotNet.Client
                     Volatile.Write(ref _continuation, continuation);
                 }
             }
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            _cancel.Cancel();
+            base.Dispose(disposing);
         }
     }
 }
