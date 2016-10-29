@@ -63,11 +63,10 @@ namespace CondenserDotNet.Client
             return Tuple.Create(service.Key.Address, service.Key.Port);
         }
 
-        private async Task CheckForUpdates(string index = null)
+        private async Task CheckForUpdates()
         {
-            var result = await _client.GetAsync(_requestString + $"?index={index}", _token);
-            IEnumerable<string> waitTime = null;
-            result.Headers.TryGetValues("X-Consul-Index", out waitTime);
+            var result = await _client.GetAsync(_requestString + $"?index=", _token);
+           
             var stringResult = await result.Content.ReadAsStringAsync();
             var objects = JsonConvert.DeserializeObject<InformationServiceSet[]>(stringResult);
             var dictionary = new Dictionary<InformationService, List<Version>>();
@@ -86,12 +85,7 @@ namespace CondenserDotNet.Client
                 dictionary.Add(obj.Service, versions);
             }
             Volatile.Write(ref _serviceListings ,dictionary);
-            if (!_token.IsCancellationRequested)
-            {
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-                CheckForUpdates(waitTime.FirstOrDefault());
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-            }
+           
         }
     }
 }
