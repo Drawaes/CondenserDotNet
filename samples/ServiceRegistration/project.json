@@ -8,16 +8,19 @@
     "CondenserDotNet.Client": { "target": "project" },
     "Microsoft.AspNetCore.Hosting": "1.0.0",
     "Microsoft.AspNetCore.Mvc": "1.0.0",
-    "Microsoft.AspNetCore.Server.Kestrel": "1.0.1",
-    "Microsoft.NETCore.App": {
-      "type": "platform",
-      "version": "1.0.0"
-    },
+    "Microsoft.AspNetCore.Server.Kestrel": "1.0.0",
+    "Microsoft.NETCore.App": "1.0.0",
     "System.Net.Http": "4.1.0"
   },
 
   "frameworks": {
     "netcoreapp1.0": {
+      "dependencies": {
+        "Microsoft.NETCore.App": {
+          "version": "1.0.0",
+          "type": "platform"
+        }
+      }
     }
   }
 }
