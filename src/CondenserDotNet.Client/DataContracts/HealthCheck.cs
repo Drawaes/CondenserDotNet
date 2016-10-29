@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace CondenserDotNet.Client.DataContracts
 {
-    public class HealthCheck
+    internal class HealthCheck
     {
         public string HTTP { get; set; }
         public string Interval { get; set; }

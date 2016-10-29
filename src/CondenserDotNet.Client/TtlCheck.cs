@@ -22,7 +22,7 @@ namespace CondenserDotNet.Client
             _timeToLiveSeconds = timeToLiveSeconds;
         }
 
-        public HealthCheck HealthCheck => _healthCheck;
+        internal HealthCheck HealthCheck => _healthCheck;
 
         public async Task<bool> ReportPassingAsync()
         {

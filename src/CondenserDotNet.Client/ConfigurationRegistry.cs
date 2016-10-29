@@ -10,13 +10,13 @@ using Newtonsoft.Json;
 
 namespace CondenserDotNet.Client
 {
-    public class ConfigurationManager
+    public class ConfigurationRegistry: IConfigurationRegistry
     {
         private readonly ServiceManager _serviceManager;
         private List<Dictionary<string, string>> _configKeys = new List<Dictionary<string, string>>();
         private List<ConfigurationWatcher> _configWatchers = new List<ConfigurationWatcher>();
 
-        internal ConfigurationManager(ServiceManager serviceManager)
+        internal ConfigurationRegistry(ServiceManager serviceManager)
         {
             _serviceManager = serviceManager;
         }

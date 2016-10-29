@@ -21,12 +21,23 @@ namespace Condenser.Tests.Integration
         [Fact]
         public async Task TestRegisterAndSetPassTtl()
         {
-            var manager = new ServiceManager("TestService");
+            var manager = new ServiceManager("TestService2");
             manager.AddTtlHealthCheck(10);
             var registerResult = await manager.RegisterServiceAsync();
             var ttlResult = await manager.TtlCheck.ReportPassingAsync();
 
             Assert.Equal(true, ttlResult);
+        }
+        [Fact]
+        public async Task TestRegisterAndCheckRegistered()
+        {
+            var manager = new ServiceManager("TestService3");
+            var registrationResult = await manager.RegisterServiceAsync();
+            Assert.Equal(true, registrationResult);
+
+            var services = await manager.Services.GetAvailableServicesAsync();
+
+            Assert.Contains("TestService3", services);
         }
     }
 }

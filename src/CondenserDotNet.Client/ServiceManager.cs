@@ -24,7 +24,8 @@ namespace CondenserDotNet.Client
         private HealthCheck _httpCheck;
         private TtlCheck _ttlCheck;
         private CountdownEvent _shutdownCounter = new CountdownEvent(0);
-        private readonly ConfigurationManager _config;
+        private readonly ConfigurationRegistry _config;
+        private readonly ServiceRegistry _services;
 
         public ServiceManager(string serviceName) : this(serviceName, $"{serviceName}:{Dns.GetHostName()}", "localhost", 8500) { }
         public ServiceManager(string serviceName, string serviceId) : this(serviceName, serviceId, "localhost", 8500) { }
@@ -35,21 +36,23 @@ namespace CondenserDotNet.Client
             _httpClient.BaseAddress = new Uri($"http://{agentAddress}:{agentPort}");
             _serviceId = serviceId;
             _serviceName = serviceName;
-            _config = new ConfigurationManager(this);
+            _config = new ConfigurationRegistry(this);
+            _services = new ServiceRegistry(this);
             ServiceAddress = Dns.GetHostName();
             ServicePort = GetNextAvailablePort();
         }
 
         internal List<string> SupportedUrls => _supportedUrls;
-        public ConfigurationManager Config => _config;
         internal HttpClient Client => _httpClient;
         internal HealthCheck HttpCheck { get { return _httpCheck; } set { _httpCheck = value; } }
-        public string ServiceAddress { get; set; }
-        public int ServicePort { get; set; }
+        public ConfigurationRegistry Config => _config;
         public string ServiceId => _serviceId;
         public string ServiceName => _serviceName;
+        public ServiceRegistry Services => _services;
         public bool IsRegistered { get { return _isRegistered; } internal set { _isRegistered = value; } }
         public TtlCheck TtlCheck { get { return _ttlCheck; } internal set { _ttlCheck = value; } }
+        public string ServiceAddress { get; set; }
+        public int ServicePort { get; set; }
 
         protected int GetNextAvailablePort()
         {

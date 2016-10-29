@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace CondenserDotNet.Client.DataContracts
 {
-    public class Service
+    internal class Service
     {
         public string ID { get; set; }
         public string Name { get; set; }
