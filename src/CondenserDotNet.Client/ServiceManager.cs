@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using CondenserDotNet.Client.DataContracts;
@@ -35,6 +36,8 @@ namespace CondenserDotNet.Client
             _serviceId = serviceId;
             _serviceName = serviceName;
             _config = new ConfigurationManager(this);
+            ServiceAddress = Dns.GetHostName();
+            ServicePort = GetNextAvailablePort();
         }
 
         internal List<string> SupportedUrls => _supportedUrls;
@@ -47,6 +50,15 @@ namespace CondenserDotNet.Client
         public string ServiceName => _serviceName;
         public bool IsRegistered { get { return _isRegistered; } internal set { _isRegistered = value; } }
         public TtlCheck TtlCheck { get { return _ttlCheck; } internal set { _ttlCheck = value; } }
+
+        protected int GetNextAvailablePort()
+        {
+            TcpListener l = new TcpListener(IPAddress.Loopback, 0);
+            l.Start();
+            int port = ((IPEndPoint)l.LocalEndpoint).Port;
+            l.Stop();
+            return port;
+        }
 
         public void Dispose()
         {
