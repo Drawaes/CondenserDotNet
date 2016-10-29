@@ -12,14 +12,32 @@ CI Builds available as nuget packs from
 
 https://www.myget.org/F/condenserdotnet/api/v3/index.json
 
-Example use to register a service
+## Example use to register a service
 
 ``` csharp
-var regClient = new ServiceRegistrationClient();
-    regClient
-        .Config(serviceName: "timsService", port:7777, address: "localhost")
-        .AddSupportedVersions(new Version(1,0,0))
-        .AddHealthCheck("Health", 10, 20);
-    await regClient.RegisterServiceAsync();
+var serviceManager = new ServiceManager("TestService");
+    await serviceManager.AddHttpHealthCheck("health",10)
+        .AddApiUrl("/api/someObject")
+        .AddApiUrl("/api/someOtherObject")
+        .RegisterServiceAsync();
 ```
 
+## Example to configure Kestrel on a dynamic port
+
+``` csharp
+var host = new WebHostBuilder()
+    .UseKestrel()
+    .UseUrls($"http://*:{serviceManager.ServicePort}")
+    .UseStartup<Startup>()
+    .Build();
+
+host.Run();
+```
+
+The first available port in the dynamic range for windows is allocated by default. You can override this if you have a specific port you would like to use.  
+
+``` csharp
+serviceManager.ServicePort = 5000;
+```
+
+You should assign this before registering or call RegisterServiceAsync() again if you change the details to send the new configuration to Consul.
