@@ -1,4 +1,4 @@
-﻿{
+{
   "version": "1.0.0-*",
   "testRunner": "xunit",
   "dependencies": {
@@ -9,14 +9,20 @@
     "CondenserDotNet.Client": "0.5.0-*"
   },
 
-  "frameworks": {
+  
+   "frameworks": {
     "netcoreapp1.0": {
       "dependencies": {
         "Microsoft.NETCore.App": {
-          "type": "platform",
-          "version": "1.0.0"
+          "version": "1.0.0",
+          "type": "platform"
+        },
+        "Microsoft.CodeCoverage": {
+          "type": "build",
+          "version": "1.0.1"
         }
-      }
+      },
+      "imports": "dnxcore50"
     }
   }
 }

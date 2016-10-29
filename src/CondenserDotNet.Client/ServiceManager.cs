@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Threading;
 using System.Threading.Tasks;
 using CondenserDotNet.Client.DataContracts;
 using Newtonsoft.Json;
@@ -22,6 +24,7 @@ namespace CondenserDotNet.Client
         private List<string> _supportedUrls = new List<string>();
         private HealthCheck _httpCheck;
         private TtlCheck _ttlCheck;
+        private CountdownEvent _shutdownCounter = new CountdownEvent(0);
 
         public ServiceManager(string serviceName) : this(serviceName, $"{serviceName}:{Dns.GetHostName()}", "localhost", 8500) { }
         public ServiceManager(string serviceName, string serviceId) : this(serviceName, serviceId, "localhost", 8500) { }
@@ -52,6 +55,8 @@ namespace CondenserDotNet.Client
 
         protected virtual void Dispose(bool disposing)
         {
+            Debug.Assert(_shutdownCounter.Wait(5000), "Did not shut down cleanly!!!");
+            
             if (_disposed)
                 return;
 
