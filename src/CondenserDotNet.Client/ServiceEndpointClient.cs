@@ -13,11 +13,7 @@ namespace CondenserDotNet.Client
 
         Dictionary<string, string[]> _availableServices = new Dictionary<string, string[]>();
         ConcurrentDictionary<string, ServiceInformationContainer> _serviceSubscriptions = new ConcurrentDictionary<string, ServiceInformationContainer>();
-
-        public ServiceEndpointClient(string agentAddress, int agentPort) : base(agentAddress, agentPort) { }
-        public ServiceEndpointClient(string agentAddress) : base(agentAddress) { }
-        public ServiceEndpointClient(int agentPort) : base(agentPort) { }
-        public ServiceEndpointClient() : base() { }
+                
 
         public string DataCenter { get; set; }
 
@@ -38,12 +34,12 @@ namespace CondenserDotNet.Client
             _availableServices = services;
         }
 
-        public Task<Tuple<string, int>> GetServiceAddressAsync(string serviceName, Version minVersion = null, Version maxVersion = null, Version exactVersion = null)
-        {
-            ServiceInformationContainer info = _serviceSubscriptions.GetOrAdd(serviceName, (key) => new ServiceInformationContainer(serviceName, _httpClient, _jsonSettings));
+        //public Task<Tuple<string, int>> GetServiceAddressAsync(string serviceName, Version minVersion = null, Version maxVersion = null, Version exactVersion = null)
+        //{
+        //    ServiceInformationContainer info = _serviceSubscriptions.GetOrAdd(serviceName, (key) => new ServiceInformationContainer(serviceName, _httpClient, _jsonSettings));
 
-            return info.GetServiceInstance(minVersion, maxVersion, exactVersion);
-        }
+        //    return info.GetServiceInstance(minVersion, maxVersion, exactVersion);
+        //}
 
     }
 }

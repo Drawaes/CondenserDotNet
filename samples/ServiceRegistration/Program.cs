@@ -17,13 +17,13 @@ namespace ServiceRegistration
             serviceClient.LoadAvailableDataCenters().Wait();
             serviceClient.LoadAvailableServices().Wait();
 
-            var regClient = new ServiceRegistrationClient();
-            regClient
-                .Config(serviceName: "timsService", port:7777, address: "localhost")
-                .AddSupportedVersions(new Version(1,0,0))
-                .AddHealthCheck("Health", 10, 20)
-                .AddLeaderElectionKey("/test/leaderElection");
-            regClient.RegisterServiceAsync();
+            //var regClient = new ServiceRegistrationClient();
+            //regClient
+            //    .Config(serviceName: "timsService", port:7777, address: "localhost")
+            //    .AddSupportedVersions(new Version(1,0,0))
+            //    .AddHealthCheck("Health", 10, 20)
+            //    .AddLeaderElectionKey("/test/leaderElection");
+            //regClient.RegisterServiceAsync();
 
             var host = new WebHostBuilder()
                 .UseKestrel()
