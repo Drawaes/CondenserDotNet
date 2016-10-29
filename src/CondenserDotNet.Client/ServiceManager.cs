@@ -18,8 +18,6 @@ namespace CondenserDotNet.Client
         private bool _disposed = false;
         private string _serviceName;
         private string _serviceId;
-        private string _serviceAddress;
-        private int _servicePort;
         private bool _isRegistered;
         private List<string> _supportedUrls = new List<string>();
         private HealthCheck _httpCheck;
@@ -43,8 +41,8 @@ namespace CondenserDotNet.Client
         public ConfigurationManager Config => _config;
         internal HttpClient Client => _httpClient;
         internal HealthCheck HttpCheck { get { return _httpCheck; } set { _httpCheck = value; } }
-        public string ServiceAddress => _serviceAddress;
-        public int ServicePort => _servicePort;
+        public string ServiceAddress { get; set; }
+        public int ServicePort { get; set; }
         public string ServiceId => _serviceId;
         public string ServiceName => _serviceName;
         public bool IsRegistered { get { return _isRegistered; } internal set { _isRegistered = value; } }
@@ -59,7 +57,7 @@ namespace CondenserDotNet.Client
         protected virtual void Dispose(bool disposing)
         {
             Debug.Assert(_shutdownCounter.Wait(5000), "Did not shut down cleanly!!!");
-            
+
             if (_disposed)
                 return;
 

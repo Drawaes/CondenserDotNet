@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using CondenserDotNet.Client;
 using Xunit;
@@ -55,6 +56,57 @@ namespace Condenser.Tests.Integration
             var firstValue = manager.Config["test1"];
 
             Assert.Equal("testValue2", firstValue);
+        }
+
+        [Fact]
+        public async Task GetCallbackForSpecificKey()
+        {
+            var manager = new ServiceManager("TestService");
+            await manager.Config.SetKeyAsync("org/test3/test1", "testValue1");
+
+            var result = await manager.Config.AddUpdatingPathAsync("org/test3/");
+
+            var e = new ManualResetEvent(false);
+            manager.Config.AddWatchOnSingleKey("test1", () => e.Set());
+
+            await manager.Config.SetKeyAsync("org/test3/test1", "testValue2");
+
+            //Wait for a max of 1 second for the change to notify us
+            Assert.True(e.WaitOne(1000));
+        }
+
+        [Fact]
+        public async Task GetCallbackForKeyThatIsAdded()
+        {
+            var manager = new ServiceManager("TestService");
+            await manager.Config.SetKeyAsync("org/test4/test1", "testValue1");
+
+            var result = await manager.Config.AddUpdatingPathAsync("org/test4/");
+
+            var e = new ManualResetEvent(false);
+            manager.Config.AddWatchOnSingleKey("test2", () => e.Set());
+
+            await manager.Config.SetKeyAsync("org/test4/test2", "testValue2");
+
+            //Wait for a max of 1 second for the change to notify us
+            Assert.True(e.WaitOne(1000));
+        }
+
+        [Fact]
+        public async Task GetCallbackForAnyKey()
+        {
+            var manager = new ServiceManager("TestService");
+            await manager.Config.SetKeyAsync("org/test5/test1", "testValue1");
+
+            var result = await manager.Config.AddUpdatingPathAsync("org/test5/");
+
+            var e = new ManualResetEvent(false);
+            manager.Config.AddWatchOnEntireConfig( () => e.Set());
+
+            await manager.Config.SetKeyAsync("org/test5/test1", "testValue2");
+
+            //Wait for a max of 1 second for the change to notify us
+            Assert.True(e.WaitOne(1000));
         }
     }
 }

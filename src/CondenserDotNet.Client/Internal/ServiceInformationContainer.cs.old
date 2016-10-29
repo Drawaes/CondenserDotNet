@@ -17,7 +17,6 @@ namespace CondenserDotNet.Client
         private HttpClient _client;
         private string _requestString;
         private JsonSerializerSettings _settings;
-        private CancellationToken _token;
         private string _serviceName;
         private Task _loadedTask;
         private Dictionary<InformationService, List<Version>> _serviceListings = new Dictionary<InformationService, List<Version>>();
@@ -32,7 +31,6 @@ namespace CondenserDotNet.Client
         }
 
         public string ServiceName => _serviceName;
-        public CancellationToken Token => _token;
                 
         public async Task<Tuple<string, int>> GetServiceInstance(Version minVersion = null, Version maxVersion = null, Version exactVersion = null, int msTimeout = Timeout.Infinite)
         {
@@ -65,7 +63,7 @@ namespace CondenserDotNet.Client
 
         private async Task CheckForUpdates()
         {
-            var result = await _client.GetAsync(_requestString + $"?index=", _token);
+            var result = await _client.GetAsync(_requestString + $"?index=");
            
             var stringResult = await result.Content.ReadAsStringAsync();
             var objects = JsonConvert.DeserializeObject<InformationServiceSet[]>(stringResult);

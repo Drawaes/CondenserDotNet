@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace CondenserDotNet.Client
+namespace CondenserDotNet.Client.Internal
 {
     internal static class HttpUtils
     {
@@ -15,6 +15,8 @@ namespace CondenserDotNet.Client
         private readonly static string _indexHeader = "X-Consul-Index";
         public readonly static string ApiUrl = "/v1/";
         public readonly static string KeyUrl = ApiUrl + "kv/";
+        public readonly static string ServiceCatalogUrl = ApiUrl + "catalog/services";
+        public readonly static string DatacenterCatalogUrl = ApiUrl + "catalog/datacenters";
 
 
         static HttpUtils()
@@ -35,7 +37,7 @@ namespace CondenserDotNet.Client
         public static string GetConsulIndex(this HttpResponseMessage response)
         {
             IEnumerable<string> results;
-            if(!response.Headers.TryGetValues(_indexHeader, out results))
+            if (!response.Headers.TryGetValues(_indexHeader, out results))
             {
                 return string.Empty;
             }
