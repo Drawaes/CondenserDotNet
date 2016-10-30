@@ -19,6 +19,7 @@ namespace CondenserDotNet.Client.Internal
         private readonly string _serviceName;
         private readonly string _lookupUrl;
         private InformationServiceSet[] _serviceInstances;
+        private WatcherState _state = WatcherState.NotInitialized;
 
         public ServiceWatcher(ServiceManager serviceManager, string serviceName)
         {
@@ -30,10 +31,13 @@ namespace CondenserDotNet.Client.Internal
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         }
 
-        internal async Task<InformationService> GetNextServiceInstanceAsync()
+        internal async Task<InformationService> GetNextServiceInstanceAsync(int millisecondTimeout)
         {
-            await _haveFirstResults.WaitAsync();
-            var instances = _serviceInstances;
+            if (!await _haveFirstResults.WaitAsync(millisecondTimeout))
+            {
+                return null;
+            }
+            InformationServiceSet[] instances = Volatile.Read(ref _serviceInstances);
             if (instances.Length > 0)
             {
                 return instances[random.Value.Next(0, instances.Length)].Service;
@@ -49,6 +53,10 @@ namespace CondenserDotNet.Client.Internal
                 var result = await _serviceManager.Client.GetAsync(_lookupUrl + consulIndex);
                 if (!result.IsSuccessStatusCode)
                 {
+                    if (_state == WatcherState.UsingLiveValues)
+                    {
+                        _state = WatcherState.UsingCachedValues;
+                    }
                     await Task.Delay(1000);
                     continue;
                 }
@@ -56,8 +64,16 @@ namespace CondenserDotNet.Client.Internal
                 var content = await result.Content.ReadAsStringAsync();
                 var listOfServices = JsonConvert.DeserializeObject<InformationServiceSet[]>(content);
                 Interlocked.Exchange(ref _serviceInstances, listOfServices);
+                _state = WatcherState.UsingLiveValues;
                 _haveFirstResults.Release();
             }
+        }
+
+        public enum WatcherState
+        {
+            NotInitialized,
+            UsingCachedValues,
+            UsingLiveValues
         }
     }
 }

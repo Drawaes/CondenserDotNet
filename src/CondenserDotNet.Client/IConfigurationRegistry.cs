@@ -8,7 +8,7 @@ namespace CondenserDotNet.Client
         string this[string key] { get; }
 
         Task<bool> AddStaticKeyPathAsync(string keyPath);
-        Task<bool> AddUpdatingPathAsync(string keyPath);
+        Task AddUpdatingPathAsync(string keyPath);
         void AddWatchOnEntireConfig(Action callback);
         void AddWatchOnSingleKey(string keyToWatch, Action callback);
         Task<bool> SetKeyAsync(string keyPath, string value);

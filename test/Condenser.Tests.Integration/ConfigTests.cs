@@ -47,7 +47,7 @@ namespace Condenser.Tests.Integration
             var manager = new ServiceManager("TestService");
             await manager.Config.SetKeyAsync("org/test2/test1", "testValue1");
 
-            var result = await manager.Config.AddUpdatingPathAsync("org/test2/");
+            await manager.Config.AddUpdatingPathAsync("org/test2/");
 
             await manager.Config.SetKeyAsync("org/test2/test1", "testValue2");
 
@@ -64,7 +64,7 @@ namespace Condenser.Tests.Integration
             var manager = new ServiceManager("TestService");
             await manager.Config.SetKeyAsync("org/test3/test1", "testValue1");
 
-            var result = await manager.Config.AddUpdatingPathAsync("org/test3/");
+            await manager.Config.AddUpdatingPathAsync("org/test3/");
 
             var e = new ManualResetEvent(false);
             manager.Config.AddWatchOnSingleKey("test1", () => e.Set());
@@ -81,7 +81,7 @@ namespace Condenser.Tests.Integration
             var manager = new ServiceManager("TestService");
             await manager.Config.SetKeyAsync("org/test4/test1", "testValue1");
 
-            var result = await manager.Config.AddUpdatingPathAsync("org/test4/");
+            await manager.Config.AddUpdatingPathAsync("org/test4/");
 
             var e = new ManualResetEvent(false);
             manager.Config.AddWatchOnSingleKey("test2", () => e.Set());
@@ -98,7 +98,7 @@ namespace Condenser.Tests.Integration
             var manager = new ServiceManager("TestService");
             await manager.Config.SetKeyAsync("org/test5/test1", "testValue1");
 
-            var result = await manager.Config.AddUpdatingPathAsync("org/test5/");
+            await manager.Config.AddUpdatingPathAsync("org/test5/");
 
             var e = new ManualResetEvent(false);
             manager.Config.AddWatchOnEntireConfig( () => e.Set());

@@ -39,34 +39,35 @@ namespace CondenserDotNet.Client
             return AddNewDictionaryToList(dictionary);
         }
 
-        public async Task<bool> AddUpdatingPathAsync(string keyPath)
+        public async Task AddUpdatingPathAsync(string keyPath)
         {
             var intialDictionary = await AddInitialKeyPathAsync(keyPath);
             if (intialDictionary == -1)
             {
-                return false;
+                var newDicitonary = new Dictionary<string,string>();
+                intialDictionary = AddNewDictionaryToList(newDicitonary);
             }
             //We got values so lets start watching but we aren't waiting for this we will let it run
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             WatchingLoop(intialDictionary, keyPath);
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-            return true;
         }
 
         private async Task WatchingLoop(int indexOfDictionary, string keyPath)
         {
             var consulIndex = "0";
             string url = $"{HttpUtils.KeyUrl}{keyPath}?recurse=true&wait=300s&index=";
+
             while (true)
             {
                 var response = await _serviceManager.Client.GetAsync(url + consulIndex);
+                consulIndex = response.GetConsulIndex();
                 if (!response.IsSuccessStatusCode)
                 {
                     //There is some error we need to do something 
-                    throw new NotImplementedException();
+                    continue;
                 }
                 var content = await response.Content.ReadAsStringAsync();
-                consulIndex = response.GetConsulIndex();
                 var keys = JsonConvert.DeserializeObject<KeyValue[]>(content);
                 var dictionary = keys.ToDictionary(kv => kv.Key.Substring(keyPath.Length).Replace('/', ':'), kv => kv.Value == null ? null : Encoding.UTF8.GetString(Convert.FromBase64String(kv.Value)), StringComparer.OrdinalIgnoreCase);
                 bool needToCheckWatchers = false;

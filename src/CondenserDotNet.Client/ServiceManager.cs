@@ -24,6 +24,7 @@ namespace CondenserDotNet.Client
         private HealthCheck _httpCheck;
         private TtlCheck _ttlCheck;
         private CountdownEvent _shutdownCounter = new CountdownEvent(0);
+        private CancellationTokenSource _cancel = new CancellationTokenSource();
         private readonly ConfigurationRegistry _config;
         private readonly ServiceRegistry _services;
 
@@ -53,6 +54,7 @@ namespace CondenserDotNet.Client
         public TtlCheck TtlCheck { get { return _ttlCheck; } internal set { _ttlCheck = value; } }
         public string ServiceAddress { get; set; }
         public int ServicePort { get; set; }
+        public CancellationToken Cancelled => _cancel.Token;
 
         protected int GetNextAvailablePort()
         {

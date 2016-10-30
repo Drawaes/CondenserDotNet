@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using CondenserDotNet.Client.Internal;
 using Newtonsoft.Json;
@@ -29,7 +30,7 @@ namespace CondenserDotNet.Client
             return serviceList.Keys;
         }
 
-        public Task<DataContracts.InformationService> GetServiceInstanceAsync(string serviceName)
+        public Task<DataContracts.InformationService> GetServiceInstanceAsync(string serviceName, int milliSecondTimeout = Timeout.Infinite)
         {
             ServiceWatcher watcher;
             lock (_watchedServices)
@@ -41,7 +42,7 @@ namespace CondenserDotNet.Client
                 }
             }
             //We either have one or have made one now so lets carry on
-            return watcher.GetNextServiceInstanceAsync();
+            return watcher.GetNextServiceInstanceAsync(milliSecondTimeout);
         }
     }
 }
