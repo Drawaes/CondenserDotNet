@@ -12,7 +12,5 @@ namespace CondenserDotNet.Client.DataContracts
         public string[] Tags { get; set; }
         public string Address { get; set; }
         public int Port { get; set; }
-
-        public InformationCheck[] Checks {get;set;}
     }
 }

@@ -17,7 +17,7 @@ namespace CondenserDotNet.Client.Internal
         public readonly static string KeyUrl = ApiUrl + "kv/";
         public readonly static string ServiceCatalogUrl = ApiUrl + "catalog/services";
         public readonly static string DatacenterCatalogUrl = ApiUrl + "catalog/datacenters";
-
+        public readonly static string ServiceHealthUrl = ApiUrl + "health/service/";
 
         static HttpUtils()
         {
