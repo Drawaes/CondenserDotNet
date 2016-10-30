@@ -12,6 +12,10 @@ CI Builds available as nuget packs from
 
 https://www.myget.org/F/condenserdotnet/api/v3/index.json
 
+Current release is available at
+
+https://www.nuget.org/packages/CondenserDotNet.Client/
+
 ## Example use to register a service
 
 ``` csharp
