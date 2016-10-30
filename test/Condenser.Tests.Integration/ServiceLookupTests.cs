@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using CondenserDotNet.Client;
 using Xunit;
@@ -23,6 +24,17 @@ namespace Condenser.Tests.Integration
             var service = await manager.Services.GetServiceInstanceAsync("TestService3");
 
             Assert.Equal("TestService3", service.Service);
+        }
+
+        [Fact]
+        public async Task TestRegisterAndCheckUpdates()
+        {
+            var manager = new ServiceManager("ServiceLookup");
+            Assert.Null(await manager.Services.GetServiceInstanceAsync("ServiceLookup"));
+            await manager.RegisterServiceAsync();
+            //Give it 500ms to update with the new service
+            await Task.Delay(500);
+            Assert.NotNull(await manager.Services.GetServiceInstanceAsync("ServiceLookup"));
         }
     }
 }
