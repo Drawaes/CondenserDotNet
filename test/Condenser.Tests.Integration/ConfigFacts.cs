@@ -49,7 +49,6 @@ namespace Condenser.Tests.Integration
         [Fact]
         public async Task PickUpChangesFact()
         {
-            Console.WriteLine(nameof(PickUpChangesFact));
             string keyid = Guid.NewGuid().ToString();
             using (var manager = new ServiceManager("TestService"))
             {
@@ -76,6 +75,7 @@ namespace Condenser.Tests.Integration
 
                 var e = new ManualResetEvent(false);
                 manager.Config.AddWatchOnSingleKey("test1", () => e.Set());
+
                 await manager.Config.SetKeyAsync($"org/{keyid}/test1", "testValue2");
 
                 //Wait for a max of 1 second for the change to notify us
@@ -83,40 +83,39 @@ namespace Condenser.Tests.Integration
             }
         }
 
-        [Fact(Skip = "brittle")]
+        [Fact]
         public async Task GetCallbackForKeyThatIsAdded()
         {
-            Console.WriteLine(nameof(GetCallbackForKeyThatIsAdded));
             string keyid = Guid.NewGuid().ToString();
             using (var manager = new ServiceManager("TestService"))
             {
-                await manager.Config.SetKeyAsync("org/test4/" + keyid, "testValue1");
-                await manager.Config.AddUpdatingPathAsync("org/test4/");
+                await manager.Config.SetKeyAsync($"org/{keyid}/test1", "testValue1");
+                await manager.Config.AddUpdatingPathAsync($"org/{keyid}/");
 
                 var e = new ManualResetEvent(false);
-                manager.Config.AddWatchOnSingleKey(keyid, () => e.Set());
-                await manager.Config.SetKeyAsync("org/test4/" + keyid, "testValue2");
+                manager.Config.AddWatchOnSingleKey("test1", () => e.Set());
+                await manager.Config.SetKeyAsync($"org/{keyid}/test1", "testValue2");
 
                 //Wait for a max of 1 second for the change to notify us
                 Assert.True(e.WaitOne(1000));
             }
         }
 
-        [Fact(Skip = "brittle")]
+        [Fact]
         public async Task GetCallbackForAnyKey()
         {
             Console.WriteLine(nameof(GetCallbackForAnyKey));
             string keyid = Guid.NewGuid().ToString();
             using (var manager = new ServiceManager("TestService"))
             {
-                await manager.Config.SetKeyAsync("org/test5/" + keyid, "testValue1");
+                await manager.Config.SetKeyAsync($"org/{keyid}/test1", "testValue1");
 
-                await manager.Config.AddUpdatingPathAsync("org/test5/");
+                await manager.Config.AddUpdatingPathAsync($"org/{keyid}");
 
                 var e = new ManualResetEvent(false);
                 manager.Config.AddWatchOnEntireConfig(() => e.Set());
 
-                await manager.Config.SetKeyAsync("org/test5/" + keyid, "testValue2");
+                await manager.Config.SetKeyAsync($"org/{keyid}/test1", "testValue2");
 
                 //Wait for a max of 1 second for the change to notify us
                 Assert.True(e.WaitOne(1000));

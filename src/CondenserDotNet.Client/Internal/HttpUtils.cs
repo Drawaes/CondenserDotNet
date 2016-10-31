@@ -44,5 +44,11 @@ namespace CondenserDotNet.Client.Internal
             }
             return results.FirstOrDefault();
         }
+
+        public static string StripFrontAndBackSlashes(string inputString)
+        {
+            int startIndex = inputString.StartsWith("/") ? 1 : 0;
+            return inputString.Substring(startIndex, (inputString.Length - startIndex) - (inputString.EndsWith("/") ? 1 : 0));
+        }
     }
 }

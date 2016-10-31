@@ -23,6 +23,7 @@ namespace CondenserDotNet.Client
 
         public Task<bool> AddStaticKeyPathAsync(string keyPath)
         {
+            keyPath = HttpUtils.StripFrontAndBackSlashes(keyPath);
             return AddInitialKeyPathAsync(keyPath).ContinueWith(r => r.Result > -1);
         }
 
@@ -41,6 +42,7 @@ namespace CondenserDotNet.Client
 
         public async Task AddUpdatingPathAsync(string keyPath)
         {
+            keyPath = HttpUtils.StripFrontAndBackSlashes(keyPath);
             var intialDictionary = await AddInitialKeyPathAsync(keyPath);
             if (intialDictionary == -1)
             {
@@ -185,6 +187,7 @@ namespace CondenserDotNet.Client
 
         public async Task<bool> SetKeyAsync(string keyPath, string value)
         {
+            keyPath = HttpUtils.StripFrontAndBackSlashes(keyPath);
             var response = await _serviceManager.Client.PutAsync($"{HttpUtils.KeyUrl}{keyPath}", HttpUtils.GetStringContent(value));
             if (!response.IsSuccessStatusCode)
             {
