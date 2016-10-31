@@ -23,7 +23,7 @@ namespace CondenserDotNet.Client
 
         public Task<bool> AddStaticKeyPathAsync(string keyPath)
         {
-            keyPath = HttpUtils.StripFrontAndBackSlashes(keyPath);
+            if (!keyPath.EndsWith("/")) keyPath = keyPath + "/";
             return AddInitialKeyPathAsync(keyPath).ContinueWith(r => r.Result > -1);
         }
 
@@ -36,13 +36,13 @@ namespace CondenserDotNet.Client
             }
             var content = await response.Content.ReadAsStringAsync();
             var keys = JsonConvert.DeserializeObject<KeyValue[]>(content);
-            var dictionary = keys.ToDictionary(kv => kv.Key.Substring(keyPath.Length + 1).Replace('/', ':'), kv => kv.Value == null ? null : kv.ValueFromBase64(), StringComparer.OrdinalIgnoreCase);
+            var dictionary = keys.ToDictionary(kv => kv.Key.Substring(keyPath.Length).Replace('/', ':'), kv => kv.Value == null ? null : kv.ValueFromBase64(), StringComparer.OrdinalIgnoreCase);
             return AddNewDictionaryToList(dictionary);
         }
 
         public async Task AddUpdatingPathAsync(string keyPath)
         {
-            keyPath = HttpUtils.StripFrontAndBackSlashes(keyPath);
+            if(!keyPath.EndsWith("/")) keyPath = keyPath + "/";
             var intialDictionary = await AddInitialKeyPathAsync(keyPath);
             if (intialDictionary == -1)
             {
@@ -72,7 +72,7 @@ namespace CondenserDotNet.Client
                     }
                     var content = await response.Content.ReadAsStringAsync();
                     var keys = JsonConvert.DeserializeObject<KeyValue[]>(content);
-                    var dictionary = keys.ToDictionary(kv => kv.Key.Substring(keyPath.Length + 1).Replace('/', ':'), kv => kv.Value == null ? null : Encoding.UTF8.GetString(Convert.FromBase64String(kv.Value)), StringComparer.OrdinalIgnoreCase);
+                    var dictionary = keys.ToDictionary(kv => kv.Key.Substring(keyPath.Length).Replace('/', ':'), kv => kv.Value == null ? null : Encoding.UTF8.GetString(Convert.FromBase64String(kv.Value)), StringComparer.OrdinalIgnoreCase);
                     UpdateDictionaryInList(indexOfDictionary, dictionary);
                     FireWatchers();
                 }
