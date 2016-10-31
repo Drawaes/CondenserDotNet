@@ -29,7 +29,7 @@ namespace CondenserDotNet.Client
 
         private async Task<int> AddInitialKeyPathAsync(string keyPath)
         {
-            var response = await _serviceManager.Client.GetAsync($"{HttpUtils.KeyUrl}{keyPath}?recurse=true");
+            var response = await _serviceManager.Client.GetAsync($"{HttpUtils.KeyUrl}{keyPath}?recurse");
             if (!response.IsSuccessStatusCode)
             {
                 return -1;
@@ -60,7 +60,7 @@ namespace CondenserDotNet.Client
             try
             {
                 var consulIndex = "0";
-                string url = $"{HttpUtils.KeyUrl}{keyPath}?recurse=true&wait=300s&index=";
+                string url = $"{HttpUtils.KeyUrl}{keyPath}?recurse&wait=300s&index=";
                 while (true)
                 {
                     var response = await _serviceManager.Client.GetAsync(url + consulIndex, _serviceManager.Cancelled);
@@ -73,19 +73,8 @@ namespace CondenserDotNet.Client
                     var content = await response.Content.ReadAsStringAsync();
                     var keys = JsonConvert.DeserializeObject<KeyValue[]>(content);
                     var dictionary = keys.ToDictionary(kv => kv.Key.Substring(keyPath.Length + 1).Replace('/', ':'), kv => kv.Value == null ? null : Encoding.UTF8.GetString(Convert.FromBase64String(kv.Value)), StringComparer.OrdinalIgnoreCase);
-                    bool needToCheckWatchers = false;
-                    lock (_configKeys)
-                    {
-                        if (!dictionary.DictionaryEquals(_configKeys[indexOfDictionary]))
-                        {
-                            needToCheckWatchers = true;
-                        }
-                    }
                     UpdateDictionaryInList(indexOfDictionary, dictionary);
-                    if (needToCheckWatchers)
-                    {
-                        FireWatchers();
-                    }
+                    FireWatchers();
                 }
             }
             catch (TaskCanceledException) { /* nom nom */}
@@ -174,9 +163,12 @@ namespace CondenserDotNet.Client
         {
             lock (_configWatchers)
             {
-                string currentValue;
-                TryGetValue(keyToWatch, out currentValue);
-                _configWatchers.Add(new ConfigurationWatcher() { CallBack = callback, KeyToWatch = keyToWatch, CurrentValue = currentValue });
+                lock (_configKeys)
+                {
+                    string currentValue;
+                    TryGetValue(keyToWatch, out currentValue);
+                    _configWatchers.Add(new ConfigurationWatcher() { CallBack = callback, KeyToWatch = keyToWatch, CurrentValue = currentValue });
+                }
             }
         }
 
