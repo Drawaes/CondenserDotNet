@@ -74,11 +74,11 @@ namespace Condenser.Tests.Integration
             string keyid = Guid.NewGuid().ToString();
             using (var manager = new ServiceManager("TestService"))
             {
-                await manager.Config.SetKeyAsync($"org/{keyid}/test1", "testValue1");
-                await manager.Config.AddUpdatingPathAsync($"org/{keyid}/");
-
                 var e = new ManualResetEvent(false);
                 manager.Config.AddWatchOnSingleKey("test1", () => e.Set());
+
+                await manager.Config.SetKeyAsync($"org/{keyid}/test1", "testValue1");
+                await manager.Config.AddUpdatingPathAsync($"org/{keyid}/");
 
                 await manager.Config.SetKeyAsync($"org/{keyid}/test1", "testValue2");
 
@@ -93,10 +93,11 @@ namespace Condenser.Tests.Integration
             string keyid = Guid.NewGuid().ToString();
             using (var manager = new ServiceManager("TestService"))
             {
-                await manager.Config.AddUpdatingPathAsync($"org/{keyid}/");
-
                 var e = new ManualResetEvent(false);
                 manager.Config.AddWatchOnSingleKey("test1", () => e.Set());
+
+                await manager.Config.AddUpdatingPathAsync($"org/{keyid}/");
+
                 await manager.Config.SetKeyAsync($"org/{keyid}/test1", "testValue2");
 
                 //Wait for a max of 1 second for the change to notify us
