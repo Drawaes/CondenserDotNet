@@ -119,7 +119,7 @@ namespace CondenserDotNet.Client.Internal
             {
                 Behavior = "delete",
                 Checks = checks,
-                LockDelay = "2s",
+                LockDelay = "1s",
                 Name = $"{_serviceManager.ServiceId}:LeaderElection:{_keyToWatch.Replace('/', ':')}"
             };
             return HttpUtils.GetStringContent(sessionCreate);
