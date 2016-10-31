@@ -10,7 +10,7 @@ environment:
 install:
   - ps: wget https://releases.hashicorp.com/consul/0.7.0/consul_0.7.0_windows_amd64.zip -OutFile consul.zip
   - cmd: 7z x consul.zip -o"C:\Consul" -y > nul
-  - ps: $MyProcess = Start-Process C:\Consul\consul.exe -ArgumentList "agent -dev" -PassThru
+  - ps: $MyProcess = Start-Process C:\Consul\consul.exe -ArgumentList "agent -server -bootstrap-expect 1 -data-dir C:\Consul\Data -advertise=127.0.0.1" -PassThru
 
 before_test:
   - dotnet --info
