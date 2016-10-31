@@ -57,7 +57,7 @@ namespace Condenser.Tests.Integration
             using (var manager = new ServiceManager("TestService"))
             {
                 await manager.Config.SetKeyAsync($"org/{keyid}/test2", "testValue1");
-                await manager.Config.AddUpdatingPathAsync($"org/{keyid}");
+                await manager.Config.AddUpdatingPathAsync($"org/{keyid}/");
 
                 Assert.Equal("testValue1", manager.Config["test2"]);
                 await manager.Config.SetKeyAsync($"org/{keyid}/test2", "testValue2");
@@ -74,16 +74,16 @@ namespace Condenser.Tests.Integration
             string keyid = Guid.NewGuid().ToString();
             using (var manager = new ServiceManager("TestService"))
             {
-                await manager.Config.SetKeyAsync($"org/{keyid}/test1", "testValue1");
-                await manager.Config.AddUpdatingPathAsync($"org/{keyid}");
-
                 var e = new ManualResetEvent(false);
                 manager.Config.AddWatchOnSingleKey("test1", () => e.Set());
+
+                await manager.Config.SetKeyAsync($"org/{keyid}/test1", "testValue1");
+                await manager.Config.AddUpdatingPathAsync($"org/{keyid}/");
 
                 await manager.Config.SetKeyAsync($"org/{keyid}/test1", "testValue2");
 
                 //Wait for a max of 1 second for the change to notify us
-                Assert.True(e.WaitOne(1000));
+                Assert.True(e.WaitOne(2000));
             }
         }
 
@@ -93,14 +93,15 @@ namespace Condenser.Tests.Integration
             string keyid = Guid.NewGuid().ToString();
             using (var manager = new ServiceManager("TestService"))
             {
-                await manager.Config.AddUpdatingPathAsync($"org/{keyid}/");
-
                 var e = new ManualResetEvent(false);
                 manager.Config.AddWatchOnSingleKey("test1", () => e.Set());
+
+                await manager.Config.AddUpdatingPathAsync($"org/{keyid}/");
+
                 await manager.Config.SetKeyAsync($"org/{keyid}/test1", "testValue2");
 
                 //Wait for a max of 1 second for the change to notify us
-                Assert.True(e.WaitOne(1000));
+                Assert.True(e.WaitOne(2000));
             }
         }
 
@@ -121,7 +122,7 @@ namespace Condenser.Tests.Integration
                 await manager.Config.SetKeyAsync($"org/{keyid}/test1", "testValue2");
 
                 //Wait for a max of 1 second for the change to notify us
-                Assert.True(e.WaitOne(1000));
+                Assert.True(e.WaitOne(2000));
             }
         }
     }
