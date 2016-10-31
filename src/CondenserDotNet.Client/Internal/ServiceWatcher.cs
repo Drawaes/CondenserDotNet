@@ -14,7 +14,7 @@ namespace CondenserDotNet.Client.Internal
         static int seed = Environment.TickCount;
         static readonly ThreadLocal<Random> random = new ThreadLocal<Random>(() => new Random(Interlocked.Increment(ref seed)));
 
-        private readonly SemaphoreSlim _haveFirstResults = new SemaphoreSlim(0);
+        private readonly AsyncManualResetEvent<bool> _haveFirstResults = new AsyncManualResetEvent<bool>();
         private readonly ServiceManager _serviceManager;
         private readonly string _serviceName;
         private readonly string _lookupUrl;
@@ -31,9 +31,9 @@ namespace CondenserDotNet.Client.Internal
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         }
 
-        internal async Task<InformationService> GetNextServiceInstanceAsync(int millisecondTimeout)
+        internal async Task<InformationService> GetNextServiceInstanceAsync()
         {
-            if (!await _haveFirstResults.WaitAsync(millisecondTimeout))
+            if (!await _haveFirstResults.WaitAsync())
             {
                 return null;
             }
@@ -47,26 +47,31 @@ namespace CondenserDotNet.Client.Internal
 
         private async Task WatchLoop()
         {
-            string consulIndex = "0";
-            while (true)
+            try
             {
-                var result = await _serviceManager.Client.GetAsync(_lookupUrl + consulIndex);
-                if (!result.IsSuccessStatusCode)
+                string consulIndex = "0";
+                while (true)
                 {
-                    if (_state == WatcherState.UsingLiveValues)
+                    var result = await _serviceManager.Client.GetAsync(_lookupUrl + consulIndex, _serviceManager.Cancelled);
+                    if (!result.IsSuccessStatusCode)
                     {
-                        _state = WatcherState.UsingCachedValues;
+                        if (_state == WatcherState.UsingLiveValues)
+                        {
+                            _state = WatcherState.UsingCachedValues;
+                        }
+                        await Task.Delay(1000);
+                        continue;
                     }
-                    await Task.Delay(1000);
-                    continue;
+                    consulIndex = result.GetConsulIndex();
+                    var content = await result.Content.ReadAsStringAsync();
+                    var listOfServices = JsonConvert.DeserializeObject<InformationServiceSet[]>(content);
+                    Interlocked.Exchange(ref _serviceInstances, listOfServices);
+                    _state = WatcherState.UsingLiveValues;
+                    _haveFirstResults.Set(true);
                 }
-                consulIndex = result.GetConsulIndex();
-                var content = await result.Content.ReadAsStringAsync();
-                var listOfServices = JsonConvert.DeserializeObject<InformationServiceSet[]>(content);
-                Interlocked.Exchange(ref _serviceInstances, listOfServices);
-                _state = WatcherState.UsingLiveValues;
-                _haveFirstResults.Release();
             }
+            catch (TaskCanceledException) { /*nom nom */}
+            catch (ObjectDisposedException) { /*nom nom */}
         }
 
         public enum WatcherState

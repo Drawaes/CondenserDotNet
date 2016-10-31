@@ -20,7 +20,7 @@ namespace CondenserDotNet.Client
 
         public async Task<IEnumerable<string>> GetAvailableServicesAsync()
         {
-            var result = await _serviceManager.Client.GetAsync(HttpUtils.ServiceCatalogUrl);
+            var result = await _serviceManager.Client.GetAsync(HttpUtils.ServiceCatalogUrl, _serviceManager.Cancelled);
             if (!result.IsSuccessStatusCode)
             {
                 return null;
@@ -30,19 +30,19 @@ namespace CondenserDotNet.Client
             return serviceList.Keys;
         }
 
-        public Task<DataContracts.InformationService> GetServiceInstanceAsync(string serviceName, int milliSecondTimeout = Timeout.Infinite)
+        public Task<DataContracts.InformationService> GetServiceInstanceAsync(string serviceName)
         {
             ServiceWatcher watcher;
             lock (_watchedServices)
             {
-                if(!_watchedServices.TryGetValue(serviceName,out watcher))
+                if (!_watchedServices.TryGetValue(serviceName, out watcher))
                 {
                     watcher = new ServiceWatcher(_serviceManager, serviceName);
                     _watchedServices.Add(serviceName, watcher);
                 }
             }
             //We either have one or have made one now so lets carry on
-            return watcher.GetNextServiceInstanceAsync(milliSecondTimeout);
+            return watcher.GetNextServiceInstanceAsync();
         }
     }
 }

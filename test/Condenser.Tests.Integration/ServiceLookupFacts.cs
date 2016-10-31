@@ -13,28 +13,34 @@ namespace Condenser.Tests.Integration
         [Fact]
         public async Task TestRegisterAndCheckRegistered()
         {
-            var manager = new ServiceManager("TestService3", "Id1");
-            var registrationResult = await manager.RegisterServiceAsync();
-            Assert.Equal(true, registrationResult);
+            Console.WriteLine(nameof(TestRegisterAndCheckRegistered));
+            using (var manager = new ServiceManager("TestService3", "Id1"))
+            using (var manager2 = new ServiceManager("TestService3", "Id2"))
+            {
+                var registrationResult = await manager.RegisterServiceAsync();
+                Assert.Equal(true, registrationResult);
 
-            var manager2 = new ServiceManager("TestService3", "Id2");
-            var registrationResult2 = await manager.RegisterServiceAsync();
-            Assert.Equal(true, registrationResult2);
+                var registrationResult2 = await manager2.RegisterServiceAsync();
+                Assert.Equal(true, registrationResult2);
 
-            var service = await manager.Services.GetServiceInstanceAsync("TestService3");
-
-            Assert.Equal("TestService3", service.Service);
+                var service = await manager.Services.GetServiceInstanceAsync("TestService3");
+                Assert.Equal("TestService3", service.Service);
+            }
         }
 
         [Fact]
         public async Task TestRegisterAndCheckUpdates()
         {
-            var manager = new ServiceManager("ServiceLookup");
-            Assert.Null(await manager.Services.GetServiceInstanceAsync("ServiceLookup"));
-            await manager.RegisterServiceAsync();
-            //Give it 500ms to update with the new service
-            await Task.Delay(500);
-            Assert.NotNull(await manager.Services.GetServiceInstanceAsync("ServiceLookup"));
+            Console.WriteLine(nameof(TestRegisterAndCheckUpdates));
+            var serviceName = Guid.NewGuid().ToString();
+            using (var manager = new ServiceManager(serviceName))
+            {
+                Assert.Null(await manager.Services.GetServiceInstanceAsync(serviceName));
+                await manager.RegisterServiceAsync();
+                //Give it 500ms to update with the new service
+                await Task.Delay(500);
+                Assert.NotNull(await manager.Services.GetServiceInstanceAsync(serviceName));
+            }
         }
     }
 }

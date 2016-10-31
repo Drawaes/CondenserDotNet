@@ -1,6 +1,12 @@
 os: Visual Studio 2015
 build: off
 
+environment:
+  sonarkey:
+    secure: dqF6V11A7InHKcyOX6WDGE3oA54yZQm0r9VLio85ndCn2B8d9zVI2mJ3lQdDzO3o
+  COVERALLS_REPO_TOKEN:
+    secure: x41DSerLXKgGVbKIokF+zuR3eNRVJXsgJA6j5yggnCB8/TTyYfa/2euNflfGzCot
+
 install:
   - ps: wget https://releases.hashicorp.com/consul/0.7.0/consul_0.7.0_windows_amd64.zip -OutFile consul.zip
   - cmd: 7z x consul.zip -o"C:\Consul" -y > nul
@@ -17,9 +23,11 @@ test_script:
   
 after_test:
   # Build and pack source
+  - ps: iex ((Get-ChildItem ($env:USERPROFILE + '\.nuget\packages\OpenCover'))[0].FullName + '\tools\OpenCover.Console.exe' + ' -register:user -target:"dotnet.exe" -searchdirs:".\test\Condenser.Tests.Integration\bin\Debug\netcoreapp1.0" -oldstyle -targetargs:"test test/Condenser.Tests.Integration" -output:coverage.xml -skipautoprops -returntargetcode -filter:"+[Condenser*]* -[*Test*]*"')
+  - ps: iex ((Get-ChildItem ($env:USERPROFILE + '\.nuget\packages\coveralls.io'))[0].FullName + '\tools\coveralls.net.exe' + ' --opencover coverage.xml')
   - dotnet pack -c Release src/CondenserDotNet.Client --version-suffix %APPVEYOR_BUILD_NUMBER%
   - dotnet pack -c Release src/CondenserDotNet.Host --version-suffix %APPVEYOR_BUILD_NUMBER%
-
+  
 artifacts:
   path: '**/*.nupkg'
 

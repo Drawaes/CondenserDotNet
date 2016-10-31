@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using CondenserDotNet.Client.DataContracts;
@@ -22,7 +23,6 @@ namespace CondenserDotNet.Client
         private List<string> _supportedUrls = new List<string>();
         private HealthCheck _httpCheck;
         private TtlCheck _ttlCheck;
-        private CountdownEvent _shutdownCounter = new CountdownEvent(0);
         private CancellationTokenSource _cancel = new CancellationTokenSource();
         private readonly ConfigurationRegistry _config;
         private readonly ServiceRegistry _services;
@@ -43,7 +43,7 @@ namespace CondenserDotNet.Client
             ServiceAddress = Dns.GetHostName();
             ServicePort = GetNextAvailablePort();
         }
-
+                
         internal List<string> SupportedUrls => _supportedUrls;
         internal HttpClient Client => _httpClient;
         internal HealthCheck HttpCheck { get { return _httpCheck; } set { _httpCheck = value; } }
@@ -67,25 +67,30 @@ namespace CondenserDotNet.Client
             l.Stop();
             return port;
         }
-
+        
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
-        protected virtual void Dispose(bool disposing)
+        protected void Dispose(bool disposing)
         {
-            Debug.Assert(_shutdownCounter.Wait(5000), "Did not shut down cleanly!!!");
-
             if (_disposed)
                 return;
 
             if (disposing)
             {
             }
-            _httpClient.Dispose();
-            _disposed = true;
+            try
+            {
+                _cancel.Cancel();
+            }
+            finally
+            {
+                _httpClient.Dispose();
+                _disposed = true;
+            }
         }
 
         ~ServiceManager()

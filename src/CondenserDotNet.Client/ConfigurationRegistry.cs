@@ -35,7 +35,7 @@ namespace CondenserDotNet.Client
             }
             var content = await response.Content.ReadAsStringAsync();
             var keys = JsonConvert.DeserializeObject<KeyValue[]>(content);
-            var dictionary = keys.ToDictionary(kv => kv.Key.Substring(keyPath.Length).Replace('/', ':'), kv => kv.Value == null ? null : kv.ValueFromBase64(), StringComparer.OrdinalIgnoreCase);
+            var dictionary = keys.ToDictionary(kv => kv.Key.Substring(keyPath.Length+1).Replace('/', ':'), kv => kv.Value == null ? null : kv.ValueFromBase64(), StringComparer.OrdinalIgnoreCase);
             return AddNewDictionaryToList(dictionary);
         }
 
@@ -55,47 +55,55 @@ namespace CondenserDotNet.Client
 
         private async Task WatchingLoop(int indexOfDictionary, string keyPath)
         {
-            var consulIndex = "0";
-            string url = $"{HttpUtils.KeyUrl}{keyPath}?recurse=true&wait=300s&index=";
-
-            while (true)
+            try
             {
-                var response = await _serviceManager.Client.GetAsync(url + consulIndex);
-                consulIndex = response.GetConsulIndex();
-                if (!response.IsSuccessStatusCode)
+                var consulIndex = "0";
+                string url = $"{HttpUtils.KeyUrl}{keyPath}?recurse=true&wait=300s&index=";
+                while (true)
                 {
-                    //There is some error we need to do something 
-                    continue;
-                }
-                var content = await response.Content.ReadAsStringAsync();
-                var keys = JsonConvert.DeserializeObject<KeyValue[]>(content);
-                var dictionary = keys.ToDictionary(kv => kv.Key.Substring(keyPath.Length).Replace('/', ':'), kv => kv.Value == null ? null : Encoding.UTF8.GetString(Convert.FromBase64String(kv.Value)), StringComparer.OrdinalIgnoreCase);
-                bool needToCheckWatchers = false;
-                if (!dictionary.SequenceEqual(_configKeys[indexOfDictionary]))
-                {
-                    needToCheckWatchers = true;
-                }
-                UpdateDictionaryInList(indexOfDictionary, dictionary);
-                if (needToCheckWatchers)
-                {
-                    lock (_configWatchers)
+                    var response = await _serviceManager.Client.GetAsync(url + consulIndex, _serviceManager.Cancelled);
+                    consulIndex = response.GetConsulIndex();
+                    if (!response.IsSuccessStatusCode)
                     {
-                        foreach (var watch in _configWatchers)
+                        //There is some error we need to do something 
+                        continue;
+                    }
+                    var content = await response.Content.ReadAsStringAsync();
+                    var keys = JsonConvert.DeserializeObject<KeyValue[]>(content);
+                    var dictionary = keys.ToDictionary(kv => kv.Key.Substring(keyPath.Length+1).Replace('/', ':'), kv => kv.Value == null ? null : Encoding.UTF8.GetString(Convert.FromBase64String(kv.Value)), StringComparer.OrdinalIgnoreCase);
+                    bool needToCheckWatchers = false;
+                    if (!dictionary.SequenceEqual(_configKeys[indexOfDictionary]))
+                    {
+                        needToCheckWatchers = true;
+                    }
+                    UpdateDictionaryInList(indexOfDictionary, dictionary);
+                    if (needToCheckWatchers)
+                    {
+                        FireWatchers();
+                    }
+                }
+            }
+            catch (TaskCanceledException) { /* nom nom */}
+        }
+
+        private void FireWatchers()
+        {
+            lock (_configWatchers)
+            {
+                foreach (var watch in _configWatchers)
+                {
+                    if (watch.KeyToWatch == null)
+                    {
+                        Task.Run(watch.CallBack);
+                    }
+                    else
+                    {
+                        string newValue;
+                        TryGetValue(watch.KeyToWatch, out newValue);
+                        if (StringComparer.OrdinalIgnoreCase.Compare(watch.CurrentValue, newValue) != 0)
                         {
-                            if (watch.KeyToWatch == null)
-                            {
-                                Task.Run(watch.CallBack);
-                            }
-                            else
-                            {
-                                string newValue;
-                                TryGetValue(watch.KeyToWatch, out newValue);
-                                if (StringComparer.OrdinalIgnoreCase.Compare(watch.CurrentValue, newValue) != 0)
-                                {
-                                    watch.CurrentValue = newValue;
-                                    Task.Run(watch.CallBack);
-                                }
-                            }
+                            watch.CurrentValue = newValue;
+                            Task.Run(watch.CallBack);
                         }
                     }
                 }
