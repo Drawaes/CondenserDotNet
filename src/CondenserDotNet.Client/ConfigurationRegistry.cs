@@ -29,7 +29,7 @@ namespace CondenserDotNet.Client
 
         private async Task<int> AddInitialKeyPathAsync(string keyPath)
         {
-            var response = await _serviceManager.Client.GetAsync($"{HttpUtils.KeyUrl}{keyPath}?recurse=true");
+            var response = await _serviceManager.Client.GetAsync($"{HttpUtils.KeyUrl}{keyPath}?recurse");
             if (!response.IsSuccessStatusCode)
             {
                 return -1;
@@ -60,7 +60,7 @@ namespace CondenserDotNet.Client
             try
             {
                 var consulIndex = "0";
-                string url = $"{HttpUtils.KeyUrl}{keyPath}?recurse=true&wait=300s&index=";
+                string url = $"{HttpUtils.KeyUrl}{keyPath}?recurse&wait=300s&index=";
                 while (true)
                 {
                     var response = await _serviceManager.Client.GetAsync(url + consulIndex, _serviceManager.Cancelled);
