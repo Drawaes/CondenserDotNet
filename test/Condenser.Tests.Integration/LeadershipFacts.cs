@@ -27,7 +27,7 @@ namespace Condenser.Tests.Integration
             }
         }
 
-        [Fact(Skip = "Broken")]
+        [Fact]
         public async Task TestLeadershipFailOver()
         {
             Console.WriteLine(nameof(TestLeadershipFailOver));
@@ -61,7 +61,7 @@ namespace Condenser.Tests.Integration
                 await manager.TtlCheck.ReportFailAsync();
 
                 //Now we wait, the leadership should fall over
-                Assert.True(resetEvent.WaitOne(2000));
+                Assert.True(resetEvent.WaitOne(5000));
 
                 //Now check that service 2 is the leader
                 var leader = await watcher2.GetCurrentLeaderAsync();
