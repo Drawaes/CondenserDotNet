@@ -73,19 +73,8 @@ namespace CondenserDotNet.Client
                     var content = await response.Content.ReadAsStringAsync();
                     var keys = JsonConvert.DeserializeObject<KeyValue[]>(content);
                     var dictionary = keys.ToDictionary(kv => kv.Key.Substring(keyPath.Length + 1).Replace('/', ':'), kv => kv.Value == null ? null : Encoding.UTF8.GetString(Convert.FromBase64String(kv.Value)), StringComparer.OrdinalIgnoreCase);
-                    bool needToCheckWatchers = false;
-                    lock (_configKeys)
-                    {
-                        if (!dictionary.DictionaryEquals(_configKeys[indexOfDictionary]))
-                        {
-                            needToCheckWatchers = true;
-                        }
-                    }
                     UpdateDictionaryInList(indexOfDictionary, dictionary);
-                    if (needToCheckWatchers)
-                    {
-                        FireWatchers();
-                    }
+                    FireWatchers();
                 }
             }
             catch (TaskCanceledException) { /* nom nom */}

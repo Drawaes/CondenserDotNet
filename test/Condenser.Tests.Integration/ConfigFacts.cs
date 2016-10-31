@@ -10,6 +10,10 @@ namespace Condenser.Tests.Integration
 {
     public class ConfigFacts
     {
+        const string _value1 = "testValue1";
+        const string _value2 = "testValue2";
+
+
         [Fact]
         public async Task TestRegister()
         {
@@ -63,7 +67,7 @@ namespace Condenser.Tests.Integration
             }
         }
 
-        [Fact(Skip = "Callbacks unstable")]
+        [Fact]
         public async Task GetCallbackForSpecificKey()
         {
             Console.WriteLine(nameof(GetCallbackForSpecificKey));
@@ -83,7 +87,7 @@ namespace Condenser.Tests.Integration
             }
         }
 
-        [Fact(Skip = "Callbacks unstable")]
+        [Fact]
         public async Task GetCallbackForKeyThatIsAdded()
         {
             string keyid = Guid.NewGuid().ToString();
@@ -100,7 +104,7 @@ namespace Condenser.Tests.Integration
             }
         }
 
-        [Fact(Skip ="Callbacks unstable")]
+        [Fact]
         public async Task GetCallbackForAnyKey()
         {
             Console.WriteLine(nameof(GetCallbackForAnyKey));
