@@ -19,7 +19,6 @@ namespace CondenserDotNet.Client
         private bool _disposed = false;
         private string _serviceName;
         private string _serviceId;
-        private bool _isRegistered;
         private List<string> _supportedUrls = new List<string>();
         private HealthCheck _httpCheck;
         private TtlCheck _ttlCheck;
@@ -27,6 +26,7 @@ namespace CondenserDotNet.Client
         private CancellationTokenSource _cancel = new CancellationTokenSource();
         private readonly ConfigurationRegistry _config;
         private readonly ServiceRegistry _services;
+        private readonly LeaderRegistry _leaders;
 
         public ServiceManager(string serviceName) : this(serviceName, $"{serviceName}:{Dns.GetHostName()}", "localhost", 8500) { }
         public ServiceManager(string serviceName, string serviceId) : this(serviceName, serviceId, "localhost", 8500) { }
@@ -39,6 +39,7 @@ namespace CondenserDotNet.Client
             _serviceName = serviceName;
             _config = new ConfigurationRegistry(this);
             _services = new ServiceRegistry(this);
+            _leaders = new LeaderRegistry(this);
             ServiceAddress = Dns.GetHostName();
             ServicePort = GetNextAvailablePort();
         }
@@ -46,15 +47,17 @@ namespace CondenserDotNet.Client
         internal List<string> SupportedUrls => _supportedUrls;
         internal HttpClient Client => _httpClient;
         internal HealthCheck HttpCheck { get { return _httpCheck; } set { _httpCheck = value; } }
+        internal Service RegisteredService { get; set; }
         public ConfigurationRegistry Config => _config;
         public string ServiceId => _serviceId;
         public string ServiceName => _serviceName;
         public ServiceRegistry Services => _services;
-        public bool IsRegistered { get { return _isRegistered; } internal set { _isRegistered = value; } }
+        public bool IsRegistered => RegisteredService != null;
         public TtlCheck TtlCheck { get { return _ttlCheck; } internal set { _ttlCheck = value; } }
         public string ServiceAddress { get; set; }
         public int ServicePort { get; set; }
         public CancellationToken Cancelled => _cancel.Token;
+        public LeaderRegistry Leaders => _leaders;
 
         protected int GetNextAvailablePort()
         {

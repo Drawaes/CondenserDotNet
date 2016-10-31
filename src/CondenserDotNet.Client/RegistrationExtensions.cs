@@ -58,15 +58,25 @@ namespace CondenserDotNet.Client
             {
                 s.Checks.Add(serviceManager.TtlCheck.HealthCheck);
             }
-
+            if (s.Checks.Count > 1)
+            {
+                for (int i = 0; i < s.Checks.Count; i++)
+                {
+                    s.Checks[i].Name = $"service:{s.ID}:{i + 1}";
+                }
+            }
+            else if (s.Checks.Count == 1)
+            {
+                s.Checks[0].Name = $"service:{s.ID}";
+            }
             var content = HttpUtils.GetStringContent(s);
             var response = await serviceManager.Client.PutAsync("/v1/agent/service/register", content);
             if (response.IsSuccessStatusCode)
             {
-                serviceManager.IsRegistered = true;
+                serviceManager.RegisteredService = s;
                 return true;
             }
-            serviceManager.IsRegistered = false;
+            serviceManager.RegisteredService = null;
             return false;
         }
     }

@@ -10,7 +10,7 @@ using Newtonsoft.Json;
 
 namespace CondenserDotNet.Client
 {
-    public class ConfigurationRegistry: IConfigurationRegistry
+    public class ConfigurationRegistry : IConfigurationRegistry
     {
         private readonly ServiceManager _serviceManager;
         private List<Dictionary<string, string>> _configKeys = new List<Dictionary<string, string>>();
@@ -35,7 +35,7 @@ namespace CondenserDotNet.Client
             }
             var content = await response.Content.ReadAsStringAsync();
             var keys = JsonConvert.DeserializeObject<KeyValue[]>(content);
-            var dictionary = keys.ToDictionary(kv => kv.Key.Substring(keyPath.Length).Replace('/', ':'), kv => kv.Value == null ? null : Encoding.UTF8.GetString(Convert.FromBase64String(kv.Value)), StringComparer.OrdinalIgnoreCase);
+            var dictionary = keys.ToDictionary(kv => kv.Key.Substring(keyPath.Length).Replace('/', ':'), kv => kv.Value == null ? null : kv.ValueFromBase64(), StringComparer.OrdinalIgnoreCase);
             return AddNewDictionaryToList(dictionary);
         }
 
@@ -44,7 +44,7 @@ namespace CondenserDotNet.Client
             var intialDictionary = await AddInitialKeyPathAsync(keyPath);
             if (intialDictionary == -1)
             {
-                var newDicitonary = new Dictionary<string,string>();
+                var newDicitonary = new Dictionary<string, string>();
                 intialDictionary = AddNewDictionaryToList(newDicitonary);
             }
             //We got values so lets start watching but we aren't waiting for this we will let it run

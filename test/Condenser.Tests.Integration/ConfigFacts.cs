@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Condenser.Tests.Integration
 {
-    public class ConfigTests
+    public class ConfigFacts
     {
         [Fact]
         public async Task TestRegister()

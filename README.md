@@ -106,5 +106,6 @@ var singleCallBack = manager.Config.AddWatchOnSingleKey("test1", () => Console.W
 If you want any update to trigger your callback just do
 
 ``` csharp
-var multipleCallBack = manager.Config.AddWatchOnEntireConfig( () => Console.Writeline("Some key changed, or multiple keys changed, or maybe none?");
+var multipleCallBack = manager.Config.AddWatchOnEntireConfig(
+    () => Console.Writeline("Some key changed, or multiple keys changed, or maybe none?");
 ```

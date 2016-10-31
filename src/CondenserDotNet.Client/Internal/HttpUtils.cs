@@ -11,21 +11,22 @@ namespace CondenserDotNet.Client.Internal
 {
     internal static class HttpUtils
     {
-        private readonly static JsonSerializerSettings _jsonSettings;
         private readonly static string _indexHeader = "X-Consul-Index";
+        public readonly static JsonSerializerSettings JsonSettings;
         public readonly static string ApiUrl = "/v1/";
         public readonly static string KeyUrl = ApiUrl + "kv/";
         public readonly static string ServiceCatalogUrl = ApiUrl + "catalog/services";
         public readonly static string DatacenterCatalogUrl = ApiUrl + "catalog/datacenters";
         public readonly static string ServiceHealthUrl = ApiUrl + "health/service/";
+        public readonly static string SessionCreateUrl = ApiUrl + "session/create";
 
         static HttpUtils()
         {
-            _jsonSettings = new JsonSerializerSettings { ContractResolver = new DefaultContractResolver(), NullValueHandling = NullValueHandling.Ignore };
+            JsonSettings = new JsonSerializerSettings { ContractResolver = new DefaultContractResolver(), NullValueHandling = NullValueHandling.Ignore };
         }
         public static StringContent GetStringContent<T>(T objectForContent)
         {
-            var returnValue = new StringContent(JsonConvert.SerializeObject(objectForContent, _jsonSettings), Encoding.UTF8, "application/json");
+            var returnValue = new StringContent(JsonConvert.SerializeObject(objectForContent, JsonSettings), Encoding.UTF8, "application/json");
             return returnValue;
         }
         public static StringContent GetStringContent(string stringForContent)

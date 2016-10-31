@@ -8,7 +8,7 @@ using Xunit;
 
 namespace Condenser.Tests.Integration
 {
-    public class ServiceLookupTests
+    public class ServiceLookupFacts
     {
         [Fact]
         public async Task TestRegisterAndCheckRegistered()

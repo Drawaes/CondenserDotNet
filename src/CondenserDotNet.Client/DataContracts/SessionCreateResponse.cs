@@ -7,6 +7,6 @@ namespace CondenserDotNet.Client.DataContracts
 {
     public class SessionCreateResponse
     {
-        public string Id { get; set; }
+        public Guid Id { get; set; }
     }
 }
