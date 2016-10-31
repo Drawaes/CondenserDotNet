@@ -31,6 +31,10 @@ namespace CondenserDotNet.Client.Internal
         }
         public static StringContent GetStringContent(string stringForContent)
         {
+            if(stringForContent == null)
+            {
+                return null;
+            }
             var returnValue = new StringContent(stringForContent, Encoding.UTF8);
             return returnValue;
         }
