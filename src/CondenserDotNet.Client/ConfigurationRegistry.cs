@@ -98,7 +98,7 @@ namespace CondenserDotNet.Client
                         if (StringComparer.OrdinalIgnoreCase.Compare(watch.CurrentValue, newValue) != 0)
                         {
                             watch.CurrentValue = newValue;
-                            Task.Run(watch.CallBack);
+                            ThreadPool.QueueUserWorkItem(state => ((Action)state).Invoke(), watch.CallBack);
                         }
                     }
                 }
