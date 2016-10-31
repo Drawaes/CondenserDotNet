@@ -163,9 +163,12 @@ namespace CondenserDotNet.Client
         {
             lock (_configWatchers)
             {
-                string currentValue;
-                TryGetValue(keyToWatch, out currentValue);
-                _configWatchers.Add(new ConfigurationWatcher() { CallBack = callback, KeyToWatch = keyToWatch, CurrentValue = currentValue });
+                lock (_configKeys)
+                {
+                    string currentValue;
+                    TryGetValue(keyToWatch, out currentValue);
+                    _configWatchers.Add(new ConfigurationWatcher() { CallBack = callback, KeyToWatch = keyToWatch, CurrentValue = currentValue });
+                }
             }
         }
 
