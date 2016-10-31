@@ -36,7 +36,7 @@ namespace CondenserDotNet.Client
             }
             var content = await response.Content.ReadAsStringAsync();
             var keys = JsonConvert.DeserializeObject<KeyValue[]>(content);
-            var dictionary = keys.ToDictionary(kv => kv.Key.Substring(keyPath.Length+1).Replace('/', ':'), kv => kv.Value == null ? null : kv.ValueFromBase64(), StringComparer.OrdinalIgnoreCase);
+            var dictionary = keys.ToDictionary(kv => kv.Key.Substring(keyPath.Length + 1).Replace('/', ':'), kv => kv.Value == null ? null : kv.ValueFromBase64(), StringComparer.OrdinalIgnoreCase);
             return AddNewDictionaryToList(dictionary);
         }
 
@@ -72,11 +72,14 @@ namespace CondenserDotNet.Client
                     }
                     var content = await response.Content.ReadAsStringAsync();
                     var keys = JsonConvert.DeserializeObject<KeyValue[]>(content);
-                    var dictionary = keys.ToDictionary(kv => kv.Key.Substring(keyPath.Length+1).Replace('/', ':'), kv => kv.Value == null ? null : Encoding.UTF8.GetString(Convert.FromBase64String(kv.Value)), StringComparer.OrdinalIgnoreCase);
+                    var dictionary = keys.ToDictionary(kv => kv.Key.Substring(keyPath.Length + 1).Replace('/', ':'), kv => kv.Value == null ? null : Encoding.UTF8.GetString(Convert.FromBase64String(kv.Value)), StringComparer.OrdinalIgnoreCase);
                     bool needToCheckWatchers = false;
-                    if (!dictionary.SequenceEqual(_configKeys[indexOfDictionary]))
+                    lock (_configKeys)
                     {
-                        needToCheckWatchers = true;
+                        if (!dictionary.DictionaryEquals(_configKeys[indexOfDictionary]))
+                        {
+                            needToCheckWatchers = true;
+                        }
                     }
                     UpdateDictionaryInList(indexOfDictionary, dictionary);
                     if (needToCheckWatchers)
@@ -86,6 +89,7 @@ namespace CondenserDotNet.Client
                 }
             }
             catch (TaskCanceledException) { /* nom nom */}
+            catch (ObjectDisposedException) { /* nom nom */ }
         }
 
         private void FireWatchers()
@@ -114,30 +118,18 @@ namespace CondenserDotNet.Client
 
         private int AddNewDictionaryToList(Dictionary<string, string> dictionaryToAdd)
         {
-            while (true)
+            lock (_configKeys)
             {
-                List<Dictionary<string, string>> listCopy = Volatile.Read(ref _configKeys);
-                var newList = new List<Dictionary<string, string>>(listCopy);
-                newList.Add(dictionaryToAdd);
-                var returnValue = newList.Count - 1;
-                if (Interlocked.CompareExchange(ref _configKeys, newList, listCopy) == listCopy)
-                {
-                    return returnValue;
-                }
+                _configKeys.Add(dictionaryToAdd);
+                return _configKeys.Count - 1;
             }
         }
 
         private void UpdateDictionaryInList(int index, Dictionary<string, string> dictionaryToAdd)
         {
-            while (true)
-            {
-                List<Dictionary<string, string>> listCopy = Volatile.Read(ref _configKeys);
-                var newList = new List<Dictionary<string, string>>(listCopy);
-                newList[index] = dictionaryToAdd;
-                if (Interlocked.CompareExchange(ref _configKeys, newList, listCopy) == listCopy)
-                {
-                    return;
-                }
+            lock(_configKeys)
+            { 
+                _configKeys[index] = dictionaryToAdd;
             }
         }
 
@@ -156,15 +148,18 @@ namespace CondenserDotNet.Client
 
         public bool TryGetValue(string key, out string value)
         {
-            for (int i = _configKeys.Count - 1; i >= 0; i--)
+            lock (_configKeys)
             {
-                if (_configKeys[i].TryGetValue(key, out value))
+                for (int i = _configKeys.Count - 1; i >= 0; i--)
                 {
-                    return true;
+                    if (_configKeys[i].TryGetValue(key, out value))
+                    {
+                        return true;
+                    }
                 }
+                value = null;
+                return false;
             }
-            value = null;
-            return false;
         }
 
         public void AddWatchOnEntireConfig(Action callback)
