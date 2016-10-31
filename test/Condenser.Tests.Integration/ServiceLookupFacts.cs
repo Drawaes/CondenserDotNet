@@ -13,9 +13,10 @@ namespace Condenser.Tests.Integration
         [Fact]
         public async Task TestRegisterAndCheckRegistered()
         {
+            var key = Guid.NewGuid().ToString();
             Console.WriteLine(nameof(TestRegisterAndCheckRegistered));
-            using (var manager = new ServiceManager("TestService3", "Id1"))
-            using (var manager2 = new ServiceManager("TestService3", "Id2"))
+            using (var manager = new ServiceManager(key, key + "Id1"))
+            using (var manager2 = new ServiceManager(key, key + "Id2"))
             {
                 var registrationResult = await manager.RegisterServiceAsync();
                 Assert.Equal(true, registrationResult);
@@ -23,8 +24,8 @@ namespace Condenser.Tests.Integration
                 var registrationResult2 = await manager2.RegisterServiceAsync();
                 Assert.Equal(true, registrationResult2);
 
-                var service = await manager.Services.GetServiceInstanceAsync("TestService3");
-                Assert.Equal("TestService3", service.Service);
+                var service = await manager.Services.GetServiceInstanceAsync(key);
+                Assert.Equal(key, service.Service);
             }
         }
 

@@ -12,8 +12,8 @@ namespace Condenser.Tests.Integration
         [Fact]
         public async Task TestRegister()
         {
-            Console.WriteLine(nameof(TestRegister));
-            using (var manager = new ServiceManager("TestService"))
+            var serviceName = Guid.NewGuid().ToString();
+            using (var manager = new ServiceManager(serviceName))
             {
                 manager.AddApiUrl("api/testurl");
                 var registrationResult = await manager.RegisterServiceAsync();
@@ -24,8 +24,8 @@ namespace Condenser.Tests.Integration
         [Fact]
         public async Task TestRegisterAndSetPassTtl()
         {
-            Console.WriteLine(nameof(TestRegisterAndSetPassTtl));
-            using (var manager = new ServiceManager("TestService2"))
+            var serviceName = Guid.NewGuid().ToString();
+            using (var manager = new ServiceManager(serviceName))
             {
                 manager.AddTtlHealthCheck(10);
                 var registerResult = await manager.RegisterServiceAsync();
@@ -37,15 +37,15 @@ namespace Condenser.Tests.Integration
         [Fact]
         public async Task TestRegisterAndCheckRegistered()
         {
-            Console.WriteLine(nameof(TestRegisterAndCheckRegistered));
-            using (var manager = new ServiceManager("TestService3"))
+            var serviceName = Guid.NewGuid().ToString();
+            using (var manager = new ServiceManager(serviceName))
             {
                 var registrationResult = await manager.RegisterServiceAsync();
                 Assert.Equal(true, registrationResult);
 
                 var services = await manager.Services.GetAvailableServicesAsync();
 
-                Assert.Contains("TestService3", services);
+                Assert.Contains(serviceName, services);
             }
         }
     }
