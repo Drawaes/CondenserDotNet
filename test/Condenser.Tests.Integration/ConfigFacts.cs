@@ -87,7 +87,7 @@ namespace Condenser.Tests.Integration
             }
         }
 
-        [Fact(Skip = "Flakey")]
+        [Fact]
         public async Task GetCallbackForKeyThatIsAdded()
         {
             string keyid = Guid.NewGuid().ToString();
@@ -97,6 +97,9 @@ namespace Condenser.Tests.Integration
                 manager.Config.AddWatchOnSingleKey("test1", () => e.Set());
 
                 await manager.Config.AddUpdatingPathAsync($"org/{keyid}/");
+
+                //give it time to register
+                await Task.Delay(1000); 
 
                 await manager.Config.SetKeyAsync($"org/{keyid}/test1", "testValue2");
 
