@@ -67,7 +67,7 @@ namespace Condenser.Tests.Integration
             }
         }
 
-        [Fact(Skip = "Flakey")]
+        [Fact]
         public async Task GetCallbackForSpecificKey()
         {
             Console.WriteLine(nameof(GetCallbackForSpecificKey));
@@ -79,6 +79,8 @@ namespace Condenser.Tests.Integration
 
                 await manager.Config.SetKeyAsync($"org/{keyid}/test1", "testValue1");
                 await manager.Config.AddUpdatingPathAsync($"org/{keyid}/");
+
+                await Task.Delay(1000);
 
                 await manager.Config.SetKeyAsync($"org/{keyid}/test1", "testValue2");
 
@@ -108,7 +110,7 @@ namespace Condenser.Tests.Integration
             }
         }
 
-        [Fact(Skip = "Flakey")]
+        [Fact]
         public async Task GetCallbackForAnyKey()
         {
             Console.WriteLine(nameof(GetCallbackForAnyKey));
@@ -121,6 +123,9 @@ namespace Condenser.Tests.Integration
 
                 var e = new ManualResetEvent(false);
                 manager.Config.AddWatchOnEntireConfig(() => e.Set());
+
+                //give the registration time to complete registration
+                await Task.Delay(1000); 
 
                 await manager.Config.SetKeyAsync($"org/{keyid}/test1", "testValue2");
 
