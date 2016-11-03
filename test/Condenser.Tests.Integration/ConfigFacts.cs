@@ -59,6 +59,8 @@ namespace Condenser.Tests.Integration
                 await manager.Config.SetKeyAsync($"org/{keyid}/test2", "testValue1");
                 await manager.Config.AddUpdatingPathAsync($"org/{keyid}/");
 
+                await Task.Delay(500);
+
                 Assert.Equal("testValue1", manager.Config["test2"]);
                 await manager.Config.SetKeyAsync($"org/{keyid}/test2", "testValue2");
 
