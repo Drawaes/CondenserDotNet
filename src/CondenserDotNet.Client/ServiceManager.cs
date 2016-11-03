@@ -43,7 +43,7 @@ namespace CondenserDotNet.Client
             ServiceAddress = Dns.GetHostName();
             ServicePort = GetNextAvailablePort();
         }
-                
+
         internal List<string> SupportedUrls => _supportedUrls;
         internal HttpClient Client => _httpClient;
         internal HealthCheck HttpCheck { get { return _httpCheck; } set { _httpCheck = value; } }
@@ -61,13 +61,19 @@ namespace CondenserDotNet.Client
 
         protected int GetNextAvailablePort()
         {
-            TcpListener l = new TcpListener(IPAddress.Loopback, 0);
-            l.Start();
-            int port = ((IPEndPoint)l.LocalEndpoint).Port;
-            l.Stop();
+            var l = new TcpListener(IPAddress.Loopback, 0);
+            int port = 0;
+            try
+            {
+                l.Start();
+                port = ((IPEndPoint)l.LocalEndpoint).Port;
+                l.Stop();
+                l.Server.Dispose();
+            }
+            catch { /*Nom nom */}
             return port;
         }
-        
+
         public void Dispose()
         {
             Dispose(true);
