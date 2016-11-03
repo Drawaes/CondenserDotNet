@@ -1,8 +1,0 @@
-﻿{
-  "rule": {
-    "route": "test/test2",
-    "tag": {
-      "name": "v1",
-      "weight" : .
-    }
-}
