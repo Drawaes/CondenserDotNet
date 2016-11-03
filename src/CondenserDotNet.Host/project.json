@@ -1,5 +1,5 @@
 {
-  "version": "0.5.1-*",
+  "version": "0.6.0-*",
   "buildOptions": {
     "warningsAsErrors": true,
     "emitEntryPoint": true
@@ -19,13 +19,11 @@
   },
 
   "frameworks": {
-    "netcoreapp1.0": {
+    "netstandard1.3": {
       "dependencies": {
-        "Microsoft.NETCore.App": {
-          "version": "1.0.0",
-          "type": "platform"
-        }
+        "System.Threading.ThreadPool": "4.0.10"
       }
-    }
+    },
+    "net461": {}
   }
 }

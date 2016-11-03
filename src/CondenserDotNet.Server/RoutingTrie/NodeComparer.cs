@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CondenserDotNet.Host.RoutingTrie
+namespace CondenserDotNet.Server.RoutingTrie
 {
     public class NodeComparer: IEqualityComparer<string[]>
     {
@@ -13,19 +13,20 @@ namespace CondenserDotNet.Host.RoutingTrie
             _compareLength = compareLength;
         }
 
-        public int CompareLength { get { return _compareLength; } }
+        public int CompareLength => _compareLength;
 
         public bool Equals(string[] x, string[] y)
         {
-            if(y.Length < _compareLength || x.Length < _compareLength)
+            if (y.Length < _compareLength || x.Length < _compareLength)
+            {
                 return false;
+            }
 
             for(int i = 0; i < _compareLength; i++)
             {
                 if(x[i] != y[i])
                     return false;                
             }
-
             return true;
         }
 

@@ -4,11 +4,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Routing;
 
-namespace CondenserDotNet.Host
+namespace CondenserDotNet.Server
 {
     public class CustomRouter : IRouter
     {
-        RoutingTrie.RadixTree _tree = new RoutingTrie.RadixTree();
+        RoutingTrie.RadixTree<Service> _tree = new RoutingTrie.RadixTree<Service>();
         Task _taskDone = Task.FromResult(0);
 
         public CustomRouter()

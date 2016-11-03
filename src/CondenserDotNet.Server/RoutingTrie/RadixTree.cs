@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CondenserDotNet.Host.RoutingTrie
+namespace CondenserDotNet.Server.RoutingTrie
 {
-    public class RadixTree
+    public class RadixTree<T>
     {
-        Node _topNode = new Node(new string[0], "");
+        Node<T> _topNode = new Node<T>(new string[0], "");
         object _writeLock = new object();
         char[] _routeSplit = new char[] {'/'};
 
-        public void AddServiceToRoute(string route, Service service)
+        public void AddServiceToRoute(string route, T service)
         {
             lock (_writeLock)
             {
@@ -19,7 +19,7 @@ namespace CondenserDotNet.Host.RoutingTrie
             }
         }
 
-        public Service GetServiceFromRoute(string route, out string matchedPath)
+        public T GetServiceFromRoute(string route, out string matchedPath)
         {
             return _topNode.GetService(route.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries), out matchedPath);
         }
@@ -32,7 +32,7 @@ namespace CondenserDotNet.Host.RoutingTrie
             }
         }
         
-        public void RemoveService(Service service)
+        public void RemoveService(T service)
         {
             lock (_writeLock)
             {
@@ -40,7 +40,7 @@ namespace CondenserDotNet.Host.RoutingTrie
             }
         }
 
-        public void RemoveServiceFromRoute(string route, Service service)
+        public void RemoveServiceFromRoute(string route, T service)
         {
             lock (_writeLock)
             {
@@ -48,7 +48,7 @@ namespace CondenserDotNet.Host.RoutingTrie
             }
         }
 
-        public Node GetTopNode()
+        public Node<T> GetTopNode()
         {
             return _topNode;
         }

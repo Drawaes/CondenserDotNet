@@ -7,10 +7,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-namespace CondenserDotNet.Host
+namespace CondenserDotNet.Server
 {
     public class Service:IDisposable
     {
+        public Service()
+        {
+        }
         public Service(string[] routes, string serviceId, string address, int port, string[] tags)
         {
             Tags = tags;
@@ -24,9 +27,9 @@ namespace CondenserDotNet.Host
 
         private string _hostString;
         private HttpClient _httpClient = new HttpClient(new HttpClientHandler());
-        private System.Threading.CountdownEvent _waitUntilRequestsAreFinished = new System.Threading.CountdownEvent(0);
+        private System.Threading.CountdownEvent _waitUntilRequestsAreFinished = new System.Threading.CountdownEvent(1);
 
-        public System.Version[] SupportedVersions { get; private set;}
+        public Version[] SupportedVersions { get; private set;}
         public string[] Tags { get; private set;}
         public int Port { get; private set; }
         public string Address { get; private set; }
@@ -102,34 +105,26 @@ namespace CondenserDotNet.Host
         public override bool Equals(object obj)
         {
             var otherService = obj as Service;
-            if(otherService != null)
+            if (otherService != null)
             {
-                if(otherService.Address != Address)
+                if (otherService.Address != Address)
+                {
                     return false;
-                if(otherService.Port != Port)
+                }
+                if (otherService.Port != Port)
+                {
                     return false;
-                if(otherService.ServiceId != ServiceId)
+                }
+                if (otherService.ServiceId != ServiceId)
+                {
                     return false;
-                if(!Tags.SequenceEqual(otherService.Tags))
+                }
+                if (!Tags.SequenceEqual(otherService.Tags))
+                {
                     return false;
-
+                }
                 return true;
             }
-            //var consulService = obj as Consul.ServiceEntry;
-            //if(consulService != null)
-            //{
-            //    if(consulService.Service.ID != ServiceId)
-            //        return false;
-            //    if(consulService.Service.Port != Port)
-            //        return false;
-            //    if(consulService.Service.Address != Address)
-            //        return false;
-            //    if(!consulService.Service.Tags.Where(t => !t.StartsWith("url=")).SequenceEqual(Tags))
-            //        return false;
-
-            //    return true;
-            //}
-
             return false;
         }
 
@@ -140,6 +135,7 @@ namespace CondenserDotNet.Host
 
         public void Dispose()
         {
+            _waitUntilRequestsAreFinished.Signal();
             _waitUntilRequestsAreFinished.Wait(5000);
             _httpClient.Dispose();
             _waitUntilRequestsAreFinished.Dispose();

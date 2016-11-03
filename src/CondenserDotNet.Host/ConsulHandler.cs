@@ -11,9 +11,10 @@ namespace CondenserDotNet.Host
         //ConsulClient _consul;
         //QueryResult<Dictionary<string,string[]>> _lastServiceCall;
         //Task _runConsul;
-        private CustomRouter _router;
-        HttpClient _client;
-        Uri _healthCheckUri;
+        private readonly CustomRouter _router;
+        private readonly HttpClient _client;
+        private readonly Uri _healthCheckUri;
+        string _consulIndex = "0";
         //Dictionary<string, Service> _currentServices = new Dictionary<string, Service>();
 
         public ConsulHandler(CustomRouter router)
