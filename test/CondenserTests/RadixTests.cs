@@ -65,5 +65,28 @@ namespace CondenserTests
             Assert.Equal("/test1/test2/test3/test4/test5", matchedpath);
             Assert.Equal(returnservice.ServiceId, service.ServiceId);
         }
+
+        [Fact]
+        public void TestRemovingAService()
+        {
+            var tree = new RadixTree<Service>();
+            var service = new Service(new string[0], "Service1Test", "Address1Test", 10000, new string[0]);
+            var service2 = new Service(new string[0], "Service1Test", "Address2Test", 10000, new string[0]);
+
+            tree.AddServiceToRoute("/test1/test2/test3/test4/test5", service);
+            tree.AddServiceToRoute("/test1/test2/test3/test4/test5/test6", service2);
+
+            string matchedpath;
+            var returnservice = tree.GetServiceFromRoute("/test1/test2/test3/test4/test5/test7", out matchedpath);
+            Assert.Equal("/test1/test2/test3/test4/test5", matchedpath);
+
+            //now remove the service
+            tree.RemoveService(service);
+
+            //Now we should get no match
+            returnservice = tree.GetServiceFromRoute("/test1/test2/test3/test4/test5/test7", out matchedpath);
+            Assert.Null(returnservice);
+
+        }
     }
 }
