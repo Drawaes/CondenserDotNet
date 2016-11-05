@@ -7,43 +7,43 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
-namespace CondenserDotNet.Host
+namespace CondenserDotNet.Server
 {
-    public class Service:IDisposable
+    public class Service : IDisposable
     {
-        public Service(string[] routes, string serviceId, string address, int port, string[] tags)
+        private string _hostString;
+        private readonly HttpClient _httpClient = new HttpClient(new HttpClientHandler());
+        private readonly System.Threading.CountdownEvent _waitUntilRequestsAreFinished = new System.Threading.CountdownEvent(1);
+
+        public Service()
+        {
+        }
+        public Service(string[] routes, string serviceId, string address, int port, string nodeId, string[] tags)
         {
             Tags = tags;
-            Routes = routes.Select(r => !r.StartsWith("/") ? "/" + r : r).Select(r => r.EndsWith("/") ? r.Substring(0,r.Length-1) : r).ToArray();
+            Routes = routes.Select(r => !r.StartsWith("/") ? "/" + r : r).Select(r => r.EndsWith("/") ? r.Substring(0, r.Length - 1) : r).ToArray();
             ServiceId = serviceId;
+            NodeId = nodeId;
             Address = address;
             Port = port;
             _hostString = Address + ":" + port;
-            SupportedVersions = tags.Where(t => t.StartsWith("version=")).Select(t => new System.Version(t.Substring(8))).ToArray(); 
+            SupportedVersions = tags.Where(t => t.StartsWith("version=")).Select(t => new System.Version(t.Substring(8))).ToArray();
         }
 
-        private string _hostString;
-        private HttpClient _httpClient = new HttpClient(new HttpClientHandler());
-        private System.Threading.CountdownEvent _waitUntilRequestsAreFinished = new System.Threading.CountdownEvent(0);
-
-        public System.Version[] SupportedVersions { get; private set;}
-        public string[] Tags { get; private set;}
+        public Version[] SupportedVersions { get; private set; }
+        public string[] Tags { get; private set; }
         public int Port { get; private set; }
         public string Address { get; private set; }
         public string[] Routes { get; private set; }
         public string ServiceId { get; private set; }
-
-        //private bool disposed = false;
+        public string NodeId { get; private set; }
 
         public async Task CallService(HttpContext context)
         {
             _waitUntilRequestsAreFinished.AddCount();
             try
             {
-                var apiPath = (string)context.GetRouteData().DataTokens["apiPath"];
-
-                string remainingPath = context.Request.Path.Value.Substring(apiPath.Length);
-                var uriString = $"http://{_hostString}{remainingPath}{context.Request.QueryString}";
+                var uriString = $"http://{_hostString}{context.Request.Path}{context.Request.QueryString}";
                 var uri = new Uri(uriString);
 
                 var requestMessage = new HttpRequestMessage();
@@ -102,34 +102,26 @@ namespace CondenserDotNet.Host
         public override bool Equals(object obj)
         {
             var otherService = obj as Service;
-            if(otherService != null)
+            if (otherService != null)
             {
-                if(otherService.Address != Address)
+                if (otherService.Address != Address)
+                {
                     return false;
-                if(otherService.Port != Port)
+                }
+                if (otherService.Port != Port)
+                {
                     return false;
-                if(otherService.ServiceId != ServiceId)
+                }
+                if (otherService.ServiceId != ServiceId)
+                {
                     return false;
-                if(!Tags.SequenceEqual(otherService.Tags))
+                }
+                if (!Tags.SequenceEqual(otherService.Tags))
+                {
                     return false;
-
+                }
                 return true;
             }
-            //var consulService = obj as Consul.ServiceEntry;
-            //if(consulService != null)
-            //{
-            //    if(consulService.Service.ID != ServiceId)
-            //        return false;
-            //    if(consulService.Service.Port != Port)
-            //        return false;
-            //    if(consulService.Service.Address != Address)
-            //        return false;
-            //    if(!consulService.Service.Tags.Where(t => !t.StartsWith("url=")).SequenceEqual(Tags))
-            //        return false;
-
-            //    return true;
-            //}
-
             return false;
         }
 
@@ -140,6 +132,7 @@ namespace CondenserDotNet.Host
 
         public void Dispose()
         {
+            _waitUntilRequestsAreFinished.Signal();
             _waitUntilRequestsAreFinished.Wait(5000);
             _httpClient.Dispose();
             _waitUntilRequestsAreFinished.Dispose();

@@ -1,0 +1,14 @@
+﻿{
+  "version": "0.6.0-*",
+
+  "dependencies": {
+    "NETStandard.Library": "1.6.0",
+    "Microsoft.AspNetCore.Routing.Abstractions": "1.0.1",
+    "CondenserDotNet.Client": { "target": "project" }
+  },
+
+  "frameworks": {
+    "netstandard1.3": {},
+    "net461": {}
+  }
+}

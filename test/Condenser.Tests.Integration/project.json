@@ -6,9 +6,12 @@
     "xunit": "2.2.0-beta2-build3300",
     "dotnet-test-xunit": "2.2.0-preview2-build1029",
     "CondenserDotNet.Client": { "target": "project" },
+    "CondenserDotNet.Server": { "target": "project" },
     "OpenCover": "4.6.519",
     "Microsoft.CodeCoverage": "1.0.2",
-    "coveralls.io": "1.3.4"
+    "coveralls.io": "1.3.4",
+    "Microsoft.AspNetCore.Http.Abstractions": "1.0.0",
+    "Microsoft.AspNetCore.Http": "1.0.0"
   },
 
   "frameworks": {

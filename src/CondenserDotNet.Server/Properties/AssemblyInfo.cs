@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("CondenserDotNet.Host")]
+[assembly: AssemblyProduct("CondenserDotNet.Server")]
 [assembly: AssemblyTrademark("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible
@@ -16,4 +16,4 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("5989ba60-d7f4-42a3-a6b9-c37f76c9834f")]
+[assembly: Guid("f8a84abc-60cd-4ef4-b55d-cb27996b1f78")]

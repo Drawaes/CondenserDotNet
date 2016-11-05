@@ -3,50 +3,48 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CondenserDotNet.Host.RoutingTrie
+namespace CondenserDotNet.Server.RoutingTrie
 {
-    public class Node
+    public class Node<T>
     {
+        private NodeContainer<T> _childrenNodes;
+        
         public Node(string[] prefix, string pathToHere)
             :this(prefix, pathToHere, 1)
         {
-
         }
 
         public Node(string[] prefix, string pathToHere,int initialKeySize)
         {
             Prefix = prefix;
-            _children = new ChildrenContainer(initialKeySize);
+            _childrenNodes = new NodeContainer<T>(initialKeySize);
             Path = pathToHere + "/" + string.Join("/", Prefix);
             if(Path == "/")
                 Path = "";
         }
         
         public string Path { get; private set;}
-
-        public ServiceContainer Services { get; private set;} = new ServiceContainer();
-
-        ChildrenContainer _children;
-        public ChildrenContainer Children {  get {  return _children;} }
+        public ChildContainer<T> Services { get; private set;} = new ChildContainer<T>();
+        public NodeContainer<T> ChildrenNodes => _childrenNodes;
         public string[] Prefix { get; private set; }
                 
-        public Node CloneWithNewPrefix(string[] newPrefix, string newPath)
+        public Node<T> CloneWithNewPrefix(string[] newPrefix, string newPath)
         {
-            Node newNode = new Node(newPrefix, newPath);
-            newNode._children = _children;
+            Node<T> newNode = new Node<T>(newPrefix, newPath);
+            newNode._childrenNodes = _childrenNodes;
             newNode.Services = Services;
 
             return newNode;
         }
 
-        public void AddRoute(string[] route, Service service)
+        public void AddRoute(string[] route, T service)
         {
             if(route.Length == 0)
             {
                 Services.AddService(service);
                 return;
             }
-            var children = System.Threading.Volatile.Read(ref _children);
+            var children = System.Threading.Volatile.Read(ref _childrenNodes);
 
             for (int i = Math.Min(children.KeyLength, route.Length); i > 0;  i--)
             {
@@ -64,7 +62,7 @@ namespace CondenserDotNet.Host.RoutingTrie
                     {
                         var newChildren = children.SplitContainer(i, Path);
                         newChildren[route].AddRoute(route.Skip(i).ToArray(), service);
-                        System.Threading.Volatile.Write(ref _children, newChildren);
+                        System.Threading.Volatile.Write(ref _childrenNodes, newChildren);
                         return;
                     }
                 }
@@ -73,36 +71,36 @@ namespace CondenserDotNet.Host.RoutingTrie
             if(route.Length >= children.KeyLength)
             {
                 //Create a new node and add it
-                Node n = new Node(route.Take(children.KeyLength).ToArray(), Path);
+                Node<T> n = new Node<T>(route.Take(children.KeyLength).ToArray(), Path);
                 n.AddRoute(route.Skip(children.KeyLength).ToArray(),service);
 
                 var newChildren = children.Clone();
                 newChildren.Add(n.Prefix, n);
-                System.Threading.Volatile.Write(ref _children, newChildren);
+                System.Threading.Volatile.Write(ref _childrenNodes, newChildren);
                 return;
             }
             else
             {
                 //The key is smaller than the current key length so we are going to have to split before we add
-                var newChildren = Children.SplitContainer(route.Length, Path);
-                Node n = new Node(route, Path);
+                var newChildren = ChildrenNodes.SplitContainer(route.Length, Path);
+                Node<T> n = new Node<T>(route, Path);
                 n.AddRoute(new string[0], service);
                 newChildren.Add(n.Prefix, n);
 
-                System.Threading.Volatile.Write(ref _children, newChildren);
+                System.Threading.Volatile.Write(ref _childrenNodes, newChildren);
                 return;
             }
         }
 
-        internal bool RemoveServiceFromRoute(string[] route, Service service)
+        internal bool RemoveServiceFromRoute(string[] route, T service)
         {
-            ChildrenContainer container = System.Threading.Volatile.Read(ref _children);
+            NodeContainer<T> container = System.Threading.Volatile.Read(ref _childrenNodes);
             if (route.Length == 0)
             {
                 return Services.RemoveService(service);
             }
 
-            Node child;
+            Node<T> child;
             if (container.TryGetValue(route, out child))
             {
                 return child.RemoveServiceFromRoute(route.Skip(container.KeyLength).ToArray(), service);
@@ -110,9 +108,9 @@ namespace CondenserDotNet.Host.RoutingTrie
             return false;
         }
 
-        internal void RemoveService(Service service)
+        internal void RemoveService(T service)
         {
-            var children = System.Threading.Volatile.Read(ref _children);
+            var children = System.Threading.Volatile.Read(ref _childrenNodes);
             Services.RemoveService(service);
             foreach(var kv in children)
             {
@@ -120,16 +118,16 @@ namespace CondenserDotNet.Host.RoutingTrie
             }
         }
 
-        public Service GetService(string[] route, out string matchedPath)
+        public T GetService(string[] route, out string matchedPath)
         {
-            ChildrenContainer container = System.Threading.Volatile.Read(ref _children);
+            var container = System.Threading.Volatile.Read(ref _childrenNodes);
             if(route.Length == 0)
             {
                 matchedPath = Path;
                 return Services.GetService();
             }
 
-            Node child;
+            Node<T> child;
             if(container.TryGetValue(route, out child))
             {
                 var returnService = child.GetService(route.Skip(container.KeyLength).ToArray(), out matchedPath);
@@ -146,7 +144,7 @@ namespace CondenserDotNet.Host.RoutingTrie
         {
             bool canCompress = true;
 
-            var children = System.Threading.Volatile.Read(ref _children);
+            var children = System.Threading.Volatile.Read(ref _childrenNodes);
 
             if(children.Count == 0) return;
 
@@ -161,13 +159,13 @@ namespace CondenserDotNet.Host.RoutingTrie
 
             if (canCompress)
             {
-                var newMerged = new ChildrenContainer(children.KeyLength + 1);
+                var newMerged = new NodeContainer<T>(children.KeyLength + 1);
                 foreach (var kv in children)
                 {
-                    foreach (var childkv in kv.Value.Children)
+                    foreach (var childkv in kv.Value.ChildrenNodes)
                     {
                         //This will prune out orphaned trees
-                        if (childkv.Value.Services.Count > 0 || childkv.Value.Children.Count > 0)
+                        if (childkv.Value.Services.Count > 0 || childkv.Value.ChildrenNodes.Count > 0)
                         {
                             var mergedKey = Enumerable.Concat(kv.Key, childkv.Key).ToArray();
                             var newNode = childkv.Value.CloneWithNewPrefix(mergedKey, Path);
@@ -175,7 +173,7 @@ namespace CondenserDotNet.Host.RoutingTrie
                         }
                     }
                 }
-                System.Threading.Volatile.Write(ref _children, newMerged);
+                System.Threading.Volatile.Write(ref _childrenNodes, newMerged);
                 Compress();
             }
             else

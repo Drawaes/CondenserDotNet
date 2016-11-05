@@ -13,8 +13,6 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ServiceRegistration", "samp
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CondenserDotNet.Client", "src\CondenserDotNet.Client\CondenserDotNet.Client.xproj", "{941378DD-52CC-48CD-8CB5-CE9039721DF8}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CondenserDotNet.Host", "src\CondenserDotNet.Host\CondenserDotNet.Host.xproj", "{5989BA60-D7F4-42A3-A6B9-C37F76C9834F}"
-EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CondenserTests", "test\CondenserTests\CondenserTests.xproj", "{17E329C7-CAC6-4D6A-8D83-A4C68476DD04}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{32AEF73B-E6B6-48DF-BF84-16FFB8A9DF04}"
@@ -26,6 +24,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	EndProjectSection
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Condenser.Tests.Integration", "test\Condenser.Tests.Integration\Condenser.Tests.Integration.xproj", "{A7E55927-04D3-4EDB-B598-6754611DE8C6}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CondenserDotNet.Server", "src\CondenserDotNet.Server\CondenserDotNet.Server.xproj", "{F8A84ABC-60CD-4EF4-B55D-CB27996B1F78}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,10 +41,6 @@ Global
 		{941378DD-52CC-48CD-8CB5-CE9039721DF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{941378DD-52CC-48CD-8CB5-CE9039721DF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{941378DD-52CC-48CD-8CB5-CE9039721DF8}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5989BA60-D7F4-42A3-A6B9-C37F76C9834F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5989BA60-D7F4-42A3-A6B9-C37F76C9834F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5989BA60-D7F4-42A3-A6B9-C37F76C9834F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5989BA60-D7F4-42A3-A6B9-C37F76C9834F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{17E329C7-CAC6-4D6A-8D83-A4C68476DD04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{17E329C7-CAC6-4D6A-8D83-A4C68476DD04}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{17E329C7-CAC6-4D6A-8D83-A4C68476DD04}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -53,6 +49,10 @@ Global
 		{A7E55927-04D3-4EDB-B598-6754611DE8C6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A7E55927-04D3-4EDB-B598-6754611DE8C6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A7E55927-04D3-4EDB-B598-6754611DE8C6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8A84ABC-60CD-4EF4-B55D-CB27996B1F78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8A84ABC-60CD-4EF4-B55D-CB27996B1F78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8A84ABC-60CD-4EF4-B55D-CB27996B1F78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8A84ABC-60CD-4EF4-B55D-CB27996B1F78}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -60,8 +60,8 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{763C29CE-F23C-496B-8DC4-D60E5399CFD4} = {35C5514B-9E50-4AC6-BC6E-45BEAE7B7B4D}
 		{941378DD-52CC-48CD-8CB5-CE9039721DF8} = {CB18CD55-85E2-46FC-A55B-7DE23EABFAE5}
-		{5989BA60-D7F4-42A3-A6B9-C37F76C9834F} = {CB18CD55-85E2-46FC-A55B-7DE23EABFAE5}
 		{17E329C7-CAC6-4D6A-8D83-A4C68476DD04} = {6C110226-F12E-423E-A358-D680889C6CD7}
 		{A7E55927-04D3-4EDB-B598-6754611DE8C6} = {6C110226-F12E-423E-A358-D680889C6CD7}
+		{F8A84ABC-60CD-4EF4-B55D-CB27996B1F78} = {CB18CD55-85E2-46FC-A55B-7DE23EABFAE5}
 	EndGlobalSection
 EndGlobal
