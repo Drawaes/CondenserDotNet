@@ -25,6 +25,8 @@ namespace CondenserTests
             var routeContext = new RouteContext(context);
 
             await router.RouteAsync(routeContext);
+
+            Assert.Equal(service, routeContext.Handler.Target);
         }
     }
 }

@@ -72,7 +72,7 @@ namespace CondenserDotNet.Client
                     }
                     var content = await response.Content.ReadAsStringAsync();
                     var keys = JsonConvert.DeserializeObject<KeyValue[]>(content);
-                    var dictionary = keys.ToDictionary(kv => kv.Key.Substring(keyPath.Length).Replace('/', ':'), kv => kv.Value == null ? null : Encoding.UTF8.GetString(Convert.FromBase64String(kv.Value)), StringComparer.OrdinalIgnoreCase);
+                    var dictionary = keys.ToDictionary(kv => kv.Key.Substring(keyPath.Length).Replace('/', ':'), kv => kv.Value == null ? null : kv.ValueFromBase64()), StringComparer.OrdinalIgnoreCase);
                     UpdateDictionaryInList(indexOfDictionary, dictionary);
                     FireWatchers();
                 }
