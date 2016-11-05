@@ -24,11 +24,13 @@ namespace CondenserDotNet.Client.Internal
         {
             JsonSettings = new JsonSerializerSettings { ContractResolver = new DefaultContractResolver(), NullValueHandling = NullValueHandling.Ignore };
         }
+
         public static StringContent GetStringContent<T>(T objectForContent)
         {
             var returnValue = new StringContent(JsonConvert.SerializeObject(objectForContent, JsonSettings), Encoding.UTF8, "application/json");
             return returnValue;
         }
+
         public static StringContent GetStringContent(string stringForContent)
         {
             if(stringForContent == null)
