@@ -16,7 +16,7 @@ namespace CondenserTests
         public async void SetupCustomRouterAndRouteToService()
         {
             var router = new CustomRouter();
-            var service = new Service(new string[] {"/test1/test2/test3/test4/test5" }, "Service1Test", "Address1Test", 10000, new string[0]);
+            var service = new Service(new string[] {"/test1/test2/test3/test4/test5" }, "Service1Test", "Address1Test", 10000, "node1", new string[0]);
             router.AddNewService(service);
 
             var context = new DefaultHttpContext();
@@ -27,6 +27,23 @@ namespace CondenserTests
             await router.RouteAsync(routeContext);
 
             Assert.Equal(service, routeContext.Handler.Target);
+        }
+
+        [Fact]
+        public async void SetupCustomRouterAndLookForbadRoute()
+        {
+            var router = new CustomRouter();
+            var service = new Service(new string[] { "/test1/test2/test3/test4/test5" }, "Service1Test", "Address1Test", 10000, "node1", new string[0]);
+            router.AddNewService(service);
+
+            var context = new DefaultHttpContext();
+            context.Request.Method = "GET";
+            context.Request.Path = "/test2/test2/test3/test4/test5/test6";
+            var routeContext = new RouteContext(context);
+
+            await router.RouteAsync(routeContext);
+
+            Assert.Null(routeContext.Handler);
         }
     }
 }

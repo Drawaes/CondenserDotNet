@@ -7,9 +7,9 @@ namespace CondenserDotNet.Server.RoutingTrie
 {
     public class RadixTree<T>
     {
-        Node<T> _topNode = new Node<T>(new string[0], "");
-        object _writeLock = new object();
-        char[] _routeSplit = new char[] {'/'};
+        private readonly Node<T> _topNode = new Node<T>(new string[0], "");
+        private readonly object _writeLock = new object();
+        private static readonly char[] _routeSplit = new char[] {'/'};
 
         public void AddServiceToRoute(string route, T service)
         {

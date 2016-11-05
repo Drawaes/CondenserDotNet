@@ -14,8 +14,8 @@ namespace CondenserTests
         public void TestSplitting()
         {
             var tree = new RadixTree<Service>();
-            var service = new Service(new string[0], "Service1Test", "Address1Test", 10000, new string[0]);
-            var service2 = new Service(new string[0], "Service1Test", "Address2Test", 10000, new string[0]);
+            var service = new Service(new string[0], "Service1Test", "Address1Test", 10000, "node1", new string[0]);
+            var service2 = new Service(new string[0], "Service1Test", "Address2Test", 10000, "node1", new string[0]);
 
             tree.AddServiceToRoute("/test1/test2/test3/test4/test5", service);
             tree.AddServiceToRoute("/test1/test2/test3/test4/test5/test6", service);
@@ -44,8 +44,8 @@ namespace CondenserTests
         public void TestCompression()
         {
             var tree = new RadixTree<Service>();
-            var service = new Service(new string[0], "Service1Test", "Address1Test", 10000, new string[0]);
-            var service2 = new Service(new string[0], "Service1Test", "Address2Test", 10000, new string[0]);
+            var service = new Service(new string[0], "Service1Test", "Address1Test", 10000, "node1", new string[0]);
+            var service2 = new Service(new string[0], "Service1Test", "Address2Test", 10000, "node1", new string[0]);
 
             tree.AddServiceToRoute("/test1/test2/test3/test4/test5", service);
             tree.AddServiceToRoute("/test1/test2/test3/test4/test5/test6", service2);
@@ -70,8 +70,8 @@ namespace CondenserTests
         public void TestRemovingAService()
         {
             var tree = new RadixTree<Service>();
-            var service = new Service(new string[0], "Service1Test", "Address1Test", 10000, new string[0]);
-            var service2 = new Service(new string[0], "Service1Test", "Address2Test", 10000, new string[0]);
+            var service = new Service(new string[0], "Service1Test", "Address1Test", 10000, "node1", new string[0]);
+            var service2 = new Service(new string[0], "Service1Test", "Address2Test", 10000, "node1", new string[0]);
 
             tree.AddServiceToRoute("/test1/test2/test3/test4/test5", service);
             tree.AddServiceToRoute("/test1/test2/test3/test4/test5/test6", service2);
