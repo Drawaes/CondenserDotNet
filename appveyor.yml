@@ -36,6 +36,6 @@ deploy:
   server: https://www.myget.org/F/condenserdotnet/api/v2/package
   api_key:
     secure: 5mBb0A2rlwk1Iq6FEo94XSORm9etc3xPn0oLZ8dIJ6Hmm1G7quqf+Bz6fm+ft+FK
-  skip_symbols: false
+  skip_symbols: true
   on:
     branch: master
