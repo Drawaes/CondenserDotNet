@@ -48,7 +48,7 @@ namespace CondenserDotNet.Client
                 Name = serviceManager.ServiceName,
                 Port = serviceManager.ServicePort,
                 Checks = new List<HealthCheck>(),
-                Tags = new List<string>(serviceManager.SupportedUrls.Select(u => $"url={u}"))
+                Tags = new List<string>(serviceManager.SupportedUrls.Select(u => $"urlprefix-{u}"))
             };
             if (serviceManager.HttpCheck != null)
             {
