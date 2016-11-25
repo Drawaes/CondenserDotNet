@@ -28,6 +28,10 @@ namespace CondenserDotNet.Client
                 Interval = $"{intervalInSeconds}s",
                 Name = $"{serviceManager.ServiceId}:HttpCheck"
             };
+            if(!check.HTTP.StartsWith("HTTP",StringComparison.OrdinalIgnoreCase))
+            {
+                check.HTTP = "http://" + check.HTTP;
+            }
             serviceManager.HttpCheck = check;
             return serviceManager;
         }
