@@ -89,7 +89,7 @@ namespace CondenserDotNet.Client
                 {
                     if (watch.KeyToWatch == null)
                     {
-                        Task.Run(watch.CallBack);
+                        Task.Run(watch.CallbackAllKeys);
                     }
                     else
                     {
@@ -98,7 +98,7 @@ namespace CondenserDotNet.Client
                         if (StringComparer.OrdinalIgnoreCase.Compare(watch.CurrentValue, newValue) != 0)
                         {
                             watch.CurrentValue = newValue;
-                            ThreadPool.QueueUserWorkItem(state => ((Action)state).Invoke(), watch.CallBack);
+                            Task.Run(() => watch.CallBack(newValue));
                         }
                     }
                 }
@@ -155,11 +155,11 @@ namespace CondenserDotNet.Client
         {
             lock (_configWatchers)
             {
-                _configWatchers.Add(new ConfigurationWatcher() { CallBack = callback });
+                _configWatchers.Add(new ConfigurationWatcher() { CallbackAllKeys = callback });
             }
         }
 
-        public void AddWatchOnSingleKey(string keyToWatch, Action callback)
+        public void AddWatchOnSingleKey(string keyToWatch, Action<string> callback)
         {
             lock (_configWatchers)
             {

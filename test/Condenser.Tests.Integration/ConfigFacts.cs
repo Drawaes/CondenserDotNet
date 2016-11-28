@@ -76,7 +76,7 @@ namespace Condenser.Tests.Integration
             using (var manager = new ServiceManager("TestService"))
             {
                 var e = new ManualResetEvent(false);
-                manager.Config.AddWatchOnSingleKey("test1", () => e.Set());
+                manager.Config.AddWatchOnSingleKey("test1", keyValue => e.Set());
 
                 await manager.Config.SetKeyAsync($"org/{keyid}/test1", _value1);
                 await manager.Config.AddUpdatingPathAsync($"org/{keyid}/");
@@ -97,7 +97,7 @@ namespace Condenser.Tests.Integration
             using (var manager = new ServiceManager("TestService"))
             {
                 var e = new ManualResetEvent(false);
-                manager.Config.AddWatchOnSingleKey("test1", () => e.Set());
+                manager.Config.AddWatchOnSingleKey("test1", keyValue => e.Set());
 
                 await manager.Config.AddUpdatingPathAsync($"org/{keyid}/");
 
