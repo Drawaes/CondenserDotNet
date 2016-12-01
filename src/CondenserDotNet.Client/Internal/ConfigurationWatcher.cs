@@ -8,7 +8,8 @@ namespace CondenserDotNet.Client.Internal
     internal class ConfigurationWatcher
     {
         public string CurrentValue { get; set; }
-        public Action CallBack { get; set; }
+        public Action<string> CallBack { get; set; }
+        public Action CallbackAllKeys { get;set;}
         public string KeyToWatch { get; set; }
     }
 }

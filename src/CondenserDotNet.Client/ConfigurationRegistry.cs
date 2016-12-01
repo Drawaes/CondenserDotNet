@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using CondenserDotNet.Client.Configuration;
 using CondenserDotNet.Client.DataContracts;
 using CondenserDotNet.Client.Internal;
 using Newtonsoft.Json;
@@ -13,13 +14,22 @@ namespace CondenserDotNet.Client
     public class ConfigurationRegistry : IConfigurationRegistry
     {
         private readonly ServiceManager _serviceManager;
-        private List<Dictionary<string, string>> _configKeys = new List<Dictionary<string, string>>();
-        private List<ConfigurationWatcher> _configWatchers = new List<ConfigurationWatcher>();
+        private readonly List<Dictionary<string, string>> _configKeys = new List<Dictionary<string, string>>();
+        private readonly List<ConfigurationWatcher> _configWatchers = new List<ConfigurationWatcher>();
+        private IKeyParser _parser = SimpleKeyValueParser.Instance;
+
 
         internal ConfigurationRegistry(ServiceManager serviceManager)
         {
             _serviceManager = serviceManager;
         }
+
+        public IEnumerable<string> AllKeys => _configKeys.SelectMany(x => x.Keys);
+        public void UpdateKeyParser(IKeyParser parser)
+        {
+            _parser = parser;
+        }
+
 
         public Task<bool> AddStaticKeyPathAsync(string keyPath)
         {
@@ -35,8 +45,14 @@ namespace CondenserDotNet.Client
                 return -1;
             }
             var content = await response.Content.ReadAsStringAsync();
-            var keys = JsonConvert.DeserializeObject<KeyValue[]>(content);
-            var dictionary = keys.ToDictionary(kv => kv.Key.Substring(keyPath.Length).Replace('/', ':'), kv => kv.Value == null ? null : kv.ValueFromBase64(), StringComparer.OrdinalIgnoreCase);
+
+            var keys = JsonConvert.DeserializeObject<KeyValue[]>(content)
+                .SelectMany(k => _parser.Parse(k));
+
+            var dictionary = keys.ToDictionary(
+                kv => kv.Key.Substring(keyPath.Length).Replace('/', ':'), 
+                kv => kv.IsDerivedKey ? kv.Value : kv.Value == null ? null : kv.ValueFromBase64(), StringComparer.OrdinalIgnoreCase);
+
             return AddNewDictionaryToList(dictionary);
         }
 
@@ -89,7 +105,7 @@ namespace CondenserDotNet.Client
                 {
                     if (watch.KeyToWatch == null)
                     {
-                        Task.Run(watch.CallBack);
+                        Task.Run(watch.CallbackAllKeys);
                     }
                     else
                     {
@@ -98,7 +114,7 @@ namespace CondenserDotNet.Client
                         if (StringComparer.OrdinalIgnoreCase.Compare(watch.CurrentValue, newValue) != 0)
                         {
                             watch.CurrentValue = newValue;
-                            ThreadPool.QueueUserWorkItem(state => ((Action)state).Invoke(), watch.CallBack);
+                            Task.Run(() => watch.CallBack(newValue));
                         }
                     }
                 }
@@ -155,11 +171,11 @@ namespace CondenserDotNet.Client
         {
             lock (_configWatchers)
             {
-                _configWatchers.Add(new ConfigurationWatcher() { CallBack = callback });
+                _configWatchers.Add(new ConfigurationWatcher() { CallbackAllKeys = callback });
             }
         }
 
-        public void AddWatchOnSingleKey(string keyToWatch, Action callback)
+        public void AddWatchOnSingleKey(string keyToWatch, Action<string> callback)
         {
             lock (_configWatchers)
             {
