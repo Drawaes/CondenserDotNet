@@ -13,11 +13,14 @@ namespace CondenserDotNet.Client
 {
     public class ConfigurationRegistry : IConfigurationRegistry
     {
+        private const string ConsulPath = "/";
+        private const char ConsulPathChar = '/';
+        private const char CorePath = ':';
+
         private readonly ServiceManager _serviceManager;
         private readonly List<Dictionary<string, string>> _configKeys = new List<Dictionary<string, string>>();
         private readonly List<ConfigurationWatcher> _configWatchers = new List<ConfigurationWatcher>();
         private IKeyParser _parser = SimpleKeyValueParser.Instance;
-
 
         internal ConfigurationRegistry(ServiceManager serviceManager)
         {
@@ -33,7 +36,7 @@ namespace CondenserDotNet.Client
 
         public Task<bool> AddStaticKeyPathAsync(string keyPath)
         {
-            if (!keyPath.EndsWith("/")) keyPath = keyPath + "/";
+            if (!keyPath.EndsWith(ConsulPath)) keyPath = keyPath + ConsulPath;
             return AddInitialKeyPathAsync(keyPath).ContinueWith(r => r.Result > -1);
         }
 
@@ -46,11 +49,12 @@ namespace CondenserDotNet.Client
             }
             var content = await response.Content.ReadAsStringAsync();
 
-            var keys = JsonConvert.DeserializeObject<KeyValue[]>(content)
+            var keys = JsonConvert.DeserializeObject<KeyValue[]>(content);
+            var parsedKeys = keys
                 .SelectMany(k => _parser.Parse(k));
 
-            var dictionary = keys.ToDictionary(
-                kv => kv.Key.Substring(keyPath.Length).Replace('/', ':'), 
+            var dictionary = parsedKeys.ToDictionary(
+                kv => kv.Key.Substring(keyPath.Length).Replace(ConsulPathChar, CorePath), 
                 kv => kv.IsDerivedKey ? kv.Value : kv.Value == null ? null : kv.ValueFromBase64(), StringComparer.OrdinalIgnoreCase);
 
             return AddNewDictionaryToList(dictionary);
@@ -58,7 +62,7 @@ namespace CondenserDotNet.Client
 
         public async Task AddUpdatingPathAsync(string keyPath)
         {
-            if(!keyPath.EndsWith("/")) keyPath = keyPath + "/";
+            if(!keyPath.EndsWith(ConsulPath)) keyPath = keyPath + ConsulPath;
             var intialDictionary = await AddInitialKeyPathAsync(keyPath);
             if (intialDictionary == -1)
             {
@@ -88,7 +92,7 @@ namespace CondenserDotNet.Client
                     }
                     var content = await response.Content.ReadAsStringAsync();
                     var keys = JsonConvert.DeserializeObject<KeyValue[]>(content);
-                    var dictionary = keys.ToDictionary(kv => kv.Key.Substring(keyPath.Length).Replace('/', ':'), kv => kv.Value == null ? null : kv.ValueFromBase64(), StringComparer.OrdinalIgnoreCase);
+                    var dictionary = keys.ToDictionary(kv => kv.Key.Substring(keyPath.Length).Replace(ConsulPathChar, CorePath), kv => kv.Value == null ? null : kv.ValueFromBase64(), StringComparer.OrdinalIgnoreCase);
                     UpdateDictionaryInList(indexOfDictionary, dictionary);
                     FireWatchers();
                 }

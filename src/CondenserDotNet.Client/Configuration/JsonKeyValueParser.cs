@@ -13,7 +13,7 @@ namespace CondenserDotNet.Client.Configuration
     {
         private readonly Stack<string> _context = new Stack<string>();
 
-        private readonly IDictionary<string, string> _data =
+        private readonly SortedDictionary<string, string> _data =
             new SortedDictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 
         private string _currentPath;
