@@ -17,7 +17,7 @@ namespace Configuration
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonConsul(ServiceManager.Config);
 
-            ServiceManager.Config.AddStaticKeyPathAsync("EVO").Wait();
+            ServiceManager.Config.AddUpdatingPathAsync("EVO").Wait();
 
             Configuration = builder.Build();
         }
@@ -30,8 +30,7 @@ namespace Configuration
             services.AddRouting();
 
             services.AddOptions();
-            services.Configure<ConsulConfig>
-                (Configuration.GetSection("ConsulConfig"));
+            services.ConfigureReloadable<ConsulConfig>(Configuration, ServiceManager.Config);
 
             services.AddSingleton(Configuration);
         }

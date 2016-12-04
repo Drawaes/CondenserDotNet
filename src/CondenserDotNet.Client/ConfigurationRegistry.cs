@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -47,15 +48,8 @@ namespace CondenserDotNet.Client
             {
                 return -1;
             }
-            var content = await response.Content.ReadAsStringAsync();
-
-            var keys = JsonConvert.DeserializeObject<KeyValue[]>(content);
-            var parsedKeys = keys
-                .SelectMany(k => _parser.Parse(k));
-
-            var dictionary = parsedKeys.ToDictionary(
-                kv => kv.Key.Substring(keyPath.Length).Replace(ConsulPathChar, CorePath), 
-                kv => kv.IsDerivedKey ? kv.Value : kv.Value == null ? null : kv.ValueFromBase64(), StringComparer.OrdinalIgnoreCase);
+            
+            var dictionary = await BuildDictionaryAsync(keyPath, response);
 
             return AddNewDictionaryToList(dictionary);
         }
@@ -63,15 +57,15 @@ namespace CondenserDotNet.Client
         public async Task AddUpdatingPathAsync(string keyPath)
         {
             if(!keyPath.EndsWith(ConsulPath)) keyPath = keyPath + ConsulPath;
-            var intialDictionary = await AddInitialKeyPathAsync(keyPath);
-            if (intialDictionary == -1)
+            var initialDictionary = await AddInitialKeyPathAsync(keyPath);
+            if (initialDictionary == -1)
             {
-                var newDicitonary = new Dictionary<string, string>();
-                intialDictionary = AddNewDictionaryToList(newDicitonary);
+                var newDictionary = new Dictionary<string, string>();
+                initialDictionary = AddNewDictionaryToList(newDictionary);
             }
             //We got values so lets start watching but we aren't waiting for this we will let it run
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-            WatchingLoop(intialDictionary, keyPath);
+            WatchingLoop(initialDictionary, keyPath);
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         }
 
@@ -90,15 +84,27 @@ namespace CondenserDotNet.Client
                         //There is some error we need to do something 
                         continue;
                     }
-                    var content = await response.Content.ReadAsStringAsync();
-                    var keys = JsonConvert.DeserializeObject<KeyValue[]>(content);
-                    var dictionary = keys.ToDictionary(kv => kv.Key.Substring(keyPath.Length).Replace(ConsulPathChar, CorePath), kv => kv.Value == null ? null : kv.ValueFromBase64(), StringComparer.OrdinalIgnoreCase);
+                    var dictionary = await BuildDictionaryAsync(keyPath, response);
                     UpdateDictionaryInList(indexOfDictionary, dictionary);
                     FireWatchers();
                 }
             }
             catch (TaskCanceledException) { /* nom nom */}
             catch (ObjectDisposedException) { /* nom nom */ }
+        }
+
+        private async Task<Dictionary<string, string>> BuildDictionaryAsync(string keyPath, HttpResponseMessage response)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            var keys = JsonConvert.DeserializeObject<KeyValue[]>(content);
+
+            var parsedKeys = keys.SelectMany(k => _parser.Parse(k));
+
+            var dictionary = parsedKeys.ToDictionary(
+                kv => kv.Key.Substring(keyPath.Length).Replace(ConsulPathChar, CorePath),
+                kv => kv.IsDerivedKey ? kv.Value : kv.Value == null ? null : kv.ValueFromBase64(),
+                StringComparer.OrdinalIgnoreCase);
+            return dictionary;
         }
 
         private void FireWatchers()
