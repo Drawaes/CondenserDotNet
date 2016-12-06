@@ -1,4 +1,5 @@
-﻿using CondenserDotNet.Client;
+﻿using System;
+using CondenserDotNet.Client;
 using CondenserDotNet.Client.Configuration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -7,37 +8,43 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Configuration
 {
-    public class Startup
+    public class Startup : IStartup
     {
-        public static ServiceManager ServiceManager;
+        private readonly ServiceManager _manager;
 
-        public Startup(IHostingEnvironment env)
+        public Startup(IHostingEnvironment env,
+            ServiceManager manager)
         {
+            _manager = manager;
+
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
-                .AddJsonConsul(ServiceManager.Config);
+                .AddJsonConsul(manager.Config);
 
-            ServiceManager.Config.AddUpdatingPathAsync("EVO").Wait();
+            manager.Config
+                .AddUpdatingPathAsync(env.EnvironmentName)
+                .Wait();
 
             Configuration = builder.Build();
         }
 
-        public IConfiguration Configuration { get; set; }
+        public IConfiguration Configuration { get; }
 
-        public void ConfigureServices(IServiceCollection services)
+        public void Configure(IApplicationBuilder app)
+        {
+            app.UseMvcWithDefaultRoute();
+        }
+
+        IServiceProvider IStartup.ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
             services.AddRouting();
 
             services.AddOptions();
-            services.ConfigureReloadable<ConsulConfig>(Configuration, ServiceManager.Config);
+            services.ConfigureReloadable<ConsulConfig>(Configuration, _manager.Config);
 
             services.AddSingleton(Configuration);
-        }
-
-        public void Configure(IApplicationBuilder app)
-        {
-            app.UseMvcWithDefaultRoute();
+            return services.BuildServiceProvider();
         }
     }
 }

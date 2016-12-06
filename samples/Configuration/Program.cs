@@ -1,6 +1,7 @@
-﻿using CondenserDotNet.Client;
+﻿using System;
+using CondenserDotNet.Client;
 using Microsoft.AspNetCore.Hosting;
-using Newtonsoft.Json;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Configuration
 {
@@ -10,20 +11,30 @@ namespace Configuration
         {
             var serviceManager = new ServiceManager("TestService");
 
-            var setting = JsonConvert.SerializeObject(new ConsulConfig
+            //This setup would be done outside of this sample.  
+            //The environment variable is passed to the startup to bootstrap
+            var environment = "Org1";
+            Environment
+                .SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", environment);
+
+            var config = new ConsulConfig
             {
                 Setting = "Test"
-            });
+            };
 
-            serviceManager.Config.SetKeyAsync("EVO/ConsulConfig", setting)
+            serviceManager.Config.SetKeyJsonAsync($"{environment}/ConsulConfig", config)
                 .Wait();
 
-            Startup.ServiceManager = serviceManager;
+            //End of set up
 
             var host = new WebHostBuilder()
                 .UseKestrel()
                 .UseUrls($"http://*:{serviceManager.ServicePort}")
-                .UseStartup<Startup>()
+                .ConfigureServices(services =>
+                {
+                    services.AddSingleton(serviceManager);
+                    services.AddSingleton<IStartup, Startup>();
+                })
                 .Build();
 
             host.Run();
