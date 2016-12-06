@@ -16,25 +16,26 @@ namespace CondenserDotNet.Client
 {
     public class ServiceManager : IDisposable
     {
-        private HttpClient _httpClient;
-        private bool _disposed = false;
-        private string _serviceName;
-        private string _serviceId;
-        private List<string> _supportedUrls = new List<string>();
+        private readonly HttpClient _httpClient;
+        private bool _disposed;
+        private readonly string _serviceName;
+        private readonly string _serviceId;
+        private readonly List<string> _supportedUrls = new List<string>();
         private HealthCheck _httpCheck;
         private TtlCheck _ttlCheck;
-        private CancellationTokenSource _cancel = new CancellationTokenSource();
+        private readonly CancellationTokenSource _cancel = new CancellationTokenSource();
         private readonly ConfigurationRegistry _config;
         private readonly ServiceRegistry _services;
         private readonly LeaderRegistry _leaders;
+        private const int ConsulPort = 8500;
+        private const string LocalHost = "localhost";
 
-        public ServiceManager(string serviceName) : this(serviceName, $"{serviceName}:{Dns.GetHostName()}", "localhost", 8500) { }
-        public ServiceManager(string serviceName, string serviceId) : this(serviceName, serviceId, "localhost", 8500) { }
+        public ServiceManager(string serviceName) : this(serviceName, $"{serviceName}:{Dns.GetHostName()}", LocalHost, ConsulPort) { }
+        public ServiceManager(string serviceName, string serviceId) : this(serviceName, serviceId, LocalHost, ConsulPort) { }
         public ServiceManager(string serviceName, string agentAddress, int agentPort) : this(serviceName, $"{serviceName}:{Dns.GetHostName()}", agentAddress, agentPort) { }
         public ServiceManager(string serviceName, string serviceId, string agentAddress, int agentPort)
         {
-            _httpClient = new HttpClient();
-            _httpClient.BaseAddress = new Uri($"http://{agentAddress}:{agentPort}");
+            _httpClient = new HttpClient {BaseAddress = new Uri($"http://{agentAddress}:{agentPort}")};
             _serviceId = serviceId;
             _serviceName = serviceName;
             _config = new ConfigurationRegistry(this);

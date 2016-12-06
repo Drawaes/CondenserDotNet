@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CondenserDotNet.Client.DataContracts
 {
-    internal class KeyValue
+    public class KeyValue
     {
         public string Key { get; set; }
         public string Value { get; set; }
@@ -15,5 +15,7 @@ namespace CondenserDotNet.Client.DataContracts
         {
             return Encoding.UTF8.GetString(Convert.FromBase64String(Value));
         }
+
+        public bool IsDerivedKey { get; set; }
     }
 }

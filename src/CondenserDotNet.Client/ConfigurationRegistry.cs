@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using CondenserDotNet.Client.Configuration;
 using CondenserDotNet.Client.DataContracts;
 using CondenserDotNet.Client.Internal;
 using Newtonsoft.Json;
@@ -12,18 +14,30 @@ namespace CondenserDotNet.Client
 {
     public class ConfigurationRegistry : IConfigurationRegistry
     {
+        private const string ConsulPath = "/";
+        private const char ConsulPathChar = '/';
+        private const char CorePath = ':';
+
         private readonly ServiceManager _serviceManager;
-        private List<Dictionary<string, string>> _configKeys = new List<Dictionary<string, string>>();
-        private List<ConfigurationWatcher> _configWatchers = new List<ConfigurationWatcher>();
+        private readonly List<Dictionary<string, string>> _configKeys = new List<Dictionary<string, string>>();
+        private readonly List<ConfigurationWatcher> _configWatchers = new List<ConfigurationWatcher>();
+        private IKeyParser _parser = SimpleKeyValueParser.Instance;
 
         internal ConfigurationRegistry(ServiceManager serviceManager)
         {
             _serviceManager = serviceManager;
         }
 
+        public IEnumerable<string> AllKeys => _configKeys.SelectMany(x => x.Keys);
+        public void UpdateKeyParser(IKeyParser parser)
+        {
+            _parser = parser;
+        }
+
+
         public Task<bool> AddStaticKeyPathAsync(string keyPath)
         {
-            if (!keyPath.EndsWith("/")) keyPath = keyPath + "/";
+            if (!keyPath.EndsWith(ConsulPath)) keyPath = keyPath + ConsulPath;
             return AddInitialKeyPathAsync(keyPath).ContinueWith(r => r.Result > -1);
         }
 
@@ -34,24 +48,24 @@ namespace CondenserDotNet.Client
             {
                 return -1;
             }
-            var content = await response.Content.ReadAsStringAsync();
-            var keys = JsonConvert.DeserializeObject<KeyValue[]>(content);
-            var dictionary = keys.ToDictionary(kv => kv.Key.Substring(keyPath.Length).Replace('/', ':'), kv => kv.Value == null ? null : kv.ValueFromBase64(), StringComparer.OrdinalIgnoreCase);
+            
+            var dictionary = await BuildDictionaryAsync(keyPath, response);
+
             return AddNewDictionaryToList(dictionary);
         }
 
         public async Task AddUpdatingPathAsync(string keyPath)
         {
-            if(!keyPath.EndsWith("/")) keyPath = keyPath + "/";
-            var intialDictionary = await AddInitialKeyPathAsync(keyPath);
-            if (intialDictionary == -1)
+            if(!keyPath.EndsWith(ConsulPath)) keyPath = keyPath + ConsulPath;
+            var initialDictionary = await AddInitialKeyPathAsync(keyPath);
+            if (initialDictionary == -1)
             {
-                var newDicitonary = new Dictionary<string, string>();
-                intialDictionary = AddNewDictionaryToList(newDicitonary);
+                var newDictionary = new Dictionary<string, string>();
+                initialDictionary = AddNewDictionaryToList(newDictionary);
             }
             //We got values so lets start watching but we aren't waiting for this we will let it run
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-            WatchingLoop(intialDictionary, keyPath);
+            WatchingLoop(initialDictionary, keyPath);
 #pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         }
 
@@ -70,15 +84,27 @@ namespace CondenserDotNet.Client
                         //There is some error we need to do something 
                         continue;
                     }
-                    var content = await response.Content.ReadAsStringAsync();
-                    var keys = JsonConvert.DeserializeObject<KeyValue[]>(content);
-                    var dictionary = keys.ToDictionary(kv => kv.Key.Substring(keyPath.Length).Replace('/', ':'), kv => kv.Value == null ? null : kv.ValueFromBase64(), StringComparer.OrdinalIgnoreCase);
+                    var dictionary = await BuildDictionaryAsync(keyPath, response);
                     UpdateDictionaryInList(indexOfDictionary, dictionary);
                     FireWatchers();
                 }
             }
             catch (TaskCanceledException) { /* nom nom */}
             catch (ObjectDisposedException) { /* nom nom */ }
+        }
+
+        private async Task<Dictionary<string, string>> BuildDictionaryAsync(string keyPath, HttpResponseMessage response)
+        {
+            var content = await response.Content.ReadAsStringAsync();
+            var keys = JsonConvert.DeserializeObject<KeyValue[]>(content);
+
+            var parsedKeys = keys.SelectMany(k => _parser.Parse(k));
+
+            var dictionary = parsedKeys.ToDictionary(
+                kv => kv.Key.Substring(keyPath.Length).Replace(ConsulPathChar, CorePath),
+                kv => kv.IsDerivedKey ? kv.Value : kv.Value == null ? null : kv.ValueFromBase64(),
+                StringComparer.OrdinalIgnoreCase);
+            return dictionary;
         }
 
         private void FireWatchers()
