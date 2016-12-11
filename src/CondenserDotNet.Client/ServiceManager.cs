@@ -35,7 +35,7 @@ namespace CondenserDotNet.Client
         public ServiceManager(string serviceName, string agentAddress, int agentPort) : this(serviceName, $"{serviceName}:{Dns.GetHostName()}", agentAddress, agentPort) { }
         public ServiceManager(string serviceName, string serviceId, string agentAddress, int agentPort)
         {
-            _httpClient = new HttpClient {BaseAddress = new Uri($"http://{agentAddress}:{agentPort}")};
+            _httpClient = new HttpClient { BaseAddress = new Uri($"http://{agentAddress}:{agentPort}") };
             _serviceId = serviceId;
             _serviceName = serviceName;
             _config = new ConfigurationRegistry(this);
@@ -52,6 +52,7 @@ namespace CondenserDotNet.Client
         public ConfigurationRegistry Config => _config;
         public string ServiceId => _serviceId;
         public string ServiceName => _serviceName;
+        public TimeSpan DeregisterIfCriticalAfter { get; internal set; }
         public ServiceRegistry Services => _services;
         public bool IsRegistered => RegisteredService != null;
         public TtlCheck TtlCheck { get { return _ttlCheck; } internal set { _ttlCheck = value; } }

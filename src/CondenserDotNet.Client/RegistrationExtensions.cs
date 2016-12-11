@@ -42,13 +42,13 @@ namespace CondenserDotNet.Client
             return serviceManager;
         }
 
-        public static ServiceManager DeregisterIfCriticalAfterMinutes(this ServiceManager serviceManager, int minutes)
+        public static ServiceManager WithDeregisterIfCriticalAfterMinutes(this ServiceManager serviceManager, int minutes)
         {
             serviceManager.DeregisterIfCriticalAfter = new TimeSpan(0,minutes,0);
             return serviceManager;
         }
 
-        public static ServiceManager DeregisterIfCriticalAfter(this ServiceManager serviceManager, TimeSpan timeSpan)
+        public static ServiceManager WithDeregisterIfCriticalAfter(this ServiceManager serviceManager, TimeSpan timeSpan)
         {
             if(timeSpan.TotalMilliseconds < 0)
             {
