@@ -42,6 +42,22 @@ namespace CondenserDotNet.Client
             return serviceManager;
         }
 
+        public static ServiceManager WithDeregisterIfCriticalAfterMinutes(this ServiceManager serviceManager, int minutes)
+        {
+            serviceManager.DeregisterIfCriticalAfter = new TimeSpan(0,minutes,0);
+            return serviceManager;
+        }
+
+        public static ServiceManager WithDeregisterIfCriticalAfter(this ServiceManager serviceManager, TimeSpan timeSpan)
+        {
+            if(timeSpan.TotalMilliseconds < 0)
+            {
+                throw new ArgumentOutOfRangeException("You are required to register with a timespan that is more than zero milliseconds");
+            }
+            serviceManager.DeregisterIfCriticalAfter = timeSpan;
+            return serviceManager;
+        }
+
         public static async Task<bool> RegisterServiceAsync(this ServiceManager serviceManager)
         {
             Service s = new Service()
@@ -67,11 +83,19 @@ namespace CondenserDotNet.Client
                 for (int i = 0; i < s.Checks.Count; i++)
                 {
                     s.Checks[i].Name = $"service:{s.ID}:{i + 1}";
+                    if (serviceManager.DeregisterIfCriticalAfter != default(TimeSpan))
+                    {
+                        s.Checks[i].DeregisterCriticalServiceAfter = (int)serviceManager.DeregisterIfCriticalAfter.TotalMilliseconds + "ms";
+                    }
                 }
             }
             else if (s.Checks.Count == 1)
             {
                 s.Checks[0].Name = $"service:{s.ID}";
+                if (serviceManager.DeregisterIfCriticalAfter != default(TimeSpan))
+                {
+                    s.Checks[0].DeregisterCriticalServiceAfter = (int)serviceManager.DeregisterIfCriticalAfter.TotalMilliseconds + "ms";
+                }
             }
             var content = HttpUtils.GetStringContent(s);
             var response = await serviceManager.Client.PutAsync("/v1/agent/service/register", content);
