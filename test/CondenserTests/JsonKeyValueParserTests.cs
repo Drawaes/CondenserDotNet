@@ -1,8 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using CondenserDotNet.Client.Configuration;
 using CondenserDotNet.Client.DataContracts;
+using CondenserTests.Fakes;
 using Newtonsoft.Json;
 using Xunit;
 
@@ -10,6 +12,41 @@ namespace CondenserTests
 {
     public class JsonKeyValueParserTests
     {
+        [Fact]
+        public void CanParseList()
+        {
+            var fakeConfigs = new List<FakeConfig>
+            {
+                new FakeConfig
+                {
+                    Setting1 = "one",
+                    Setting2 = "two"
+                },
+                new FakeConfig
+                {
+                    Setting1 = "three",
+                    Setting2 = "four"
+                }
+            };
+            var key = "my/config/section/objectlist";
+            var json = JsonConvert.SerializeObject(fakeConfigs);
+            var parser = new JsonKeyValueParser();
+            var keyValue = new KeyValue
+            {
+                Key = key,
+                Value = Convert.ToBase64String(Encoding.UTF8.GetBytes(json))
+            };
+
+            var keys = parser.Parse(keyValue)
+                .ToArray();
+
+            Assert.Equal(4, keys.Length);
+            Assert.Equal("my/config/section/objectlist:0:Setting1", keys[0].Key);
+            Assert.Equal("my/config/section/objectlist:0:Setting2", keys[1].Key);
+            Assert.Equal("my/config/section/objectlist:1:Setting1", keys[2].Key);
+            Assert.Equal("my/config/section/objectlist:1:Setting2", keys[3].Key);
+        }
+
         [Fact]
         public void CanParseJsonObjectToRequireOptionsFormat()
         {

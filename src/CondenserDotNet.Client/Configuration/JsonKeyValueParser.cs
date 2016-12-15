@@ -31,9 +31,9 @@ namespace CondenserDotNet.Client.Configuration
                 DateParseHandling = DateParseHandling.None
             };
 
-            var jsonConfig = JObject.Load(_reader);
+            var jsonConfig = JToken.Load(_reader);
 
-            VisitJObject(jsonConfig);
+            VisitToken(jsonConfig);
 
             foreach (var kv in _data)
                 yield return new KeyValue
