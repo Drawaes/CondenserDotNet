@@ -11,5 +11,6 @@ namespace CondenserDotNet.Client.DataContracts
         public string Interval { get; set; }
         public string TTL { get; set; }
         public string Name { get; set; }
+        public string DeregisterCriticalServiceAfter { get;set;}
     }
 }
