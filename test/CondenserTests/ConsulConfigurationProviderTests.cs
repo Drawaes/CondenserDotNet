@@ -1,4 +1,5 @@
-﻿using CondenserDotNet.Client.Configuration;
+﻿using System.Collections.Generic;
+using CondenserDotNet.Client.Configuration;
 using CondenserTests.Fakes;
 using Microsoft.Extensions.Configuration;
 using Xunit;
@@ -23,6 +24,29 @@ namespace CondenserTests
 
             Assert.Equal("abc", config.Setting1);
             Assert.Equal("def", config.Setting2);
+        }
+
+        [Fact]
+        public void CanBindConfiguratonSectionAsList()
+        {
+            var registry = new FakeConfigurationRegistry();
+            registry.SetKeyAsync("my/config/section/objectlist:0:Setting1", "1");
+            registry.SetKeyAsync("my/config/section/objectlist:0:Setting2", "2");
+            registry.SetKeyAsync("my/config/section/objectlist:1:Setting1", "3");
+            registry.SetKeyAsync("my/config/section/objectlist:1:Setting2", "4");
+
+            var builder = new ConfigurationBuilder()
+                .AddJsonConsul(registry)
+                .Build();
+
+            var config = new List<FakeConfig>();
+            builder.GetSection("my/config/section/objectlist").Bind(config);
+
+            Assert.Equal(2, config.Count);
+            Assert.Equal("1", config[0].Setting1);
+            Assert.Equal("2", config[0].Setting2);
+            Assert.Equal("3", config[1].Setting1);
+            Assert.Equal("4", config[1].Setting2);
         }
 
         [Fact]
