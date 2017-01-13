@@ -13,10 +13,12 @@ namespace ServiceRegistration
     {
         public static void Main(string[] args)
         {
-            var serviceManager = new ServiceManager("TestService");
-            serviceManager.AddHttpHealthCheck("health",10)
-                .AddApiUrl("/api/someObject")
-                .AddApiUrl("/api/someOtherObject")
+            var serviceManager = new ServiceManager("TestService",
+                "localhost", 8500);
+
+            serviceManager.AddHttpHealthCheck("/Health",10)
+                .AddApiUrl("/api/some/someobject")
+                .AddApiUrl("/api/some/someotherobject")
                 .RegisterServiceAsync().Wait();
             
             var host = new WebHostBuilder()

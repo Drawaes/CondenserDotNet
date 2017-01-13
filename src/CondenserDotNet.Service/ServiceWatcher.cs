@@ -1,12 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using CondenserDotNet.Client.DataContracts;
+using CondenserDotNet.Service.DataContracts;
 using Newtonsoft.Json;
 
-namespace CondenserDotNet.Client.Internal
+namespace CondenserDotNet.Service
 {
     internal class ServiceWatcher
     {
@@ -15,16 +14,20 @@ namespace CondenserDotNet.Client.Internal
         static readonly ThreadLocal<Random> random = new ThreadLocal<Random>(() => new Random(Interlocked.Increment(ref seed)));
 
         private readonly AsyncManualResetEvent<bool> _haveFirstResults = new AsyncManualResetEvent<bool>();
-        private readonly ServiceManager _serviceManager;
+
         private readonly string _serviceName;
+        private readonly HttpClient _client;
+        private readonly CancellationToken _cancel;
         private readonly string _lookupUrl;
         private InformationServiceSet[] _serviceInstances;
         private WatcherState _state = WatcherState.NotInitialized;
 
-        public ServiceWatcher(ServiceManager serviceManager, string serviceName)
+        public ServiceWatcher(string serviceName, 
+            HttpClient client, CancellationToken cancel)
         {
-            _serviceManager = serviceManager;
             _serviceName = serviceName;
+            _client = client;
+            _cancel = cancel;
             _lookupUrl = $"{HttpUtils.ServiceHealthUrl}{serviceName}?passing&index=";
 #pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
             WatchLoop();
@@ -52,7 +55,8 @@ namespace CondenserDotNet.Client.Internal
                 string consulIndex = "0";
                 while (true)
                 {
-                    var result = await _serviceManager.Client.GetAsync(_lookupUrl + consulIndex, _serviceManager.Cancelled);
+                    var result = await _client.GetAsync(_lookupUrl + consulIndex, 
+                        _cancel);
                     if (!result.IsSuccessStatusCode)
                     {
                         if (_state == WatcherState.UsingLiveValues)

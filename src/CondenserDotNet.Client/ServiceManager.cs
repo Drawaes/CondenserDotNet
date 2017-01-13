@@ -9,6 +9,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using CondenserDotNet.Client.DataContracts;
+using CondenserDotNet.Service;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -39,7 +40,7 @@ namespace CondenserDotNet.Client
             _serviceId = serviceId;
             _serviceName = serviceName;
             _config = new ConfigurationRegistry(this);
-            _services = new ServiceRegistry(this);
+            _services = new ServiceRegistry(_httpClient, Cancelled);
             _leaders = new LeaderRegistry(this);
             ServiceAddress = Dns.GetHostName();
             ServicePort = GetNextAvailablePort();
@@ -48,7 +49,7 @@ namespace CondenserDotNet.Client
         internal List<string> SupportedUrls => _supportedUrls;
         internal HttpClient Client => _httpClient;
         internal HealthCheck HttpCheck { get { return _httpCheck; } set { _httpCheck = value; } }
-        internal Service RegisteredService { get; set; }
+        internal DataContracts.Service RegisteredService { get; set; }
         public ConfigurationRegistry Config => _config;
         public string ServiceId => _serviceId;
         public string ServiceName => _serviceName;

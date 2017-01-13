@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using CondenserDotNet.Client.Configuration;
 using CondenserDotNet.Client.DataContracts;
 using CondenserDotNet.Client.Internal;
+using CondenserDotNet.Service;
 using Newtonsoft.Json;
 
 namespace CondenserDotNet.Client

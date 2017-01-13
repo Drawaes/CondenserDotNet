@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
+using System.Net.Http;
 using System.Threading.Tasks;
 using CondenserDotNet.Client;
+using Newtonsoft.Json;
 using Xunit;
 
 namespace Condenser.Tests.Integration
@@ -16,16 +16,18 @@ namespace Condenser.Tests.Integration
             var key = Guid.NewGuid().ToString();
             Console.WriteLine(nameof(TestRegisterAndCheckRegistered));
             using (var manager = new ServiceManager(key, key + "Id1"))
-            using (var manager2 = new ServiceManager(key, key + "Id2"))
             {
-                var registrationResult = await manager.RegisterServiceAsync();
-                Assert.Equal(true, registrationResult);
+                using (var manager2 = new ServiceManager(key, key + "Id2"))
+                {
+                    var registrationResult = await manager.RegisterServiceAsync();
+                    Assert.Equal(true, registrationResult);
 
-                var registrationResult2 = await manager2.RegisterServiceAsync();
-                Assert.Equal(true, registrationResult2);
+                    var registrationResult2 = await manager2.RegisterServiceAsync();
+                    Assert.Equal(true, registrationResult2);
 
-                var service = await manager.Services.GetServiceInstanceAsync(key);
-                Assert.Equal(key, service.Service);
+                    var service = await manager.Services.GetServiceInstanceAsync(key);
+                    Assert.Equal(key, service.Service);
+                }
             }
         }
 
@@ -41,6 +43,35 @@ namespace Condenser.Tests.Integration
                 //Give it 500ms to update with the new service
                 await Task.Delay(500);
                 Assert.NotNull(await manager.Services.GetServiceInstanceAsync(serviceName));
+            }
+        }
+
+        [Fact]
+        public async Task TestRouting()
+        {
+            Console.WriteLine(nameof(TestRegisterAndCheckUpdates));
+            var serviceName = Guid.NewGuid().ToString();
+            using (var manager = new ServiceManager(serviceName,
+                "docker", 8500))
+            {
+
+                await manager
+                    .AddHttpHealthCheck("health", 10)
+                    .AddApiUrl("data/names")
+                    .AddApiUrl("names/all")
+                    .RegisterServiceAsync();
+
+                var client = new HttpClient();
+                var url = "http://docker:8500//v1/catalog/services";
+                var responses = await client.GetAsync(url);
+
+                var content = await responses.Content.ReadAsStringAsync();
+
+                var services = JsonConvert
+                    .DeserializeObject<Dictionary<string,
+                    string[]>>(content);
+
+                Assert.NotNull(content);
             }
         }
     }
