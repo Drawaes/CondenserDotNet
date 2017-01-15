@@ -45,34 +45,5 @@ namespace Condenser.Tests.Integration
                 Assert.NotNull(await manager.Services.GetServiceInstanceAsync(serviceName));
             }
         }
-
-        [Fact]
-        public async Task TestRouting()
-        {
-            Console.WriteLine(nameof(TestRegisterAndCheckUpdates));
-            var serviceName = Guid.NewGuid().ToString();
-            using (var manager = new ServiceManager(serviceName,
-                "docker", 8500))
-            {
-
-                await manager
-                    .AddHttpHealthCheck("health", 10)
-                    .AddApiUrl("data/names")
-                    .AddApiUrl("names/all")
-                    .RegisterServiceAsync();
-
-                var client = new HttpClient();
-                var url = "http://docker:8500//v1/catalog/services";
-                var responses = await client.GetAsync(url);
-
-                var content = await responses.Content.ReadAsStringAsync();
-
-                var services = JsonConvert
-                    .DeserializeObject<Dictionary<string,
-                    string[]>>(content);
-
-                Assert.NotNull(content);
-            }
-        }
     }
 }
