@@ -31,7 +31,7 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Configuration", "samples\Co
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CondenserDotNet.Service", "src\CondenserDotNet.Service\CondenserDotNet.Service.xproj", "{25408E8E-979D-4A36-84EC-F778FEE284CF}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Routing", "samples\Routing\Routing\Routing.xproj", "{BD511C62-B3F6-4652-9C46-A59BE8F3EF99}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Routing", "samples\Routing\Routing.xproj", "{BD511C62-B3F6-4652-9C46-A59BE8F3EF99}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
