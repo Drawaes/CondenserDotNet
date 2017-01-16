@@ -6,7 +6,7 @@ using Newtonsoft.Json;
 
 namespace CondenserDotNet.Service
 {
-    internal class BlockingWatcher<T>
+    public class BlockingWatcher<T>
         where T : class
     {
         
@@ -14,32 +14,32 @@ namespace CondenserDotNet.Service
 
         private readonly HttpClient _client;
         private readonly CancellationToken _cancel;
+        private readonly Action<T> _onNew;
         private readonly string _lookupUrl;
-        private T _serviceInstances;
+        private T _instances;
         private WatcherState _state = WatcherState.NotInitialized;
 
         public BlockingWatcher(string url,
-            HttpClient client, CancellationToken cancel)
+            HttpClient client, CancellationToken cancel, 
+            Action<T> onNew = null)
         {
             _client = client;
             _cancel = cancel;
+            _onNew = onNew;
             _lookupUrl = $"{url}?passing&index=";
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-            WatchLoop();
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
         }
 
-        internal async Task<T> SafeReadAsync()
+        public async Task<T> SafeReadAsync()
         {
             if (!await _haveFirstResults.WaitAsync())
             {
                 return null;
             }
-            T instances = Volatile.Read(ref _serviceInstances);
+            T instances = Volatile.Read(ref _instances);
             return instances;
         }
 
-        internal async Task WatchLoop()
+        public async Task WatchLoop()
         {
             try
             {
@@ -59,10 +59,11 @@ namespace CondenserDotNet.Service
                     }
                     consulIndex = result.GetConsulIndex();
                     var content = await result.Content.ReadAsStringAsync();
-                    var listOfServices = JsonConvert.DeserializeObject<T>(content);
-                    Interlocked.Exchange(ref _serviceInstances, listOfServices);
+                    var instance = JsonConvert.DeserializeObject<T>(content);
+                    Interlocked.Exchange(ref _instances, instance);
                     _state = WatcherState.UsingLiveValues;
                     _haveFirstResults.Set(true);
+                    _onNew?.Invoke(instance);
                 }
             }
             catch (TaskCanceledException) { /*nom nom */}

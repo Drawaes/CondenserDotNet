@@ -10,7 +10,7 @@ namespace Routing
             var host = new WebHostBuilder()
                 .UseKestrel()
                 .UseUrls($"http://*:{50000}")
-                .ConfigureServices(x => { x.AddCondenserRouter("localhost", 8500); })
+                .ConfigureServices(x => { x.AddCondenserRouter("docker", 8500); })
                 .Configure(x => { x.UseCondenserRouter(); })
                 .Build();
 
