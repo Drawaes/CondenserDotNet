@@ -1,13 +1,15 @@
-﻿using CondenserDotNet.Client;
-using CondenserTests.Fakes;
-using Microsoft.Extensions.Configuration;
+﻿using System;
+using CondenserDotNet.Client;
 using CondenserDotNet.Client.Configuration;
 using CondenserDotNet.Server;
+using CondenserDotNet.Service.DataContracts;
+using CondenserTests.Fakes;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
-using Xunit;
-using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Xunit;
 
 namespace CondenserTests
 {
@@ -53,55 +55,55 @@ namespace CondenserTests
             }
         }
 
-
-        [Fact(Skip = "Doesnt work yet")]
+        [Fact]
         public async void CanRoutePath()
         {
-            var registry = new FakeConfigurationRegistry();
-            await registry.SetKeyAsync("FakeConfig:Setting1", "abc");
-            await registry.SetKeyAsync("FakeConfig:Setting2", "def");
-
-            var config = new ConfigurationBuilder()
-                .AddJsonConsul(registry)
-                .Build();
-
             var apiBuilder = new WebHostBuilder()
                 .Configure(x => x.UseMvcWithDefaultRoute())
-                .ConfigureServices(x =>
-                {
-                    x.AddMvcCore();
-                    x.AddOptions();
-                    x.ConfigureReloadable<FakeConfig>(config, registry);
-                });
+                .ConfigureServices(x => { x.AddMvcCore(); });
 
-            CustomRouter customRouter = null;
+            var customRouter = new CustomRouter();
+            var tags = new[] { "fake/fake/route" };
+            var registry = new FakeServiceRegistry();
+            var serviceId = "FakeService";
+
             var routerBuilder = new WebHostBuilder()
                 .Configure(x =>
                 {
-                    customRouter = x.ApplicationServices.GetService<CustomRouter>();
                     x.UseRouter(customRouter);
                 })
                 .ConfigureServices(x =>
                 {
                     x.AddRouting();
-                    x.AddSingleton<CustomRouter>();
+                    x.AddSingleton(customRouter);
                 });
-            using (var apiServer = new TestServer(apiBuilder))
+
+            using (var apiClient = new TestServer(apiBuilder))
             {
+                var infoService = new InformationService
+                {
+                    Address = apiClient.BaseAddress.Host,
+                    Port = apiClient.BaseAddress.Port,
+                    Service = serviceId,
+                    Tags = tags
+                };
+
+                registry.AddServiceInstance(infoService);
+
+                var serviceToAdd = new Service(tags,
+                serviceId, serviceId, tags,
+                registry, apiClient.CreateClient());
+
+                customRouter.AddNewService(serviceToAdd);
+                
                 using (var routerServer = new TestServer(routerBuilder))
                 {
                     using (var routerClient = routerServer.CreateClient())
                     {
-                        var service = new Service(new string[0],
-                            "Service1", "1", new string[0],
-                            null);
-
-                        customRouter.AddServiceToRoute("Fake", service);
-
-                        var response = await routerClient.GetAsync("Fake");
+                        var response = await routerClient.GetAsync("fake/fake/route");
                         var setting = await response.Content.ReadAsStringAsync();
 
-                        Assert.Equal("Config: abc", setting);
+                        Assert.Equal("Was routed", setting);
                     }
                 }
             }

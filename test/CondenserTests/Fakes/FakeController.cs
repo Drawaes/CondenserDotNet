@@ -17,5 +17,11 @@ namespace CondenserTests.Fakes
         {
             return Ok("Config: " + _config.Value.Setting1);
         }
+
+        [Route("fake/route")]
+        public IActionResult GetFakeRoute()
+        {
+            return Ok("Was routed");
+        }
     }
 }

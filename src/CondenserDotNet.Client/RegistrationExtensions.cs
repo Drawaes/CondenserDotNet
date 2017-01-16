@@ -15,13 +15,13 @@ namespace CondenserDotNet.Client
 {
     public static class RegistrationExtensions
     {
-        public static ServiceManager AddApiUrl(this ServiceManager serviceManager, string urlToAdd)
+        public static IServiceManager AddApiUrl(this IServiceManager serviceManager, string urlToAdd)
         {
             serviceManager.SupportedUrls.Add(urlToAdd);
             return serviceManager;
         }
 
-        public static ServiceManager AddHttpHealthCheck(this ServiceManager serviceManager, string url, int intervalInSeconds)
+        public static IServiceManager AddHttpHealthCheck(this IServiceManager serviceManager, string url, int intervalInSeconds)
         {
             HealthCheck check = new HealthCheck()
             {
@@ -37,19 +37,19 @@ namespace CondenserDotNet.Client
             return serviceManager;
         }
 
-        public static ServiceManager AddTtlHealthCheck(this ServiceManager serviceManager, int timetoLiveInSeconds)
+        public static IServiceManager AddTtlHealthCheck(this IServiceManager serviceManager, int timetoLiveInSeconds)
         {
             serviceManager.TtlCheck = new TtlCheck(serviceManager, timetoLiveInSeconds);
             return serviceManager;
         }
 
-        public static ServiceManager WithDeregisterIfCriticalAfterMinutes(this ServiceManager serviceManager, int minutes)
+        public static IServiceManager WithDeregisterIfCriticalAfterMinutes(this IServiceManager serviceManager, int minutes)
         {
             serviceManager.DeregisterIfCriticalAfter = new TimeSpan(0,minutes,0);
             return serviceManager;
         }
 
-        public static ServiceManager WithDeregisterIfCriticalAfter(this ServiceManager serviceManager, TimeSpan timeSpan)
+        public static IServiceManager WithDeregisterIfCriticalAfter(this IServiceManager serviceManager, TimeSpan timeSpan)
         {
             if(timeSpan.TotalMilliseconds < 0)
             {
@@ -59,7 +59,7 @@ namespace CondenserDotNet.Client
             return serviceManager;
         }
 
-        public static async Task<bool> RegisterServiceAsync(this ServiceManager serviceManager)
+        public static async Task<bool> RegisterServiceAsync(this IServiceManager serviceManager)
         {
             DataContracts.Service s = new DataContracts.Service()
             {

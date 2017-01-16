@@ -14,8 +14,7 @@ namespace CondenserDotNet.Server
     {
         private readonly IServiceRegistry _registry;
 
-        private readonly HttpClient _httpClient = new HttpClient(
-            new HttpClientHandler());
+        private readonly HttpClient _httpClient;
         private readonly System.Threading.CountdownEvent _waitUntilRequestsAreFinished = new System.Threading.CountdownEvent(1);
 
         public Service()
@@ -23,8 +22,12 @@ namespace CondenserDotNet.Server
         }
         public Service(string[] routes, string serviceId,  
             string nodeId, string[] tags,
-            IServiceRegistry registry)
+            IServiceRegistry registry, 
+            HttpClient client = null)
         {
+            _httpClient = client ??
+                new HttpClient(new HttpClientHandler());
+
             _registry = registry;
             Tags = tags;
             Routes = routes.Select(r => !r.StartsWith("/") ? "/" + r : r).Select(r => r.EndsWith("/") ? r.Substring(0, r.Length - 1) : r).ToArray();

@@ -23,7 +23,8 @@ namespace CondenserTests.Fakes
 
         public Task<InformationService> GetServiceInstanceAsync(string serviceName)
         {
-            return Task.FromResult(_services.SingleOrDefault(x => x.Service == serviceName));
+            var service = _services.SingleOrDefault(x => x.Service == serviceName);
+            return Task.FromResult(service);
         }
 
         public void AddServiceInstance(InformationService informationService)
