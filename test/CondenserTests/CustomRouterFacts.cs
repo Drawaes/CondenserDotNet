@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CondenserDotNet.Server;
+using CondenserTests.Fakes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.AspNetCore.Routing;
@@ -16,7 +17,10 @@ namespace CondenserTests
         public async void SetupCustomRouterAndRouteToService()
         {
             var router = new CustomRouter();
-            var service = new Service(new string[] {"/test1/test2/test3/test4/test5" }, "Service1Test", "Address1Test", 10000, "node1", new string[0]);
+            var registry = new FakeServiceRegistry();
+            registry.AddServiceInstance("Address1Test", 10000);
+            var service = new Service(new string[] {"/test1/test2/test3/test4/test5" }, 
+                "Service1Test", "node1", new string[0], registry);
             router.AddNewService(service);
 
             var context = new DefaultHttpContext();
@@ -33,7 +37,12 @@ namespace CondenserTests
         public async void SetupCustomRouterAndLookForbadRoute()
         {
             var router = new CustomRouter();
-            var service = new Service(new string[] { "/test1/test2/test3/test4/test5" }, "Service1Test", "Address1Test", 10000, "node1", new string[0]);
+
+            var registry = new FakeServiceRegistry();
+            registry.AddServiceInstance("Address1Test", 10000);
+            var service = new Service(new string[] { "/test1/test2/test3/test4/test5" }, "Service1Test", "node1", new string[0],
+                registry);
+
             router.AddNewService(service);
 
             var context = new DefaultHttpContext();

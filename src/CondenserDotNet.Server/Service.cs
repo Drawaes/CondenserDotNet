@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using CondenserDotNet.Service;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
@@ -11,29 +12,33 @@ namespace CondenserDotNet.Server
 {
     public class Service : IDisposable
     {
-        private string _hostString;
-        private readonly HttpClient _httpClient = new HttpClient(new HttpClientHandler());
+        private readonly IServiceRegistry _registry;
+
+        private readonly HttpClient _httpClient;
         private readonly System.Threading.CountdownEvent _waitUntilRequestsAreFinished = new System.Threading.CountdownEvent(1);
 
         public Service()
         {
         }
-        public Service(string[] routes, string serviceId, string address, int port, string nodeId, string[] tags)
+        public Service(string[] routes, string serviceId,  
+            string nodeId, string[] tags,
+            IServiceRegistry registry, 
+            HttpClient client = null)
         {
+            _httpClient = client ??
+                new HttpClient(new HttpClientHandler());
+
+            _registry = registry;
             Tags = tags;
             Routes = routes.Select(r => !r.StartsWith("/") ? "/" + r : r).Select(r => r.EndsWith("/") ? r.Substring(0, r.Length - 1) : r).ToArray();
             ServiceId = serviceId;
             NodeId = nodeId;
-            Address = address;
-            Port = port;
-            _hostString = Address + ":" + port;
+            
             SupportedVersions = tags.Where(t => t.StartsWith("version=")).Select(t => new System.Version(t.Substring(8))).ToArray();
         }
 
         public Version[] SupportedVersions { get; private set; }
         public string[] Tags { get; private set; }
-        public int Port { get; private set; }
-        public string Address { get; private set; }
         public string[] Routes { get; private set; }
         public string ServiceId { get; private set; }
         public string NodeId { get; private set; }
@@ -43,7 +48,10 @@ namespace CondenserDotNet.Server
             _waitUntilRequestsAreFinished.AddCount();
             try
             {
-                var uriString = $"http://{_hostString}{context.Request.Path}{context.Request.QueryString}";
+                var instance = await _registry.GetServiceInstanceAsync(ServiceId);
+                var hostString = $"{instance.Address}:{instance.Port}";
+
+                var uriString = $"http://{hostString}{context.Request.Path}{context.Request.QueryString}";
                 var uri = new Uri(uriString);
 
                 var requestMessage = new HttpRequestMessage();
@@ -66,7 +74,7 @@ namespace CondenserDotNet.Server
                     }
                 }
 
-                requestMessage.Headers.Host = _hostString;
+                requestMessage.Headers.Host = hostString;
 
                 requestMessage.Method = new HttpMethod(context.Request.Method);
 
@@ -104,14 +112,7 @@ namespace CondenserDotNet.Server
             var otherService = obj as Service;
             if (otherService != null)
             {
-                if (otherService.Address != Address)
-                {
-                    return false;
-                }
-                if (otherService.Port != Port)
-                {
-                    return false;
-                }
+                
                 if (otherService.ServiceId != ServiceId)
                 {
                     return false;

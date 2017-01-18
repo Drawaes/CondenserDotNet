@@ -6,13 +6,13 @@ using CondenserDotNet.Client.DataContracts;
 
 namespace CondenserDotNet.Client
 {
-    public class TtlCheck
+    public class TtlCheck : ITtlCheck
     {
-        private ServiceManager _parentManager;
+        private IServiceManager _parentManager;
         private int _timeToLiveSeconds;
         private HealthCheck _healthCheck;
 
-        internal TtlCheck(ServiceManager parentManager, int timeToLiveSeconds)
+        internal TtlCheck(IServiceManager parentManager, int timeToLiveSeconds)
         {
             _parentManager = parentManager;
             _healthCheck = new HealthCheck()
@@ -22,7 +22,7 @@ namespace CondenserDotNet.Client
             _timeToLiveSeconds = timeToLiveSeconds;
         }
 
-        internal HealthCheck HealthCheck => _healthCheck;
+        public HealthCheck HealthCheck => _healthCheck;
 
         public async Task<bool> ReportPassingAsync()
         {

@@ -1,24 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace CondenserDotNet.Client.Internal
+namespace CondenserDotNet.Service
 {
-    internal static class HttpUtils
+    public static class HttpUtils
     {
-        private readonly static string _indexHeader = "X-Consul-Index";
-        public readonly static JsonSerializerSettings JsonSettings;
-        public readonly static string ApiUrl = "/v1/";
-        public readonly static string KeyUrl = ApiUrl + "kv/";
-        public readonly static string ServiceCatalogUrl = ApiUrl + "catalog/services";
-        public readonly static string DatacenterCatalogUrl = ApiUrl + "catalog/datacenters";
-        public readonly static string ServiceHealthUrl = ApiUrl + "health/service/";
-        public readonly static string SessionCreateUrl = ApiUrl + "session/create";
+        private static readonly string _indexHeader = "X-Consul-Index";
+        public static readonly JsonSerializerSettings JsonSettings;
+        public static readonly string ApiUrl = "/v1/";
+        public static readonly string KeyUrl = ApiUrl + "kv/";
+        public static readonly string ServiceCatalogUrl = ApiUrl + "catalog/services";
+        public static readonly string DatacenterCatalogUrl = ApiUrl + "catalog/datacenters";
+        public static readonly string ServiceHealthUrl = ApiUrl + "health/service/";
+        public static readonly string SessionCreateUrl = ApiUrl + "session/create";
 
         static HttpUtils()
         {

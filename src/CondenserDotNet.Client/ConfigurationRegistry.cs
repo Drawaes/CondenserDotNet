@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using CondenserDotNet.Client.Configuration;
 using CondenserDotNet.Client.DataContracts;
 using CondenserDotNet.Client.Internal;
+using CondenserDotNet.Service;
 using Newtonsoft.Json;
 
 namespace CondenserDotNet.Client
@@ -18,12 +19,12 @@ namespace CondenserDotNet.Client
         private const char ConsulPathChar = '/';
         private const char CorePath = ':';
 
-        private readonly ServiceManager _serviceManager;
+        private readonly IServiceManager _serviceManager;
         private readonly List<Dictionary<string, string>> _configKeys = new List<Dictionary<string, string>>();
         private readonly List<ConfigurationWatcher> _configWatchers = new List<ConfigurationWatcher>();
         private IKeyParser _parser = SimpleKeyValueParser.Instance;
 
-        internal ConfigurationRegistry(ServiceManager serviceManager)
+        internal ConfigurationRegistry(IServiceManager serviceManager)
         {
             _serviceManager = serviceManager;
         }

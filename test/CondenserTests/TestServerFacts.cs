@@ -1,12 +1,15 @@
-﻿using CondenserDotNet.Client;
-using CondenserTests.Fakes;
-using Microsoft.Extensions.Configuration;
+﻿using System;
+using CondenserDotNet.Client;
 using CondenserDotNet.Client.Configuration;
+using CondenserDotNet.Server;
+using CondenserDotNet.Service.DataContracts;
+using CondenserTests.Fakes;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
-using Xunit;
-using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Xunit;
 
 namespace CondenserTests
 {
@@ -48,6 +51,60 @@ namespace CondenserTests
                     setting = await response.Content.ReadAsStringAsync();
 
                     Assert.Equal("Config: this is the new setting", setting);
+                }
+            }
+        }
+
+        [Fact]
+        public async void CanRoutePath()
+        {
+            var apiBuilder = new WebHostBuilder()
+                .Configure(x => x.UseMvcWithDefaultRoute())
+                .ConfigureServices(x => { x.AddMvcCore(); });
+
+            var customRouter = new CustomRouter();
+            var tags = new[] { "fake/fake/route" };
+            var registry = new FakeServiceRegistry();
+            var serviceId = "FakeService";
+
+            var routerBuilder = new WebHostBuilder()
+                .Configure(x =>
+                {
+                    x.UseRouter(customRouter);
+                })
+                .ConfigureServices(x =>
+                {
+                    x.AddRouting();
+                    x.AddSingleton(customRouter);
+                });
+
+            using (var apiClient = new TestServer(apiBuilder))
+            {
+                var infoService = new InformationService
+                {
+                    Address = apiClient.BaseAddress.Host,
+                    Port = apiClient.BaseAddress.Port,
+                    Service = serviceId,
+                    Tags = tags
+                };
+
+                registry.AddServiceInstance(infoService);
+
+                var serviceToAdd = new Service(tags,
+                serviceId, serviceId, tags,
+                registry, apiClient.CreateClient());
+
+                customRouter.AddNewService(serviceToAdd);
+                
+                using (var routerServer = new TestServer(routerBuilder))
+                {
+                    using (var routerClient = routerServer.CreateClient())
+                    {
+                        var response = await routerClient.GetAsync("fake/fake/route");
+                        var setting = await response.Content.ReadAsStringAsync();
+
+                        Assert.Equal("Was routed", setting);
+                    }
                 }
             }
         }

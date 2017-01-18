@@ -5,19 +5,21 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using CondenserDotNet.Client.DataContracts;
+using CondenserDotNet.Service;
+using CondenserDotNet.Service.DataContracts;
 using Newtonsoft.Json;
 
 namespace CondenserDotNet.Client.Internal
 {
-    public class LeaderWatcher
+    public class LeaderWatcher : ILeaderWatcher
     {
         private readonly AsyncManualResetEvent<InformationService> _currentLeaderEvent = new AsyncManualResetEvent<InformationService>();
         private readonly AsyncManualResetEvent<bool> _electedLeaderEvent = new AsyncManualResetEvent<bool>();
-        private readonly ServiceManager _serviceManager;
+        private readonly IServiceManager _serviceManager;
         private readonly string _keyToWatch;
         private Guid _sessionId;
 
-        internal LeaderWatcher(ServiceManager serviceManager, string keyToWatch)
+        internal LeaderWatcher(IServiceManager serviceManager, string keyToWatch)
         {
             _serviceManager = serviceManager;
             _keyToWatch = keyToWatch;

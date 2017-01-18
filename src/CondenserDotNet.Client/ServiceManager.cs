@@ -1,20 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Sockets;
-using System.Runtime.CompilerServices;
 using System.Threading;
-using System.Threading.Tasks;
 using CondenserDotNet.Client.DataContracts;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+using CondenserDotNet.Service;
 
 namespace CondenserDotNet.Client
 {
-    public class ServiceManager : IDisposable
+    public class ServiceManager : IServiceManager
     {
         private readonly HttpClient _httpClient;
         private bool _disposed;
@@ -22,7 +17,7 @@ namespace CondenserDotNet.Client
         private readonly string _serviceId;
         private readonly List<string> _supportedUrls = new List<string>();
         private HealthCheck _httpCheck;
-        private TtlCheck _ttlCheck;
+        private ITtlCheck _ttlCheck;
         private readonly CancellationTokenSource _cancel = new CancellationTokenSource();
         private readonly ConfigurationRegistry _config;
         private readonly ServiceRegistry _services;
@@ -39,27 +34,27 @@ namespace CondenserDotNet.Client
             _serviceId = serviceId;
             _serviceName = serviceName;
             _config = new ConfigurationRegistry(this);
-            _services = new ServiceRegistry(this);
+            _services = new ServiceRegistry(_httpClient, Cancelled);
             _leaders = new LeaderRegistry(this);
             ServiceAddress = Dns.GetHostName();
             ServicePort = GetNextAvailablePort();
         }
 
-        internal List<string> SupportedUrls => _supportedUrls;
-        internal HttpClient Client => _httpClient;
-        internal HealthCheck HttpCheck { get { return _httpCheck; } set { _httpCheck = value; } }
-        internal Service RegisteredService { get; set; }
-        public ConfigurationRegistry Config => _config;
+        public List<string> SupportedUrls => _supportedUrls;
+        public HttpClient Client => _httpClient;
+        public HealthCheck HttpCheck { get { return _httpCheck; } set { _httpCheck = value; } }
+        public DataContracts.Service RegisteredService { get; set; }
+        public IConfigurationRegistry Config => _config;
         public string ServiceId => _serviceId;
         public string ServiceName => _serviceName;
-        public TimeSpan DeregisterIfCriticalAfter { get; internal set; }
-        public ServiceRegistry Services => _services;
+        public TimeSpan DeregisterIfCriticalAfter { get; set; }
+        public IServiceRegistry Services => _services;
         public bool IsRegistered => RegisteredService != null;
-        public TtlCheck TtlCheck { get { return _ttlCheck; } internal set { _ttlCheck = value; } }
+        public ITtlCheck TtlCheck { get { return _ttlCheck; } set { _ttlCheck = value; } }
         public string ServiceAddress { get; set; }
         public int ServicePort { get; set; }
         public CancellationToken Cancelled => _cancel.Token;
-        public LeaderRegistry Leaders => _leaders;
+        public ILeaderRegistry Leaders => _leaders;
 
         protected int GetNextAvailablePort()
         {

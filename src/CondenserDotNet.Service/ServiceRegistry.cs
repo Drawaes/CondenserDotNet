@@ -1,33 +1,42 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using CondenserDotNet.Client.Internal;
 using Newtonsoft.Json;
 
-namespace CondenserDotNet.Client
+namespace CondenserDotNet.Service
 {
-    public class ServiceRegistry
+    public class ServiceRegistry : IServiceRegistry
     {
-        private readonly ServiceManager _serviceManager;
+        private readonly HttpClient _client;
+        private readonly CancellationToken _cancel;
         private readonly Dictionary<string, ServiceWatcher> _watchedServices = new Dictionary<string, ServiceWatcher>(StringComparer.OrdinalIgnoreCase);
 
-        internal ServiceRegistry(ServiceManager serviceManager)
+        public ServiceRegistry(
+            HttpClient client, CancellationToken cancel)
         {
-            _serviceManager = serviceManager;
+            _client = client;
+            _cancel = cancel;
         }
 
         public async Task<IEnumerable<string>> GetAvailableServicesAsync()
         {
-            var result = await _serviceManager.Client.GetAsync(HttpUtils.ServiceCatalogUrl, _serviceManager.Cancelled);
+            var all = await GetAvailableServicesWithTagsAsync();
+            return all.Keys;
+        }
+
+        public async Task<Dictionary<string, string[]>> GetAvailableServicesWithTagsAsync()
+        {
+            var result = await _client.GetAsync(
+                HttpUtils.ServiceCatalogUrl, _cancel);
             if (!result.IsSuccessStatusCode)
             {
                 return null;
             }
             var content = await result.Content.ReadAsStringAsync();
             var serviceList = JsonConvert.DeserializeObject<Dictionary<string, string[]>>(content);
-            return serviceList.Keys;
+            return serviceList;
         }
 
         public Task<DataContracts.InformationService> GetServiceInstanceAsync(string serviceName)
@@ -37,7 +46,7 @@ namespace CondenserDotNet.Client
             {
                 if (!_watchedServices.TryGetValue(serviceName, out watcher))
                 {
-                    watcher = new ServiceWatcher(_serviceManager, serviceName);
+                    watcher = new ServiceWatcher(serviceName, _client, _cancel);
                     _watchedServices.Add(serviceName, watcher);
                 }
             }

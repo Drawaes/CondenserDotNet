@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using CondenserDotNet.Client.DataContracts;
 using CondenserDotNet.Client.Internal;
+using CondenserDotNet.Service;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
@@ -14,13 +15,13 @@ namespace CondenserDotNet.Client
 {
     public static class RegistrationExtensions
     {
-        public static ServiceManager AddApiUrl(this ServiceManager serviceManager, string urlToAdd)
+        public static IServiceManager AddApiUrl(this IServiceManager serviceManager, string urlToAdd)
         {
             serviceManager.SupportedUrls.Add(urlToAdd);
             return serviceManager;
         }
 
-        public static ServiceManager AddHttpHealthCheck(this ServiceManager serviceManager, string url, int intervalInSeconds)
+        public static IServiceManager AddHttpHealthCheck(this IServiceManager serviceManager, string url, int intervalInSeconds)
         {
             HealthCheck check = new HealthCheck()
             {
@@ -36,19 +37,19 @@ namespace CondenserDotNet.Client
             return serviceManager;
         }
 
-        public static ServiceManager AddTtlHealthCheck(this ServiceManager serviceManager, int timetoLiveInSeconds)
+        public static IServiceManager AddTtlHealthCheck(this IServiceManager serviceManager, int timetoLiveInSeconds)
         {
             serviceManager.TtlCheck = new TtlCheck(serviceManager, timetoLiveInSeconds);
             return serviceManager;
         }
 
-        public static ServiceManager WithDeregisterIfCriticalAfterMinutes(this ServiceManager serviceManager, int minutes)
+        public static IServiceManager WithDeregisterIfCriticalAfterMinutes(this IServiceManager serviceManager, int minutes)
         {
             serviceManager.DeregisterIfCriticalAfter = new TimeSpan(0,minutes,0);
             return serviceManager;
         }
 
-        public static ServiceManager WithDeregisterIfCriticalAfter(this ServiceManager serviceManager, TimeSpan timeSpan)
+        public static IServiceManager WithDeregisterIfCriticalAfter(this IServiceManager serviceManager, TimeSpan timeSpan)
         {
             if(timeSpan.TotalMilliseconds < 0)
             {
@@ -58,9 +59,9 @@ namespace CondenserDotNet.Client
             return serviceManager;
         }
 
-        public static async Task<bool> RegisterServiceAsync(this ServiceManager serviceManager)
+        public static async Task<bool> RegisterServiceAsync(this IServiceManager serviceManager)
         {
-            Service s = new Service()
+            DataContracts.Service s = new DataContracts.Service()
             {
                 Address = serviceManager.ServiceAddress,
                 EnableTagOverride = false,
@@ -68,7 +69,8 @@ namespace CondenserDotNet.Client
                 Name = serviceManager.ServiceName,
                 Port = serviceManager.ServicePort,
                 Checks = new List<HealthCheck>(),
-                Tags = new List<string>(serviceManager.SupportedUrls.Select(u => $"urlprefix-{u}"))
+                Tags = new List<string>(
+                    serviceManager.SupportedUrls.Select(u => $"urlprefix-{u}"))
             };
             if (serviceManager.HttpCheck != null)
             {

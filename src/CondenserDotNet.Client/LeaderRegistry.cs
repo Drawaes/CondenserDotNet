@@ -7,17 +7,17 @@ using CondenserDotNet.Client.Internal;
 
 namespace CondenserDotNet.Client
 {
-    public class LeaderRegistry
+    public class LeaderRegistry : ILeaderRegistry
     {
-        private readonly ServiceManager _serviceManager;
+        private readonly IServiceManager _serviceManager;
         private readonly Dictionary<string, LeaderWatcher> _leaderWatchers = new Dictionary<string, LeaderWatcher>(StringComparer.OrdinalIgnoreCase);
 
-        internal LeaderRegistry(ServiceManager serviceManager)
+        internal LeaderRegistry(IServiceManager serviceManager)
         {
             _serviceManager = serviceManager;
         }
 
-        public LeaderWatcher GetLeaderWatcher(string keyForLeadership)
+        public ILeaderWatcher GetLeaderWatcher(string keyForLeadership)
         {
             LeaderWatcher returnValue;
             lock (_leaderWatchers)

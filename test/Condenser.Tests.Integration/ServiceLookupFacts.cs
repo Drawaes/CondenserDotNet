@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
+using System.Net.Http;
 using System.Threading.Tasks;
 using CondenserDotNet.Client;
+using Newtonsoft.Json;
 using Xunit;
 
 namespace Condenser.Tests.Integration
@@ -16,16 +16,18 @@ namespace Condenser.Tests.Integration
             var key = Guid.NewGuid().ToString();
             Console.WriteLine(nameof(TestRegisterAndCheckRegistered));
             using (var manager = new ServiceManager(key, key + "Id1"))
-            using (var manager2 = new ServiceManager(key, key + "Id2"))
             {
-                var registrationResult = await manager.RegisterServiceAsync();
-                Assert.Equal(true, registrationResult);
+                using (var manager2 = new ServiceManager(key, key + "Id2"))
+                {
+                    var registrationResult = await manager.RegisterServiceAsync();
+                    Assert.Equal(true, registrationResult);
 
-                var registrationResult2 = await manager2.RegisterServiceAsync();
-                Assert.Equal(true, registrationResult2);
+                    var registrationResult2 = await manager2.RegisterServiceAsync();
+                    Assert.Equal(true, registrationResult2);
 
-                var service = await manager.Services.GetServiceInstanceAsync(key);
-                Assert.Equal(key, service.Service);
+                    var service = await manager.Services.GetServiceInstanceAsync(key);
+                    Assert.Equal(key, service.Service);
+                }
             }
         }
 

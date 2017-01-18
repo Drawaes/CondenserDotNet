@@ -9,7 +9,7 @@ namespace CondenserDotNet.Server
     public class CustomRouter : IRouter
     {
         private readonly RoutingTrie.RadixTree<Service> _tree = new RoutingTrie.RadixTree<Service>();
-        private readonly static Task _taskDone = Task.FromResult(0);
+        private static readonly Task _taskDone = Task.FromResult(0);
 
         public CustomRouter()
         {
