@@ -72,21 +72,23 @@ namespace Condenser.Tests.Integration
 
             await google.AddApiUrl("/search")
                 .RegisterServiceAsync();
-
+            
             await wait.WaitAsync();
 
             var routeContext = await RouteRequest(router, "/search");
 
             Assert.Equal(200, routeContext.HttpContext.Response.StatusCode);
-/*
-            var gmail = new ServiceManager("Gmail",
+
+            google = new ServiceManager("Google",
                 agentAddress, 8500)
             {
                 ServiceAddress = "www.google.com",
                 ServicePort = 80
             };
 
-            await gmail.AddApiUrl("/gmail")
+            wait.Reset();
+
+            await google.AddApiUrl("/gmail")
                 .RegisterServiceAsync();
 
             await wait.WaitAsync();
@@ -94,7 +96,10 @@ namespace Condenser.Tests.Integration
             routeContext = await RouteRequest(router, "/gmail");
 
             Assert.Equal(200, routeContext.HttpContext.Response.StatusCode);
-            */
+
+            routeContext = await RouteRequest(router, "/search");
+
+            Assert.Null(routeContext);
         }
 
         private static async Task<RouteContext> RouteRequest(CustomRouter router, 
@@ -107,6 +112,12 @@ namespace Condenser.Tests.Integration
             var routeContext = new RouteContext(context);
 
             await router.RouteAsync(routeContext);
+
+            if (routeContext.Handler == null)
+            {
+                return null;
+            }
+
             await routeContext.Handler.Invoke(routeContext.HttpContext);
             return routeContext;
         }

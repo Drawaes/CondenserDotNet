@@ -5,6 +5,11 @@ namespace CondenserDotNet.Server.Extensions
 {
     public static class ServiceCollectionExtentions
     {
+        public static void AddCondenserRouter(this IServiceCollection self)
+        {
+            self.AddCondenserRouter("localhost", 8500);
+        }
+
         public static void AddCondenserRouter(this IServiceCollection self,
             string agentAddress, int agentPort)
         {
