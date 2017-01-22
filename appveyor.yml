@@ -8,7 +8,7 @@ environment:
     secure: x41DSerLXKgGVbKIokF+zuR3eNRVJXsgJA6j5yggnCB8/TTyYfa/2euNflfGzCot
 
 install:
-  - ps: wget https://releases.hashicorp.com/consul/0.7.2/consul_0.7.2_windows_amd64.zip -OutFile consul.zip
+  - ps:  Start-FileDownload 'https://releases.hashicorp.com/consul/0.7.2/consul_0.7.2_windows_amd64.zip' -FileName consul.zip
   - cmd: 7z x consul.zip -o"C:\Consul" -y > nul
   - ps: $MyProcess = Start-Process C:\Consul\consul.exe -ArgumentList "agent -server -bootstrap-expect 1 -data-dir C:\Consul\Data -advertise=127.0.0.1" -PassThru
 
