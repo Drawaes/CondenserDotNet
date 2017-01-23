@@ -1,6 +1,10 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using CondenserDotNet.Client;
 using CondenserDotNet.Server;
+using CondenserDotNet.Server.Builder;
+using CondenserDotNet.Server.DataContracts;
 using CondenserDotNet.Service;
 using CondenserDotNet.Service.DataContracts;
 using Microsoft.AspNetCore.Http;
@@ -22,7 +26,7 @@ namespace Condenser.Tests.Integration
             };
             registry.SetServiceInstance(informationService);
 
-            var router = new CustomRouter();
+            var router = BuildRouter();
             var service = new Service(new[] {"/search"}, "Service1",
                 "node1", new string[0], registry);
             router.AddNewService(service);
@@ -30,6 +34,32 @@ namespace Condenser.Tests.Integration
             var context = new DefaultHttpContext();
             context.Request.Method = "GET";
             context.Request.Path = "/search";
+
+            var routeContext = new RouteContext(context);
+
+            await router.RouteAsync(routeContext);
+
+            await routeContext.Handler.Invoke(routeContext.HttpContext);
+
+            Assert.Equal(200, routeContext.HttpContext.Response.StatusCode);
+        }
+
+        [Fact]
+        public async Task CanWeFindAHealthRoute()
+        {
+            var registry = new FakeServiceRegistry();
+            var informationService = new InformationService
+            {
+                Address = "www.google.com",
+                Port = 80
+            };
+            registry.SetServiceInstance(informationService);
+
+            var router = BuildRouter();
+            
+            var context = new DefaultHttpContext();
+            context.Request.Method = "GET";
+            context.Request.Path = "/health";
 
             var routeContext = new RouteContext(context);
 
@@ -51,7 +81,7 @@ namespace Condenser.Tests.Integration
                 AgentAddress = agentAddress,
                 AgentPort = 8500
             };
-            var router = new CustomRouter();
+            var router = BuildRouter();
             var host = new RoutingHost(router, config)
             {
                 OnRouteBuilt = servers => {
@@ -100,6 +130,24 @@ namespace Condenser.Tests.Integration
             routeContext = await RouteRequest(router, "/search");
 
             Assert.Null(routeContext);
+        }
+
+        private CustomRouter BuildRouter()
+        {
+            var checks = new List<Func<Task<HealthCheck>>>();
+            return new CustomRouter(new HealthRouter(new FakeHealthConfig(checks,"/health")));
+        }
+
+        private class FakeHealthConfig : IHealthConfig
+        {
+            public FakeHealthConfig(List<Func<Task<HealthCheck>>> checks, string route)
+            {
+                Checks = checks;
+                Route = route;
+            }
+
+            public List<Func<Task<HealthCheck>>> Checks { get; }
+            public string Route { get; }
         }
 
         private static async Task<RouteContext> RouteRequest(CustomRouter router, 

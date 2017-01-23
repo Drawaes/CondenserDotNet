@@ -10,9 +10,11 @@ namespace CondenserDotNet.Server
     {
         private readonly RoutingTrie.RadixTree<Service> _tree = new RoutingTrie.RadixTree<Service>();
         private static readonly Task _taskDone = Task.FromResult(0);
+        private readonly IHealthRouter _healthRouter;
 
-        public CustomRouter()
+        public CustomRouter(IHealthRouter healthRouter)
         {
+            _healthRouter = healthRouter;
         }
 
         public VirtualPathData GetVirtualPath(VirtualPathContext context)
@@ -45,15 +47,24 @@ namespace CondenserDotNet.Server
 
         public Task RouteAsync(RouteContext context)
         {
-            string matchedPath;
-            
-            var path = context.HttpContext.Request.Path.Value; 
-            Service s = _tree.GetServiceFromRoute(path, out matchedPath);
-            context.RouteData.DataTokens.Add("apiPath",matchedPath);
-            if (s != null)
+            var path = context.HttpContext.Request.Path.Value;
+
+            if (path == _healthRouter.Route)
             {
-                context.Handler = s.CallService;
+                context.Handler = _healthRouter.CheckHealth;
             }
+            else
+            {
+                string matchedPath;
+                Service s = _tree.GetServiceFromRoute(path, out matchedPath);
+                context.RouteData.DataTokens.Add("apiPath", matchedPath);
+                if (s != null)
+                {
+                    context.Handler = s.CallService;
+                }
+                
+            }
+
             return _taskDone;
         }
 
