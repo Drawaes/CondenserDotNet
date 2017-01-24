@@ -1,2 +1,4 @@
 - name: Introduction
   href: intro.md
+- name: Service Registration
+  href: serviceregistration.md
