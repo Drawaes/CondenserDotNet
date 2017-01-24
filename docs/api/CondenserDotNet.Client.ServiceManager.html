@@ -78,11 +78,35 @@
                   <div class="level0"><span class="xref">System.Object</span></div>
                   <div class="level1"><span class="xref">ServiceManager</span></div>
               </div>
+              <div class="inheritedMembers">
+                <h5>Inherited Members</h5>
+                <div>
+                  <span class="xref">System.Object.Equals(System.Object)</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.Equals(System.Object, System.Object)</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.GetHashCode()</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.GetType()</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.MemberwiseClone()</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.ReferenceEquals(System.Object, System.Object)</span>
+                </div>
+                <div>
+                  <span class="xref">System.Object.ToString()</span>
+                </div>
+              </div>
               <h6><strong>Namespace</strong>:CondenserDotNet.Client</h6>
               <h6><strong>Assembly</strong>:CondenserDotNet.Client.dll</h6>
               <h5 id="CondenserDotNet_Client_ServiceManager_syntax">Syntax</h5>
               <div class="codewrapper">
-                <pre><code class="lang-csharp hljs">public class ServiceManager : object, IServiceManager, IDisposable</code></pre>
+                <pre><code class="lang-csharp hljs">public class ServiceManager : IServiceManager, IDisposable</code></pre>
               </div>
               <h3 id="constructors">Constructors
               </h3>
@@ -271,7 +295,7 @@
                 </thead>
                 <tbody>
                   <tr>
-                    <td><span class="xref">CancellationToken</span></td>
+                    <td><span class="xref">System.Threading.CancellationToken</span></td>
                     <td></td>
                   </tr>
                 </tbody>
@@ -303,7 +327,7 @@
                 </thead>
                 <tbody>
                   <tr>
-                    <td><span class="xref">HttpClient</span></td>
+                    <td><span class="xref">System.Net.Http.HttpClient</span></td>
                     <td></td>
                   </tr>
                 </tbody>
@@ -367,7 +391,7 @@
                 </thead>
                 <tbody>
                   <tr>
-                    <td><span class="xref">TimeSpan</span></td>
+                    <td><span class="xref">System.TimeSpan</span></td>
                     <td></td>
                   </tr>
                 </tbody>
@@ -655,7 +679,7 @@
                 </thead>
                 <tbody>
                   <tr>
-                    <td><span class="xref">IServiceRegistry</span></td>
+                    <td><a class="xref" href="CondenserDotNet.Service.IServiceRegistry.html">IServiceRegistry</a></td>
                     <td></td>
                   </tr>
                 </tbody>
@@ -687,7 +711,7 @@
                 </thead>
                 <tbody>
                   <tr>
-                    <td><span class="xref">List</span>&lt;<span class="xref">System.String</span>&gt;</td>
+                    <td><span class="xref">System.Collections.Generic.List</span>&lt;<span class="xref">System.String</span>&gt;</td>
                     <td></td>
                   </tr>
                 </tbody>
@@ -743,6 +767,8 @@
               <div class="codewrapper">
                 <pre><code class="lang-csharp hljs">public void Dispose()</code></pre>
               </div>
+              <h5 class="implements">Implements</h5>
+                  <div><span class="xref">System.IDisposable.Dispose()</span></div>
               <span class="small pull-right mobile-hide">
                 <span class="divider">|</span>
                 <a href="https://github.com/Drawaes/CondenserDotNet/new/master/apiSpec/new?filename=CondenserDotNet_Client_ServiceManager_Dispose_System_Boolean_.md&amp;value=---%0Auid%3A%20CondenserDotNet.Client.ServiceManager.Dispose(System.Boolean)%0Asummary%3A%20'*You%20can%20override%20summary%20for%20the%20API%20here%20using%20*MARKDOWN*%20syntax'%0A---%0A%0A*Please%20type%20below%20more%20information%20about%20this%20API%3A*%0A%0A">Improve this Doc</a>
@@ -820,6 +846,25 @@
                   </tr>
                 </tbody>
               </table>
+              <h3 id="extensionmethods">Extension Methods</h3>
+              <div>
+                  <a class="xref" href="CondenserDotNet.Client.RegistrationExtensions.html#CondenserDotNet_Client_RegistrationExtensions_AddApiUrl_CondenserDotNet_Client_IServiceManager_System_String_">RegistrationExtensions.AddApiUrl(IServiceManager, String)</a>
+              </div>
+              <div>
+                  <a class="xref" href="CondenserDotNet.Client.RegistrationExtensions.html#CondenserDotNet_Client_RegistrationExtensions_AddHttpHealthCheck_CondenserDotNet_Client_IServiceManager_System_String_System_Int32_">RegistrationExtensions.AddHttpHealthCheck(IServiceManager, String, Int32)</a>
+              </div>
+              <div>
+                  <a class="xref" href="CondenserDotNet.Client.RegistrationExtensions.html#CondenserDotNet_Client_RegistrationExtensions_AddTtlHealthCheck_CondenserDotNet_Client_IServiceManager_System_Int32_">RegistrationExtensions.AddTtlHealthCheck(IServiceManager, Int32)</a>
+              </div>
+              <div>
+                  <a class="xref" href="CondenserDotNet.Client.RegistrationExtensions.html#CondenserDotNet_Client_RegistrationExtensions_WithDeregisterIfCriticalAfterMinutes_CondenserDotNet_Client_IServiceManager_System_Int32_">RegistrationExtensions.WithDeregisterIfCriticalAfterMinutes(IServiceManager, Int32)</a>
+              </div>
+              <div>
+                  <a class="xref" href="CondenserDotNet.Client.RegistrationExtensions.html#CondenserDotNet_Client_RegistrationExtensions_WithDeregisterIfCriticalAfter_CondenserDotNet_Client_IServiceManager_System_TimeSpan_">RegistrationExtensions.WithDeregisterIfCriticalAfter(IServiceManager, TimeSpan)</a>
+              </div>
+              <div>
+                  <a class="xref" href="CondenserDotNet.Client.RegistrationExtensions.html#CondenserDotNet_Client_RegistrationExtensions_RegisterServiceAsync_CondenserDotNet_Client_IServiceManager_">RegistrationExtensions.RegisterServiceAsync(IServiceManager)</a>
+              </div>
                         </article>
           </div>
           

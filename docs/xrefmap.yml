@@ -19,11 +19,11 @@ references:
   commentId: T:CondenserDotNet.Client.Configuration.ConsulConfigurationExtensions
   fullName: CondenserDotNet.Client.Configuration.ConsulConfigurationExtensions
   nameWithType: ConsulConfigurationExtensions
-- uid: CondenserDotNet.Client.Configuration.ConsulConfigurationExtensions.AddConsul(IConfigurationBuilder,CondenserDotNet.Client.IConfigurationRegistry)
+- uid: CondenserDotNet.Client.Configuration.ConsulConfigurationExtensions.AddConsul(Microsoft.Extensions.Configuration.IConfigurationBuilder,CondenserDotNet.Client.IConfigurationRegistry)
   name: AddConsul(IConfigurationBuilder, IConfigurationRegistry)
-  href: api/CondenserDotNet.Client.Configuration.ConsulConfigurationExtensions.html#CondenserDotNet_Client_Configuration_ConsulConfigurationExtensions_AddConsul_IConfigurationBuilder_CondenserDotNet_Client_IConfigurationRegistry_
-  commentId: M:CondenserDotNet.Client.Configuration.ConsulConfigurationExtensions.AddConsul(IConfigurationBuilder,CondenserDotNet.Client.IConfigurationRegistry)
-  fullName: CondenserDotNet.Client.Configuration.ConsulConfigurationExtensions.AddConsul(IConfigurationBuilder, CondenserDotNet.Client.IConfigurationRegistry)
+  href: api/CondenserDotNet.Client.Configuration.ConsulConfigurationExtensions.html#CondenserDotNet_Client_Configuration_ConsulConfigurationExtensions_AddConsul_Microsoft_Extensions_Configuration_IConfigurationBuilder_CondenserDotNet_Client_IConfigurationRegistry_
+  commentId: M:CondenserDotNet.Client.Configuration.ConsulConfigurationExtensions.AddConsul(Microsoft.Extensions.Configuration.IConfigurationBuilder,CondenserDotNet.Client.IConfigurationRegistry)
+  fullName: CondenserDotNet.Client.Configuration.ConsulConfigurationExtensions.AddConsul(Microsoft.Extensions.Configuration.IConfigurationBuilder, CondenserDotNet.Client.IConfigurationRegistry)
   nameWithType: ConsulConfigurationExtensions.AddConsul(IConfigurationBuilder, IConfigurationRegistry)
 - uid: CondenserDotNet.Client.Configuration.ConsulConfigurationExtensions.AddConsul*
   name: AddConsul
@@ -31,11 +31,11 @@ references:
   commentId: Overload:CondenserDotNet.Client.Configuration.ConsulConfigurationExtensions.AddConsul
   fullName: CondenserDotNet.Client.Configuration.ConsulConfigurationExtensions.AddConsul
   nameWithType: ConsulConfigurationExtensions.AddConsul
-- uid: CondenserDotNet.Client.Configuration.ConsulConfigurationExtensions.AddJsonConsul(IConfigurationBuilder,CondenserDotNet.Client.IConfigurationRegistry)
+- uid: CondenserDotNet.Client.Configuration.ConsulConfigurationExtensions.AddJsonConsul(Microsoft.Extensions.Configuration.IConfigurationBuilder,CondenserDotNet.Client.IConfigurationRegistry)
   name: AddJsonConsul(IConfigurationBuilder, IConfigurationRegistry)
-  href: api/CondenserDotNet.Client.Configuration.ConsulConfigurationExtensions.html#CondenserDotNet_Client_Configuration_ConsulConfigurationExtensions_AddJsonConsul_IConfigurationBuilder_CondenserDotNet_Client_IConfigurationRegistry_
-  commentId: M:CondenserDotNet.Client.Configuration.ConsulConfigurationExtensions.AddJsonConsul(IConfigurationBuilder,CondenserDotNet.Client.IConfigurationRegistry)
-  fullName: CondenserDotNet.Client.Configuration.ConsulConfigurationExtensions.AddJsonConsul(IConfigurationBuilder, CondenserDotNet.Client.IConfigurationRegistry)
+  href: api/CondenserDotNet.Client.Configuration.ConsulConfigurationExtensions.html#CondenserDotNet_Client_Configuration_ConsulConfigurationExtensions_AddJsonConsul_Microsoft_Extensions_Configuration_IConfigurationBuilder_CondenserDotNet_Client_IConfigurationRegistry_
+  commentId: M:CondenserDotNet.Client.Configuration.ConsulConfigurationExtensions.AddJsonConsul(Microsoft.Extensions.Configuration.IConfigurationBuilder,CondenserDotNet.Client.IConfigurationRegistry)
+  fullName: CondenserDotNet.Client.Configuration.ConsulConfigurationExtensions.AddJsonConsul(Microsoft.Extensions.Configuration.IConfigurationBuilder, CondenserDotNet.Client.IConfigurationRegistry)
   nameWithType: ConsulConfigurationExtensions.AddJsonConsul(IConfigurationBuilder, IConfigurationRegistry)
 - uid: CondenserDotNet.Client.Configuration.ConsulConfigurationExtensions.AddJsonConsul*
   name: AddJsonConsul
@@ -61,13 +61,13 @@ references:
   commentId: Overload:CondenserDotNet.Client.Configuration.ConsulProvider.#ctor
   fullName: CondenserDotNet.Client.Configuration.ConsulProvider.ConsulProvider
   nameWithType: ConsulProvider.ConsulProvider
-- uid: CondenserDotNet.Client.Configuration.ConsulProvider.GetChildKeys(IEnumerable{System.String},System.String)
+- uid: CondenserDotNet.Client.Configuration.ConsulProvider.GetChildKeys(System.Collections.Generic.IEnumerable{System.String},System.String)
   name: GetChildKeys(IEnumerable<String>, String)
-  href: api/CondenserDotNet.Client.Configuration.ConsulProvider.html#CondenserDotNet_Client_Configuration_ConsulProvider_GetChildKeys_IEnumerable_System_String__System_String_
-  commentId: M:CondenserDotNet.Client.Configuration.ConsulProvider.GetChildKeys(IEnumerable{System.String},System.String)
+  href: api/CondenserDotNet.Client.Configuration.ConsulProvider.html#CondenserDotNet_Client_Configuration_ConsulProvider_GetChildKeys_System_Collections_Generic_IEnumerable_System_String__System_String_
+  commentId: M:CondenserDotNet.Client.Configuration.ConsulProvider.GetChildKeys(System.Collections.Generic.IEnumerable{System.String},System.String)
   name.vb: GetChildKeys(IEnumerable(Of String), String)
-  fullName: CondenserDotNet.Client.Configuration.ConsulProvider.GetChildKeys(IEnumerable<System.String>, System.String)
-  fullName.vb: CondenserDotNet.Client.Configuration.ConsulProvider.GetChildKeys(IEnumerable(Of System.String), System.String)
+  fullName: CondenserDotNet.Client.Configuration.ConsulProvider.GetChildKeys(System.Collections.Generic.IEnumerable<System.String>, System.String)
+  fullName.vb: CondenserDotNet.Client.Configuration.ConsulProvider.GetChildKeys(System.Collections.Generic.IEnumerable(Of System.String), System.String)
   nameWithType: ConsulProvider.GetChildKeys(IEnumerable<String>, String)
   nameWithType.vb: ConsulProvider.GetChildKeys(IEnumerable(Of String), String)
 - uid: CondenserDotNet.Client.Configuration.ConsulProvider.GetChildKeys*
@@ -133,11 +133,11 @@ references:
   commentId: Overload:CondenserDotNet.Client.Configuration.ConsulSource.#ctor
   fullName: CondenserDotNet.Client.Configuration.ConsulSource.ConsulSource
   nameWithType: ConsulSource.ConsulSource
-- uid: CondenserDotNet.Client.Configuration.ConsulSource.Build(IConfigurationBuilder)
+- uid: CondenserDotNet.Client.Configuration.ConsulSource.Build(Microsoft.Extensions.Configuration.IConfigurationBuilder)
   name: Build(IConfigurationBuilder)
-  href: api/CondenserDotNet.Client.Configuration.ConsulSource.html#CondenserDotNet_Client_Configuration_ConsulSource_Build_IConfigurationBuilder_
-  commentId: M:CondenserDotNet.Client.Configuration.ConsulSource.Build(IConfigurationBuilder)
-  fullName: CondenserDotNet.Client.Configuration.ConsulSource.Build(IConfigurationBuilder)
+  href: api/CondenserDotNet.Client.Configuration.ConsulSource.html#CondenserDotNet_Client_Configuration_ConsulSource_Build_Microsoft_Extensions_Configuration_IConfigurationBuilder_
+  commentId: M:CondenserDotNet.Client.Configuration.ConsulSource.Build(Microsoft.Extensions.Configuration.IConfigurationBuilder)
+  fullName: CondenserDotNet.Client.Configuration.ConsulSource.Build(Microsoft.Extensions.Configuration.IConfigurationBuilder)
   nameWithType: ConsulSource.Build(IConfigurationBuilder)
 - uid: CondenserDotNet.Client.Configuration.ConsulSource.Build*
   name: Build
@@ -211,11 +211,11 @@ references:
   commentId: Overload:CondenserDotNet.Client.ConfigurationRegistry.AddUpdatingPathAsync
   fullName: CondenserDotNet.Client.ConfigurationRegistry.AddUpdatingPathAsync
   nameWithType: ConfigurationRegistry.AddUpdatingPathAsync
-- uid: CondenserDotNet.Client.ConfigurationRegistry.AddWatchOnEntireConfig(Action)
+- uid: CondenserDotNet.Client.ConfigurationRegistry.AddWatchOnEntireConfig(System.Action)
   name: AddWatchOnEntireConfig(Action)
-  href: api/CondenserDotNet.Client.ConfigurationRegistry.html#CondenserDotNet_Client_ConfigurationRegistry_AddWatchOnEntireConfig_Action_
-  commentId: M:CondenserDotNet.Client.ConfigurationRegistry.AddWatchOnEntireConfig(Action)
-  fullName: CondenserDotNet.Client.ConfigurationRegistry.AddWatchOnEntireConfig(Action)
+  href: api/CondenserDotNet.Client.ConfigurationRegistry.html#CondenserDotNet_Client_ConfigurationRegistry_AddWatchOnEntireConfig_System_Action_
+  commentId: M:CondenserDotNet.Client.ConfigurationRegistry.AddWatchOnEntireConfig(System.Action)
+  fullName: CondenserDotNet.Client.ConfigurationRegistry.AddWatchOnEntireConfig(System.Action)
   nameWithType: ConfigurationRegistry.AddWatchOnEntireConfig(Action)
 - uid: CondenserDotNet.Client.ConfigurationRegistry.AddWatchOnEntireConfig*
   name: AddWatchOnEntireConfig
@@ -223,13 +223,13 @@ references:
   commentId: Overload:CondenserDotNet.Client.ConfigurationRegistry.AddWatchOnEntireConfig
   fullName: CondenserDotNet.Client.ConfigurationRegistry.AddWatchOnEntireConfig
   nameWithType: ConfigurationRegistry.AddWatchOnEntireConfig
-- uid: CondenserDotNet.Client.ConfigurationRegistry.AddWatchOnSingleKey(System.String,Action{System.String})
+- uid: CondenserDotNet.Client.ConfigurationRegistry.AddWatchOnSingleKey(System.String,System.Action{System.String})
   name: AddWatchOnSingleKey(String, Action<String>)
-  href: api/CondenserDotNet.Client.ConfigurationRegistry.html#CondenserDotNet_Client_ConfigurationRegistry_AddWatchOnSingleKey_System_String_Action_System_String__
-  commentId: M:CondenserDotNet.Client.ConfigurationRegistry.AddWatchOnSingleKey(System.String,Action{System.String})
+  href: api/CondenserDotNet.Client.ConfigurationRegistry.html#CondenserDotNet_Client_ConfigurationRegistry_AddWatchOnSingleKey_System_String_System_Action_System_String__
+  commentId: M:CondenserDotNet.Client.ConfigurationRegistry.AddWatchOnSingleKey(System.String,System.Action{System.String})
   name.vb: AddWatchOnSingleKey(String, Action(Of String))
-  fullName: CondenserDotNet.Client.ConfigurationRegistry.AddWatchOnSingleKey(System.String, Action<System.String>)
-  fullName.vb: CondenserDotNet.Client.ConfigurationRegistry.AddWatchOnSingleKey(System.String, Action(Of System.String))
+  fullName: CondenserDotNet.Client.ConfigurationRegistry.AddWatchOnSingleKey(System.String, System.Action<System.String>)
+  fullName.vb: CondenserDotNet.Client.ConfigurationRegistry.AddWatchOnSingleKey(System.String, System.Action(Of System.String))
   nameWithType: ConfigurationRegistry.AddWatchOnSingleKey(String, Action<String>)
   nameWithType.vb: ConfigurationRegistry.AddWatchOnSingleKey(String, Action(Of String))
 - uid: CondenserDotNet.Client.ConfigurationRegistry.AddWatchOnSingleKey*
@@ -655,11 +655,11 @@ references:
   commentId: Overload:CondenserDotNet.Client.IConfigurationRegistry.AddUpdatingPathAsync
   fullName: CondenserDotNet.Client.IConfigurationRegistry.AddUpdatingPathAsync
   nameWithType: IConfigurationRegistry.AddUpdatingPathAsync
-- uid: CondenserDotNet.Client.IConfigurationRegistry.AddWatchOnEntireConfig(Action)
+- uid: CondenserDotNet.Client.IConfigurationRegistry.AddWatchOnEntireConfig(System.Action)
   name: AddWatchOnEntireConfig(Action)
-  href: api/CondenserDotNet.Client.IConfigurationRegistry.html#CondenserDotNet_Client_IConfigurationRegistry_AddWatchOnEntireConfig_Action_
-  commentId: M:CondenserDotNet.Client.IConfigurationRegistry.AddWatchOnEntireConfig(Action)
-  fullName: CondenserDotNet.Client.IConfigurationRegistry.AddWatchOnEntireConfig(Action)
+  href: api/CondenserDotNet.Client.IConfigurationRegistry.html#CondenserDotNet_Client_IConfigurationRegistry_AddWatchOnEntireConfig_System_Action_
+  commentId: M:CondenserDotNet.Client.IConfigurationRegistry.AddWatchOnEntireConfig(System.Action)
+  fullName: CondenserDotNet.Client.IConfigurationRegistry.AddWatchOnEntireConfig(System.Action)
   nameWithType: IConfigurationRegistry.AddWatchOnEntireConfig(Action)
 - uid: CondenserDotNet.Client.IConfigurationRegistry.AddWatchOnEntireConfig*
   name: AddWatchOnEntireConfig
@@ -667,13 +667,13 @@ references:
   commentId: Overload:CondenserDotNet.Client.IConfigurationRegistry.AddWatchOnEntireConfig
   fullName: CondenserDotNet.Client.IConfigurationRegistry.AddWatchOnEntireConfig
   nameWithType: IConfigurationRegistry.AddWatchOnEntireConfig
-- uid: CondenserDotNet.Client.IConfigurationRegistry.AddWatchOnSingleKey(System.String,Action{System.String})
+- uid: CondenserDotNet.Client.IConfigurationRegistry.AddWatchOnSingleKey(System.String,System.Action{System.String})
   name: AddWatchOnSingleKey(String, Action<String>)
-  href: api/CondenserDotNet.Client.IConfigurationRegistry.html#CondenserDotNet_Client_IConfigurationRegistry_AddWatchOnSingleKey_System_String_Action_System_String__
-  commentId: M:CondenserDotNet.Client.IConfigurationRegistry.AddWatchOnSingleKey(System.String,Action{System.String})
+  href: api/CondenserDotNet.Client.IConfigurationRegistry.html#CondenserDotNet_Client_IConfigurationRegistry_AddWatchOnSingleKey_System_String_System_Action_System_String__
+  commentId: M:CondenserDotNet.Client.IConfigurationRegistry.AddWatchOnSingleKey(System.String,System.Action{System.String})
   name.vb: AddWatchOnSingleKey(String, Action(Of String))
-  fullName: CondenserDotNet.Client.IConfigurationRegistry.AddWatchOnSingleKey(System.String, Action<System.String>)
-  fullName.vb: CondenserDotNet.Client.IConfigurationRegistry.AddWatchOnSingleKey(System.String, Action(Of System.String))
+  fullName: CondenserDotNet.Client.IConfigurationRegistry.AddWatchOnSingleKey(System.String, System.Action<System.String>)
+  fullName.vb: CondenserDotNet.Client.IConfigurationRegistry.AddWatchOnSingleKey(System.String, System.Action(Of System.String))
   nameWithType: IConfigurationRegistry.AddWatchOnSingleKey(String, Action<String>)
   nameWithType.vb: IConfigurationRegistry.AddWatchOnSingleKey(String, Action(Of String))
 - uid: CondenserDotNet.Client.IConfigurationRegistry.AddWatchOnSingleKey*
@@ -1144,11 +1144,11 @@ references:
   commentId: Overload:CondenserDotNet.Client.RegistrationExtensions.RegisterServiceAsync
   fullName: CondenserDotNet.Client.RegistrationExtensions.RegisterServiceAsync
   nameWithType: RegistrationExtensions.RegisterServiceAsync
-- uid: CondenserDotNet.Client.RegistrationExtensions.WithDeregisterIfCriticalAfter(CondenserDotNet.Client.IServiceManager,TimeSpan)
+- uid: CondenserDotNet.Client.RegistrationExtensions.WithDeregisterIfCriticalAfter(CondenserDotNet.Client.IServiceManager,System.TimeSpan)
   name: WithDeregisterIfCriticalAfter(IServiceManager, TimeSpan)
-  href: api/CondenserDotNet.Client.RegistrationExtensions.html#CondenserDotNet_Client_RegistrationExtensions_WithDeregisterIfCriticalAfter_CondenserDotNet_Client_IServiceManager_TimeSpan_
-  commentId: M:CondenserDotNet.Client.RegistrationExtensions.WithDeregisterIfCriticalAfter(CondenserDotNet.Client.IServiceManager,TimeSpan)
-  fullName: CondenserDotNet.Client.RegistrationExtensions.WithDeregisterIfCriticalAfter(CondenserDotNet.Client.IServiceManager, TimeSpan)
+  href: api/CondenserDotNet.Client.RegistrationExtensions.html#CondenserDotNet_Client_RegistrationExtensions_WithDeregisterIfCriticalAfter_CondenserDotNet_Client_IServiceManager_System_TimeSpan_
+  commentId: M:CondenserDotNet.Client.RegistrationExtensions.WithDeregisterIfCriticalAfter(CondenserDotNet.Client.IServiceManager,System.TimeSpan)
+  fullName: CondenserDotNet.Client.RegistrationExtensions.WithDeregisterIfCriticalAfter(CondenserDotNet.Client.IServiceManager, System.TimeSpan)
   nameWithType: RegistrationExtensions.WithDeregisterIfCriticalAfter(IServiceManager, TimeSpan)
 - uid: CondenserDotNet.Client.RegistrationExtensions.WithDeregisterIfCriticalAfter*
   name: WithDeregisterIfCriticalAfter
@@ -1180,22 +1180,22 @@ references:
   commentId: Overload:CondenserDotNet.Client.ServiceCollectionExtensions.ConfigureReloadable
   fullName: CondenserDotNet.Client.ServiceCollectionExtensions.ConfigureReloadable
   nameWithType: ServiceCollectionExtensions.ConfigureReloadable
-- uid: CondenserDotNet.Client.ServiceCollectionExtensions.ConfigureReloadable``1(IServiceCollection,IConfiguration,CondenserDotNet.Client.IConfigurationRegistry)
+- uid: CondenserDotNet.Client.ServiceCollectionExtensions.ConfigureReloadable``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration,CondenserDotNet.Client.IConfigurationRegistry)
   name: ConfigureReloadable<TConfig>(IServiceCollection, IConfiguration, IConfigurationRegistry)
-  href: api/CondenserDotNet.Client.ServiceCollectionExtensions.html#CondenserDotNet_Client_ServiceCollectionExtensions_ConfigureReloadable__1_IServiceCollection_IConfiguration_CondenserDotNet_Client_IConfigurationRegistry_
-  commentId: M:CondenserDotNet.Client.ServiceCollectionExtensions.ConfigureReloadable``1(IServiceCollection,IConfiguration,CondenserDotNet.Client.IConfigurationRegistry)
+  href: api/CondenserDotNet.Client.ServiceCollectionExtensions.html#CondenserDotNet_Client_ServiceCollectionExtensions_ConfigureReloadable__1_Microsoft_Extensions_DependencyInjection_IServiceCollection_Microsoft_Extensions_Configuration_IConfiguration_CondenserDotNet_Client_IConfigurationRegistry_
+  commentId: M:CondenserDotNet.Client.ServiceCollectionExtensions.ConfigureReloadable``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration,CondenserDotNet.Client.IConfigurationRegistry)
   name.vb: ConfigureReloadable(Of TConfig)(IServiceCollection, IConfiguration, IConfigurationRegistry)
-  fullName: CondenserDotNet.Client.ServiceCollectionExtensions.ConfigureReloadable<TConfig>(IServiceCollection, IConfiguration, CondenserDotNet.Client.IConfigurationRegistry)
-  fullName.vb: CondenserDotNet.Client.ServiceCollectionExtensions.ConfigureReloadable(Of TConfig)(IServiceCollection, IConfiguration, CondenserDotNet.Client.IConfigurationRegistry)
+  fullName: CondenserDotNet.Client.ServiceCollectionExtensions.ConfigureReloadable<TConfig>(Microsoft.Extensions.DependencyInjection.IServiceCollection, Microsoft.Extensions.Configuration.IConfiguration, CondenserDotNet.Client.IConfigurationRegistry)
+  fullName.vb: CondenserDotNet.Client.ServiceCollectionExtensions.ConfigureReloadable(Of TConfig)(Microsoft.Extensions.DependencyInjection.IServiceCollection, Microsoft.Extensions.Configuration.IConfiguration, CondenserDotNet.Client.IConfigurationRegistry)
   nameWithType: ServiceCollectionExtensions.ConfigureReloadable<TConfig>(IServiceCollection, IConfiguration, IConfigurationRegistry)
   nameWithType.vb: ServiceCollectionExtensions.ConfigureReloadable(Of TConfig)(IServiceCollection, IConfiguration, IConfigurationRegistry)
-- uid: CondenserDotNet.Client.ServiceCollectionExtensions.ConfigureReloadable``1(IServiceCollection,IConfiguration,CondenserDotNet.Client.IConfigurationRegistry,System.String)
+- uid: CondenserDotNet.Client.ServiceCollectionExtensions.ConfigureReloadable``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration,CondenserDotNet.Client.IConfigurationRegistry,System.String)
   name: ConfigureReloadable<TConfig>(IServiceCollection, IConfiguration, IConfigurationRegistry, String)
-  href: api/CondenserDotNet.Client.ServiceCollectionExtensions.html#CondenserDotNet_Client_ServiceCollectionExtensions_ConfigureReloadable__1_IServiceCollection_IConfiguration_CondenserDotNet_Client_IConfigurationRegistry_System_String_
-  commentId: M:CondenserDotNet.Client.ServiceCollectionExtensions.ConfigureReloadable``1(IServiceCollection,IConfiguration,CondenserDotNet.Client.IConfigurationRegistry,System.String)
+  href: api/CondenserDotNet.Client.ServiceCollectionExtensions.html#CondenserDotNet_Client_ServiceCollectionExtensions_ConfigureReloadable__1_Microsoft_Extensions_DependencyInjection_IServiceCollection_Microsoft_Extensions_Configuration_IConfiguration_CondenserDotNet_Client_IConfigurationRegistry_System_String_
+  commentId: M:CondenserDotNet.Client.ServiceCollectionExtensions.ConfigureReloadable``1(Microsoft.Extensions.DependencyInjection.IServiceCollection,Microsoft.Extensions.Configuration.IConfiguration,CondenserDotNet.Client.IConfigurationRegistry,System.String)
   name.vb: ConfigureReloadable(Of TConfig)(IServiceCollection, IConfiguration, IConfigurationRegistry, String)
-  fullName: CondenserDotNet.Client.ServiceCollectionExtensions.ConfigureReloadable<TConfig>(IServiceCollection, IConfiguration, CondenserDotNet.Client.IConfigurationRegistry, System.String)
-  fullName.vb: CondenserDotNet.Client.ServiceCollectionExtensions.ConfigureReloadable(Of TConfig)(IServiceCollection, IConfiguration, CondenserDotNet.Client.IConfigurationRegistry, System.String)
+  fullName: CondenserDotNet.Client.ServiceCollectionExtensions.ConfigureReloadable<TConfig>(Microsoft.Extensions.DependencyInjection.IServiceCollection, Microsoft.Extensions.Configuration.IConfiguration, CondenserDotNet.Client.IConfigurationRegistry, System.String)
+  fullName.vb: CondenserDotNet.Client.ServiceCollectionExtensions.ConfigureReloadable(Of TConfig)(Microsoft.Extensions.DependencyInjection.IServiceCollection, Microsoft.Extensions.Configuration.IConfiguration, CondenserDotNet.Client.IConfigurationRegistry, System.String)
   nameWithType: ServiceCollectionExtensions.ConfigureReloadable<TConfig>(IServiceCollection, IConfiguration, IConfigurationRegistry, String)
   nameWithType.vb: ServiceCollectionExtensions.ConfigureReloadable(Of TConfig)(IServiceCollection, IConfiguration, IConfigurationRegistry, String)
 - uid: CondenserDotNet.Client.ServiceManager
