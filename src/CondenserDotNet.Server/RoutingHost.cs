@@ -44,12 +44,11 @@ namespace CondenserDotNet.Server
             foreach (var server in latestValues)
             {
                 var name = server.Key;
+                var routes = FilterRoutes(server.Value);
 
                 Service current;
                 if (!_servicesByName.TryGetValue(name, out current))
                 {
-                    var routes = FilterRoutes(server.Value);
-
                     var service = new Service(routes,
                         name, name, server.Value, _services);
 
@@ -61,10 +60,10 @@ namespace CondenserDotNet.Server
                 {
                     var previousRoutes = current.Routes;
 
-                    foreach (var newTag in current.Routes.Except(previousRoutes))
+                    foreach (var newTag in routes.Except(previousRoutes))
                         _router.AddServiceToRoute(newTag, current);
 
-                    foreach (var oldTag in previousRoutes.Except(current.Routes))
+                    foreach (var oldTag in previousRoutes.Except(routes))
                         _router.RemoveServiceFromRoute(oldTag, current);
                 }
             }

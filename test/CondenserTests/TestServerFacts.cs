@@ -62,7 +62,7 @@ namespace CondenserTests
                 .Configure(x => x.UseMvcWithDefaultRoute())
                 .ConfigureServices(x => { x.AddMvcCore(); });
 
-            var customRouter = new CustomRouter();
+            var customRouter = BuildRouter();
             var tags = new[] { "fake/fake/route" };
             var registry = new FakeServiceRegistry();
             var serviceId = "FakeService";
@@ -107,6 +107,11 @@ namespace CondenserTests
                     }
                 }
             }
+        }
+
+        private CustomRouter BuildRouter()
+        {
+            return new CustomRouter(new FakeHealthRouter());
         }
     }
 }
