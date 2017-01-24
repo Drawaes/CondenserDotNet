@@ -1,0 +1,177 @@
+﻿<!DOCTYPE html>
+<!--[if IE]><![endif]-->
+<html>
+  
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>CondenserDotNet </title>
+    <meta name="viewport" content="width=device-width">
+    <meta name="title" content="CondenserDotNet ">
+    <meta name="generator" content="docfx 2.11.0.0">
+    
+    <link rel="shortcut icon" href="favicon.ico">
+    <link rel="stylesheet" href="styles/docfx.vendor.css">
+    <link rel="stylesheet" href="styles/docfx.css">
+    <link rel="stylesheet" href="styles/main.css">
+    <meta property="docfx:navrel" content="toc.html">
+    <meta property="docfx:tocrel" content="toc.html">
+    
+  </head>
+  <body data-spy="scroll" data-target="#affix">
+    <div id="wrapper">
+      <header>
+        
+        <nav id="autocollapse" class="navbar navbar-inverse ng-scope" role="navigation">
+          <div class="container">
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              
+              <a class="navbar-brand" href="index.html">
+                <img id="logo" class="svg" src="logo.svg" alt="">
+              </a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+              <form class="navbar-form navbar-right" role="search" id="search">
+                <div class="form-group">
+                  <input type="text" class="form-control" id="search-query" placeholder="Search" autocomplete="off">
+                </div>
+              </form>
+            </div>
+          </div>
+        </nav>
+        
+        <div class="subnav navbar navbar-default">
+          <div class="container hide-when-search" id="breadcrumb">
+            <ul class="breadcrumb">
+              <li></li>
+            </ul>
+          </div>
+        </div>
+      </header>
+      <div role="main" class="container body-content hide-when-search">
+        <div class="article row grid">
+          <div class="col-md-10">
+            <article class="content wrap" id="_content" data-uid="">
+              
+              <p><a href="https://ci.appveyor.com/project/Drawaes/condenserdotnet"><img src="https://ci.appveyor.com/api/projects/status/r2088yqbhp57cu66?svg=true" alt="Build status"></a>
+<a href="https://travis-ci.org/Drawaes/CondenserDotNet"><img src="https://travis-ci.org/Drawaes/CondenserDotNet.svg?branch=master" alt="Xplat Build status"></a>
+<a href="https://gitter.im/CondenserDotNet/Lobby?utm_source=badge&amp;utm_medium=badge&amp;utm_campaign=pr-badge&amp;utm_content=badge"><img src="https://badges.gitter.im/CondenserDotNet/Lobby.svg" alt="Join the chat at https://gitter.im/CondenserDotNet/Lobby"></a>
+<a href="https://coveralls.io/github/Drawaes/CondenserDotNet?branch=master"><img src="https://img.shields.io/coveralls/Drawaes/CondenserDotNet.svg" alt="Coveralls"></a></p>
+<h1 id="condenserdotnet">CondenserDotNet</h1>
+<p>API Condenser / Reverse Proxy using Kestrel and Consul, Including light weight consul lib</p>
+<p>A set of consul clients for .net that is simple and integrates with an API proxy</p>
+<p>CI Builds available as nuget packs from myget</p>
+<p><a href="https://www.myget.org/F/condenserdotnet/api/v3/index.json"><img src="https://img.shields.io/myget/condenserdotnet/v/CondenserDotNet.Client.svg" alt="MyGet"></a></p>
+<p>Current release is available at</p>
+<p><a href="https://www.nuget.org/packages/CondenserDotNet.Client/"><img src="https://img.shields.io/nuget/v/CondenserDotNet.Client.svg" alt="NuGet"></a></p>
+<h2 id="example-use-to-register-a-service">Example use to register a service</h2>
+<pre><code class="lang-csharp">var serviceManager = new ServiceManager(&quot;TestService&quot;);
+    await serviceManager.AddHttpHealthCheck(&quot;health&quot;,10)
+        .AddApiUrl(&quot;/api/someObject&quot;)
+        .AddApiUrl(&quot;/api/someOtherObject&quot;)
+        .RegisterServiceAsync();
+</code></pre><h2 id="example-to-configure-kestrel-on-a-dynamic-port">Example to configure Kestrel on a dynamic port</h2>
+<pre><code class="lang-csharp">var host = new WebHostBuilder()
+    .UseKestrel()
+    .UseUrls($&quot;http://*:{serviceManager.ServicePort}&quot;)
+    .UseStartup&lt;Startup&gt;()
+    .Build();
+
+host.Run();
+</code></pre><p>The first available port in the dynamic range for windows is allocated by default. You can override this if you have a specific port you would like to use.  </p>
+<pre><code class="lang-csharp">serviceManager.ServicePort = 5000;
+</code></pre><p>You should assign this before registering or call RegisterServiceAsync() again if you change the details to send the new configuration to Consul.</p>
+<h2 id="example-to-get-an-instance-of-a-service-to-connect-to">Example to get an instance of a service to connect to</h2>
+<p>The following gets an instance of a service to call. If you recall the method you will get randomly rotated around the instances and they will be updated in the background based on the health changing</p>
+<pre><code class="lang-csharp">var serviceInstance = await manager.Services.GetServiceInstanceAsync(&quot;ServiceLookup&quot;);
+if(serviceInsance == null)
+{
+    //you need to handle no service instance available
+}
+//connect to service via your method
+var serverUrl = $&quot;http://{serviceInstance.Address}:{serviceInsance.Port}&quot;;
+
+serviceInstance2 = await manager.Services.GetServiceInstanceAsync(&quot;ServiceLookup&quot;);
+</code></pre><h2 id="example-for-configuration">Example for configuration</h2>
+<p>Configuration follows a LIFO policy, in that the last configuration item registered will &quot;win&quot; and override the same keys from a previous registration. Both static and dynamic registrations will override each other. To access values you call</p>
+<pre><code class="lang-csharp">var configValue = serviceManager.Config[&quot;MyKey&quot;];
+</code></pre><p>If the key doesn&#39;t exist it will throw an exception. You can access it with the normal tryget pattern as well</p>
+<pre><code class="lang-csharp">string configValue;
+if(serviceManager.Config.TryGetValue(&quot;MyKey&quot;, out configValue))
+{
+    //do something with the key
+}
+</code></pre><h3 id="static-configuration">Static configuration</h3>
+<p>To register a static set of keys you call the following</p>
+<pre><code class="lang-csharp">var result = await ServiceManager.Config.AddStaticKeyPathAsync(&quot;my/keys/path&quot;);
+</code></pre><p>result will be false if the key bucket or key was not found otherwise it will return true and add all of the child keys recursively. Keys will be in the format keyPath:keyPath:Key in the config after that to comply with the ASP.Net configuration. It will not include the path prefix that you used in adding the configuraiton (in this case &quot;my/key/path&quot;)</p>
+<h3 id="dynamic-configuration">Dynamic configuration</h3>
+<p>You can register a key path for dynamic configuration. This will watch consul for any changes in a a callback fashion. It uses async long polling so it should react instantly and without causing undue network traffic or system load.
+Below is how you register a key space that you want the library to watch until disposal.</p>
+<pre><code class="lang-csharp">var manager = new ServiceManager(&quot;TestService&quot;);
+    await manager.Config.AddUpdatingPathAsync(&quot;org/test5/&quot;);
+</code></pre><p>You can also register a callback to alert you if a specific key is updated or if any key in the config is updated. The any key might be triggered even if there is no actual effective update (due to an override) so applications will need to check if their information has actually been updated.
+The single key watch will check for an actual update and only return if that key has changed.</p>
+<pre><code class="lang-csharp">var singleCallBack = manager.Config.AddWatchOnSingleKey(&quot;test1&quot;, () =&gt; Console.Writeline(&quot;Key Changed!&quot;);
+</code></pre><p>If you want any update to trigger your callback just do</p>
+<pre><code class="lang-csharp">var multipleCallBack = manager.Config.AddWatchOnEntireConfig(
+    () =&gt; Console.Writeline(&quot;Some key changed, or multiple keys changed, or maybe none?&quot;);
+</code></pre><h3 id="leader-election">Leader Election</h3>
+<p>You can participate in leader election using the consul sessions. You simply ask for a LeaderWatcher based on a predefined key for your application.</p>
+<pre><code class="lang-csharp">var watcher1 = manager.Leaders.GetLeaderWatcher(leadershipKey);
+</code></pre><p>You can then await on this object until a leader is elected and it will return when someone is elected and tell you who it is.</p>
+<pre><code class="lang-csharp">var leader = await watcher1.GetCurrentLeaderAsync();
+</code></pre><p>If you would like to get the leadership you can do so, the GetLeadershipAsync will return once you have become leader. You can call this over and over to ensure that you haven&#39;t lost the leadership</p>
+<pre><code class="lang-csharp">while(true)
+{
+  await watcher1.GetLeadershipAsync();
+  //Do some work that only the leader should do
+  //then loop back to do the next bit of work
+  //but check that we are still the leader
+}
+</code></pre>
+            </article>
+          </div>
+          
+          <div class="hidden-sm col-md-2" role="complementary">
+            <div class="sideaffix">
+              <div class="contribution">
+                <ul class="nav">
+                  <li>
+                    <a href="https://github.com/Drawaes/CondenserDotNet/blob/master/README.md/#L1" class="contribution-link">Improve this Doc</a>
+                  </li>
+                </ul>
+              </div>
+              <nav class="bs-docs-sidebar hidden-print hidden-xs hidden-sm affix" id="affix">
+              <!-- <p><a class="back-to-top" href="#top">Back to top</a><p> -->
+              </nav>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <footer>
+        <div class="grad-bottom"></div>
+        <div class="footer">
+          <div class="container">
+            <span class="pull-right">
+              <a href="#top">Back to top</a>
+            </span>
+            
+            <span>Copyright © 2015-2016 Microsoft<br>Generated by <strong>DocFX</strong></span>
+          </div>
+        </div>
+      </footer>
+    </div>
+    
+    <script type="text/javascript" src="styles/docfx.vendor.js"></script>
+    <script type="text/javascript" src="styles/docfx.js"></script>
+    <script type="text/javascript" src="styles/main.js"></script>
+  </body>
+</html>
