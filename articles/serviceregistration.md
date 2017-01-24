@@ -34,7 +34,7 @@ You will need to add the port as well as the machine even if the port is the def
 If you also wish to override the serviceId your constructor would look like this.
 
 ``` csharp
-var serviceManager = new ServiceManager("TestService","serviceInstanceName", "consulAgentMachine", 8500);
+var serviceManager = new ServiceManager("TestService", "instanceName", "agentMachine", 8500);
 await serviceManager.RegisterServiceAsync();
 ```
 

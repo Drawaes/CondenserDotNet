@@ -1516,6 +1516,144 @@ references:
   commentId: N:CondenserDotNet.Server
   fullName: CondenserDotNet.Server
   nameWithType: CondenserDotNet.Server
+- uid: CondenserDotNet.Server.Builder
+  name: CondenserDotNet.Server.Builder
+  href: api/CondenserDotNet.Server.Builder.html
+  commentId: N:CondenserDotNet.Server.Builder
+  fullName: CondenserDotNet.Server.Builder
+  nameWithType: CondenserDotNet.Server.Builder
+- uid: CondenserDotNet.Server.Builder.HealthCheckBuilder
+  name: HealthCheckBuilder
+  href: api/CondenserDotNet.Server.Builder.HealthCheckBuilder.html
+  commentId: T:CondenserDotNet.Server.Builder.HealthCheckBuilder
+  fullName: CondenserDotNet.Server.Builder.HealthCheckBuilder
+  nameWithType: HealthCheckBuilder
+- uid: CondenserDotNet.Server.Builder.HealthCheckBuilder.#ctor(Microsoft.AspNetCore.Hosting.IWebHostBuilder)
+  name: HealthCheckBuilder(IWebHostBuilder)
+  href: api/CondenserDotNet.Server.Builder.HealthCheckBuilder.html#CondenserDotNet_Server_Builder_HealthCheckBuilder__ctor_Microsoft_AspNetCore_Hosting_IWebHostBuilder_
+  commentId: M:CondenserDotNet.Server.Builder.HealthCheckBuilder.#ctor(Microsoft.AspNetCore.Hosting.IWebHostBuilder)
+  fullName: CondenserDotNet.Server.Builder.HealthCheckBuilder.HealthCheckBuilder(Microsoft.AspNetCore.Hosting.IWebHostBuilder)
+  nameWithType: HealthCheckBuilder.HealthCheckBuilder(IWebHostBuilder)
+- uid: CondenserDotNet.Server.Builder.HealthCheckBuilder.#ctor*
+  name: HealthCheckBuilder
+  href: api/CondenserDotNet.Server.Builder.HealthCheckBuilder.html#CondenserDotNet_Server_Builder_HealthCheckBuilder__ctor_
+  commentId: Overload:CondenserDotNet.Server.Builder.HealthCheckBuilder.#ctor
+  fullName: CondenserDotNet.Server.Builder.HealthCheckBuilder.HealthCheckBuilder
+  nameWithType: HealthCheckBuilder.HealthCheckBuilder
+- uid: CondenserDotNet.Server.Builder.HealthCheckBuilder.Build
+  name: Build()
+  href: api/CondenserDotNet.Server.Builder.HealthCheckBuilder.html#CondenserDotNet_Server_Builder_HealthCheckBuilder_Build
+  commentId: M:CondenserDotNet.Server.Builder.HealthCheckBuilder.Build
+  fullName: CondenserDotNet.Server.Builder.HealthCheckBuilder.Build()
+  nameWithType: HealthCheckBuilder.Build()
+- uid: CondenserDotNet.Server.Builder.HealthCheckBuilder.Build*
+  name: Build
+  href: api/CondenserDotNet.Server.Builder.HealthCheckBuilder.html#CondenserDotNet_Server_Builder_HealthCheckBuilder_Build_
+  commentId: Overload:CondenserDotNet.Server.Builder.HealthCheckBuilder.Build
+  fullName: CondenserDotNet.Server.Builder.HealthCheckBuilder.Build
+  nameWithType: HealthCheckBuilder.Build
+- uid: CondenserDotNet.Server.Builder.HealthCheckBuilder.Checks
+  name: Checks
+  href: api/CondenserDotNet.Server.Builder.HealthCheckBuilder.html#CondenserDotNet_Server_Builder_HealthCheckBuilder_Checks
+  commentId: P:CondenserDotNet.Server.Builder.HealthCheckBuilder.Checks
+  fullName: CondenserDotNet.Server.Builder.HealthCheckBuilder.Checks
+  nameWithType: HealthCheckBuilder.Checks
+- uid: CondenserDotNet.Server.Builder.HealthCheckBuilder.Checks*
+  name: Checks
+  href: api/CondenserDotNet.Server.Builder.HealthCheckBuilder.html#CondenserDotNet_Server_Builder_HealthCheckBuilder_Checks_
+  commentId: Overload:CondenserDotNet.Server.Builder.HealthCheckBuilder.Checks
+  fullName: CondenserDotNet.Server.Builder.HealthCheckBuilder.Checks
+  nameWithType: HealthCheckBuilder.Checks
+- uid: CondenserDotNet.Server.Builder.HealthCheckBuilder.NoHealth
+  name: NoHealth()
+  href: api/CondenserDotNet.Server.Builder.HealthCheckBuilder.html#CondenserDotNet_Server_Builder_HealthCheckBuilder_NoHealth
+  commentId: M:CondenserDotNet.Server.Builder.HealthCheckBuilder.NoHealth
+  fullName: CondenserDotNet.Server.Builder.HealthCheckBuilder.NoHealth()
+  nameWithType: HealthCheckBuilder.NoHealth()
+- uid: CondenserDotNet.Server.Builder.HealthCheckBuilder.NoHealth*
+  name: NoHealth
+  href: api/CondenserDotNet.Server.Builder.HealthCheckBuilder.html#CondenserDotNet_Server_Builder_HealthCheckBuilder_NoHealth_
+  commentId: Overload:CondenserDotNet.Server.Builder.HealthCheckBuilder.NoHealth
+  fullName: CondenserDotNet.Server.Builder.HealthCheckBuilder.NoHealth
+  nameWithType: HealthCheckBuilder.NoHealth
+- uid: CondenserDotNet.Server.Builder.HealthCheckBuilder.Route
+  name: Route
+  href: api/CondenserDotNet.Server.Builder.HealthCheckBuilder.html#CondenserDotNet_Server_Builder_HealthCheckBuilder_Route
+  commentId: P:CondenserDotNet.Server.Builder.HealthCheckBuilder.Route
+  fullName: CondenserDotNet.Server.Builder.HealthCheckBuilder.Route
+  nameWithType: HealthCheckBuilder.Route
+- uid: CondenserDotNet.Server.Builder.HealthCheckBuilder.Route*
+  name: Route
+  href: api/CondenserDotNet.Server.Builder.HealthCheckBuilder.html#CondenserDotNet_Server_Builder_HealthCheckBuilder_Route_
+  commentId: Overload:CondenserDotNet.Server.Builder.HealthCheckBuilder.Route
+  fullName: CondenserDotNet.Server.Builder.HealthCheckBuilder.Route
+  nameWithType: HealthCheckBuilder.Route
+- uid: CondenserDotNet.Server.Builder.HealthCheckBuilder.WithHealthCheck(System.Func{CondenserDotNet.Server.DataContracts.HealthCheck})
+  name: WithHealthCheck(Func<HealthCheck>)
+  href: api/CondenserDotNet.Server.Builder.HealthCheckBuilder.html#CondenserDotNet_Server_Builder_HealthCheckBuilder_WithHealthCheck_System_Func_CondenserDotNet_Server_DataContracts_HealthCheck__
+  commentId: M:CondenserDotNet.Server.Builder.HealthCheckBuilder.WithHealthCheck(System.Func{CondenserDotNet.Server.DataContracts.HealthCheck})
+  name.vb: WithHealthCheck(Func(Of HealthCheck))
+  fullName: CondenserDotNet.Server.Builder.HealthCheckBuilder.WithHealthCheck(System.Func<CondenserDotNet.Server.DataContracts.HealthCheck>)
+  fullName.vb: CondenserDotNet.Server.Builder.HealthCheckBuilder.WithHealthCheck(System.Func(Of CondenserDotNet.Server.DataContracts.HealthCheck))
+  nameWithType: HealthCheckBuilder.WithHealthCheck(Func<HealthCheck>)
+  nameWithType.vb: HealthCheckBuilder.WithHealthCheck(Func(Of HealthCheck))
+- uid: CondenserDotNet.Server.Builder.HealthCheckBuilder.WithHealthCheck(System.Func{System.Threading.Tasks.Task{CondenserDotNet.Server.DataContracts.HealthCheck}})
+  name: WithHealthCheck(Func<Task<HealthCheck>>)
+  href: api/CondenserDotNet.Server.Builder.HealthCheckBuilder.html#CondenserDotNet_Server_Builder_HealthCheckBuilder_WithHealthCheck_System_Func_System_Threading_Tasks_Task_CondenserDotNet_Server_DataContracts_HealthCheck___
+  commentId: M:CondenserDotNet.Server.Builder.HealthCheckBuilder.WithHealthCheck(System.Func{System.Threading.Tasks.Task{CondenserDotNet.Server.DataContracts.HealthCheck}})
+  name.vb: WithHealthCheck(Func(Of Task(Of HealthCheck)))
+  fullName: CondenserDotNet.Server.Builder.HealthCheckBuilder.WithHealthCheck(System.Func<System.Threading.Tasks.Task<CondenserDotNet.Server.DataContracts.HealthCheck>>)
+  fullName.vb: CondenserDotNet.Server.Builder.HealthCheckBuilder.WithHealthCheck(System.Func(Of System.Threading.Tasks.Task(Of CondenserDotNet.Server.DataContracts.HealthCheck)))
+  nameWithType: HealthCheckBuilder.WithHealthCheck(Func<Task<HealthCheck>>)
+  nameWithType.vb: HealthCheckBuilder.WithHealthCheck(Func(Of Task(Of HealthCheck)))
+- uid: CondenserDotNet.Server.Builder.HealthCheckBuilder.WithHealthCheck*
+  name: WithHealthCheck
+  href: api/CondenserDotNet.Server.Builder.HealthCheckBuilder.html#CondenserDotNet_Server_Builder_HealthCheckBuilder_WithHealthCheck_
+  commentId: Overload:CondenserDotNet.Server.Builder.HealthCheckBuilder.WithHealthCheck
+  fullName: CondenserDotNet.Server.Builder.HealthCheckBuilder.WithHealthCheck
+  nameWithType: HealthCheckBuilder.WithHealthCheck
+- uid: CondenserDotNet.Server.Builder.HealthCheckBuilder.WithHealthRoute(System.String)
+  name: WithHealthRoute(String)
+  href: api/CondenserDotNet.Server.Builder.HealthCheckBuilder.html#CondenserDotNet_Server_Builder_HealthCheckBuilder_WithHealthRoute_System_String_
+  commentId: M:CondenserDotNet.Server.Builder.HealthCheckBuilder.WithHealthRoute(System.String)
+  fullName: CondenserDotNet.Server.Builder.HealthCheckBuilder.WithHealthRoute(System.String)
+  nameWithType: HealthCheckBuilder.WithHealthRoute(String)
+- uid: CondenserDotNet.Server.Builder.HealthCheckBuilder.WithHealthRoute*
+  name: WithHealthRoute
+  href: api/CondenserDotNet.Server.Builder.HealthCheckBuilder.html#CondenserDotNet_Server_Builder_HealthCheckBuilder_WithHealthRoute_
+  commentId: Overload:CondenserDotNet.Server.Builder.HealthCheckBuilder.WithHealthRoute
+  fullName: CondenserDotNet.Server.Builder.HealthCheckBuilder.WithHealthRoute
+  nameWithType: HealthCheckBuilder.WithHealthRoute
+- uid: CondenserDotNet.Server.Builder.IHealthConfig
+  name: IHealthConfig
+  href: api/CondenserDotNet.Server.Builder.IHealthConfig.html
+  commentId: T:CondenserDotNet.Server.Builder.IHealthConfig
+  fullName: CondenserDotNet.Server.Builder.IHealthConfig
+  nameWithType: IHealthConfig
+- uid: CondenserDotNet.Server.Builder.IHealthConfig.Checks
+  name: Checks
+  href: api/CondenserDotNet.Server.Builder.IHealthConfig.html#CondenserDotNet_Server_Builder_IHealthConfig_Checks
+  commentId: P:CondenserDotNet.Server.Builder.IHealthConfig.Checks
+  fullName: CondenserDotNet.Server.Builder.IHealthConfig.Checks
+  nameWithType: IHealthConfig.Checks
+- uid: CondenserDotNet.Server.Builder.IHealthConfig.Checks*
+  name: Checks
+  href: api/CondenserDotNet.Server.Builder.IHealthConfig.html#CondenserDotNet_Server_Builder_IHealthConfig_Checks_
+  commentId: Overload:CondenserDotNet.Server.Builder.IHealthConfig.Checks
+  fullName: CondenserDotNet.Server.Builder.IHealthConfig.Checks
+  nameWithType: IHealthConfig.Checks
+- uid: CondenserDotNet.Server.Builder.IHealthConfig.Route
+  name: Route
+  href: api/CondenserDotNet.Server.Builder.IHealthConfig.html#CondenserDotNet_Server_Builder_IHealthConfig_Route
+  commentId: P:CondenserDotNet.Server.Builder.IHealthConfig.Route
+  fullName: CondenserDotNet.Server.Builder.IHealthConfig.Route
+  nameWithType: IHealthConfig.Route
+- uid: CondenserDotNet.Server.Builder.IHealthConfig.Route*
+  name: Route
+  href: api/CondenserDotNet.Server.Builder.IHealthConfig.html#CondenserDotNet_Server_Builder_IHealthConfig_Route_
+  commentId: Overload:CondenserDotNet.Server.Builder.IHealthConfig.Route
+  fullName: CondenserDotNet.Server.Builder.IHealthConfig.Route
+  nameWithType: IHealthConfig.Route
 - uid: CondenserDotNet.Server.CondenserConfiguration
   name: CondenserConfiguration
   href: api/CondenserDotNet.Server.CondenserConfiguration.html
@@ -1582,12 +1720,12 @@ references:
   commentId: T:CondenserDotNet.Server.CustomRouter
   fullName: CondenserDotNet.Server.CustomRouter
   nameWithType: CustomRouter
-- uid: CondenserDotNet.Server.CustomRouter.#ctor
-  name: CustomRouter()
-  href: api/CondenserDotNet.Server.CustomRouter.html#CondenserDotNet_Server_CustomRouter__ctor
-  commentId: M:CondenserDotNet.Server.CustomRouter.#ctor
-  fullName: CondenserDotNet.Server.CustomRouter.CustomRouter()
-  nameWithType: CustomRouter.CustomRouter()
+- uid: CondenserDotNet.Server.CustomRouter.#ctor(CondenserDotNet.Server.IHealthRouter)
+  name: CustomRouter(IHealthRouter)
+  href: api/CondenserDotNet.Server.CustomRouter.html#CondenserDotNet_Server_CustomRouter__ctor_CondenserDotNet_Server_IHealthRouter_
+  commentId: M:CondenserDotNet.Server.CustomRouter.#ctor(CondenserDotNet.Server.IHealthRouter)
+  fullName: CondenserDotNet.Server.CustomRouter.CustomRouter(CondenserDotNet.Server.IHealthRouter)
+  nameWithType: CustomRouter.CustomRouter(IHealthRouter)
 - uid: CondenserDotNet.Server.CustomRouter.#ctor*
   name: CustomRouter
   href: api/CondenserDotNet.Server.CustomRouter.html#CondenserDotNet_Server_CustomRouter__ctor_
@@ -1618,11 +1756,11 @@ references:
   commentId: Overload:CondenserDotNet.Server.CustomRouter.AddServiceToRoute
   fullName: CondenserDotNet.Server.CustomRouter.AddServiceToRoute
   nameWithType: CustomRouter.AddServiceToRoute
-- uid: CondenserDotNet.Server.CustomRouter.GetVirtualPath(VirtualPathContext)
+- uid: CondenserDotNet.Server.CustomRouter.GetVirtualPath(Microsoft.AspNetCore.Routing.VirtualPathContext)
   name: GetVirtualPath(VirtualPathContext)
-  href: api/CondenserDotNet.Server.CustomRouter.html#CondenserDotNet_Server_CustomRouter_GetVirtualPath_VirtualPathContext_
-  commentId: M:CondenserDotNet.Server.CustomRouter.GetVirtualPath(VirtualPathContext)
-  fullName: CondenserDotNet.Server.CustomRouter.GetVirtualPath(VirtualPathContext)
+  href: api/CondenserDotNet.Server.CustomRouter.html#CondenserDotNet_Server_CustomRouter_GetVirtualPath_Microsoft_AspNetCore_Routing_VirtualPathContext_
+  commentId: M:CondenserDotNet.Server.CustomRouter.GetVirtualPath(Microsoft.AspNetCore.Routing.VirtualPathContext)
+  fullName: CondenserDotNet.Server.CustomRouter.GetVirtualPath(Microsoft.AspNetCore.Routing.VirtualPathContext)
   nameWithType: CustomRouter.GetVirtualPath(VirtualPathContext)
 - uid: CondenserDotNet.Server.CustomRouter.GetVirtualPath*
   name: GetVirtualPath
@@ -1654,11 +1792,11 @@ references:
   commentId: Overload:CondenserDotNet.Server.CustomRouter.RemoveServiceFromRoute
   fullName: CondenserDotNet.Server.CustomRouter.RemoveServiceFromRoute
   nameWithType: CustomRouter.RemoveServiceFromRoute
-- uid: CondenserDotNet.Server.CustomRouter.RouteAsync(RouteContext)
+- uid: CondenserDotNet.Server.CustomRouter.RouteAsync(Microsoft.AspNetCore.Routing.RouteContext)
   name: RouteAsync(RouteContext)
-  href: api/CondenserDotNet.Server.CustomRouter.html#CondenserDotNet_Server_CustomRouter_RouteAsync_RouteContext_
-  commentId: M:CondenserDotNet.Server.CustomRouter.RouteAsync(RouteContext)
-  fullName: CondenserDotNet.Server.CustomRouter.RouteAsync(RouteContext)
+  href: api/CondenserDotNet.Server.CustomRouter.html#CondenserDotNet_Server_CustomRouter_RouteAsync_Microsoft_AspNetCore_Routing_RouteContext_
+  commentId: M:CondenserDotNet.Server.CustomRouter.RouteAsync(Microsoft.AspNetCore.Routing.RouteContext)
+  fullName: CondenserDotNet.Server.CustomRouter.RouteAsync(Microsoft.AspNetCore.Routing.RouteContext)
   nameWithType: CustomRouter.RouteAsync(RouteContext)
 - uid: CondenserDotNet.Server.CustomRouter.RouteAsync*
   name: RouteAsync
@@ -1666,6 +1804,54 @@ references:
   commentId: Overload:CondenserDotNet.Server.CustomRouter.RouteAsync
   fullName: CondenserDotNet.Server.CustomRouter.RouteAsync
   nameWithType: CustomRouter.RouteAsync
+- uid: CondenserDotNet.Server.DataContracts
+  name: CondenserDotNet.Server.DataContracts
+  href: api/CondenserDotNet.Server.DataContracts.html
+  commentId: N:CondenserDotNet.Server.DataContracts
+  fullName: CondenserDotNet.Server.DataContracts
+  nameWithType: CondenserDotNet.Server.DataContracts
+- uid: CondenserDotNet.Server.DataContracts.HealthCheck
+  name: HealthCheck
+  href: api/CondenserDotNet.Server.DataContracts.HealthCheck.html
+  commentId: T:CondenserDotNet.Server.DataContracts.HealthCheck
+  fullName: CondenserDotNet.Server.DataContracts.HealthCheck
+  nameWithType: HealthCheck
+- uid: CondenserDotNet.Server.DataContracts.HealthCheck.Message
+  name: Message
+  href: api/CondenserDotNet.Server.DataContracts.HealthCheck.html#CondenserDotNet_Server_DataContracts_HealthCheck_Message
+  commentId: P:CondenserDotNet.Server.DataContracts.HealthCheck.Message
+  fullName: CondenserDotNet.Server.DataContracts.HealthCheck.Message
+  nameWithType: HealthCheck.Message
+- uid: CondenserDotNet.Server.DataContracts.HealthCheck.Message*
+  name: Message
+  href: api/CondenserDotNet.Server.DataContracts.HealthCheck.html#CondenserDotNet_Server_DataContracts_HealthCheck_Message_
+  commentId: Overload:CondenserDotNet.Server.DataContracts.HealthCheck.Message
+  fullName: CondenserDotNet.Server.DataContracts.HealthCheck.Message
+  nameWithType: HealthCheck.Message
+- uid: CondenserDotNet.Server.DataContracts.HealthCheck.Name
+  name: Name
+  href: api/CondenserDotNet.Server.DataContracts.HealthCheck.html#CondenserDotNet_Server_DataContracts_HealthCheck_Name
+  commentId: P:CondenserDotNet.Server.DataContracts.HealthCheck.Name
+  fullName: CondenserDotNet.Server.DataContracts.HealthCheck.Name
+  nameWithType: HealthCheck.Name
+- uid: CondenserDotNet.Server.DataContracts.HealthCheck.Name*
+  name: Name
+  href: api/CondenserDotNet.Server.DataContracts.HealthCheck.html#CondenserDotNet_Server_DataContracts_HealthCheck_Name_
+  commentId: Overload:CondenserDotNet.Server.DataContracts.HealthCheck.Name
+  fullName: CondenserDotNet.Server.DataContracts.HealthCheck.Name
+  nameWithType: HealthCheck.Name
+- uid: CondenserDotNet.Server.DataContracts.HealthCheck.Ok
+  name: Ok
+  href: api/CondenserDotNet.Server.DataContracts.HealthCheck.html#CondenserDotNet_Server_DataContracts_HealthCheck_Ok
+  commentId: P:CondenserDotNet.Server.DataContracts.HealthCheck.Ok
+  fullName: CondenserDotNet.Server.DataContracts.HealthCheck.Ok
+  nameWithType: HealthCheck.Ok
+- uid: CondenserDotNet.Server.DataContracts.HealthCheck.Ok*
+  name: Ok
+  href: api/CondenserDotNet.Server.DataContracts.HealthCheck.html#CondenserDotNet_Server_DataContracts_HealthCheck_Ok_
+  commentId: Overload:CondenserDotNet.Server.DataContracts.HealthCheck.Ok
+  fullName: CondenserDotNet.Server.DataContracts.HealthCheck.Ok
+  nameWithType: HealthCheck.Ok
 - uid: CondenserDotNet.Server.Extensions
   name: CondenserDotNet.Server.Extensions
   href: api/CondenserDotNet.Server.Extensions.html
@@ -1678,11 +1864,11 @@ references:
   commentId: T:CondenserDotNet.Server.Extensions.ApplicationBuilderExtensions
   fullName: CondenserDotNet.Server.Extensions.ApplicationBuilderExtensions
   nameWithType: ApplicationBuilderExtensions
-- uid: CondenserDotNet.Server.Extensions.ApplicationBuilderExtensions.UseCondenserRouter(IApplicationBuilder)
+- uid: CondenserDotNet.Server.Extensions.ApplicationBuilderExtensions.UseCondenserRouter(Microsoft.AspNetCore.Builder.IApplicationBuilder)
   name: UseCondenserRouter(IApplicationBuilder)
-  href: api/CondenserDotNet.Server.Extensions.ApplicationBuilderExtensions.html#CondenserDotNet_Server_Extensions_ApplicationBuilderExtensions_UseCondenserRouter_IApplicationBuilder_
-  commentId: M:CondenserDotNet.Server.Extensions.ApplicationBuilderExtensions.UseCondenserRouter(IApplicationBuilder)
-  fullName: CondenserDotNet.Server.Extensions.ApplicationBuilderExtensions.UseCondenserRouter(IApplicationBuilder)
+  href: api/CondenserDotNet.Server.Extensions.ApplicationBuilderExtensions.html#CondenserDotNet_Server_Extensions_ApplicationBuilderExtensions_UseCondenserRouter_Microsoft_AspNetCore_Builder_IApplicationBuilder_
+  commentId: M:CondenserDotNet.Server.Extensions.ApplicationBuilderExtensions.UseCondenserRouter(Microsoft.AspNetCore.Builder.IApplicationBuilder)
+  fullName: CondenserDotNet.Server.Extensions.ApplicationBuilderExtensions.UseCondenserRouter(Microsoft.AspNetCore.Builder.IApplicationBuilder)
   nameWithType: ApplicationBuilderExtensions.UseCondenserRouter(IApplicationBuilder)
 - uid: CondenserDotNet.Server.Extensions.ApplicationBuilderExtensions.UseCondenserRouter*
   name: UseCondenserRouter
@@ -1696,11 +1882,17 @@ references:
   commentId: T:CondenserDotNet.Server.Extensions.ServiceCollectionExtentions
   fullName: CondenserDotNet.Server.Extensions.ServiceCollectionExtentions
   nameWithType: ServiceCollectionExtentions
-- uid: CondenserDotNet.Server.Extensions.ServiceCollectionExtentions.AddCondenserRouter(IServiceCollection,System.String,System.Int32)
+- uid: CondenserDotNet.Server.Extensions.ServiceCollectionExtentions.AddCondenserRouter(Microsoft.Extensions.DependencyInjection.IServiceCollection)
+  name: AddCondenserRouter(IServiceCollection)
+  href: api/CondenserDotNet.Server.Extensions.ServiceCollectionExtentions.html#CondenserDotNet_Server_Extensions_ServiceCollectionExtentions_AddCondenserRouter_Microsoft_Extensions_DependencyInjection_IServiceCollection_
+  commentId: M:CondenserDotNet.Server.Extensions.ServiceCollectionExtentions.AddCondenserRouter(Microsoft.Extensions.DependencyInjection.IServiceCollection)
+  fullName: CondenserDotNet.Server.Extensions.ServiceCollectionExtentions.AddCondenserRouter(Microsoft.Extensions.DependencyInjection.IServiceCollection)
+  nameWithType: ServiceCollectionExtentions.AddCondenserRouter(IServiceCollection)
+- uid: CondenserDotNet.Server.Extensions.ServiceCollectionExtentions.AddCondenserRouter(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String,System.Int32)
   name: AddCondenserRouter(IServiceCollection, String, Int32)
-  href: api/CondenserDotNet.Server.Extensions.ServiceCollectionExtentions.html#CondenserDotNet_Server_Extensions_ServiceCollectionExtentions_AddCondenserRouter_IServiceCollection_System_String_System_Int32_
-  commentId: M:CondenserDotNet.Server.Extensions.ServiceCollectionExtentions.AddCondenserRouter(IServiceCollection,System.String,System.Int32)
-  fullName: CondenserDotNet.Server.Extensions.ServiceCollectionExtentions.AddCondenserRouter(IServiceCollection, System.String, System.Int32)
+  href: api/CondenserDotNet.Server.Extensions.ServiceCollectionExtentions.html#CondenserDotNet_Server_Extensions_ServiceCollectionExtentions_AddCondenserRouter_Microsoft_Extensions_DependencyInjection_IServiceCollection_System_String_System_Int32_
+  commentId: M:CondenserDotNet.Server.Extensions.ServiceCollectionExtentions.AddCondenserRouter(Microsoft.Extensions.DependencyInjection.IServiceCollection,System.String,System.Int32)
+  fullName: CondenserDotNet.Server.Extensions.ServiceCollectionExtentions.AddCondenserRouter(Microsoft.Extensions.DependencyInjection.IServiceCollection, System.String, System.Int32)
   nameWithType: ServiceCollectionExtentions.AddCondenserRouter(IServiceCollection, String, Int32)
 - uid: CondenserDotNet.Server.Extensions.ServiceCollectionExtentions.AddCondenserRouter*
   name: AddCondenserRouter
@@ -1708,6 +1900,102 @@ references:
   commentId: Overload:CondenserDotNet.Server.Extensions.ServiceCollectionExtentions.AddCondenserRouter
   fullName: CondenserDotNet.Server.Extensions.ServiceCollectionExtentions.AddCondenserRouter
   nameWithType: ServiceCollectionExtentions.AddCondenserRouter
+- uid: CondenserDotNet.Server.Extensions.WebHostExtensions
+  name: WebHostExtensions
+  href: api/CondenserDotNet.Server.Extensions.WebHostExtensions.html
+  commentId: T:CondenserDotNet.Server.Extensions.WebHostExtensions
+  fullName: CondenserDotNet.Server.Extensions.WebHostExtensions
+  nameWithType: WebHostExtensions
+- uid: CondenserDotNet.Server.Extensions.WebHostExtensions.AsCondenserRouter(Microsoft.AspNetCore.Hosting.IWebHostBuilder)
+  name: AsCondenserRouter(IWebHostBuilder)
+  href: api/CondenserDotNet.Server.Extensions.WebHostExtensions.html#CondenserDotNet_Server_Extensions_WebHostExtensions_AsCondenserRouter_Microsoft_AspNetCore_Hosting_IWebHostBuilder_
+  commentId: M:CondenserDotNet.Server.Extensions.WebHostExtensions.AsCondenserRouter(Microsoft.AspNetCore.Hosting.IWebHostBuilder)
+  fullName: CondenserDotNet.Server.Extensions.WebHostExtensions.AsCondenserRouter(Microsoft.AspNetCore.Hosting.IWebHostBuilder)
+  nameWithType: WebHostExtensions.AsCondenserRouter(IWebHostBuilder)
+- uid: CondenserDotNet.Server.Extensions.WebHostExtensions.AsCondenserRouter(Microsoft.AspNetCore.Hosting.IWebHostBuilder,System.String,System.Int32)
+  name: AsCondenserRouter(IWebHostBuilder, String, Int32)
+  href: api/CondenserDotNet.Server.Extensions.WebHostExtensions.html#CondenserDotNet_Server_Extensions_WebHostExtensions_AsCondenserRouter_Microsoft_AspNetCore_Hosting_IWebHostBuilder_System_String_System_Int32_
+  commentId: M:CondenserDotNet.Server.Extensions.WebHostExtensions.AsCondenserRouter(Microsoft.AspNetCore.Hosting.IWebHostBuilder,System.String,System.Int32)
+  fullName: CondenserDotNet.Server.Extensions.WebHostExtensions.AsCondenserRouter(Microsoft.AspNetCore.Hosting.IWebHostBuilder, System.String, System.Int32)
+  nameWithType: WebHostExtensions.AsCondenserRouter(IWebHostBuilder, String, Int32)
+- uid: CondenserDotNet.Server.Extensions.WebHostExtensions.AsCondenserRouter*
+  name: AsCondenserRouter
+  href: api/CondenserDotNet.Server.Extensions.WebHostExtensions.html#CondenserDotNet_Server_Extensions_WebHostExtensions_AsCondenserRouter_
+  commentId: Overload:CondenserDotNet.Server.Extensions.WebHostExtensions.AsCondenserRouter
+  fullName: CondenserDotNet.Server.Extensions.WebHostExtensions.AsCondenserRouter
+  nameWithType: WebHostExtensions.AsCondenserRouter
+- uid: CondenserDotNet.Server.HealthRouter
+  name: HealthRouter
+  href: api/CondenserDotNet.Server.HealthRouter.html
+  commentId: T:CondenserDotNet.Server.HealthRouter
+  fullName: CondenserDotNet.Server.HealthRouter
+  nameWithType: HealthRouter
+- uid: CondenserDotNet.Server.HealthRouter.#ctor(CondenserDotNet.Server.Builder.IHealthConfig)
+  name: HealthRouter(IHealthConfig)
+  href: api/CondenserDotNet.Server.HealthRouter.html#CondenserDotNet_Server_HealthRouter__ctor_CondenserDotNet_Server_Builder_IHealthConfig_
+  commentId: M:CondenserDotNet.Server.HealthRouter.#ctor(CondenserDotNet.Server.Builder.IHealthConfig)
+  fullName: CondenserDotNet.Server.HealthRouter.HealthRouter(CondenserDotNet.Server.Builder.IHealthConfig)
+  nameWithType: HealthRouter.HealthRouter(IHealthConfig)
+- uid: CondenserDotNet.Server.HealthRouter.#ctor*
+  name: HealthRouter
+  href: api/CondenserDotNet.Server.HealthRouter.html#CondenserDotNet_Server_HealthRouter__ctor_
+  commentId: Overload:CondenserDotNet.Server.HealthRouter.#ctor
+  fullName: CondenserDotNet.Server.HealthRouter.HealthRouter
+  nameWithType: HealthRouter.HealthRouter
+- uid: CondenserDotNet.Server.HealthRouter.CheckHealth(Microsoft.AspNetCore.Http.HttpContext)
+  name: CheckHealth(HttpContext)
+  href: api/CondenserDotNet.Server.HealthRouter.html#CondenserDotNet_Server_HealthRouter_CheckHealth_Microsoft_AspNetCore_Http_HttpContext_
+  commentId: M:CondenserDotNet.Server.HealthRouter.CheckHealth(Microsoft.AspNetCore.Http.HttpContext)
+  fullName: CondenserDotNet.Server.HealthRouter.CheckHealth(Microsoft.AspNetCore.Http.HttpContext)
+  nameWithType: HealthRouter.CheckHealth(HttpContext)
+- uid: CondenserDotNet.Server.HealthRouter.CheckHealth*
+  name: CheckHealth
+  href: api/CondenserDotNet.Server.HealthRouter.html#CondenserDotNet_Server_HealthRouter_CheckHealth_
+  commentId: Overload:CondenserDotNet.Server.HealthRouter.CheckHealth
+  fullName: CondenserDotNet.Server.HealthRouter.CheckHealth
+  nameWithType: HealthRouter.CheckHealth
+- uid: CondenserDotNet.Server.HealthRouter.Route
+  name: Route
+  href: api/CondenserDotNet.Server.HealthRouter.html#CondenserDotNet_Server_HealthRouter_Route
+  commentId: P:CondenserDotNet.Server.HealthRouter.Route
+  fullName: CondenserDotNet.Server.HealthRouter.Route
+  nameWithType: HealthRouter.Route
+- uid: CondenserDotNet.Server.HealthRouter.Route*
+  name: Route
+  href: api/CondenserDotNet.Server.HealthRouter.html#CondenserDotNet_Server_HealthRouter_Route_
+  commentId: Overload:CondenserDotNet.Server.HealthRouter.Route
+  fullName: CondenserDotNet.Server.HealthRouter.Route
+  nameWithType: HealthRouter.Route
+- uid: CondenserDotNet.Server.IHealthRouter
+  name: IHealthRouter
+  href: api/CondenserDotNet.Server.IHealthRouter.html
+  commentId: T:CondenserDotNet.Server.IHealthRouter
+  fullName: CondenserDotNet.Server.IHealthRouter
+  nameWithType: IHealthRouter
+- uid: CondenserDotNet.Server.IHealthRouter.CheckHealth(Microsoft.AspNetCore.Http.HttpContext)
+  name: CheckHealth(HttpContext)
+  href: api/CondenserDotNet.Server.IHealthRouter.html#CondenserDotNet_Server_IHealthRouter_CheckHealth_Microsoft_AspNetCore_Http_HttpContext_
+  commentId: M:CondenserDotNet.Server.IHealthRouter.CheckHealth(Microsoft.AspNetCore.Http.HttpContext)
+  fullName: CondenserDotNet.Server.IHealthRouter.CheckHealth(Microsoft.AspNetCore.Http.HttpContext)
+  nameWithType: IHealthRouter.CheckHealth(HttpContext)
+- uid: CondenserDotNet.Server.IHealthRouter.CheckHealth*
+  name: CheckHealth
+  href: api/CondenserDotNet.Server.IHealthRouter.html#CondenserDotNet_Server_IHealthRouter_CheckHealth_
+  commentId: Overload:CondenserDotNet.Server.IHealthRouter.CheckHealth
+  fullName: CondenserDotNet.Server.IHealthRouter.CheckHealth
+  nameWithType: IHealthRouter.CheckHealth
+- uid: CondenserDotNet.Server.IHealthRouter.Route
+  name: Route
+  href: api/CondenserDotNet.Server.IHealthRouter.html#CondenserDotNet_Server_IHealthRouter_Route
+  commentId: P:CondenserDotNet.Server.IHealthRouter.Route
+  fullName: CondenserDotNet.Server.IHealthRouter.Route
+  nameWithType: IHealthRouter.Route
+- uid: CondenserDotNet.Server.IHealthRouter.Route*
+  name: Route
+  href: api/CondenserDotNet.Server.IHealthRouter.html#CondenserDotNet_Server_IHealthRouter_Route_
+  commentId: Overload:CondenserDotNet.Server.IHealthRouter.Route
+  fullName: CondenserDotNet.Server.IHealthRouter.Route
+  nameWithType: IHealthRouter.Route
 - uid: CondenserDotNet.Server.RoutingHost
   name: RoutingHost
   href: api/CondenserDotNet.Server.RoutingHost.html
@@ -2227,6 +2515,24 @@ references:
   fullName.vb: CondenserDotNet.Server.RoutingTrie.NodeContainer(Of T).SplitContainer
   nameWithType: NodeContainer<T>.SplitContainer
   nameWithType.vb: NodeContainer(Of T).SplitContainer
+- uid: CondenserDotNet.Server.RoutingTrie.NodeContainer`1.System#Collections#IEnumerable#GetEnumerator
+  name: IEnumerable.GetEnumerator()
+  href: api/CondenserDotNet.Server.RoutingTrie.NodeContainer-1.html#CondenserDotNet_Server_RoutingTrie_NodeContainer_1_System_Collections_IEnumerable_GetEnumerator
+  commentId: M:CondenserDotNet.Server.RoutingTrie.NodeContainer`1.System#Collections#IEnumerable#GetEnumerator
+  name.vb: System.Collections.IEnumerable.GetEnumerator()
+  fullName: CondenserDotNet.Server.RoutingTrie.NodeContainer<T>.System.Collections.IEnumerable.GetEnumerator()
+  fullName.vb: CondenserDotNet.Server.RoutingTrie.NodeContainer(Of T).System.Collections.IEnumerable.GetEnumerator()
+  nameWithType: NodeContainer<T>.IEnumerable.GetEnumerator()
+  nameWithType.vb: NodeContainer(Of T).System.Collections.IEnumerable.GetEnumerator()
+- uid: CondenserDotNet.Server.RoutingTrie.NodeContainer`1.System#Collections#IEnumerable#GetEnumerator*
+  name: IEnumerable.GetEnumerator
+  href: api/CondenserDotNet.Server.RoutingTrie.NodeContainer-1.html#CondenserDotNet_Server_RoutingTrie_NodeContainer_1_System_Collections_IEnumerable_GetEnumerator_
+  commentId: Overload:CondenserDotNet.Server.RoutingTrie.NodeContainer`1.System#Collections#IEnumerable#GetEnumerator
+  name.vb: System.Collections.IEnumerable.GetEnumerator
+  fullName: CondenserDotNet.Server.RoutingTrie.NodeContainer<T>.System.Collections.IEnumerable.GetEnumerator
+  fullName.vb: CondenserDotNet.Server.RoutingTrie.NodeContainer(Of T).System.Collections.IEnumerable.GetEnumerator
+  nameWithType: NodeContainer<T>.IEnumerable.GetEnumerator
+  nameWithType.vb: NodeContainer(Of T).System.Collections.IEnumerable.GetEnumerator
 - uid: CondenserDotNet.Server.RoutingTrie.NodeContainer`1.TryGetValue(System.String[],CondenserDotNet.Server.RoutingTrie.Node{`0}@)
   name: TryGetValue(String[], out Node<T>)
   href: api/CondenserDotNet.Server.RoutingTrie.NodeContainer-1.html#CondenserDotNet_Server_RoutingTrie_NodeContainer_1_TryGetValue_System_String___CondenserDotNet_Server_RoutingTrie_Node__0___
@@ -2362,13 +2668,13 @@ references:
   commentId: M:CondenserDotNet.Server.Service.#ctor
   fullName: CondenserDotNet.Server.Service.Service()
   nameWithType: Service.Service()
-- uid: CondenserDotNet.Server.Service.#ctor(System.String[],System.String,System.String,System.String[],IServiceRegistry,HttpClient)
+- uid: CondenserDotNet.Server.Service.#ctor(System.String[],System.String,System.String,System.String[],CondenserDotNet.Service.IServiceRegistry,System.Net.Http.HttpClient)
   name: Service(String[], String, String, String[], IServiceRegistry, HttpClient)
-  href: api/CondenserDotNet.Server.Service.html#CondenserDotNet_Server_Service__ctor_System_String___System_String_System_String_System_String___IServiceRegistry_HttpClient_
-  commentId: M:CondenserDotNet.Server.Service.#ctor(System.String[],System.String,System.String,System.String[],IServiceRegistry,HttpClient)
+  href: api/CondenserDotNet.Server.Service.html#CondenserDotNet_Server_Service__ctor_System_String___System_String_System_String_System_String___CondenserDotNet_Service_IServiceRegistry_System_Net_Http_HttpClient_
+  commentId: M:CondenserDotNet.Server.Service.#ctor(System.String[],System.String,System.String,System.String[],CondenserDotNet.Service.IServiceRegistry,System.Net.Http.HttpClient)
   name.vb: Service(String(), String, String, String(), IServiceRegistry, HttpClient)
-  fullName: CondenserDotNet.Server.Service.Service(System.String[], System.String, System.String, System.String[], IServiceRegistry, HttpClient)
-  fullName.vb: CondenserDotNet.Server.Service.Service(System.String(), System.String, System.String, System.String(), IServiceRegistry, HttpClient)
+  fullName: CondenserDotNet.Server.Service.Service(System.String[], System.String, System.String, System.String[], CondenserDotNet.Service.IServiceRegistry, System.Net.Http.HttpClient)
+  fullName.vb: CondenserDotNet.Server.Service.Service(System.String(), System.String, System.String, System.String(), CondenserDotNet.Service.IServiceRegistry, System.Net.Http.HttpClient)
   nameWithType: Service.Service(String[], String, String, String[], IServiceRegistry, HttpClient)
   nameWithType.vb: Service.Service(String(), String, String, String(), IServiceRegistry, HttpClient)
 - uid: CondenserDotNet.Server.Service.#ctor*
@@ -2377,11 +2683,11 @@ references:
   commentId: Overload:CondenserDotNet.Server.Service.#ctor
   fullName: CondenserDotNet.Server.Service.Service
   nameWithType: Service.Service
-- uid: CondenserDotNet.Server.Service.CallService(HttpContext)
+- uid: CondenserDotNet.Server.Service.CallService(Microsoft.AspNetCore.Http.HttpContext)
   name: CallService(HttpContext)
-  href: api/CondenserDotNet.Server.Service.html#CondenserDotNet_Server_Service_CallService_HttpContext_
-  commentId: M:CondenserDotNet.Server.Service.CallService(HttpContext)
-  fullName: CondenserDotNet.Server.Service.CallService(HttpContext)
+  href: api/CondenserDotNet.Server.Service.html#CondenserDotNet_Server_Service_CallService_Microsoft_AspNetCore_Http_HttpContext_
+  commentId: M:CondenserDotNet.Server.Service.CallService(Microsoft.AspNetCore.Http.HttpContext)
+  fullName: CondenserDotNet.Server.Service.CallService(Microsoft.AspNetCore.Http.HttpContext)
   nameWithType: Service.CallService(HttpContext)
 - uid: CondenserDotNet.Server.Service.CallService*
   name: CallService

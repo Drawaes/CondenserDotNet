@@ -74,17 +74,17 @@ The following is some examples of how this can be used.</p>
 <pre><code class="lang-csharp">var serviceManager = new ServiceManager(&quot;TestService&quot;);
 await serviceManager.RegisterServiceAsync();
 </code></pre><p>Service Id&#39;s are required to be unique for a single Consul agent. If you are running multiple instances of a single service
-against an agent you will need to give it a service Id</p>
+against an agent you will need to give it a service Id.</p>
 <pre><code class="lang-csharp">var serviceManager = new ServiceManager(&quot;TestService&quot;, $&quot;TestService{Guid.New().ToString()}&quot;);
 await serviceManager;
 </code></pre><p>Giving the service a Guid in it&#39;s Id will ensure it is unique but you can use any scheme you wish.</p>
-<h2 id="service-registration-with-an-agent-on-another-machine">Service Registration with an agent on another machine</h2>
-<p>There are scenarios where you will need to run the agent on a seperate machine, or different port you can do this with the following</p>
+<h2 id="service-registration-agent-on-another-machine">Service Registration, agent on another machine</h2>
+<p>There are scenarios where you will need to run the agent on a seperate machine, or different port you can do this with the following.</p>
 <pre><code class="lang-csharp">var serviceManager = new ServiceManager(&quot;TestService&quot;,&quot;consulAgentMachine&quot;,8500);
 await serviceManager.RegisterServiceAsync();
 </code></pre><p>You will need to add the port as well as the machine even if the port is the default otherwise you will clash with the serviceId override.
 If you also wish to override the serviceId your constructor would look like this.</p>
-<pre><code class="lang-csharp">var serviceManager = new ServiceManager(&quot;TestService&quot;,&quot;serviceInstanceName&quot;, &quot;consulAgentMachine&quot;, 8500);
+<pre><code class="lang-csharp">var serviceManager = new ServiceManager(&quot;TestService&quot;, &quot;instanceName&quot;, &quot;agentMachine&quot;, 8500);
 await serviceManager.RegisterServiceAsync();
 </code></pre>
             </article>
