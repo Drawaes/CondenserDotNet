@@ -1,5 +1,5 @@
 ﻿using System.Threading.Tasks;
-using CondenserDotNet.Service.DataContracts;
+using CondenserDotNet.Core.DataContracts;
 
 namespace CondenserDotNet.Client.Internal
 {

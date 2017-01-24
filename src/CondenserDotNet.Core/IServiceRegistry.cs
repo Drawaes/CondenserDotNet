@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace CondenserDotNet.Service
+namespace CondenserDotNet.Core
 {
     public interface IServiceRegistry
     {

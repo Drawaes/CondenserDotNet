@@ -16,8 +16,7 @@ namespace ServiceRegistration
             var serviceManager = new ServiceManager("TestService");
 
             serviceManager.AddHttpHealthCheck("/Health",10)
-                .AddApiUrl("/api/some/someobject")
-                .AddApiUrl("/api/some/someotherobject")
+                .AddApiUrl("/testsample")
                 .RegisterServiceAsync().Wait();
             
             var host = new WebHostBuilder()

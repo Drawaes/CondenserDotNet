@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CondenserDotNet.Service.DataContracts
+namespace CondenserDotNet.Core.DataContracts
 {
     public class InformationService : IEquatable<InformationService>
     {
