@@ -15,8 +15,10 @@ namespace CondenserDotNet.Core
         public static readonly string KeyUrl = ApiUrl + "kv/";
         public static readonly string ServiceCatalogUrl = ApiUrl + "catalog/services";
         public static readonly string DatacenterCatalogUrl = ApiUrl + "catalog/datacenters";
+        public static readonly string SingleServiceCatalogUrl = ApiUrl + "catalog/service/";
         public static readonly string ServiceHealthUrl = ApiUrl + "health/service/";
         public static readonly string SessionCreateUrl = ApiUrl + "session/create";
+        public static readonly string HealthAnyUrl = ApiUrl + "/health/state/any";
 
         static HttpUtils()
         {

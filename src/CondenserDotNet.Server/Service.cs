@@ -10,30 +10,31 @@ namespace CondenserDotNet.Server
 {
     public class Service : IDisposable
     {
-        private readonly IServiceRegistry _registry;
-        
 
         private readonly HttpClient _httpClient;
         private readonly System.Threading.CountdownEvent _waitUntilRequestsAreFinished = new System.Threading.CountdownEvent(1);
+        private readonly string _address;
+        private readonly int _port;
+        private const string UrlPrefix = "urlprefix-";
 
         public Service()
         {
         }
-        public Service(string[] routes, string serviceId,  
+        public Service(string serviceId,  
             string nodeId, string[] tags,
-            IServiceRegistry registry,
+            string address, int port, 
             HttpClient client = null)
         {
             _httpClient = client ??
                 new HttpClient(new HttpClientHandler());
-
-            _registry = registry;
+            _address = address;
+            _port = port;
             Tags = tags;
-            Routes = routes.Select(r => !r.StartsWith("/") ? "/" + r : r).Select(r => r.EndsWith("/") ? r.Substring(0, r.Length - 1) : r).ToArray();
+            Routes = RoutesFromTags(tags);
             ServiceId = serviceId;
             NodeId = nodeId;
             
-            SupportedVersions = tags.Where(t => t.StartsWith("version=")).Select(t => new System.Version(t.Substring(8))).ToArray();
+            SupportedVersions = tags.Where(t => t.StartsWith("version=")).Select(t => new Version(t.Substring(8))).ToArray();
         }
 
         public Version[] SupportedVersions { get; private set; }
@@ -42,15 +43,49 @@ namespace CondenserDotNet.Server
         public string ServiceId { get; private set; }
         public string NodeId { get; private set; }
 
+        public static string[] RoutesFromTags(string[] tags)
+        {
+            int returnCount = 0;
+            for(int i = 0; i < tags.Length;i++)
+            {
+                if(!tags[i].StartsWith(UrlPrefix))
+                {
+                    continue;
+                }
+                returnCount ++;
+            }
+            var returnValues = new string[returnCount];
+            returnCount =0;
+            for(int i = 0; i < tags.Length; i++)
+            {
+                if(!tags[i].StartsWith(UrlPrefix))
+                {
+                    continue;
+                }
+                var startSubstIndex = UrlPrefix.Length;
+                var endSubstIndex = tags[i].Length - UrlPrefix.Length;
+                if(tags[i][tags[i].Length -1] == '/')
+                {
+                    endSubstIndex --;
+                }
+                returnValues[returnCount] = tags[i].Substring(startSubstIndex, endSubstIndex);
+                if(returnValues[returnCount][0] != '/')
+                {
+                    returnValues[returnCount] = "/" + returnValues[returnCount];
+                }
+                returnCount++;
+            }
+            return returnValues;
+        }
+
         public async Task CallService(HttpContext context)
         {
             _waitUntilRequestsAreFinished.AddCount();
             try
             {
-                var instance = await _registry.GetServiceInstanceAsync(ServiceId);
+                var hostString = $"{_address}:{_port}";
 
                 var routeData = context.GetRouteData();
-                var hostString = $"{instance.Address}:{instance.Port}";
                 string uriString;
 
                 if (routeData != null)

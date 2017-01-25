@@ -3,100 +3,172 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
+using System.Threading.Tasks;
 using CondenserDotNet.Core;
+using CondenserDotNet.Core.DataContracts;
+using CondenserDotNet.Server.DataContracts;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 
 namespace CondenserDotNet.Server
 {
     public class RoutingHost
     {
-        private const string UrlPrefix = "urlprefix-";
+        private Dictionary<string, List<Service>> _servicesWithHealthChecks = new Dictionary<string, List<Service>>();
+        private readonly string _healthCheckUri;
+        private readonly string _serviceLookupUri;
         private readonly CancellationTokenSource _cancel = new CancellationTokenSource();
         private readonly CustomRouter _router;
-        private readonly ILogger<RoutingHost> _logger;
-        private readonly ServiceRegistry _services;
-
-        private readonly Dictionary<string, Service> _servicesByName =
-            new Dictionary<string, Service>();
-
-        private readonly BlockingWatcher<Dictionary<string, string[]>> _watcher;
+        private readonly CondenserConfiguration _config;
+        private readonly HttpClient _client = new HttpClient();
 
         public RoutingHost(CustomRouter router,
             CondenserConfiguration configuration, ILogger<RoutingHost> logger)
         {
+            _config = configuration;
             _router = router;
-            _logger = logger;
-            var uri = new Uri($"http://{configuration.AgentAddress}:{configuration.AgentPort}");
-            var client = new HttpClient {BaseAddress = uri};
-
-            _services = new ServiceRegistry(client, _cancel.Token);
-            _watcher = new BlockingWatcher<Dictionary<string, string[]>>
-                (HttpUtils.ServiceCatalogUrl, client, _cancel.Token, AddRemoveRoutes);
-#pragma warning disable 4014
-            _watcher.WatchLoop();
-#pragma warning restore 4014
+            _healthCheckUri = $"http://{_config.AgentAddress}:{_config.AgentPort}{HttpUtils.HealthAnyUrl}?index=";
+            _serviceLookupUri = $"http://{_config.AgentAddress}:{_config.AgentPort}{HttpUtils.SingleServiceCatalogUrl}";
+            WatchLoop();
         }
 
         public IRouter Router => _router;
+        public Action<Dictionary<string, List<Service>>> OnRouteBuilt { get; set; }
 
-        public Action<Dictionary<string, string[]>> OnRouteBuilt { get; set; }
-
-        private void AddRemoveRoutes(Dictionary<string, string[]> latestValues)
+        private async void WatchLoop()
         {
-            foreach (var server in latestValues)
+            string index = string.Empty;
+            while (!_cancel.IsCancellationRequested)
             {
-                var name = server.Key;
-                var routes = FilterRoutes(server.Value);
-
-                Service current;
-                if (!_servicesByName.TryGetValue(name, out current))
+                var result = await _client.GetAsync(_healthCheckUri + index);
+                if (!result.IsSuccessStatusCode)
                 {
-                    var service = new Service(routes,
-                        name, name, server.Value, _services);
-
-                    _servicesByName.Add(name, service);
-
-                    _router.AddNewService(service);
-
-                    _logger.LogInformation("Adding service {server}", service.ServiceId);
+                    //need to log here
+                    await Task.Delay(TimeSpan.FromSeconds(1));
+                    continue;
                 }
-                else
+                index = result.GetConsulIndex();
+                // Log stuff about updating routing
+                var content = await result.Content.ReadAsStringAsync();
+                var healthChecks = JsonConvert.DeserializeObject<HealthCheck[]>(content);
+                List<InformationService> infoList = BuildListOfHealthyServiceInstances(healthChecks);
+                RemoveDeadInstances(infoList);
+                foreach (var service in _servicesWithHealthChecks)
                 {
-                    var previousRoutes = current.Routes;
-
-                    foreach (var newTag in routes.Except(previousRoutes))
+                    result = await _client.GetAsync(_serviceLookupUri + service.Key);
+                    content = await result.Content.ReadAsStringAsync();
+                    var infoService = JsonConvert.DeserializeObject<ServiceInstance[]>(content);
+                    foreach (var info in infoService)
                     {
-                        _router.AddServiceToRoute(newTag, current);
-                        _logger.LogInformation("Adding {route} to service {server}", newTag, server.Key);
-                    }
+                        var instance = GetInstance(info, service.Value);
+                        if (instance == null)
+                        {
+                            instance = new Service(info.ServiceID, info.Node, info.ServiceTags, info.ServiceAddress, info.ServicePort);
+                            _router.AddNewService(instance);
+                            continue;
+                        }
+                        var routes = Service.RoutesFromTags(info.ServiceTags);
 
-                    foreach (var oldTag in previousRoutes.Except(routes))
-                    {
-                        _router.RemoveServiceFromRoute(oldTag, current);
-                        _logger.LogInformation("Removing {route} from service {server}", oldTag, server.Key);
+                        if (instance.Routes.SequenceEqual(routes))
+                        {
+                            continue;
+                        }
+
+                        foreach (var newTag in routes.Except(instance.Routes))
+                        {
+                            _router.AddServiceToRoute(newTag, instance);
+                        }
+
+                        foreach (var oldTag in instance.Routes.Except(routes))
+                        {
+                            _router.RemoveServiceFromRoute(oldTag, instance);
+                        }
+                        instance.UpdateRoutes(routes);
                     }
                 }
+                OnRouteBuilt?.Invoke(_servicesWithHealthChecks);
             }
-
-            foreach (var server in _servicesByName)
-            {
-                if (!latestValues.ContainsKey(server.Key))
-                {
-                    _router.RemoveService(server.Value);
-                    _logger.LogInformation("Removing service {server}", server.Key);
-                }
-            }
-
-            OnRouteBuilt?.Invoke(latestValues);
         }
 
-        private static string[] FilterRoutes(string[] tags)
+        private Service GetInstance(ServiceInstance service, List<Service> instanceList)
         {
-            return tags
-                .Where(x => x.StartsWith(UrlPrefix))
-                .Select(x => x.Replace(UrlPrefix, ""))
-                .ToArray();
+            for (int i = 0; i < instanceList.Count; i++)
+            {
+                if (instanceList[i].ServiceId == service.ServiceID)
+                {
+                    return instanceList[i];
+                }
+            }
+            return null;
+        }
+
+        private void RemoveDeadInstances(List<InformationService> infoList)
+        {
+            //All services that are removed
+            foreach (var service in _servicesWithHealthChecks.ToArray())
+            {
+                foreach (var instance in service.Value.ToArray())
+                {
+                    if (!HasInstance(instance.ServiceId, infoList))
+                    {
+                        //Service is dead remove it
+                        service.Value.Remove(instance);
+                        _router.RemoveService(instance);
+                    }
+                }
+                if (service.Value.Count == 0)
+                {
+                    _servicesWithHealthChecks.Remove(service.Key);
+                }
+            }
+            foreach (var i in infoList)
+            {
+                if (!_servicesWithHealthChecks.ContainsKey(i.Service))
+                {
+                    _servicesWithHealthChecks[i.Service] = new List<Service>();
+                }
+            }
+        }
+
+        private static List<InformationService> BuildListOfHealthyServiceInstances(HealthCheck[] healthChecks)
+        {
+            HashSet<string> downNodes = new HashSet<string>();
+            //Now we get all service instances that are working
+            var infoList = new List<InformationService>();
+            foreach (var check in healthChecks)
+            {
+                if ((check.CheckID == "serfHealth" || check.CheckID == "_node_maintenance") && check.Status != HealthCheckStatus.Passing)
+                {
+                    downNodes.Add(check.Node);
+                }
+
+            }
+            foreach (var check in healthChecks)
+            {
+                if (!string.IsNullOrEmpty(check.ServiceID) && check.Status == HealthCheckStatus.Passing && !downNodes.Contains(check.Node))
+                {
+                    infoList.Add(new InformationService()
+                    {
+                        Service = check.ServiceName,
+                        ID = check.ServiceID
+                    });
+                }
+            }
+
+            return infoList;
+        }
+
+        private bool HasInstance(string serviceID, List<InformationService> infoList)
+        {
+            for (int i = 0; i < infoList.Count; i++)
+            {
+                if (infoList[i].ID == serviceID)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
 }
