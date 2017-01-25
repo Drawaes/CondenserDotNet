@@ -54,8 +54,52 @@ namespace CondenserDotNet.Server
                     result = await _client.GetAsync($"http://{_config.AgentAddress}:{_config.AgentPort}{HttpUtils.SingleServiceCatalogUrl}{service.Key}");
                     content = await result.Content.ReadAsStringAsync();
                     var infoService = JsonConvert.DeserializeObject<ServiceInstance[]>(content);
+                    foreach(var info in infoService)
+                    {
+                        var instance = GetInstance(info, service.Value);
+                        if(instance == null)
+                        {
+                            instance = new Service(FilterRoutes(info.ServiceTags), info.ServiceID, info.Node, info.ServiceTags,info.ServiceAddress, info.ServicePort);
+                            _router.AddNewService(instance);
+                            continue;
+                        }
+                        var routes = FilterRoutes(info.ServiceTags);
+                        routes = routes.Select(r => !r.StartsWith("/") ? "/" + r : r).Select(r => r.EndsWith("/") ? r.Substring(0, r.Length - 1) : r).ToArray();
+
+                        if (instance.Routes.SequenceEqual(routes))
+                        {
+                            continue;
+                        }
+
+                        foreach (var newTag in routes.Except(instance.Routes))
+                            _router.AddServiceToRoute(newTag, instance);
+
+                        foreach (var oldTag in instance.Routes.Except(routes))
+                            _router.RemoveServiceFromRoute(oldTag, instance);
+                        instance.UpdateRoutes(routes);
+                    }
                 }
             }
+        }
+
+        private static string[] FilterRoutes(string[] tags)
+        {
+            return tags
+                .Where(x => x.StartsWith(UrlPrefix))
+                .Select(x => x.Replace(UrlPrefix, ""))
+                .ToArray();
+        }
+
+        private Service GetInstance(ServiceInstance service, List<Service> instanceList)
+        {
+            for(int i = 0; i < instanceList.Count;i++)
+            {
+                if(instanceList[i].ServiceId == service.ServiceID)
+                {
+                    return instanceList[i];
+                }
+            }
+            return null;
         }
 
         private void RemoveDeadInstances(List<InformationService> infoList)

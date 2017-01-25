@@ -27,9 +27,9 @@ namespace Condenser.Tests.Integration
             registry.SetServiceInstance(informationService);
 
             var router = BuildRouter();
-            var service = new Service(new[] {"/search"}, "Service1",
-                "node1", new string[0], registry);
-            router.AddNewService(service);
+            //var service = new Service(new[] {"/search"}, "Service1",
+            //    "node1", new string[0], registry);
+            //router.AddNewService(service);
 
             var context = new DefaultHttpContext();
             context.Request.Method = "GET";

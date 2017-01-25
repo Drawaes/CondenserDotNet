@@ -9,29 +9,29 @@ namespace CondenserDotNet.Server
 {
     public class Service : IDisposable
     {
-        private readonly IServiceRegistry _registry;
-
         private readonly HttpClient _httpClient;
         private readonly System.Threading.CountdownEvent _waitUntilRequestsAreFinished = new System.Threading.CountdownEvent(1);
+        private readonly string _address;
+        private readonly int _port;
 
         public Service()
         {
         }
         public Service(string[] routes, string serviceId,  
             string nodeId, string[] tags,
-            IServiceRegistry registry, 
+            string address, int port, 
             HttpClient client = null)
         {
             _httpClient = client ??
                 new HttpClient(new HttpClientHandler());
-
-            _registry = registry;
+            _address = address;
+            _port = port;
             Tags = tags;
             Routes = routes.Select(r => !r.StartsWith("/") ? "/" + r : r).Select(r => r.EndsWith("/") ? r.Substring(0, r.Length - 1) : r).ToArray();
             ServiceId = serviceId;
             NodeId = nodeId;
             
-            SupportedVersions = tags.Where(t => t.StartsWith("version=")).Select(t => new System.Version(t.Substring(8))).ToArray();
+            SupportedVersions = tags.Where(t => t.StartsWith("version=")).Select(t => new Version(t.Substring(8))).ToArray();
         }
 
         public Version[] SupportedVersions { get; private set; }
@@ -45,8 +45,7 @@ namespace CondenserDotNet.Server
             _waitUntilRequestsAreFinished.AddCount();
             try
             {
-                var instance = await _registry.GetServiceInstanceAsync(ServiceId);
-                var hostString = $"{instance.Address}:{instance.Port}";
+                var hostString = $"{_address}:{_port}";
 
                 var uriString = $"http://{hostString}{context.Request.Path}{context.Request.QueryString}";
                 var uri = new Uri(uriString);

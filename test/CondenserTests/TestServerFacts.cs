@@ -90,11 +90,11 @@ namespace CondenserTests
 
                 registry.AddServiceInstance(infoService);
 
-                var serviceToAdd = new Service(tags,
-                serviceId, serviceId, tags,
-                registry, apiClient.CreateClient());
+                //var serviceToAdd = new Service(tags,
+                //serviceId, serviceId, tags,
+                //registry, apiClient.CreateClient());
 
-                customRouter.AddNewService(serviceToAdd);
+                //customRouter.AddNewService(serviceToAdd);
                 
                 using (var routerServer = new TestServer(routerBuilder))
                 {

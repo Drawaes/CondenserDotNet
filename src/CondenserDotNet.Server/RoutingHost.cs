@@ -49,12 +49,12 @@ namespace CondenserDotNet.Server
                 Service current;
                 if (!_servicesByName.TryGetValue(name, out current))
                 {
-                    var service = new Service(routes,
-                        name, name, server.Value, _services);
+                    //var service = new Service(routes,
+                    //    name, name, server.Value, _services);
 
-                    _servicesByName.Add(name, service);
+                    //_servicesByName.Add(name, service);
 
-                    _router.AddNewService(service);
+                    //_router.AddNewService(service);
                 }
                 else
                 {
