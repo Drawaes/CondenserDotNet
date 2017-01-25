@@ -25,7 +25,7 @@ namespace CondenserDotNet.Server.Extensions
             self.AddSingleton(config);
             self.AddSingleton<IHealthRouter, HealthRouter>();
             self.AddSingleton<CustomRouter>();
-            self.AddSingleton<RoutingHostLite>();
+            self.AddSingleton<RoutingHost>();
         }
     }
 }

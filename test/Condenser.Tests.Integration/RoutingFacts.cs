@@ -29,7 +29,7 @@ namespace Condenser.Tests.Integration
             
             var router = BuildRouter();
             var service = new Service("service1","node1", new[] { UrlPrefix + "/search" }, "www.google.com", 80 );
-            //router.AddNewService(service);
+            router.AddNewService(service);
 
             var context = new DefaultHttpContext();
             context.Request.Method = "GET";
@@ -66,7 +66,7 @@ namespace Condenser.Tests.Integration
             Assert.Equal(200, routeContext.HttpContext.Response.StatusCode);
         }
 
-        [Fact(Skip = "Failure everyother test, need to resolve")]
+        [Fact(Skip = "Unsure if this could work without a health check?")]
         public async Task CanRegisterRoutes()
         {
             var wait = new AsyncManualResetEvent<bool>();
@@ -81,13 +81,15 @@ namespace Condenser.Tests.Integration
            
             var host = new RoutingHost(router, config, new FakeLogger<RoutingHost>())
             {
-                OnRouteBuilt = servers => {
+                OnRouteBuilt = servers =>
                 {
-                    if (servers.ContainsKey("Google"))
                     {
-                        wait.Set(true);
+                        if (servers.ContainsKey("Google"))
+                        {
+                            wait.Set(true);
+                        }
                     }
-                } }
+                }
             };
 
             var google = new ServiceManager("Google",
@@ -106,8 +108,7 @@ namespace Condenser.Tests.Integration
 
             Assert.Equal(200, routeContext.HttpContext.Response.StatusCode);
 
-            google = new ServiceManager("Google",
-                agentAddress, 8500)
+            google = new ServiceManager("Google","Google2", agentAddress, 8500)
             {
                 ServiceAddress = "www.google.com",
                 ServicePort = 80
@@ -116,6 +117,7 @@ namespace Condenser.Tests.Integration
             wait.Reset();
 
             await google.AddApiUrl("/gmail")
+                .AddHttpHealthCheck("/gmail",10)
                 .RegisterServiceAsync();
 
             await wait.WaitAsync();
