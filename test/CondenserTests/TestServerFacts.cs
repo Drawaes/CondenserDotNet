@@ -15,6 +15,8 @@ namespace CondenserTests
 {
     public class TestServerFacts
     {
+        private const string UrlPrefix = "urlprefix-";
+
         [Fact]
         public async void CanReloadOptionDetails()
         {
@@ -63,8 +65,7 @@ namespace CondenserTests
                 .ConfigureServices(x => { x.AddMvcCore(); });
 
             var customRouter = BuildRouter();
-            var tags = new[] { "fake/fake/route" };
-            var registry = new FakeServiceRegistry();
+            var tags = new[] { UrlPrefix + "fake/fake/route" };
             var serviceId = "FakeService";
 
             var routerBuilder = new WebHostBuilder()
@@ -80,21 +81,10 @@ namespace CondenserTests
 
             using (var apiClient = new TestServer(apiBuilder))
             {
-                var infoService = new InformationService
-                {
-                    Address = apiClient.BaseAddress.Host,
-                    Port = apiClient.BaseAddress.Port,
-                    Service = serviceId,
-                    Tags = tags
-                };
+                var serviceToAdd = new Service(serviceId, serviceId, tags, apiClient.BaseAddress.Host
+                    , apiClient.BaseAddress.Port, apiClient.CreateClient());
 
-                registry.AddServiceInstance(infoService);
-
-                //var serviceToAdd = new Service(tags,
-                //serviceId, serviceId, tags,
-                //registry, apiClient.CreateClient());
-
-                //customRouter.AddNewService(serviceToAdd);
+                customRouter.AddNewService(serviceToAdd);
                 
                 using (var routerServer = new TestServer(routerBuilder))
                 {
