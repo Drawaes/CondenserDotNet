@@ -27,6 +27,7 @@ after_test:
   - ps: iex ((Get-ChildItem ($env:USERPROFILE + '\.nuget\packages\coveralls.io'))[0].FullName + '\tools\coveralls.net.exe' + ' --opencover coverage.xml')
   - dotnet pack -c Release src/CondenserDotNet.Client --version-suffix %APPVEYOR_BUILD_NUMBER%
   - dotnet pack -c Release src/CondenserDotNet.Server --version-suffix %APPVEYOR_BUILD_NUMBER%
+  - dotnet pack -c Release src/CondenserDotNet.Core --version-suffix %APPVEYOR_BUILD_NUMBER%
   
 artifacts:
   path: '**/*.nupkg'
