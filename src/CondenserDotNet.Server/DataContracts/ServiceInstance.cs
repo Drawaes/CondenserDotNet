@@ -12,6 +12,5 @@ namespace CondenserDotNet.Server.DataContracts
         public string[] ServiceTags { get; set; }
         public string ServiceAddress { get; set; }
         public int ServicePort { get; set; }
-        public string Node { get;set;}
     }
 }
