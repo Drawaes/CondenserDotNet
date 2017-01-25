@@ -15,20 +15,19 @@ namespace Condenser.Tests.Integration
 {
     public class RoutingFacts
     {
+        private const string UrlPrefix = "urlprefix-";
+
         [Fact]
         public async Task CanWeFindARouteAndGetAPage()
         {
-            var registry = new FakeServiceRegistry();
             var informationService = new InformationService
             {
                 Address = "www.google.com",
                 Port = 80
             };
-            registry.SetServiceInstance(informationService);
-
+            
             var router = BuildRouter();
-            //var service = new Service(new[] {"/search"}, "Service1",
-            //    "node1", new string[0], registry);
+            var service = new Service("service1","node1", new[] { UrlPrefix + "/search" }, "www.google.com", 80 );
             //router.AddNewService(service);
 
             var context = new DefaultHttpContext();
@@ -47,14 +46,6 @@ namespace Condenser.Tests.Integration
         [Fact]
         public async Task CanWeFindAHealthRoute()
         {
-            var registry = new FakeServiceRegistry();
-            var informationService = new InformationService
-            {
-                Address = "www.google.com",
-                Port = 80
-            };
-            registry.SetServiceInstance(informationService);
-
             var router = BuildRouter();
             
             var context = new DefaultHttpContext();
