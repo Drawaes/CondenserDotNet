@@ -2,23 +2,24 @@
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using CondenserDotNet.Service;
+using CondenserDotNet.Core;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 
 namespace CondenserDotNet.Server
 {
     public class Service : IDisposable
     {
+
         private readonly HttpClient _httpClient;
         private readonly System.Threading.CountdownEvent _waitUntilRequestsAreFinished = new System.Threading.CountdownEvent(1);
         private readonly string _address;
         private readonly int _port;
-        private const string UrlPrefix = "urlprefix-";
 
         public Service()
         {
         }
-        public Service(string serviceId,  
+        public Service(string[] routes, string serviceId,  
             string nodeId, string[] tags,
             string address, int port, 
             HttpClient client = null)
@@ -28,7 +29,7 @@ namespace CondenserDotNet.Server
             _address = address;
             _port = port;
             Tags = tags;
-            Routes = RoutesFromTags(tags);
+            Routes = routes.Select(r => !r.StartsWith("/") ? "/" + r : r).Select(r => r.EndsWith("/") ? r.Substring(0, r.Length - 1) : r).ToArray();
             ServiceId = serviceId;
             NodeId = nodeId;
             
@@ -41,41 +42,6 @@ namespace CondenserDotNet.Server
         public string ServiceId { get; private set; }
         public string NodeId { get; private set; }
 
-        public static string[] RoutesFromTags(string[] tags)
-        {
-            int returnCount = 0;
-            for(int i = 0; i < tags.Length;i++)
-            {
-                if(!tags[i].StartsWith(UrlPrefix))
-                {
-                    continue;
-                }
-                returnCount ++;
-            }
-            var returnValues = new string[returnCount];
-            returnCount =0;
-            for(int i = 0; i < tags.Length; i++)
-            {
-                if(!tags[i].StartsWith(UrlPrefix))
-                {
-                    continue;
-                }
-                var startSubstIndex = UrlPrefix.Length;
-                var endSubstIndex = tags[i].Length - UrlPrefix.Length;
-                if(tags[i][tags[i].Length -1] == '/')
-                {
-                    endSubstIndex --;
-                }
-                returnValues[returnCount] = tags[i].Substring(startSubstIndex, endSubstIndex);
-                if(returnValues[returnCount][0] != '/')
-                {
-                    returnValues[returnCount] = "/" + returnValues[returnCount];
-                }
-                returnCount++;
-            }
-            return returnValues;
-        }
-
         public async Task CallService(HttpContext context)
         {
             _waitUntilRequestsAreFinished.AddCount();
@@ -83,7 +49,20 @@ namespace CondenserDotNet.Server
             {
                 var hostString = $"{_address}:{_port}";
 
-                var uriString = $"http://{hostString}{context.Request.Path}{context.Request.QueryString}";
+                var routeData = context.GetRouteData();
+                string uriString;
+
+                if (routeData != null)
+                {
+                    var apiPath = (string) routeData.DataTokens["apiPath"];
+                    string remainingPath = context.Request.Path.Value.Substring(apiPath.Length);
+                    uriString = $"http://{hostString}{remainingPath}{context.Request.QueryString}";
+                }
+                else
+                {
+                    uriString = $"http://{hostString}{context.Request.Path.Value}{context.Request.QueryString}";
+                }
+
                 var uri = new Uri(uriString);
 
                 var requestMessage = new HttpRequestMessage();
