@@ -1,7 +1,7 @@
 ﻿using CondenserDotNet.Server.DataContracts;
 using CondenserDotNet.Server.Extensions;
 using Microsoft.AspNetCore.Hosting;
-
+using Microsoft.Extensions.Logging;
 
 namespace Routing
 {
@@ -13,12 +13,12 @@ namespace Routing
                 .UseKestrel()
                 .UseUrls($"http://*:{50000}")
                 .AsCondenserRouter()
-                    .WithHealthRoute("/condenser/health")
-                    .WithHealthCheck(() => new HealthCheck
-                    {
-                        Name = "Default",
-                        Ok = true
-                    })
+                .WithHealthRoute("/condenser/health")
+                .WithHealthCheck(() => new HealthCheck
+                {
+                    Name = "Default",
+                    Ok = true
+                })
                 .Build();
 
             host.Run();

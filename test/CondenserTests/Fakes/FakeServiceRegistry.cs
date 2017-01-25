@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CondenserDotNet.Service;
-using CondenserDotNet.Service.DataContracts;
+using CondenserDotNet.Core;
+using CondenserDotNet.Core.DataContracts;
 
 namespace CondenserTests.Fakes
 {

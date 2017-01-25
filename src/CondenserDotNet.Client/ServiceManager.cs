@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Net.Sockets;
 using System.Threading;
 using CondenserDotNet.Client.DataContracts;
-using CondenserDotNet.Service;
+using CondenserDotNet.Core;
 
 namespace CondenserDotNet.Client
 {

@@ -4,7 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace CondenserDotNet.Service
+namespace CondenserDotNet.Core
 {
     public class BlockingWatcher<T>
         where T : class
@@ -29,7 +29,7 @@ namespace CondenserDotNet.Service
             _lookupUrl = $"{url}?passing&index=";
         }
 
-        public async Task<T> SafeReadAsync()
+        public async Task<T> ReadAsync()
         {
             if (!await _haveFirstResults.WaitAsync())
             {

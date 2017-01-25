@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using CondenserDotNet.Service;
-using CondenserDotNet.Service.DataContracts;
+using CondenserDotNet.Core;
+using CondenserDotNet.Core.DataContracts;
 
 namespace Condenser.Tests.Integration
 {

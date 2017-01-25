@@ -1,14 +1,15 @@
 ﻿using System;
 using CondenserDotNet.Client;
 using CondenserDotNet.Client.Configuration;
+using CondenserDotNet.Core.DataContracts;
 using CondenserDotNet.Server;
-using CondenserDotNet.Service.DataContracts;
 using CondenserTests.Fakes;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Xunit;
 
 namespace CondenserTests
@@ -63,7 +64,7 @@ namespace CondenserTests
                 .ConfigureServices(x => { x.AddMvcCore(); });
 
             var customRouter = BuildRouter();
-            var tags = new[] { "fake/fake/route" };
+            var tags = new[] { "fakeservice" };
             var registry = new FakeServiceRegistry();
             var serviceId = "FakeService";
 
@@ -92,7 +93,7 @@ namespace CondenserTests
 
                 var serviceToAdd = new Service(tags,
                 serviceId, serviceId, tags,
-                registry, apiClient.CreateClient());
+                registry,apiClient.CreateClient());
 
                 customRouter.AddNewService(serviceToAdd);
                 
@@ -100,7 +101,7 @@ namespace CondenserTests
                 {
                     using (var routerClient = routerServer.CreateClient())
                     {
-                        var response = await routerClient.GetAsync("fake/fake/route");
+                        var response = await routerClient.GetAsync("/fakeservice/fake/fake/route");
                         var setting = await response.Content.ReadAsStringAsync();
 
                         Assert.Equal("Was routed", setting);
@@ -111,7 +112,7 @@ namespace CondenserTests
 
         private CustomRouter BuildRouter()
         {
-            return new CustomRouter(new FakeHealthRouter());
+            return new CustomRouter(new FakeHealthRouter(), new CustomRouterFacts.FakeLogger<CustomRouter>());
         }
     }
 }

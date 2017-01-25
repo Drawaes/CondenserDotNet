@@ -1,7 +1,9 @@
-﻿using CondenserDotNet.Server;
+﻿using System;
+using CondenserDotNet.Server;
 using CondenserTests.Fakes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Logging;
 using Xunit;
 
 namespace CondenserTests
@@ -52,7 +54,26 @@ namespace CondenserTests
 
         private CustomRouter BuildRouter()
         {
-            return new CustomRouter(new FakeHealthRouter());
+            return new CustomRouter(new FakeHealthRouter(), new FakeLogger<CustomRouter>());
+        }
+
+        public class FakeLogger<T> : ILogger<T>
+        {
+            public void Log<TState>(LogLevel logLevel, EventId eventId, TState state,
+                Exception exception, Func<TState, Exception, string> formatter)
+            {
+
+            }
+
+            public bool IsEnabled(LogLevel logLevel)
+            {
+                return false;
+            }
+
+            public IDisposable BeginScope<TState>(TState state)
+            {
+                throw new NotImplementedException();
+            }
         }
     }
 }

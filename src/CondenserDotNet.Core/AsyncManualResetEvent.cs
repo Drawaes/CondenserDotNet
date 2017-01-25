@@ -2,7 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CondenserDotNet.Service
+namespace CondenserDotNet.Core
 {
     public class AsyncManualResetEvent<T> where T : IEquatable<T>
     {

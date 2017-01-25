@@ -1,4 +1,4 @@
-﻿namespace CondenserDotNet.Service
+﻿namespace CondenserDotNet.Core
 {
     internal enum WatcherState
     {

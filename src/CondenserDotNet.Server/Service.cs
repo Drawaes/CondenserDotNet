@@ -2,14 +2,16 @@
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using CondenserDotNet.Service;
+using CondenserDotNet.Core;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Routing;
 
 namespace CondenserDotNet.Server
 {
     public class Service : IDisposable
     {
         private readonly IServiceRegistry _registry;
+        
 
         private readonly HttpClient _httpClient;
         private readonly System.Threading.CountdownEvent _waitUntilRequestsAreFinished = new System.Threading.CountdownEvent(1);
@@ -19,7 +21,7 @@ namespace CondenserDotNet.Server
         }
         public Service(string[] routes, string serviceId,  
             string nodeId, string[] tags,
-            IServiceRegistry registry, 
+            IServiceRegistry registry,
             HttpClient client = null)
         {
             _httpClient = client ??
@@ -46,9 +48,22 @@ namespace CondenserDotNet.Server
             try
             {
                 var instance = await _registry.GetServiceInstanceAsync(ServiceId);
-                var hostString = $"{instance.Address}:{instance.Port}";
 
-                var uriString = $"http://{hostString}{context.Request.Path}{context.Request.QueryString}";
+                var routeData = context.GetRouteData();
+                var hostString = $"{instance.Address}:{instance.Port}";
+                string uriString;
+
+                if (routeData != null)
+                {
+                    var apiPath = (string) routeData.DataTokens["apiPath"];
+                    string remainingPath = context.Request.Path.Value.Substring(apiPath.Length);
+                    uriString = $"http://{hostString}{remainingPath}{context.Request.QueryString}";
+                }
+                else
+                {
+                    uriString = $"http://{hostString}{context.Request.Path.Value}{context.Request.QueryString}";
+                }
+
                 var uri = new Uri(uriString);
 
                 var requestMessage = new HttpRequestMessage();

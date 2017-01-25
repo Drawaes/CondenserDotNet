@@ -5,8 +5,8 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using CondenserDotNet.Client.DataContracts;
-using CondenserDotNet.Service;
-using CondenserDotNet.Service.DataContracts;
+using CondenserDotNet.Core;
+using CondenserDotNet.Core.DataContracts;
 using Newtonsoft.Json;
 
 namespace CondenserDotNet.Client.Internal
