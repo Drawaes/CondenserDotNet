@@ -2,9 +2,9 @@
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
-using CondenserDotNet.Service.DataContracts;
+using CondenserDotNet.Core.DataContracts;
 
-namespace CondenserDotNet.Service
+namespace CondenserDotNet.Core
 {
     internal class ServiceWatcher
     {
@@ -28,7 +28,7 @@ namespace CondenserDotNet.Service
 
         internal async Task<InformationService> GetNextServiceInstanceAsync()
         {
-            var instances = await _watcher.SafeReadAsync();
+            var instances = await _watcher.ReadAsync();
             if ((instances != null) && (instances.Length > 0))
                 return instances[Random.Value.Next(0, instances.Length)].Service;
             return null;

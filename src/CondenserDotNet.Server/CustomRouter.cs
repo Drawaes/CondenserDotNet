@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Routing;
+using Microsoft.Extensions.Logging;
 
 namespace CondenserDotNet.Server
 {
@@ -11,10 +12,13 @@ namespace CondenserDotNet.Server
         private readonly RoutingTrie.RadixTree<Service> _tree = new RoutingTrie.RadixTree<Service>();
         private static readonly Task _taskDone = Task.FromResult(0);
         private readonly IHealthRouter _healthRouter;
+        private readonly ILogger<CustomRouter> _log;
 
-        public CustomRouter(IHealthRouter healthRouter)
+        public CustomRouter(IHealthRouter healthRouter,
+            ILogger<CustomRouter> log)
         {
             _healthRouter = healthRouter;
+            _log = log;
         }
 
         public VirtualPathData GetVirtualPath(VirtualPathContext context)
@@ -49,6 +53,8 @@ namespace CondenserDotNet.Server
         {
             var path = context.HttpContext.Request.Path.Value;
 
+             _log.LogInformation("Route recieved for {path}", path);
+
             if (path == _healthRouter.Route)
             {
                 context.Handler = _healthRouter.CheckHealth;
@@ -60,7 +66,12 @@ namespace CondenserDotNet.Server
                 context.RouteData.DataTokens.Add("apiPath", matchedPath);
                 if (s != null)
                 {
+                    _log.LogInformation("Routing through service {s.ServiceId}", s.ServiceId);
                     context.Handler = s.CallService;
+                }
+                else
+                {
+                    _log.LogInformation("No route recieved for {path}", path);
                 }
                 
             }

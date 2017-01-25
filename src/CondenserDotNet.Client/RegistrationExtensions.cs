@@ -7,7 +7,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using CondenserDotNet.Client.DataContracts;
 using CondenserDotNet.Client.Internal;
-using CondenserDotNet.Service;
+using CondenserDotNet.Core;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 

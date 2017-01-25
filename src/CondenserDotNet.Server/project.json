@@ -6,9 +6,11 @@
     "Microsoft.AspNetCore.Routing.Abstractions": "1.0.1",
     "Microsoft.AspNetCore.Http": "1.0.0",
     "Microsoft.AspNetCore.Routing": "1.0.0",
-    "CondenserDotNet.Service": { "target": "project" },
+    "CondenserDotNet.Core": { "target": "project" },
     "Microsoft.AspNetCore.Hosting.Abstractions": "1.0.0",
-    "Microsoft.AspNetCore.Hosting": "1.0.0"
+    "Microsoft.AspNetCore.Hosting": "1.0.0",
+    "Microsoft.Extensions.Logging.Console": "1.0.0",
+    "Microsoft.Extensions.Logging.Debug": "1.0.0"
   },
 
   "frameworks": {

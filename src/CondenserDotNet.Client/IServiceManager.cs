@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using CondenserDotNet.Client.DataContracts;
-using CondenserDotNet.Service;
+using CondenserDotNet.Core;
 
 namespace CondenserDotNet.Client
 {
