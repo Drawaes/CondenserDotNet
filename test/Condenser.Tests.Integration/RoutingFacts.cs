@@ -135,7 +135,7 @@ namespace Condenser.Tests.Integration
         private CustomRouter BuildRouter()
         {
             var checks = new List<Func<Task<HealthCheck>>>();
-            return new CustomRouter(new HealthRouter(new FakeHealthConfig(checks,"/health")), null);
+            return new CustomRouter(new HealthRouter(new FakeHealthConfig(checks,"/health"),null), null);
         }
 
         private class FakeHealthConfig : IHealthConfig
