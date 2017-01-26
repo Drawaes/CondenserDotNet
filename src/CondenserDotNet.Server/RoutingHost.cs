@@ -26,6 +26,7 @@ namespace CondenserDotNet.Server
         public RoutingHost(CustomRouter router,
             CondenserConfiguration configuration, ILogger<RoutingHost> logger)
         {
+            _client.Timeout = TimeSpan.FromMinutes(6);
             _config = configuration;
             _router = router;
             _healthCheckUri = $"http://{_config.AgentAddress}:{_config.AgentPort}{HttpUtils.HealthAnyUrl}?index=";
