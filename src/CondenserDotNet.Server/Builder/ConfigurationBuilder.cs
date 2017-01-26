@@ -11,8 +11,7 @@ namespace CondenserDotNet.Server.Builder
     public class ConfigurationBuilder : IHealthConfig
     {
         private readonly IWebHostBuilder _builder;
-        private ILoggerProvider _logger;
-
+        
         private string _agentAddress = "localhost";
         private int _agentPort = 8500;
 
@@ -31,12 +30,7 @@ namespace CondenserDotNet.Server.Builder
             return this;
         }
 
-        public ConfigurationBuilder WithLogger(ILoggerProvider logger)
-        {
-            _logger = logger;
-            return this;
-        }
-
+        
         public ConfigurationBuilder WithAgentPort(int agentPort)
         {
             _agentPort = agentPort;
@@ -66,17 +60,6 @@ namespace CondenserDotNet.Server.Builder
         {
             return
                 _builder.ConfigureServices(x => { x.AddCondenserRouter(_agentAddress, _agentPort, this); })
-                    .ConfigureLogging(x =>
-                    {
-                        if (_logger != null)
-                        {
-                            x.AddProvider(_logger);
-                        }
-                        else
-                        {
-                            x.AddConsole().AddDebug();
-                        }
-                    })
                     .Configure(x => { x.UseCondenserRouter(); })
                     .Build();
         }

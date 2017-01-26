@@ -35,7 +35,7 @@ namespace CondenserDotNet.Server.RoutingTrie
             unchecked // Overflow is fine, just wrap
             {
                 int hash = 17;
-                for(int i =0; i < _compareLength; i++)
+                for(int i =0; i < Math.Min(_compareLength,obj.Length); i++)
                 {
                     hash = hash * 23 + obj[i].GetHashCode();
                 }

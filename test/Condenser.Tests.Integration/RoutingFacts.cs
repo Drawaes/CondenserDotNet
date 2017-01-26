@@ -7,6 +7,7 @@ using CondenserDotNet.Core.DataContracts;
 using CondenserDotNet.Server;
 using CondenserDotNet.Server.Builder;
 using CondenserDotNet.Server.DataContracts;
+using CondenserDotNet.Server.Health;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
@@ -28,7 +29,7 @@ namespace Condenser.Tests.Integration
             };
             
             var router = BuildRouter();
-            var service = new Service("service1","node1", new[] { UrlPrefix + "/search" }, "www.google.com", 80 );
+            var service = new Service("service1","node1", new[] { UrlPrefix + "/search" }, "www.google.com", 80,null );
             router.AddNewService(service);
 
             var context = new DefaultHttpContext();
@@ -79,7 +80,7 @@ namespace Condenser.Tests.Integration
             };
             var router = BuildRouter();
            
-            var host = new RoutingHost(router, config, new FakeLogger<RoutingHost>())
+            var host = new RoutingHost(router, config, null, null)
             {
                 OnRouteBuilt = servers =>
                 {
@@ -134,8 +135,7 @@ namespace Condenser.Tests.Integration
         private CustomRouter BuildRouter()
         {
             var checks = new List<Func<Task<HealthCheck>>>();
-            return new CustomRouter(new HealthRouter(new FakeHealthConfig(checks,"/health")), 
-                new FakeLogger<CustomRouter>());
+            return new CustomRouter(new HealthRouter(new FakeHealthConfig(checks,"/health")), null);
         }
 
         private class FakeHealthConfig : IHealthConfig
@@ -168,25 +168,6 @@ namespace Condenser.Tests.Integration
 
             await routeContext.Handler.Invoke(routeContext.HttpContext);
             return routeContext;
-        }
-    }
-
-    public class FakeLogger<T> : ILogger<T>
-    {
-        public void Log<TState>(LogLevel logLevel, EventId eventId, TState state,
-            Exception exception, Func<TState, Exception, string> formatter)
-        {
-            
-        }
-
-        public bool IsEnabled(LogLevel logLevel)
-        {
-            return false;
-        }
-
-        public IDisposable BeginScope<TState>(TState state)
-        {
-            throw new NotImplementedException();
         }
     }
 }

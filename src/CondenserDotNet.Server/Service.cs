@@ -16,15 +16,17 @@ namespace CondenserDotNet.Server
         private readonly string _address;
         private readonly int _port;
         private const string UrlPrefix = "urlprefix-";
+        private Health.CurrentState _stats;
 
         public Service()
         {
         }
         public Service(string serviceId,  
             string nodeId, string[] tags,
-            string address, int port, 
+            string address, int port, Health.CurrentState stats,
             HttpClient client = null)
         {
+            _stats = stats;
             _httpClient = client ??
                 new HttpClient(new HttpClientHandler());
             _address = address;
@@ -128,6 +130,7 @@ namespace CondenserDotNet.Server
                 using (var responseMessage = await _httpClient.SendAsync(requestMessage, HttpCompletionOption.ResponseHeadersRead, context.RequestAborted))
                 {
                     context.Response.StatusCode = (int)responseMessage.StatusCode;
+                    _stats.RecordResponse(context.Response.StatusCode);
                     foreach (var header in responseMessage.Headers)
                     {
                         context.Response.Headers[header.Key] = header.Value.ToArray();

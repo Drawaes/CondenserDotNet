@@ -81,10 +81,10 @@ namespace CondenserTests
             using (var apiClient = new TestServer(apiBuilder))
             {
                 var serviceToAdd = new Service(serviceId, serviceId, tags, apiClient.BaseAddress.Host
-                    , apiClient.BaseAddress.Port, apiClient.CreateClient());
+                    , apiClient.BaseAddress.Port, null, apiClient.CreateClient());
 
                 customRouter.AddNewService(serviceToAdd);
-                
+
                 using (var routerServer = new TestServer(routerBuilder))
                 {
                     using (var routerClient = routerServer.CreateClient())
@@ -100,7 +100,7 @@ namespace CondenserTests
 
         private CustomRouter BuildRouter()
         {
-            return new CustomRouter(new FakeHealthRouter(),new Microsoft.Extensions.Logging.Logger<CustomRouter>(new Microsoft.Extensions.Logging.LoggerFactory()));
+            return new CustomRouter(new FakeHealthRouter(), null);
         }
     }
 }

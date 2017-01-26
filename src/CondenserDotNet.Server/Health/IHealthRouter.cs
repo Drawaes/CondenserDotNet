@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
-namespace CondenserDotNet.Server
+namespace CondenserDotNet.Server.Health
 {
     public interface IHealthRouter
     {
