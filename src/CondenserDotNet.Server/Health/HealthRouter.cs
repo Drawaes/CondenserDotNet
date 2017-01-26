@@ -26,7 +26,7 @@ namespace CondenserDotNet.Server.Health
         public async Task CheckHealth(HttpContext context)
         {
             var response = new HealthResponse();
-            response.Stats = _state.GetSummary();
+            response.Stats = _state?.GetSummary();
 
             if (_config.Checks?.Count > 0)
             {
