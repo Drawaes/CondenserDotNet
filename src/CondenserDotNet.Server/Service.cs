@@ -133,12 +133,12 @@ namespace CondenserDotNet.Server
                     _stats.RecordResponse(context.Response.StatusCode);
                     foreach (var header in responseMessage.Headers)
                     {
-                        context.Response.Headers[header.Key] = header.Value.ToArray();
+                        context.Response.Headers[header.Key] = header.Value?.ToArray();
                     }
 
                     foreach (var header in responseMessage.Content.Headers)
                     {
-                        context.Response.Headers[header.Key] = header.Value.ToArray();
+                        context.Response.Headers[header.Key] = header.Value?.ToArray();
                     }
 
                     // SendAsync removes chunking from the response. This removes the header so it doesn't expect a chunked response.
