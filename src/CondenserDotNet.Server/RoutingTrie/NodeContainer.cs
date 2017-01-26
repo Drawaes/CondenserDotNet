@@ -12,7 +12,6 @@ namespace CondenserDotNet.Server.RoutingTrie
         {
             _keylength = keyLength;
             _children = new Dictionary<string[], Node<T>>(new NodeComparer(_keylength));
-
         }
 
         int _keylength;
@@ -88,6 +87,16 @@ namespace CondenserDotNet.Server.RoutingTrie
         public bool TryGetValue(string[] route, out Node<T> node)
         {
             return _children.TryGetValue(route,out node);
+        }
+
+        public int MaxNodeDepth()
+        {
+            int nodeDepth = 0;
+            foreach(var n in _children.Values)
+            {
+                nodeDepth = Math.Max(n.MaxDepth(), nodeDepth);
+            }
+            return nodeDepth;
         }
 
         internal NodeContainer<T> Clone()

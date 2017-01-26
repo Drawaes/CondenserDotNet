@@ -12,8 +12,8 @@ namespace CondenserTests
         {
             var tree = new RadixTree<Service>();
             
-            var service = new Service("Service1Test", "node1", new string[0], "Adress1Test", 10000);
-            var service2 = new Service("Service1Test", "node1", new string[0], "Address2Test", 10000);
+            var service = new Service("Service1Test", "node1", new string[0], "Adress1Test", 10000, null);
+            var service2 = new Service("Service1Test", "node1", new string[0], "Address2Test", 10000, null);
             tree.AddServiceToRoute("/test1/test2/test3/test4/test5", service);
             tree.AddServiceToRoute("/test1/test2/test3/test4/test5/test6", service);
 
@@ -42,8 +42,8 @@ namespace CondenserTests
         {
             var tree = new RadixTree<Service>();
 
-            var service = new Service("Service1Test", "node1", new string[0], "Address1Test", 10000);
-            var service2 = new Service("Service1Test", "node1", new string[0], "Address2Test", 10000);
+            var service = new Service("Service1Test", "node1", new string[0], "Address1Test", 10000, null);
+            var service2 = new Service("Service1Test", "node1", new string[0], "Address2Test", 10000, null);
 
             tree.AddServiceToRoute("/test1/test2/test3/test4/test5", service);
             tree.AddServiceToRoute("/test1/test2/test3/test4/test5/test6", service2);
@@ -69,8 +69,8 @@ namespace CondenserTests
         {
             var tree = new RadixTree<Service>();
 
-            var service = new Service("Service1Test", "node1", new string[0], "Address1Test", 10000);
-            var service2 = new Service("Service1Test","node1", new string[0], "Address2Test", 10000);
+            var service = new Service("Service1Test", "node1", new string[0], "Address1Test", 10000, null);
+            var service2 = new Service("Service1Test","node1", new string[0], "Address2Test", 10000, null);
 
             tree.AddServiceToRoute("/test1/test2/test3/test4/test5", service);
             tree.AddServiceToRoute("/test1/test2/test3/test4/test5/test6", service2);

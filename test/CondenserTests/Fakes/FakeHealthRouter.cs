@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using CondenserDotNet.Server;
+using CondenserDotNet.Server.Health;
 using Microsoft.AspNetCore.Http;
 
 namespace CondenserTests.Fakes

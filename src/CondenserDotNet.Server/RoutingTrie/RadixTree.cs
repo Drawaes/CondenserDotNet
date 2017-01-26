@@ -52,5 +52,10 @@ namespace CondenserDotNet.Server.RoutingTrie
         {
             return _topNode;
         }
+
+        public int MaxDepth()
+        {
+            return _topNode.MaxDepth() + 1;
+        }
     }
 }

@@ -16,7 +16,7 @@ namespace CondenserTests
         public async void SetupCustomRouterAndRouteToService()
         {
             var router = BuildRouter();
-            var service = new Service("Service1Test", "node1", new string[] { UrlPrefix + "/test1/test2/test3/test4/test5" }, "Address1Test", 10000);
+            var service = new Service("Service1Test", "node1", new string[] { UrlPrefix + "/test1/test2/test3/test4/test5" }, "Address1Test", 10000, null);
             router.AddNewService(service);
 
             var context = new DefaultHttpContext();
@@ -34,7 +34,7 @@ namespace CondenserTests
         {
             var router = BuildRouter();
 
-            var service = new Service("Service1Test", "node1", new string[] { UrlPrefix + "/test1/test2/test3/test4/test5" }, "Address1Test", 10000);
+            var service = new Service("Service1Test", "node1", new string[] { UrlPrefix + "/test1/test2/test3/test4/test5" }, "Address1Test", 10000, null);
             router.AddNewService(service);
 
             var context = new DefaultHttpContext();
@@ -49,26 +49,7 @@ namespace CondenserTests
 
         private CustomRouter BuildRouter()
         {
-            return new CustomRouter(new FakeHealthRouter(), new FakeLogger<CustomRouter>());
-        }
-
-        public class FakeLogger<T> : ILogger<T>
-        {
-            public void Log<TState>(LogLevel logLevel, EventId eventId, TState state,
-                Exception exception, Func<TState, Exception, string> formatter)
-            {
-
-            }
-
-            public bool IsEnabled(LogLevel logLevel)
-            {
-                return false;
-            }
-
-            public IDisposable BeginScope<TState>(TState state)
-            {
-                throw new NotImplementedException();
-            }
+            return new CustomRouter(new FakeHealthRouter(), null);
         }
     }
 }

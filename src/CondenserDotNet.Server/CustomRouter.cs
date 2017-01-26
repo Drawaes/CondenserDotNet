@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CondenserDotNet.Server.Health;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 
@@ -15,10 +16,10 @@ namespace CondenserDotNet.Server
         private readonly ILogger<CustomRouter> _log;
 
         public CustomRouter(IHealthRouter healthRouter,
-            ILogger<CustomRouter> log)
+            ILoggerFactory factory)
         {
             _healthRouter = healthRouter;
-            _log = log;
+            _log = factory?.CreateLogger<CustomRouter>();
         }
 
         public VirtualPathData GetVirtualPath(VirtualPathContext context)
@@ -33,7 +34,7 @@ namespace CondenserDotNet.Server
 
         public void AddNewService(Service serviceToAdd)
         {
-            foreach(var r in serviceToAdd.Routes)
+            foreach (var r in serviceToAdd.Routes)
             {
                 _tree.AddServiceToRoute(r, serviceToAdd);
             }
@@ -53,7 +54,7 @@ namespace CondenserDotNet.Server
         {
             var path = context.HttpContext.Request.Path.Value;
 
-             _log.LogInformation("Route recieved for {path}", path);
+            _log?.LogInformation("Route recieved for {path}", path);
 
             if (path == _healthRouter.Route)
             {
@@ -66,14 +67,14 @@ namespace CondenserDotNet.Server
                 context.RouteData.DataTokens.Add("apiPath", matchedPath);
                 if (s != null)
                 {
-                    _log.LogInformation("Routing through service {s.ServiceId}", s.ServiceId);
+                    _log?.LogInformation("Routing through service {s.ServiceId}", s.ServiceId);
                     context.Handler = s.CallService;
                 }
                 else
                 {
-                    _log.LogInformation("No route recieved for {path}", path);
+                    _log?.LogInformation("No route recieved for {path}", path);
                 }
-                
+
             }
 
             return _taskDone;
@@ -81,7 +82,9 @@ namespace CondenserDotNet.Server
 
         internal void CleanUpRoutes()
         {
+            _log?.LogTrace("Compressing Trie Current Depth {maxDepth}", _tree.MaxDepth());
             _tree.Compress();
+            _log?.LogTrace("Compressing Trie Finished New Depth {maxDepth}", _tree.MaxDepth());
         }
     }
 }

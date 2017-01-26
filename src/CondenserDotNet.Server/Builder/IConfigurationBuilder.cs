@@ -10,7 +10,6 @@ namespace CondenserDotNet.Server.Builder
     public interface IConfigurationBuilder
     {
         IConfigurationBuilder WithAgentAddress(string agentAdress);
-        IConfigurationBuilder WithLogger(ILoggerProvider logger);
         IConfigurationBuilder WithAgentPort(int agentPort);
         IConfigurationBuilder WithHealthRoute(string route);
         IConfigurationBuilder WithHealthCheck(Func<Task<HealthCheck>> check);

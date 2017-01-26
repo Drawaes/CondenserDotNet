@@ -9,8 +9,12 @@ namespace Routing
     {
         public static void Main(string[] args)
         {
+            var logger = new LoggerFactory();
+            logger.AddConsole().AddDebug(LogLevel.Trace);
+
             var host = new WebHostBuilder()
                 .UseKestrel()
+                .UseLoggerFactory(logger)
                 .UseUrls($"http://*:{50000}")
                 .AsCondenserRouter()
                 .WithAgentAddress("docker")

@@ -92,6 +92,11 @@ namespace CondenserDotNet.Server.RoutingTrie
             }
         }
 
+        public int MaxDepth()
+        {
+            return _childrenNodes.MaxNodeDepth() + 1;
+        }
+
         internal bool RemoveServiceFromRoute(string[] route, T service)
         {
             NodeContainer<T> container = System.Threading.Volatile.Read(ref _childrenNodes);
