@@ -10,9 +10,14 @@ namespace CondenserDotNet.Server.RoutingTrie
         private readonly Node<T> _topNode = new Node<T>(new string[0], "");
         private readonly object _writeLock = new object();
         private static readonly char[] _routeSplit = new char[] {'/'};
+        private bool _killCase = true;
 
         public void AddServiceToRoute(string route, T service)
         {
+            if (_killCase)
+            {
+                route = route.ToUpperInvariant();
+            }
             lock (_writeLock)
             {
                 _topNode.AddRoute(route.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries), service);
@@ -21,6 +26,10 @@ namespace CondenserDotNet.Server.RoutingTrie
 
         public T GetServiceFromRoute(string route, out string matchedPath)
         {
+            if (_killCase)
+            {
+                route = route.ToUpperInvariant();
+            }
             return _topNode.GetService(route.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries), out matchedPath);
         }
 
@@ -42,6 +51,10 @@ namespace CondenserDotNet.Server.RoutingTrie
 
         public void RemoveServiceFromRoute(string route, T service)
         {
+            if (_killCase)
+            {
+                route = route.ToUpperInvariant();
+            }
             lock (_writeLock)
             {
                 _topNode.RemoveServiceFromRoute(route.Split(_routeSplit, StringSplitOptions.RemoveEmptyEntries), service);
