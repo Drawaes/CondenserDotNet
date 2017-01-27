@@ -28,7 +28,7 @@ namespace CondenserTests
             Assert.Equal(2, topNode.ChildrenNodes.KeyLength);
 
             //find the root common node
-            var commonNode = topNode.ChildrenNodes[new string[] { "test1", "test2" }];
+            var commonNode = topNode.ChildrenNodes[new string[] { "TEST1", "TEST2" }];
 
             //check the keys are consistant
             foreach (var kv in commonNode.ChildrenNodes)
@@ -60,7 +60,7 @@ namespace CondenserTests
 
             string matchedpath;
             var returnservice = tree.GetServiceFromRoute("/test1/test2/test3/test4/test5/test7",out matchedpath);
-            Assert.Equal("/test1/test2/test3/test4/test5", matchedpath);
+            Assert.Equal("/test1/test2/test3/test4/test5".ToUpperInvariant(), matchedpath);
             //Assert.Equal(returnservice.ServiceId, service.ServiceId);
         }
 
