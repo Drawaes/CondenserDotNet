@@ -77,7 +77,7 @@ namespace CondenserTests
 
             string matchedpath;
             var returnservice = tree.GetServiceFromRoute("/test1/test2/test3/test4/test5/test7", out matchedpath);
-            Assert.Equal("/test1/test2/test3/test4/test5", matchedpath);
+            Assert.Equal("/test1/test2/test3/test4/test5".ToUpperInvariant(), matchedpath);
 
             ////now remove the service
             tree.RemoveService(service);
