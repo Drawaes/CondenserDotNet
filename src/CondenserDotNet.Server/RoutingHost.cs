@@ -7,40 +7,46 @@ using System.Threading.Tasks;
 using CondenserDotNet.Core;
 using CondenserDotNet.Core.DataContracts;
 using CondenserDotNet.Server.DataContracts;
-using CondenserDotNet.Server.Health;
-using Microsoft.AspNetCore.Routing;
+using CondenserDotNet.Server.Routes;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using IRouter = Microsoft.AspNetCore.Routing.IRouter;
 
 namespace CondenserDotNet.Server
 {
     public class RoutingHost
     {
-        private Dictionary<string, List<Service>> _servicesWithHealthChecks = new Dictionary<string, List<Service>>();
         private readonly string _healthCheckUri;
         private readonly string _serviceLookupUri;
         private readonly CancellationTokenSource _cancel = new CancellationTokenSource();
         private readonly CustomRouter _router;
-        private readonly CondenserConfiguration _config;
         private readonly HttpClient _client = new HttpClient();
         private readonly ILogger<RoutingHost> _logger;
         private readonly CurrentState _state;
+        private readonly RoutingData _routingData;
 
         public RoutingHost(CustomRouter router,
-            CondenserConfiguration configuration, ILoggerFactory logger, CurrentState state)
+            CondenserConfiguration config, ILoggerFactory logger, CurrentState state,
+            RoutingData routingData, 
+            IEnumerable<IService> customRoutes)
         {
             _state = state;
+            _routingData = routingData;
             _logger = logger?.CreateLogger<RoutingHost>();
             _client.Timeout = TimeSpan.FromMinutes(6);
-            _config = configuration;
-            _router = router;
-            _healthCheckUri = $"http://{_config.AgentAddress}:{_config.AgentPort}{HttpUtils.HealthAnyUrl}?index=";
-            _serviceLookupUri = $"http://{_config.AgentAddress}:{_config.AgentPort}{HttpUtils.SingleServiceCatalogUrl}";
+           _router = router;
+            _healthCheckUri = $"http://{config.AgentAddress}:{config.AgentPort}{HttpUtils.HealthAnyUrl}?index=";
+            _serviceLookupUri = $"http://{config.AgentAddress}:{config.AgentPort}{HttpUtils.SingleServiceCatalogUrl}";
             WatchLoop();
+
+            foreach (var customRoute in customRoutes)
+            {
+                _router.AddNewService(customRoute);
+            }
         }
 
         public IRouter Router => _router;
-        public Action<Dictionary<string, List<Service>>> OnRouteBuilt { get; set; }
+        public Action<Dictionary<string, List<IService>>> OnRouteBuilt { get; set; }
 
         private async void WatchLoop()
         {
@@ -63,7 +69,7 @@ namespace CondenserDotNet.Server
                 _logger?.LogInformation("Total number of health checks returned was {healthCheckCount}", healthChecks.Length);
                 List<InformationService> infoList = BuildListOfHealthyServiceInstances(healthChecks);
                 RemoveDeadInstances(infoList);
-                foreach (var service in _servicesWithHealthChecks)
+                foreach (var service in _routingData.ServicesWithHealthChecks)
                 {
                     result = await _client.GetAsync(_serviceLookupUri + service.Key);
                     content = await result.Content.ReadAsStringAsync();
@@ -76,6 +82,7 @@ namespace CondenserDotNet.Server
                             instance = new Service(info.ServiceID, info.Node, info.ServiceTags, info.ServiceAddress, info.ServicePort, _state);
                             _logger?.LogInformation("Adding a new service instance {serviceId} that is running the service {service} mapped to {routes}", instance.ServiceId, service.Key, instance.Routes);
                             _router.AddNewService(instance);
+                            service.Value.Add(instance);
                             continue;
                         }
                         var routes = Service.RoutesFromTags(info.ServiceTags);
@@ -98,11 +105,11 @@ namespace CondenserDotNet.Server
                     }
                 }
                 _router.CleanUpRoutes();
-                OnRouteBuilt?.Invoke(_servicesWithHealthChecks);
+                OnRouteBuilt?.Invoke(_routingData.ServicesWithHealthChecks);
             }
         }
 
-        private Service GetInstance(ServiceInstance service, List<Service> instanceList)
+        private IService GetInstance(ServiceInstance service, List<IService> instanceList)
         {
             for (int i = 0; i < instanceList.Count; i++)
             {
@@ -117,7 +124,7 @@ namespace CondenserDotNet.Server
         private void RemoveDeadInstances(List<InformationService> infoList)
         {
             //All services that are removed
-            foreach (var service in _servicesWithHealthChecks.ToArray())
+            foreach (var service in _routingData.ServicesWithHealthChecks.ToArray())
             {
                 foreach (var instance in service.Value.ToArray())
                 {
@@ -131,15 +138,15 @@ namespace CondenserDotNet.Server
                 }
                 if (service.Value.Count == 0)
                 {
-                    _servicesWithHealthChecks.Remove(service.Key);
+                    _routingData.ServicesWithHealthChecks.Remove(service.Key);
                 }
             }
             foreach (var i in infoList)
             {
-                if (!_servicesWithHealthChecks.ContainsKey(i.Service))
+                if (!_routingData.ServicesWithHealthChecks.ContainsKey(i.Service))
                 {
                     _logger?.LogInformation("New service {serviceName} added because we have found instances of it",i.Service);
-                    _servicesWithHealthChecks[i.Service] = new List<Service>();
+                    _routingData.ServicesWithHealthChecks[i.Service] = new List<IService>();
                 }
             }
         }

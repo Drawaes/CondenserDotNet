@@ -12,6 +12,8 @@ namespace CondenserDotNet.Server.RoutingTrie
         private static readonly char[] _routeSplit = new char[] {'/'};
         private bool _killCase = true;
 
+        public Node<T> TopNode => _topNode;
+
         public void AddServiceToRoute(string route, T service)
         {
             if (_killCase)

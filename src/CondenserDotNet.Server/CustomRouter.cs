@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using CondenserDotNet.Server.Health;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 
@@ -10,15 +7,13 @@ namespace CondenserDotNet.Server
 {
     public class CustomRouter : IRouter
     {
-        private readonly RoutingTrie.RadixTree<Service> _tree = new RoutingTrie.RadixTree<Service>();
+        private readonly RoutingData _routingData;
         private static readonly Task _taskDone = Task.FromResult(0);
-        private readonly IHealthRouter _healthRouter;
         private readonly ILogger<CustomRouter> _log;
 
-        public CustomRouter(IHealthRouter healthRouter,
-            ILoggerFactory factory)
+        public CustomRouter(ILoggerFactory factory, RoutingData routingData)
         {
-            _healthRouter = healthRouter;
+            _routingData = routingData;
             _log = factory?.CreateLogger<CustomRouter>();
         }
 
@@ -27,27 +22,27 @@ namespace CondenserDotNet.Server
             throw new NotImplementedException();
         }
 
-        public void AddServiceToRoute(string route, Service serviceToAdd)
+        public void AddServiceToRoute(string route, IService serviceToAdd)
         {
-            _tree.AddServiceToRoute(route, serviceToAdd);
+            _routingData.Tree.AddServiceToRoute(route, serviceToAdd);
         }
 
-        public void AddNewService(Service serviceToAdd)
+        public void AddNewService(IService serviceToAdd)
         {
             foreach (var r in serviceToAdd.Routes)
             {
-                _tree.AddServiceToRoute(r, serviceToAdd);
+                _routingData.Tree.AddServiceToRoute(r, serviceToAdd);
             }
         }
 
-        public void RemoveService(Service serviceToRemove)
+        public void RemoveService(IService serviceToRemove)
         {
-            _tree.RemoveService(serviceToRemove);
+            _routingData.Tree.RemoveService(serviceToRemove);
         }
 
-        public void RemoveServiceFromRoute(string route, Service serviceToRemove)
+        public void RemoveServiceFromRoute(string route, IService serviceToRemove)
         {
-            _tree.RemoveServiceFromRoute(route, serviceToRemove);
+            _routingData.Tree.RemoveServiceFromRoute(route, serviceToRemove);
         }
 
         public Task RouteAsync(RouteContext context)
@@ -56,35 +51,28 @@ namespace CondenserDotNet.Server
 
             _log?.LogInformation("Route recieved for {path}", path);
 
-            if (path == _healthRouter.Route)
+            string matchedPath;
+            var s = _routingData.Tree.GetServiceFromRoute(path, out matchedPath);
+            context.RouteData.DataTokens.Add("apiPath", matchedPath);
+            if (s != null)
             {
-                context.Handler = _healthRouter.CheckHealth;
+                _log?.LogInformation("Routing through service {s.ServiceId}", s.ServiceId);
+                context.Handler = s.CallService;
             }
             else
             {
-                string matchedPath;
-                Service s = _tree.GetServiceFromRoute(path, out matchedPath);
-                context.RouteData.DataTokens.Add("apiPath", matchedPath);
-                if (s != null)
-                {
-                    _log?.LogInformation("Routing through service {s.ServiceId}", s.ServiceId);
-                    context.Handler = s.CallService;
-                }
-                else
-                {
-                    _log?.LogInformation("No route recieved for {path}", path);
-                }
-
+                _log?.LogInformation("No route recieved for {path}", path);
             }
+
 
             return _taskDone;
         }
 
         internal void CleanUpRoutes()
         {
-            _log?.LogTrace("Compressing Trie Current Depth {maxDepth}", _tree.MaxDepth());
-            _tree.Compress();
-            _log?.LogTrace("Compressing Trie Finished New Depth {maxDepth}", _tree.MaxDepth());
+            _log?.LogTrace("Compressing Trie Current Depth {maxDepth}", _routingData.Tree.MaxDepth());
+            _routingData.Tree.Compress();
+            _log?.LogTrace("Compressing Trie Finished New Depth {maxDepth}", _routingData.Tree.MaxDepth());
         }
     }
 }

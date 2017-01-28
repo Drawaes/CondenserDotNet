@@ -55,52 +55,5 @@ namespace CondenserTests
                 }
             }
         }
-
-        [Fact(Skip = "Not sure how this is supposed to work")]
-        public async void CanRoutePath()
-        {
-            var apiBuilder = new WebHostBuilder()
-                .Configure(x => x.UseMvcWithDefaultRoute())
-                .ConfigureServices(x => { x.AddMvcCore(); });
-
-            var customRouter = BuildRouter();
-            var tags = new[] { UrlPrefix + "fake/fake/route/health" };
-            var serviceId = "FakeService";
-
-            var routerBuilder = new WebHostBuilder()
-                .Configure(x =>
-                {
-                    x.UseRouter(customRouter);
-                })
-                .ConfigureServices(x =>
-                {
-                    x.AddRouting();
-                    x.AddSingleton(customRouter);
-                });
-
-            using (var apiClient = new TestServer(apiBuilder))
-            {
-                var serviceToAdd = new Service(serviceId, serviceId, tags, apiClient.BaseAddress.Host
-                    , apiClient.BaseAddress.Port, null, apiClient.CreateClient());
-
-                customRouter.AddNewService(serviceToAdd);
-
-                using (var routerServer = new TestServer(routerBuilder))
-                {
-                    using (var routerClient = routerServer.CreateClient())
-                    {
-                        var response = await routerClient.GetAsync("fake/fake/route");
-                        var setting = await response.Content.ReadAsStringAsync();
-
-                        Assert.Equal("Was routed", setting);
-                    }
-                }
-            }
-        }
-
-        private CustomRouter BuildRouter()
-        {
-            return new CustomRouter(new FakeHealthRouter(), null);
-        }
     }
 }

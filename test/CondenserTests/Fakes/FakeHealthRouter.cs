@@ -1,15 +1,19 @@
 ﻿using System.Threading.Tasks;
 using CondenserDotNet.Server;
-using CondenserDotNet.Server.Health;
 using Microsoft.AspNetCore.Http;
 
 namespace CondenserTests.Fakes
 {
-    public class FakeHealthRouter : IHealthRouter
+    public class FakeHealthRouter : ServiceBase
     {
-        public string Route { get; }
+        public FakeHealthRouter(string route)
+        {
+            Routes = new [] { route};
+        }
 
-        public Task CheckHealth(HttpContext context)
+        public override string[] Routes { get; }
+
+        public override Task CallService(HttpContext context)
         {
             return Task.FromResult(0);
         }
