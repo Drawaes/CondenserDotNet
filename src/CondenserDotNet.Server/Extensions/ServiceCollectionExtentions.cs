@@ -1,7 +1,6 @@
 ﻿using CondenserDotNet.Server.Builder;
-using CondenserDotNet.Server.Health;
+using CondenserDotNet.Server.Routes;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace CondenserDotNet.Server.Extensions
 {
@@ -19,8 +18,11 @@ namespace CondenserDotNet.Server.Extensions
 
             self.AddRouting();
             self.AddSingleton(health);
+            self.AddSingleton<RoutingData>();
             self.AddSingleton(config);
-            self.AddSingleton<IHealthRouter, HealthRouter>();
+            self.AddSingleton<IService, HealthRouter>();
+            self.AddSingleton<IService, RouteSummary>();
+            self.AddSingleton<IService, TreeRouter>();
             self.AddSingleton<CurrentState>();
             self.AddSingleton<CustomRouter>();
             self.AddSingleton<RoutingHost>();

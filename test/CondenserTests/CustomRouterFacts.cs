@@ -1,9 +1,7 @@
-﻿using System;
-using CondenserDotNet.Server;
+﻿using CondenserDotNet.Server;
 using CondenserTests.Fakes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.Logging;
 using Xunit;
 
 namespace CondenserTests
@@ -49,7 +47,9 @@ namespace CondenserTests
 
         private CustomRouter BuildRouter()
         {
-            return new CustomRouter(new FakeHealthRouter(), null);
+            var fakeHealthRouter = new FakeHealthRouter("fake");
+
+            return new CustomRouter(null, new RoutingData());
         }
     }
 }

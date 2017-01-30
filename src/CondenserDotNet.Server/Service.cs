@@ -2,13 +2,13 @@
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
-using CondenserDotNet.Core;
+using CondenserDotNet.Server.Routes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 
 namespace CondenserDotNet.Server
 {
-    public class Service : IDisposable
+    public class Service : IDisposable, IService
     {
 
         private readonly HttpClient _httpClient;
@@ -16,19 +16,17 @@ namespace CondenserDotNet.Server
         private readonly string _address;
         private readonly int _port;
         private const string UrlPrefix = "urlprefix-";
-        private Health.CurrentState _stats;
+        private CurrentState _stats;
 
         public Service()
         {
         }
         public Service(string serviceId,  
             string nodeId, string[] tags,
-            string address, int port, Health.CurrentState stats,
-            HttpClient client = null)
+            string address, int port, CurrentState stats)
         {
             _stats = stats;
-            _httpClient = client ??
-                new HttpClient(new HttpClientHandler());
+            _httpClient = new HttpClient(new HttpClientHandler());
             _address = address;
             _port = port;
             Tags = tags;

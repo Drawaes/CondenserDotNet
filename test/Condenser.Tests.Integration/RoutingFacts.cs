@@ -7,10 +7,8 @@ using CondenserDotNet.Core.DataContracts;
 using CondenserDotNet.Server;
 using CondenserDotNet.Server.Builder;
 using CondenserDotNet.Server.DataContracts;
-using CondenserDotNet.Server.Health;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
-using Microsoft.Extensions.Logging;
 using Xunit;
 
 namespace Condenser.Tests.Integration
@@ -49,24 +47,7 @@ namespace Condenser.Tests.Integration
             Assert.Equal(200, routeContext.HttpContext.Response.StatusCode);
         }
 
-        [Fact]
-        public async Task CanWeFindAHealthRoute()
-        {
-            var router = BuildRouter();
-            
-            var context = new DefaultHttpContext();
-            context.Request.Method = "GET";
-            context.Request.Path = "/health";
-
-            var routeContext = new RouteContext(context);
-
-            await router.RouteAsync(routeContext);
-
-            await routeContext.Handler.Invoke(routeContext.HttpContext);
-
-            Assert.Equal(200, routeContext.HttpContext.Response.StatusCode);
-        }
-
+        
         [Fact(Skip = "Unsure if this could work without a health check?")]
         public async Task CanRegisterRoutes()
         {
@@ -80,7 +61,8 @@ namespace Condenser.Tests.Integration
             };
             var router = BuildRouter();
            
-            var host = new RoutingHost(router, config, null, null)
+            var host = new RoutingHost(router, config, null, null, new RoutingData(), 
+                new IService[0])
             {
                 OnRouteBuilt = servers =>
                 {
@@ -134,8 +116,7 @@ namespace Condenser.Tests.Integration
 
         private CustomRouter BuildRouter()
         {
-            var checks = new List<Func<Task<HealthCheck>>>();
-            return new CustomRouter(new HealthRouter(new FakeHealthConfig(checks,"/health"),null), null);
+            return new CustomRouter(null, new RoutingData());
         }
 
         private class FakeHealthConfig : IHealthConfig

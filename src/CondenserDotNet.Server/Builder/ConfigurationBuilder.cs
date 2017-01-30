@@ -15,7 +15,6 @@ namespace CondenserDotNet.Server.Builder
         private readonly List<Type> _preRoute = new List<Type>();
         private string _agentAddress = "localhost";
         private int _agentPort = 8500;
-        private ILoggerProvider _logger;
 
         public ConfigurationBuilder(IWebHostBuilder builder)
         {
@@ -69,7 +68,7 @@ namespace CondenserDotNet.Server.Builder
 
         public List<Func<Task<HealthCheck>>> Checks { get; } = new List<Func<Task<HealthCheck>>>();
 
-        public string Route { get; private set; }
+        public string Route { get; private set; } = "/admin/condenser/health";
 
         public IConfigurationBuilder UsePreRouteMiddleware<T>()
         {
