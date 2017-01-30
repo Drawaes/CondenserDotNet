@@ -23,7 +23,7 @@ namespace CondenserDotNet.Client
         private readonly ServiceRegistry _services;
         private readonly LeaderRegistry _leaders;
         private const int ConsulPort = 8500;
-        private const string LocalHost = "localhost";
+        private const string LocalHost = "docker";
 
         public ServiceManager(string serviceName) : this(serviceName, $"{serviceName}:{Dns.GetHostName()}", LocalHost, ConsulPort) { }
         public ServiceManager(string serviceName, string serviceId) : this(serviceName, serviceId, LocalHost, ConsulPort) { }

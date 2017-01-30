@@ -17,7 +17,7 @@ namespace CondenserDotNet.Server.Routes
         {
             _routingData = routingData;
 
-            Routes = new[] {"/admin/condenser/tree"};
+            Routes = new[] { CondenserRoutes.Tree};
         }
 
         public override string[] Routes { get; }

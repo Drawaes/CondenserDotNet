@@ -8,13 +8,16 @@ namespace CondenserDotNet.Server.RoutingTrie
 {
     public class NodeContainer<T>:IEnumerable<KeyValuePair<string[], Node<T>>>
     {
-        public NodeContainer(int keyLength)
+        public NodeContainer(int keyLength, 
+            Func<ChildContainer<T>> factory)
         {
             _keylength = keyLength;
+            _factory = factory;
             _children = new Dictionary<string[], Node<T>>(new NodeComparer(_keylength));
         }
 
         int _keylength;
+        private readonly Func<ChildContainer<T>> _factory;
         Dictionary<string[], Node<T>> _children;
 
         public int KeyLength { get { return _keylength; } }
@@ -39,7 +42,7 @@ namespace CondenserDotNet.Server.RoutingTrie
 
         public NodeContainer<T> SplitContainer(int newKeyLength, string currentPath)
         {
-            var newContainer = new NodeContainer<T>(newKeyLength);
+            var newContainer = new NodeContainer<T>(newKeyLength, _factory);
             foreach(var kv in _children)
             {
                 var newPrefix = kv.Key.Take(newKeyLength).ToArray();
@@ -47,7 +50,7 @@ namespace CondenserDotNet.Server.RoutingTrie
                 Node<T> newHeadNode;
                 if(!newContainer._children.TryGetValue(newPrefix, out newHeadNode))
                 {
-                    newHeadNode = new Node<T>(newPrefix, currentPath, KeyLength - newKeyLength);
+                    newHeadNode = new Node<T>(newPrefix, currentPath, KeyLength - newKeyLength, _factory);
                     newContainer.Add(newPrefix, newHeadNode);
                 }
                 var oldNode = kv.Value.CloneWithNewPrefix(newTailPrefix, newHeadNode.Path);
@@ -101,7 +104,7 @@ namespace CondenserDotNet.Server.RoutingTrie
 
         internal NodeContainer<T> Clone()
         {
-            var container = new NodeContainer<T>(KeyLength);
+            var container = new NodeContainer<T>(KeyLength, _factory);
             container._children = new Dictionary<string[], Node<T>>(_children, new NodeComparer(KeyLength));
 
             return container;

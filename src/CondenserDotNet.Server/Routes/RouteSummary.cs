@@ -13,7 +13,7 @@ namespace CondenserDotNet.Server.Routes
         public RouteSummary(RoutingData routingData)
         {
             _routingData = routingData;
-            Routes = new[] {"/admin/condenser/routes/summmary"};
+            Routes = new[] {CondenserRoutes.Summary};
         }
 
         public override string[] Routes { get; }

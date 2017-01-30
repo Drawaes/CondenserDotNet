@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
+using CondenserDotNet.Core;
+using CondenserDotNet.Core.Routing;
+using CondenserDotNet.Server.RoutingTrie;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
 
@@ -73,6 +76,19 @@ namespace CondenserDotNet.Server
             _log?.LogTrace("Compressing Trie Current Depth {maxDepth}", _routingData.Tree.MaxDepth());
             _routingData.Tree.Compress();
             _log?.LogTrace("Compressing Trie Finished New Depth {maxDepth}", _routingData.Tree.MaxDepth());
+        }
+
+        public static CustomRouter BuildDefault()
+        {
+            Func<ChildContainer<IService>> createNode = () =>
+            {
+                var randomRoutingStrategy = new RandomRoutingStrategy<IService>();
+                return new ChildContainer<IService>(new DefaultRouting<IService>(new [] {randomRoutingStrategy}, 
+                    null));
+            };
+            var data = new RoutingData(new RadixTree<IService>(createNode));
+            return new CustomRouter(null, 
+                data);
         }
     }
 }

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using CondenserDotNet.Core.DataContracts;
+using CondenserDotNet.Core.Routing;
 using Newtonsoft.Json;
 
 namespace CondenserDotNet.Core
@@ -46,7 +48,8 @@ namespace CondenserDotNet.Core
             {
                 if (!_watchedServices.TryGetValue(serviceName, out watcher))
                 {
-                    watcher = new ServiceWatcher(serviceName, _client, _cancel);
+                    watcher = new ServiceWatcher(serviceName, _client, _cancel, 
+                        new RandomRoutingStrategy<InformationServiceSet>());
                     _watchedServices.Add(serviceName, watcher);
                 }
             }

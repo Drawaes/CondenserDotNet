@@ -1,4 +1,6 @@
-﻿using CondenserDotNet.Server.DataContracts;
+﻿using System;
+using System.Net.Http;
+using CondenserDotNet.Server.DataContracts;
 using CondenserDotNet.Server.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel;
@@ -19,6 +21,7 @@ namespace Routing
                 .UseLoggerFactory(logger)
                 .UseUrls($"http://*:{50000}")
                 .AsCondenserRouter()
+                .WithAgentAddress("docker")
                 .WithHealthRoute("/condenser/health")
                 .WithHealthCheck(() => new HealthCheck
                 {
@@ -26,6 +29,11 @@ namespace Routing
                     Ok = true
                 })
                 .UsePreRouteMiddleware<MyMiddleware>()
+                .WithHttpClient(serviceId => new HttpClient
+                {
+                    Timeout = TimeSpan.FromSeconds(30)
+                            
+                })
                 .Build();
 
             host.Run();
