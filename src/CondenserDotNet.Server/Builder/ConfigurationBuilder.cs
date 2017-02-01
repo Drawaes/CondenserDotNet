@@ -59,8 +59,9 @@ namespace CondenserDotNet.Server.Builder
                     .Configure(x =>
                     {
                         foreach (var middleware in _preRoute)
+                        {
                             x.UseMiddleware(middleware);
-
+                        }
                         x.UseCondenserRouter();
                     })
                     .Build();

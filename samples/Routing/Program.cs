@@ -23,7 +23,7 @@ namespace Routing
                     Name = "Default",
                     Ok = true
                 })
-                .UsePreRouteMiddleware<MyMiddleware>()
+                .UsePreRouteMiddleware<CondenserDotNet.Server.Authentication.WindowsAuthenticationMiddleware>()
                 .Build();
 
             host.Run();
