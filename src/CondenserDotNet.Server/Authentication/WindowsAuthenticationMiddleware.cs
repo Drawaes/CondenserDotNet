@@ -16,6 +16,7 @@ namespace CondenserDotNet.Server.Authentication
         private ILogger<WindowsAuthenticationMiddleware> _logger;
         private static readonly long _ntlmTokenHeader = BitConverter.ToInt64(System.Text.Encoding.ASCII.GetBytes("NTLMSSP\0"),0);
         private static readonly SessionCache _cache = new SessionCache();
+        private const string CookieName = "CONDENSERSESSIONID";
 
         public WindowsAuthenticationMiddleware(RequestDelegate next, ILoggerFactory loggerFactory)
         {
@@ -25,7 +26,19 @@ namespace CondenserDotNet.Server.Authentication
 
         public Task Invoke(HttpContext httpContext)
         {
+            
             var authorizationHeader = httpContext.Request.Headers["Authorization"];
+            var sessionId = httpContext.Request.Cookies[CookieName];
+            Guid handshakeId;
+            if (string.IsNullOrEmpty(sessionId))
+            {
+                handshakeId = Guid.NewGuid();
+                httpContext.Response.Cookies.Append(CookieName, handshakeId.ToString());
+            }
+            else
+            {
+                handshakeId = Guid.Parse(sessionId);
+            }
             var hasNtlm = authorizationHeader.Any(h => h.StartsWith("NTLM "));
             if(!hasNtlm)
             {
@@ -36,18 +49,12 @@ namespace CondenserDotNet.Server.Authentication
             var header = authorizationHeader.First(h => h.StartsWith("NTLM "));
             var token = Convert.FromBase64String(header.Substring("NTLM ".Length));
             var messageType = token[8];
-            switch(messageType)
+            var result = _cache.ProcessHandshake(token, handshakeId);
+            if (result != null)
             {
-                case 1:
-                    //Clients first response to the challenge
-
-                    break;
-                case 2:
-                    break;
-                case 3:
-                    break;
-                default:
-                    throw new InvalidOperationException();
+                httpContext.Response.Headers.Add("WWW-Authenticate", new[] { result });
+                httpContext.Response.StatusCode = 401;
+                return Task.FromResult(0);
             }
             return _next(httpContext);
         }
