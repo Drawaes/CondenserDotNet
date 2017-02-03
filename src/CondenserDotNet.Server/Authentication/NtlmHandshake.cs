@@ -71,7 +71,7 @@ namespace CondenserDotNet.Server.Authentication
 
             if (result == SEC_RESULT.SEC_E_OK)
             {
-                //DONE!
+                return null;
             }
 
             throw new NotImplementedException();

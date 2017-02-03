@@ -1,6 +1,8 @@
 ﻿using CondenserDotNet.Server.DataContracts;
 using CondenserDotNet.Server.Extensions;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Server.Kestrel;
+using Microsoft.AspNetCore.Server.Kestrel.Filter;
 using Microsoft.Extensions.Logging;
 
 namespace Routing
@@ -27,6 +29,7 @@ namespace Routing
                 .Build();
 
             host.Run();
+
         }
     }
 }

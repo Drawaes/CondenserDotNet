@@ -5,6 +5,7 @@ using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
@@ -26,19 +27,25 @@ namespace CondenserDotNet.Server.Authentication
 
         public Task Invoke(HttpContext httpContext)
         {
-            
+            var t = httpContext.Features.Get<IHttpConnectionFeature>();
+            if(t == null)
+            {
+                httpContext.Features.Set(new test());
+            }
             var authorizationHeader = httpContext.Request.Headers["Authorization"];
             var sessionId = httpContext.Request.Cookies[CookieName];
-            Guid handshakeId;
-            if (string.IsNullOrEmpty(sessionId))
+            Guid handShakeId;
+            if(string.IsNullOrEmpty(sessionId))
             {
-                handshakeId = Guid.NewGuid();
-                httpContext.Response.Cookies.Append(CookieName, handshakeId.ToString());
+                handShakeId = Guid.NewGuid();
+                sessionId = handShakeId.ToString();
+                httpContext.Response.Cookies.Append(CookieName, sessionId);
             }
             else
             {
-                handshakeId = Guid.Parse(sessionId);
+                handShakeId = Guid.Parse(sessionId);
             }
+            
             var hasNtlm = authorizationHeader.Any(h => h.StartsWith("NTLM "));
             if(!hasNtlm)
             {
@@ -49,11 +56,12 @@ namespace CondenserDotNet.Server.Authentication
             var header = authorizationHeader.First(h => h.StartsWith("NTLM "));
             var token = Convert.FromBase64String(header.Substring("NTLM ".Length));
             var messageType = token[8];
-            var result = _cache.ProcessHandshake(token, handshakeId);
+            var result = _cache.ProcessHandshake(token, handShakeId);
             if (result != null)
             {
                 httpContext.Response.Headers.Add("WWW-Authenticate", new[] { result });
                 httpContext.Response.StatusCode = 401;
+                httpContext.Response.ContentLength = 0;
                 return Task.FromResult(0);
             }
             return _next(httpContext);
