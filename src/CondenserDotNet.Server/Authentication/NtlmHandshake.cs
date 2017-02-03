@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
 using System.Threading.Tasks;
 using static Interop.Secur32;
 
@@ -9,12 +10,13 @@ namespace CondenserDotNet.Server.Authentication
     public class NtlmHandshake
     {
         private SecurityHandle _context;
-        private Guid _sessionId;
+        private string _sessionId;
         private SecurityHandle _ntlmHandle;
+        private WindowsIdentity _identity;
         private static readonly ASC_REQ _requestType = ASC_REQ.ASC_REQ_CONFIDENTIALITY | ASC_REQ.ASC_REQ_REPLAY_DETECT
             | ASC_REQ.ASC_REQ_SEQUENCE_DETECT | ASC_REQ.ASC_REQ_CONNECTION;
 
-        internal NtlmHandshake(Guid sessionId, SecurityHandle ntlmHandle)
+        internal NtlmHandshake(string sessionId, SecurityHandle ntlmHandle)
         {
             _sessionId = sessionId;
             _ntlmHandle = ntlmHandle;
@@ -71,6 +73,10 @@ namespace CondenserDotNet.Server.Authentication
 
             if (result == SEC_RESULT.SEC_E_OK)
             {
+                IntPtr handle;
+                result = QuerySecurityContextToken(ref _context, out handle);
+                _identity = new WindowsIdentity(handle);
+                //CloseHandle(handle);
                 return null;
             }
 

@@ -10,7 +10,7 @@ namespace CondenserDotNet.Server.Authentication
     public class SessionCache
     {
         private SecurityHandle _ntlmHandle;
-        private ConcurrentDictionary<Guid, NtlmHandshake> _inflightHandshakes = new ConcurrentDictionary<Guid, NtlmHandshake>();
+        private ConcurrentDictionary<string, NtlmHandshake> _inflightHandshakes = new ConcurrentDictionary<string, NtlmHandshake>();
 
         public SessionCache()
         {
@@ -31,10 +31,10 @@ namespace CondenserDotNet.Server.Authentication
             }
         }
 
-        public unsafe string ProcessHandshake(Span<byte> token, Guid sessionId)
+        public unsafe string ProcessHandshake(Span<byte> token, string sessionId)
         {
             NtlmHandshake handshakeState;
-            handshakeState = _inflightHandshakes.GetOrAdd(sessionId, id => new NtlmHandshake(id, _ntlmHandle));
+            handshakeState = _inflightHandshakes.GetOrAdd(sessionId, id => new NtlmHandshake(sessionId, _ntlmHandle));
             
             return handshakeState.AcceptSecurityToken(token);
         }
