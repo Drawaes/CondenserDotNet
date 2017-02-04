@@ -2,8 +2,7 @@
   "version": "1.0.0-*",
   "testRunner": "xunit",
   "dependencies": {
-    "NETStandard.Library": "1.6.1",
-    "xunit": "2.2.0-beta2-build3300",
+    "xunit": "2.2.0-beta5-build3474",
     "dotnet-test-xunit": "2.2.0-preview2-build1029",
     "CondenserDotNet.Client": { "target": "project" },
     "CondenserDotNet.Server": { "target": "project" },
