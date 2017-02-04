@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
@@ -14,6 +15,11 @@ namespace CondenserDotNet.Server.WindowsAuthentication
 {
     public class WindowsAuthenticationMiddleware
     {
+        private const string AuthorizationHeader = "Authorization";
+        private const string NtlmToken = "NTLM ";
+        private const string NegotiateToken = "Negotiate ";
+        private const string WWWAuthenticateHeader = "WWW-Authenticate";
+        private static readonly string[] _supportedTokens = new[] { "NTLM", "Negotiate" };
         private RequestDelegate _next;
         private ILogger<WindowsAuthenticationMiddleware> _logger;
         private static readonly WindowsAuthHandshakeCache _cache = new WindowsAuthHandshakeCache();
@@ -34,21 +40,28 @@ namespace CondenserDotNet.Server.WindowsAuthentication
             {
                 var sessionId = t.ConnectionId;
 
-                var authorizationHeader = httpContext.Request.Headers["Authorization"];
-                var tokenHeader = authorizationHeader.FirstOrDefault(h => h.StartsWith("NTLM ") || h.StartsWith("Negotiate "));
+                var authorizationHeader = httpContext.Request.Headers[AuthorizationHeader];
+                var tokenHeader = authorizationHeader.FirstOrDefault(h => h.StartsWith(NtlmToken) || h.StartsWith(NegotiateToken));
                 if (string.IsNullOrEmpty(tokenHeader))
                 {
-                    httpContext.Response.Headers.Add("WWW-Authenticate", new[] { "Negotiate", "NTLM" });
+                    httpContext.Response.Headers.Add(WWWAuthenticateHeader, _supportedTokens);
                     httpContext.Response.StatusCode = 401;
                     return _cachedTask;
                 }
                 tokenHeader = tokenHeader.Substring(tokenHeader.IndexOf(' ') + 1);
                 var token = Convert.FromBase64String(tokenHeader);
-
-                var result = _cache.ProcessHandshake(token, sessionId);
+                string result = null;
+                try
+                {
+                    result = _cache.ProcessHandshake(token, sessionId);
+                }
+                catch
+                {
+                    httpContext.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+                }
                 if (result != null)
                 {
-                    httpContext.Response.Headers.Add("WWW-Authenticate", new[] { result });
+                    httpContext.Response.Headers.Add(WWWAuthenticateHeader, new[] { result });
                 }
                 var user = _cache.GetUser(sessionId);
                 if (user == null)

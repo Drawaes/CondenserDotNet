@@ -14,7 +14,6 @@ namespace CondenserDotNet.Server.WindowsAuthentication
         public AuthenticationConnectionFilter(IConnectionFilter previous)
         {
             _previous = previous;
-
             if(_previous == null)
             {
                 throw new ArgumentNullException();
