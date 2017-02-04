@@ -1,13 +1,16 @@
-﻿using CondenserDotNet.Server.DataContracts;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using CondenserDotNet.Server.DataContracts;
 using CondenserDotNet.Server.Extensions;
+using CondenserDotNet.Server.WindowsAuthentication;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Server.Kestrel;
-using Microsoft.AspNetCore.Server.Kestrel.Filter;
 using Microsoft.Extensions.Logging;
 
-namespace Routing
+namespace RoutingWithWindowsAuth
 {
-    public partial class Program
+    public class Program
     {
         public static void Main(string[] args)
         {
@@ -15,7 +18,10 @@ namespace Routing
             logger.AddConsole().AddDebug(LogLevel.Trace);
 
             var host = new WebHostBuilder()
-                .UseKestrel()
+                .UseKestrel((ops) =>
+                {
+                    ops.UseWindowsAuthentication();
+                })
                 .UseLoggerFactory(logger)
                 .UseUrls($"http://*:{50000}")
                 .AsCondenserRouter()
@@ -25,11 +31,10 @@ namespace Routing
                     Name = "Default",
                     Ok = true
                 })
-                .UsePreRouteMiddleware<MyMiddleware>()
+                .UsePreRouteMiddleware<WindowsAuthenticationMiddleware>()
                 .Build();
 
             host.Run();
-
         }
     }
 }
