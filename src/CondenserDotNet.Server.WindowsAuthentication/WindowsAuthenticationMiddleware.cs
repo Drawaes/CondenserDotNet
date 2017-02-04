@@ -17,7 +17,8 @@ namespace CondenserDotNet.Server.WindowsAuthentication
         private RequestDelegate _next;
         private ILogger<WindowsAuthenticationMiddleware> _logger;
         private static readonly WindowsAuthHandshakeCache _cache = new WindowsAuthHandshakeCache();
-        
+        private static readonly Task _cachedTask = Task.FromResult(0);
+
         public WindowsAuthenticationMiddleware(RequestDelegate next, ILoggerFactory loggerFactory)
         {
             _next = next;
@@ -34,16 +35,15 @@ namespace CondenserDotNet.Server.WindowsAuthentication
                 var sessionId = t.ConnectionId;
 
                 var authorizationHeader = httpContext.Request.Headers["Authorization"];
-                var hasNtlm = authorizationHeader.Any(h => h.StartsWith("NTLM ") || h.StartsWith("Negotiate "));
-                if (!hasNtlm)
+                var tokenHeader = authorizationHeader.FirstOrDefault(h => h.StartsWith("NTLM ") || h.StartsWith("Negotiate "));
+                if (string.IsNullOrEmpty(tokenHeader))
                 {
                     httpContext.Response.Headers.Add("WWW-Authenticate", new[] { "Negotiate", "NTLM" });
                     httpContext.Response.StatusCode = 401;
-                    return Task.FromResult(0);
+                    return _cachedTask;
                 }
-                var header = authorizationHeader.First(h => h.StartsWith("NTLM ") || h.StartsWith("Negotiate "));
-                header = header.Substring(header.IndexOf(' ') + 1);
-                var token = Convert.FromBase64String(header);
+                tokenHeader = tokenHeader.Substring(tokenHeader.IndexOf(' ') + 1);
+                var token = Convert.FromBase64String(tokenHeader);
 
                 var result = _cache.ProcessHandshake(token, sessionId);
                 if (result != null)
@@ -55,7 +55,7 @@ namespace CondenserDotNet.Server.WindowsAuthentication
                 {
                     httpContext.Response.StatusCode = 401;
                     httpContext.Response.ContentLength = 0;
-                    return Task.FromResult(0);
+                    return _cachedTask;
                 }
                 authFeature.Identity = user;
             }
