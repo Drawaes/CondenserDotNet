@@ -14,7 +14,7 @@ install:
 
 before_test:
   - dotnet --info
-  - dotnet restore
+  - dotnet restore -f https://dotnet.myget.org/F/dotnet-corefxlab/
 
 test_script:
   # Build sample
