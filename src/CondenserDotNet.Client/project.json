@@ -19,10 +19,9 @@
     "CondenserDotNet.Core": { "target": "project" }
   },
   "frameworks": {
-    "netstandard1.3": {
+    "netstandard1.6": {
       "dependencies": {
-        "System.Threading.ThreadPool": "4.0.10",
-        "System.Net.NameResolution": "4.0.0"
+        "System.Net.NameResolution": "4.3.0"
       }
     },
     "net451": {}
