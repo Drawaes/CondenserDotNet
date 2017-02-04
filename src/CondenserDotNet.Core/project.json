@@ -1,6 +1,14 @@
 ﻿{
   "version": "1.0.0-*",
-
+  "authors": [ "Tim Seaward", "Dean Shackley" ],
+  "packOptions": {
+    "licenseUrl": "https://github.com/Drawaes/CondenserDotNet/blob/master/LICENSE.md",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/Drawaes/CondenserDotNet"
+    },
+    "requireLicenseAcceptance": true
+  },
   "dependencies": {
     "NETStandard.Library": "1.6.1",
     "Newtonsoft.Json": "9.0.1"

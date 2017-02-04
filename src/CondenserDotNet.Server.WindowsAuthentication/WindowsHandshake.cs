@@ -5,22 +5,27 @@ using System.Security.Principal;
 using System.Threading.Tasks;
 using static Interop.Secur32;
 
-namespace CondenserDotNet.Server.Authentication
+namespace CondenserDotNet.Server.WindowsAuthentication
 {
-    public class NtlmHandshake
+    public class WindowsHandshake:IDisposable
     {
         private SecurityHandle _context;
         private string _sessionId;
         private SecurityHandle _ntlmHandle;
         private WindowsIdentity _identity;
+        private readonly DateTime _dateStarted = DateTime.UtcNow;
         private static readonly ASC_REQ _requestType = ASC_REQ.ASC_REQ_CONFIDENTIALITY | ASC_REQ.ASC_REQ_REPLAY_DETECT
             | ASC_REQ.ASC_REQ_SEQUENCE_DETECT | ASC_REQ.ASC_REQ_CONNECTION;
 
-        internal NtlmHandshake(string sessionId, SecurityHandle ntlmHandle)
+        internal WindowsHandshake(string sessionId, SecurityHandle ntlmHandle)
         {
             _sessionId = sessionId;
             _ntlmHandle = ntlmHandle;
         }
+
+        public WindowsIdentity User => _identity;
+        public DateTime DateStarted => _dateStarted;
+        public string SessionId => _sessionId;
 
         public unsafe string AcceptSecurityToken(Span<byte> token)
         {
@@ -64,23 +69,35 @@ namespace CondenserDotNet.Server.Authentication
                 result = AcceptSecurityContext(_ntlmHandle, ref _context, ref bufferDesc, _requestType, Data_Rep.SECURITY_NATIVE_DREP,
                 out _context, ref outBufferDesc, out contextAttribute, out timeStamp);
             }
-            
+            string returnToken = null;
             if (result == SEC_RESULT.SEC_I_CONTINUE_NEEDED)
             {
-                var returnToken = "NTLM " + Convert.ToBase64String((new Span<byte>(outBufferPtr, (int)outBuffer[0].cbBuffer).ToArray()));
+                returnToken = "Negotiate " + Convert.ToBase64String((new Span<byte>(outBufferPtr, (int)outBuffer[0].cbBuffer).ToArray()));
                 return returnToken;
             }
 
             if (result == SEC_RESULT.SEC_E_OK)
             {
                 IntPtr handle;
+                if(outBuffer[0].cbBuffer > 0)
+                {
+                    returnToken = "Negotiate " + Convert.ToBase64String((new Span<byte>(outBufferPtr, (int)outBuffer[0].cbBuffer).ToArray()));
+                }
                 result = QuerySecurityContextToken(ref _context, out handle);
                 _identity = new WindowsIdentity(handle);
-                //CloseHandle(handle);
-                return null;
+                CloseHandle(handle);
+                return returnToken;
             }
+            throw new InvalidOperationException();
+        }
 
-            throw new NotImplementedException();
+        public void Dispose()
+        {
+            if(_context.HighPart != IntPtr.Zero || _context.LowPart != IntPtr.Zero)
+            {
+                FreeCredentialsHandle(_context);
+                _context = new SecurityHandle(0);
+            }
         }
     }
 }

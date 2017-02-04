@@ -1,0 +1,27 @@
+﻿{
+  "version": "1.0.0-*",
+  "buildOptions": {
+    "emitEntryPoint": true
+  },
+
+  "dependencies": {
+    "CondenserDotNet.Server": { "target": "project" },
+    "CondenserDotNet.Server.WindowsAuthentication": { "target": "project" },
+    "Microsoft.AspNetCore.Hosting": "1.0.1",
+    "Microsoft.AspNetCore.Mvc": "1.0.1",
+    "Microsoft.AspNetCore.Server.Kestrel": "1.0.1",
+    "Microsoft.AspNetCore.Server.Kestrel.Https": "1.0.1",
+    "System.Net.Http": "4.3.0"
+  },
+
+  "frameworks": {
+    "netcoreapp1.1": {
+      "dependencies": {
+        "Microsoft.NETCore.App": {
+          "version": "1.1.0",
+          "type": "platform"
+        }
+      }
+    }
+  }
+}

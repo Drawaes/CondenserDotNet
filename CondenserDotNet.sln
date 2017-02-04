@@ -34,6 +34,10 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Routing", "samples\Routing\
 EndProject
 Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CondenserDotNet.Core", "src\CondenserDotNet.Core\CondenserDotNet.Core.xproj", "{25408E8E-979D-4A36-84EC-F778FEE284CF}"
 EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CondenserDotNet.Server.WindowsAuthentication", "src\CondenserDotNet.Server.WindowsAuthentication\CondenserDotNet.Server.WindowsAuthentication.xproj", "{626B872C-8A5A-40CB-8F12-2BA8CC9337B5}"
+EndProject
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "RoutingWithWindowsAuth", "samples\RoutingWithWindowsAuth\RoutingWithWindowsAuth.xproj", "{E6E9E36F-1A81-4C1D-8313-ABD21BC4A980}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -72,6 +76,14 @@ Global
 		{25408E8E-979D-4A36-84EC-F778FEE284CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{25408E8E-979D-4A36-84EC-F778FEE284CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{25408E8E-979D-4A36-84EC-F778FEE284CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{626B872C-8A5A-40CB-8F12-2BA8CC9337B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{626B872C-8A5A-40CB-8F12-2BA8CC9337B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{626B872C-8A5A-40CB-8F12-2BA8CC9337B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{626B872C-8A5A-40CB-8F12-2BA8CC9337B5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E6E9E36F-1A81-4C1D-8313-ABD21BC4A980}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E6E9E36F-1A81-4C1D-8313-ABD21BC4A980}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E6E9E36F-1A81-4C1D-8313-ABD21BC4A980}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E6E9E36F-1A81-4C1D-8313-ABD21BC4A980}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -85,5 +97,7 @@ Global
 		{C4224D81-0A55-4693-8184-4D00C8BB5E3B} = {35C5514B-9E50-4AC6-BC6E-45BEAE7B7B4D}
 		{BD511C62-B3F6-4652-9C46-A59BE8F3EF99} = {35C5514B-9E50-4AC6-BC6E-45BEAE7B7B4D}
 		{25408E8E-979D-4A36-84EC-F778FEE284CF} = {CB18CD55-85E2-46FC-A55B-7DE23EABFAE5}
+		{626B872C-8A5A-40CB-8F12-2BA8CC9337B5} = {CB18CD55-85E2-46FC-A55B-7DE23EABFAE5}
+		{E6E9E36F-1A81-4C1D-8313-ABD21BC4A980} = {35C5514B-9E50-4AC6-BC6E-45BEAE7B7B4D}
 	EndGlobalSection
 EndGlobal
