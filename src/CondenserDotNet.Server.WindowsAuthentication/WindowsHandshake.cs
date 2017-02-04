@@ -7,7 +7,7 @@ using static Interop.Secur32;
 
 namespace CondenserDotNet.Server.WindowsAuthentication
 {
-    public class WindowsHandshake:IDisposable
+    public sealed class WindowsHandshake:IDisposable
     {
         private SecurityHandle _context;
         private string _sessionId;
@@ -85,7 +85,7 @@ namespace CondenserDotNet.Server.WindowsAuthentication
                 }
                 result = QuerySecurityContextToken(ref _context, out handle);
                 _identity = new WindowsIdentity(handle);
-                CloseHandle(handle);
+                Interop.Kernel32.CloseHandle(handle);
                 return returnToken;
             }
             throw new InvalidOperationException();
@@ -98,6 +98,12 @@ namespace CondenserDotNet.Server.WindowsAuthentication
                 FreeCredentialsHandle(_context);
                 _context = new SecurityHandle(0);
             }
+            GC.SuppressFinalize(this);
+        }
+
+        ~WindowsHandshake()
+        {
+            Dispose();
         }
     }
 }
