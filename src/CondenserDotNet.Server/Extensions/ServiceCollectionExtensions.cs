@@ -8,7 +8,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CondenserDotNet.Server.Extensions
 {
-    public static class ServiceCollectionExtentions
+    public static class ServiceCollectionExtensions
     {
         internal static void AddCondenserRouter(this IServiceCollection self,
             string agentAddress, int agentPort, 
@@ -32,6 +32,7 @@ namespace CondenserDotNet.Server.Extensions
             self.AddSingleton<IService, RouteSummary>();
             self.AddSingleton<IService, TreeRouter>();
             self.AddSingleton<IService, ChangeRoutingStrategy>();
+            self.AddSingleton<IService, ServerStatsRoute>();
             self.AddTransient<IRoutingStrategy<IService>, RandomRoutingStrategy<IService>>();
             self.AddTransient<IRoutingStrategy<IService>, RoundRobinRoutingStrategy<IService>>();
             self.AddSingleton<IDefaultRouting<IService>,

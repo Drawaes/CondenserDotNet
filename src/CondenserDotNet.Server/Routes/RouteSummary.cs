@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
+using CondenserDotNet.Server.Extensions;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
@@ -36,7 +37,7 @@ namespace CondenserDotNet.Server.Routes
                             n.Tags
                         })
                 });
-            return context.Response.WriteAsync(JsonConvert.SerializeObject(response));
+            return context.Response.WriteJsonAsync(response);
         }
     }
 }

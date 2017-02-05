@@ -9,7 +9,8 @@ using Microsoft.AspNetCore.Routing;
 
 namespace CondenserDotNet.Server
 {
-    public class Service : IDisposable, IConsulService
+    public class Service : IDisposable, IConsulService,
+        IUsageInfo
     {
 
         private HttpClient _httpClient;
@@ -21,6 +22,7 @@ namespace CondenserDotNet.Server
         private readonly IHttpClientConfig _clientFactory;
         Stopwatch _watch = new Stopwatch();
         public int Calls { get; private set; }
+        public double TotalRequestTime { get; private set; }
 
         public Service()
         {
@@ -78,6 +80,7 @@ namespace CondenserDotNet.Server
             _waitUntilRequestsAreFinished.AddCount();
             try
             {
+                _watch.Start();
                 var hostString = $"{_address}:{_port}";
 
                 var routeData = context.GetRouteData();
@@ -137,11 +140,16 @@ namespace CondenserDotNet.Server
                     // SendAsync removes chunking from the response. This removes the header so it doesn't expect a chunked response.
                     context.Response.Headers.Remove("transfer-encoding");
                     await responseMessage.Content.CopyToAsync(context.Response.Body);
-                    Calls++;
                 }
             }
             finally
             {
+                _watch.Stop();
+
+                TotalRequestTime += _watch.Elapsed.TotalMilliseconds;
+                Calls++;
+
+                _watch.Reset();
                 _waitUntilRequestsAreFinished.Signal();
             }
         }

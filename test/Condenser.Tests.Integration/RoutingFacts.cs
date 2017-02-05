@@ -5,10 +5,12 @@ using System.Threading.Tasks;
 using CondenserDotNet.Client;
 using CondenserDotNet.Core;
 using CondenserDotNet.Core.DataContracts;
+using CondenserDotNet.Core.Routing;
 using CondenserDotNet.Server;
 using CondenserDotNet.Server.Builder;
 using CondenserDotNet.Server.DataContracts;
 using CondenserDotNet.Server.Routes;
+using CondenserDotNet.Server.RoutingTrie;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Xunit;
@@ -119,7 +121,15 @@ namespace Condenser.Tests.Integration
 
         private CustomRouter BuildRouter()
         {
-            return CustomRouter.BuildDefault();
+            Func<ChildContainer<IService>> createNode = () =>
+            {
+                var randomRoutingStrategy = new RandomRoutingStrategy<IService>();
+                return new ChildContainer<IService>(new DefaultRouting<IService>(new[] { randomRoutingStrategy },
+                    null));
+            };
+            var data = new RoutingData(new RadixTree<IService>(createNode));
+            return new CustomRouter(null,
+                data);
         }
 
         private class FakeHealthConfig : IHealthConfig

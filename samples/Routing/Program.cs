@@ -21,7 +21,6 @@ namespace Routing
                 .UseLoggerFactory(logger)
                 .UseUrls($"http://*:{50000}")
                 .AsCondenserRouter()
-                .WithAgentAddress("docker")
                 .WithHealthRoute("/condenser/health")
                 .WithHealthCheck(() => new HealthCheck
                 {
