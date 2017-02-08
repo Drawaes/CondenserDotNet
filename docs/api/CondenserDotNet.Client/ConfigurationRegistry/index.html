@@ -73,7 +73,8 @@
             <aside class="main-sidebar ">
                 <section class="infobar" data-spy="affix" data-offset-top="60" data-offset-bottom="200"> 
                     	
-	<div id="infobar-headings"><h6>On This Page</h6><p><a href="#Syntax">Syntax</a></p>
+	<div id="infobar-headings"><h6>On This Page</h6><p><a href="#Summary">Summary</a></p>
+<p><a href="#Syntax">Syntax</a></p>
 <p><a href="#Properties">Properties</a></p>
 <p><a href="#Methods">Methods</a></p>
 <p><a href="#ExtensionMethods">Extension Methods</a></p>
@@ -161,7 +162,11 @@
 <section class="content">
 	
 	
-	
+		<h1 id="Summary">Summary</h1>
+	<div class="lead">
+    This manages the configuration keys you load as well as watching live keys and allowing you to add or update keys.
+    </div>
+
 		<div class="panel panel-default">
   			<div class="panel-body">
 				<div class="row">
@@ -229,7 +234,9 @@ class Type type-node
 								<td><a href="/CondenserDotNet/api/CondenserDotNet.Client/ConfigurationRegistry/866F768D">AllKeys</a></td>
 								<td>IEnumerable<wbr>&lt;string&gt;<wbr></td>
 								<td>
-									<div></div>
+									<div>
+    This returns a flattened list of all the loaded keys
+    </div>
 								</td>
 							</tr>
 							<tr>
@@ -259,14 +266,18 @@ class Type type-node
 								<td><a href="/CondenserDotNet/api/CondenserDotNet.Client/ConfigurationRegistry/26387B28">Add<wbr>Static<wbr>Key<wbr>Path<wbr>Async<wbr>(string)<wbr></a></td>
 								<td>Task<wbr>&lt;bool&gt;<wbr></td>
 								<td>
-									<div></div>
+									<div>
+    This loads the keys from a path. They are not updated.
+    </div>
 								</td>
 							</tr>
 							<tr>
 								<td><a href="/CondenserDotNet/api/CondenserDotNet.Client/ConfigurationRegistry/01CA8B76">AddUpdatingPathAsync<wbr>(string)<wbr></a></td>
 								<td>Task</td>
 								<td>
-									<div></div>
+									<div>
+    This loads the keys from a path. The path is then watched and updates are added into the configuration set
+    </div>
 								</td>
 							</tr>
 							<tr>
@@ -287,7 +298,9 @@ class Type type-node
 								<td><a href="/CondenserDotNet/api/CondenserDotNet.Client/ConfigurationRegistry/A1124746">SetKeyAsync<wbr>(string, <wbr>string)<wbr></a></td>
 								<td>Task<wbr>&lt;bool&gt;<wbr></td>
 								<td>
-									<div></div>
+									<div>
+    This allows you to set a configuration key
+    </div>
 								</td>
 							</tr>
 							<tr>

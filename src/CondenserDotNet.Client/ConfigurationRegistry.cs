@@ -13,6 +13,9 @@ using Newtonsoft.Json;
 
 namespace CondenserDotNet.Client
 {
+    /// <summary>
+    /// This manages the configuration keys you load as well as watching live keys and allowing you to add or update keys.
+    /// </summary>
     public class ConfigurationRegistry : IConfigurationRegistry
     {
         private const string ConsulPath = "/";
@@ -29,13 +32,20 @@ namespace CondenserDotNet.Client
             _serviceManager = serviceManager;
         }
 
+        /// <summary>
+        /// This returns a flattened list of all the loaded keys
+        /// </summary>
         public IEnumerable<string> AllKeys => _configKeys.SelectMany(x => x.Keys);
         public void UpdateKeyParser(IKeyParser parser)
         {
             _parser = parser;
         }
 
-
+        /// <summary>
+        /// This loads the keys from a path. They are not updated.
+        /// </summary>
+        /// <param name="keyPath"></param>
+        /// <returns></returns>
         public Task<bool> AddStaticKeyPathAsync(string keyPath)
         {
             if (!keyPath.EndsWith(ConsulPath)) keyPath = keyPath + ConsulPath;
@@ -55,6 +65,11 @@ namespace CondenserDotNet.Client
             return AddNewDictionaryToList(dictionary);
         }
 
+        /// <summary>
+        /// This loads the keys from a path. The path is then watched and updates are added into the configuration set
+        /// </summary>
+        /// <param name="keyPath"></param>
+        /// <returns></returns>
         public async Task AddUpdatingPathAsync(string keyPath)
         {
             if(!keyPath.EndsWith(ConsulPath)) keyPath = keyPath + ConsulPath;
@@ -199,6 +214,12 @@ namespace CondenserDotNet.Client
             }
         }
 
+        /// <summary>
+        /// This allows you to set a configuration key
+        /// </summary>
+        /// <param name="keyPath"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
         public async Task<bool> SetKeyAsync(string keyPath, string value)
         {
             keyPath = HttpUtils.StripFrontAndBackSlashes(keyPath);
