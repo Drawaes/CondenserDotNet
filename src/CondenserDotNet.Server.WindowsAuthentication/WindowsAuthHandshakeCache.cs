@@ -36,7 +36,7 @@ namespace CondenserDotNet.Server.WindowsAuthentication
             }
         }
 
-        public string ProcessHandshake(Span<byte> token, string sessionId)
+        public string ProcessHandshake(byte[] token, string sessionId)
         {
             var handshakeState = _inflightHandshakes.GetOrAdd(sessionId, (key) => new WindowsHandshake(key, _credentialsHandle));
             if (_lastCheck < (DateTime.UtcNow - _checkForExpiry))

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Threading.Tasks;
 using static Interop.Secur32;
@@ -27,68 +28,72 @@ namespace CondenserDotNet.Server.WindowsAuthentication
         public DateTime DateStarted => _dateStarted;
         public string SessionId => _sessionId;
 
-        public unsafe string AcceptSecurityToken(Span<byte> token)
+        public unsafe string AcceptSecurityToken(byte[] token)
         {
-            var bufferPtr = stackalloc byte[token.Length];
-            var bufferSpan = new Span<byte>(bufferPtr, token.Length);
-            token.CopyTo(bufferSpan);
-            var buffer = stackalloc SecBuffer[1];
-            buffer[0].BufferType = SecurityBufferType.SECBUFFER_TOKEN;
-            buffer[0].cbBuffer = (uint)token.Length;
-            buffer[0].pvBuffer = (IntPtr)bufferPtr;
+            fixed (byte* bufferPtr = token)
+            {
+                var buffer = stackalloc SecBuffer[1];
+                buffer[0].BufferType = SecurityBufferType.SECBUFFER_TOKEN;
+                buffer[0].cbBuffer = (uint)token.Length;
+                buffer[0].pvBuffer = (IntPtr)bufferPtr;
 
-            var outBufferPtr = stackalloc byte[512];
-            var outBuffer = stackalloc SecBuffer[1];
-            outBuffer[0].BufferType = SecurityBufferType.SECBUFFER_TOKEN;
-            outBuffer[0].cbBuffer = 512;
-            outBuffer[0].pvBuffer = (IntPtr)outBufferPtr;
+                var outBufferPtr = stackalloc byte[512];
+                var outBuffer = stackalloc SecBuffer[1];
+                outBuffer[0].BufferType = SecurityBufferType.SECBUFFER_TOKEN;
+                outBuffer[0].cbBuffer = 512;
+                outBuffer[0].pvBuffer = (IntPtr)outBufferPtr;
 
-            var bufferDesc = new SecBufferDesc()
-            {
-                cBuffers = 1,
-                pBuffers = (IntPtr)buffer,
-                ulVersion = 0
-            };
-            
-            var outBufferDesc = new SecBufferDesc()
-            {
-                cBuffers = 1,
-                pBuffers = (IntPtr)outBuffer,
-                ulVersion = 0
-            };
-            uint contextAttribute;
-            SecurityInteger timeStamp;
-            SEC_RESULT result;
-            if(_context.HighPart == _context.LowPart && _context.HighPart == IntPtr.Zero)
-            {
-                result = AcceptSecurityContext(_ntlmHandle, IntPtr.Zero, ref bufferDesc, _requestType, Data_Rep.SECURITY_NATIVE_DREP,
-                out _context, ref outBufferDesc, out contextAttribute, out timeStamp);
-            }
-            else
-            {
-                result = AcceptSecurityContext(_ntlmHandle, ref _context, ref bufferDesc, _requestType, Data_Rep.SECURITY_NATIVE_DREP,
-                out _context, ref outBufferDesc, out contextAttribute, out timeStamp);
-            }
-            string returnToken = null;
-            if (result == SEC_RESULT.SEC_I_CONTINUE_NEEDED)
-            {
-                returnToken = "Negotiate " + Convert.ToBase64String((new Span<byte>(outBufferPtr, (int)outBuffer[0].cbBuffer).ToArray()));
-                return returnToken;
-            }
-
-            if (result == SEC_RESULT.SEC_E_OK)
-            {
-                IntPtr handle;
-                if(outBuffer[0].cbBuffer > 0)
+                var bufferDesc = new SecBufferDesc()
                 {
-                    returnToken = "Negotiate " + Convert.ToBase64String((new Span<byte>(outBufferPtr, (int)outBuffer[0].cbBuffer).ToArray()));
+                    cBuffers = 1,
+                    pBuffers = (IntPtr)buffer,
+                    ulVersion = 0
+                };
+
+                var outBufferDesc = new SecBufferDesc()
+                {
+                    cBuffers = 1,
+                    pBuffers = (IntPtr)outBuffer,
+                    ulVersion = 0
+                };
+                uint contextAttribute;
+                SecurityInteger timeStamp;
+                SEC_RESULT result;
+                if (_context.HighPart == _context.LowPart && _context.HighPart == IntPtr.Zero)
+                {
+                    result = AcceptSecurityContext(_ntlmHandle, IntPtr.Zero, ref bufferDesc, _requestType, Data_Rep.SECURITY_NATIVE_DREP,
+                    out _context, ref outBufferDesc, out contextAttribute, out timeStamp);
                 }
-                result = QuerySecurityContextToken(ref _context, out handle);
-                _identity = new WindowsIdentity(handle);
-                Interop.Kernel32.CloseHandle(handle);
-                return returnToken;
+                else
+                {
+                    result = AcceptSecurityContext(_ntlmHandle, ref _context, ref bufferDesc, _requestType, Data_Rep.SECURITY_NATIVE_DREP,
+                    out _context, ref outBufferDesc, out contextAttribute, out timeStamp);
+                }
+                string returnToken = null;
+                if (result == SEC_RESULT.SEC_I_CONTINUE_NEEDED)
+                {
+                    var byteSpan = new byte[(int)outBuffer[0].cbBuffer];
+                    Marshal.Copy((IntPtr)outBufferPtr, byteSpan,0, byteSpan.Length);
+                    returnToken = "Negotiate " + Convert.ToBase64String(byteSpan);
+                    return returnToken;
+                }
+
+                if (result == SEC_RESULT.SEC_E_OK)
+                {
+                    IntPtr handle;
+                    if (outBuffer[0].cbBuffer > 0)
+                    {
+                        var byteSpan = new byte[(int)outBuffer[0].cbBuffer];
+                        Marshal.Copy((IntPtr)outBufferPtr, byteSpan, 0, byteSpan.Length);
+                        returnToken = "Negotiate " + Convert.ToBase64String(byteSpan);
+                    }
+                    result = QuerySecurityContextToken(ref _context, out handle);
+                    _identity = new WindowsIdentity(handle);
+                    Interop.Kernel32.CloseHandle(handle);
+                    return returnToken;
+                }
+                throw new InvalidOperationException();
             }
-            throw new InvalidOperationException();
         }
 
         public void Dispose()
