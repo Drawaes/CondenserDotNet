@@ -28,6 +28,7 @@ after_test:
   - dotnet pack -c Release src/CondenserDotNet.Client --version-suffix %APPVEYOR_BUILD_NUMBER%
   - dotnet pack -c Release src/CondenserDotNet.Server --version-suffix %APPVEYOR_BUILD_NUMBER%
   - dotnet pack -c Release src/CondenserDotNet.Core --version-suffix %APPVEYOR_BUILD_NUMBER%
+  - dotnet pack -c Release src/CondenserDotNet.Server.WindowsAuthentication --version-suffix %APPVEYOR_BUILD_NUMBER%
   
 artifacts:
   path: '**/*.nupkg'
