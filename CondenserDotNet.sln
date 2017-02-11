@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.26206.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{CB18CD55-85E2-46FC-A55B-7DE23EABFAE5}"
 EndProject
@@ -9,34 +9,33 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{6C110226-F
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{35C5514B-9E50-4AC6-BC6E-45BEAE7B7B4D}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "ServiceRegistration", "samples\ServiceRegistration\ServiceRegistration.xproj", "{763C29CE-F23C-496B-8DC4-D60E5399CFD4}"
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CondenserDotNet.Client", "src\CondenserDotNet.Client\CondenserDotNet.Client.xproj", "{941378DD-52CC-48CD-8CB5-CE9039721DF8}"
-EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CondenserTests", "test\CondenserTests\CondenserTests.xproj", "{17E329C7-CAC6-4D6A-8D83-A4C68476DD04}"
-EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{32AEF73B-E6B6-48DF-BF84-16FFB8A9DF04}"
 	ProjectSection(SolutionItems) = preProject
 		.travis.yml = .travis.yml
 		appveyor.yml = appveyor.yml
-		global.json = global.json
 		NuGet.Config = NuGet.Config
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Condenser.Tests.Integration", "test\Condenser.Tests.Integration\Condenser.Tests.Integration.xproj", "{A7E55927-04D3-4EDB-B598-6754611DE8C6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceRegistration", "samples\ServiceRegistration\ServiceRegistration.csproj", "{763C29CE-F23C-496B-8DC4-D60E5399CFD4}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CondenserDotNet.Server", "src\CondenserDotNet.Server\CondenserDotNet.Server.xproj", "{F8A84ABC-60CD-4EF4-B55D-CB27996B1F78}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CondenserDotNet.Client", "src\CondenserDotNet.Client\CondenserDotNet.Client.csproj", "{941378DD-52CC-48CD-8CB5-CE9039721DF8}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Configuration", "samples\Configuration\Configuration.xproj", "{C4224D81-0A55-4693-8184-4D00C8BB5E3B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CondenserTests", "test\CondenserTests\CondenserTests.csproj", "{17E329C7-CAC6-4D6A-8D83-A4C68476DD04}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Routing", "samples\Routing\Routing.xproj", "{BD511C62-B3F6-4652-9C46-A59BE8F3EF99}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Condenser.Tests.Integration", "test\Condenser.Tests.Integration\Condenser.Tests.Integration.csproj", "{A7E55927-04D3-4EDB-B598-6754611DE8C6}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CondenserDotNet.Core", "src\CondenserDotNet.Core\CondenserDotNet.Core.xproj", "{25408E8E-979D-4A36-84EC-F778FEE284CF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CondenserDotNet.Server", "src\CondenserDotNet.Server\CondenserDotNet.Server.csproj", "{F8A84ABC-60CD-4EF4-B55D-CB27996B1F78}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "CondenserDotNet.Server.WindowsAuthentication", "src\CondenserDotNet.Server.WindowsAuthentication\CondenserDotNet.Server.WindowsAuthentication.xproj", "{626B872C-8A5A-40CB-8F12-2BA8CC9337B5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Configuration", "samples\Configuration\Configuration.csproj", "{C4224D81-0A55-4693-8184-4D00C8BB5E3B}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "RoutingWithWindowsAuth", "samples\RoutingWithWindowsAuth\RoutingWithWindowsAuth.xproj", "{E6E9E36F-1A81-4C1D-8313-ABD21BC4A980}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Routing", "samples\Routing\Routing.csproj", "{BD511C62-B3F6-4652-9C46-A59BE8F3EF99}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CondenserDotNet.Core", "src\CondenserDotNet.Core\CondenserDotNet.Core.csproj", "{25408E8E-979D-4A36-84EC-F778FEE284CF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CondenserDotNet.Server.WindowsAuthentication", "src\CondenserDotNet.Server.WindowsAuthentication\CondenserDotNet.Server.WindowsAuthentication.csproj", "{626B872C-8A5A-40CB-8F12-2BA8CC9337B5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoutingWithWindowsAuth", "samples\RoutingWithWindowsAuth\RoutingWithWindowsAuth.csproj", "{E6E9E36F-1A81-4C1D-8313-ABD21BC4A980}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
