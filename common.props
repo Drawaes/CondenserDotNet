@@ -1,0 +1,14 @@
+<Project>
+  <PropertyGroup>
+    <VersionSuffix>$([System.DateTime]::Now.ToString(eyyMMdd-1))</VersionSuffix>
+    <PackageLicenseUrl>https://github.com/Drawaes/CondenserDotNet/blob/master/LICENSE.md</PackageLicenseUrl>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/Drawaes/CondenserDotNet</RepositoryUrl>
+    <Copyright>Drawaes Consulting Limited</Copyright>
+    <VersionPrefix>1.1.0</VersionPrefix>
+    <Authors>Tim Seaward, Dean Shackley</Authors>
+    <PackageIconUrl>http://go.microsoft.com/fwlink/?LinkID=288859</PackageIconUrl>
+    <PackageProjectUrl>https://drawaes.github.io/CondenserDotNet/</PackageProjectUrl>
+  </PropertyGroup>
+</Project>

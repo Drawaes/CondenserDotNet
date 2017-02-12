@@ -1,14 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
+  <Import Project="..\..\common.props" />
   <PropertyGroup>
-    <Authors>Tim Seaward;Dean Shackley</Authors>
     <TargetFrameworks>netstandard1.6;net451</TargetFrameworks>
     <AssemblyName>CondenserDotNet.Core</AssemblyName>
     <PackageId>CondenserDotNet.Core</PackageId>
-    <PackageLicenseUrl>https://github.com/Drawaes/CondenserDotNet/blob/master/LICENSE.md</PackageLicenseUrl>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/Drawaes/CondenserDotNet</RepositoryUrl>
     <NetStandardImplicitPackageVersion>1.6.1</NetStandardImplicitPackageVersion>
     <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
