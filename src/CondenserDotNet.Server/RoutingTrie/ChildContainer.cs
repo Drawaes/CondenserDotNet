@@ -1,18 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading;
-using System.Threading.Tasks;
+using CondenserDotNet.Core;
+using CondenserDotNet.Core.Routing;
 
 namespace CondenserDotNet.Server.RoutingTrie
 {
     public class ChildContainer<T>
     {
-        static int seed = Environment.TickCount;
+        private IRoutingStrategy<T> _routingStrategy;
+        
+        public ChildContainer(IDefaultRouting<T> defaultStrategy)
+        {
+            _routingStrategy = defaultStrategy.Default;
+        }
 
-        static readonly ThreadLocal<Random> random = new ThreadLocal<Random>(() => new Random(Interlocked.Increment(ref seed)));
 
         List<T> _services = new List<T>();
+
+        public void SetRoutingStrategy(IRoutingStrategy<T> routingStrategy)
+        {
+            _routingStrategy = routingStrategy;
+        }
 
         public void AddService(T service)
         {
@@ -35,7 +43,7 @@ namespace CondenserDotNet.Server.RoutingTrie
             if (services.Count > 0)
             {
                 //Simple random selector
-                return services[random.Value.Next(0, services.Count)];
+                return _routingStrategy.RouteTo(services);
             }
             return default(T);
         }

@@ -2,8 +2,8 @@
 using System.Threading.Tasks;
 using CondenserDotNet.Server.Builder;
 using CondenserDotNet.Server.DataContracts;
+using CondenserDotNet.Server.Extensions;
 using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
 
 namespace CondenserDotNet.Server.Routes
 {
@@ -47,7 +47,7 @@ namespace CondenserDotNet.Server.Routes
             {
                 context.Response.StatusCode = (int) HttpStatusCode.OK;
             }
-            await context.Response.WriteAsync(JsonConvert.SerializeObject(response));
+            await context.Response.WriteJsonAsync(response);
         }
     }
 }

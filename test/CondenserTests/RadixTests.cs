@@ -1,4 +1,5 @@
-﻿using CondenserDotNet.Server;
+﻿using CondenserDotNet.Core.Routing;
+using CondenserDotNet.Server;
 using CondenserDotNet.Server.RoutingTrie;
 using CondenserTests.Fakes;
 using Xunit;
@@ -10,10 +11,12 @@ namespace CondenserTests
         [Fact]
         public void TestSplitting()
         {
-            var tree = new RadixTree<Service>();
+            var tree = CreateDefault();
             
-            var service = new Service("Service1Test", "node1", new string[0], "Adress1Test", 10000, null);
-            var service2 = new Service("Service1Test", "node1", new string[0], "Address2Test", 10000, null);
+            var service = new Service(null, null);
+            service.Initialise("Service1Test", "node1", new string[0], "Adress1Test", 10000);
+            var service2 = new Service(null, null);
+            service2.Initialise("Service1Test", "node1", new string[0], "Address2Test", 10000);
             tree.AddServiceToRoute("/test1/test2/test3/test4/test5", service);
             tree.AddServiceToRoute("/test1/test2/test3/test4/test5/test6", service);
 
@@ -40,10 +43,12 @@ namespace CondenserTests
         [Fact]
         public void TestCompression()
         {
-            var tree = new RadixTree<Service>();
+            var tree = CreateDefault();
 
-            var service = new Service("Service1Test", "node1", new string[0], "Address1Test", 10000, null);
-            var service2 = new Service("Service1Test", "node1", new string[0], "Address2Test", 10000, null);
+            var service = new Service(null, null);
+            service.Initialise("Service1Test", "node1", new string[0], "Address1Test", 10000);
+            var service2 = new Service(null, null);
+            service2.Initialise("Service1Test", "node1", new string[0], "Address2Test", 10000);
 
             tree.AddServiceToRoute("/test1/test2/test3/test4/test5", service);
             tree.AddServiceToRoute("/test1/test2/test3/test4/test5/test6", service2);
@@ -67,10 +72,12 @@ namespace CondenserTests
         [Fact]
         public void TestRemovingAService()
         {
-            var tree = new RadixTree<Service>();
+            var tree = CreateDefault();
 
-            var service = new Service("Service1Test", "node1", new string[0], "Address1Test", 10000, null);
-            var service2 = new Service("Service1Test","node1", new string[0], "Address2Test", 10000, null);
+            var service = new Service(null, null);
+            service.Initialise("Service1Test", "node1", new string[0], "Address1Test", 10000);
+            var service2 = new Service(null, null);
+            service2.Initialise("Service1Test", "node1", new string[0], "Address2Test", 10000);
 
             tree.AddServiceToRoute("/test1/test2/test3/test4/test5", service);
             tree.AddServiceToRoute("/test1/test2/test3/test4/test5/test6", service2);
@@ -87,5 +94,20 @@ namespace CondenserTests
             Assert.Null(returnservice);
 
         }
+
+        public static RadixTree<IService> CreateDefault()
+        {
+            return new RadixTree<IService>(() =>
+            {
+                var randomRoutingStrategy = new RandomRoutingStrategy<IService>();
+                return new ChildContainer<IService>(new DefaultRouting<IService>
+                    (new[] { randomRoutingStrategy }, new FakeRouteConfig()));
+            });
+        }
+    }
+
+    public class FakeRouteConfig : IRoutingConfig
+    {
+        public string DefaultRouteStrategy { get; } = RouteStrategy.Random.ToString();
     }
 }

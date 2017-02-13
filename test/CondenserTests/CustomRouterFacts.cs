@@ -1,4 +1,5 @@
 ﻿using CondenserDotNet.Server;
+using CondenserDotNet.Server.RoutingTrie;
 using CondenserTests.Fakes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -14,7 +15,8 @@ namespace CondenserTests
         public async void SetupCustomRouterAndRouteToService()
         {
             var router = BuildRouter();
-            var service = new Service("Service1Test", "node1", new string[] { UrlPrefix + "/test1/test2/test3/test4/test5" }, "Address1Test", 10000, null);
+            var service = new Service(null, null);
+            service.Initialise("Service1Test", "node1", new string[] { UrlPrefix + "/test1/test2/test3/test4/test5" }, "Address1Test", 10000);
             router.AddNewService(service);
 
             var context = new DefaultHttpContext();
@@ -32,7 +34,8 @@ namespace CondenserTests
         {
             var router = BuildRouter();
 
-            var service = new Service("Service1Test", "node1", new string[] { UrlPrefix + "/test1/test2/test3/test4/test5" }, "Address1Test", 10000, null);
+            var service = new Service(null, null);
+            service.Initialise("Service1Test", "node1", new string[] { UrlPrefix + "/test1/test2/test3/test4/test5" }, "Address1Test", 10000);
             router.AddNewService(service);
 
             var context = new DefaultHttpContext();
@@ -47,9 +50,7 @@ namespace CondenserTests
 
         private CustomRouter BuildRouter()
         {
-            var fakeHealthRouter = new FakeHealthRouter("fake");
-
-            return new CustomRouter(null, new RoutingData());
+            return new CustomRouter(null, RoutingData.BuildDefault());
         }
     }
 }

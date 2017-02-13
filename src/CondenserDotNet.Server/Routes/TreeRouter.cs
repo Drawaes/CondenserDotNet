@@ -3,9 +3,9 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using CondenserDotNet.Server.DataContracts;
+using CondenserDotNet.Server.Extensions;
 using CondenserDotNet.Server.RoutingTrie;
 using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
 
 namespace CondenserDotNet.Server.Routes
 {
@@ -17,7 +17,7 @@ namespace CondenserDotNet.Server.Routes
         {
             _routingData = routingData;
 
-            Routes = new[] {"/admin/condenser/tree"};
+            Routes = new[] { CondenserRoutes.Tree};
         }
 
         public override string[] Routes { get; }
@@ -28,8 +28,7 @@ namespace CondenserDotNet.Server.Routes
 
             var nodeDto = new Node();
             MapTo(_routingData.Tree.TopNode, nodeDto);
-            var response = JsonConvert.SerializeObject(nodeDto);
-            return context.Response.WriteAsync(response);
+            return context.Response.WriteJsonAsync(nodeDto);
         }
 
         private void MapTo(Node<IService> node, Node dto)

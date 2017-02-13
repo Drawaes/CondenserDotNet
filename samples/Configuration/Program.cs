@@ -33,8 +33,8 @@ namespace Configuration
                 .ConfigureServices(services =>
                 {
                     services.AddSingleton(serviceManager);
-                    services.AddSingleton<IStartup, Startup>();
                 })
+                .UseStartup<Startup>()
                 .Build();
 
             host.Run();

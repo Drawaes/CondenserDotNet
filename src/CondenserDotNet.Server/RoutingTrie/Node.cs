@@ -7,30 +7,35 @@ namespace CondenserDotNet.Server.RoutingTrie
 {
     public class Node<T>
     {
+        private readonly Func<ChildContainer<T>> _factory;
         private NodeContainer<T> _childrenNodes;
         
-        public Node(string[] prefix, string pathToHere)
-            :this(prefix, pathToHere, 1)
+        public Node(string[] prefix, string pathToHere, Func<ChildContainer<T>> factory)
+            :this(prefix, pathToHere, 1, factory)
         {
         }
 
-        public Node(string[] prefix, string pathToHere,int initialKeySize)
+        public Node(string[] prefix, string pathToHere,int initialKeySize,
+            Func<ChildContainer<T>> factory)
         {
+            _factory = factory;
+
+            Services = factory();
             Prefix = prefix;
-            _childrenNodes = new NodeContainer<T>(initialKeySize);
+            _childrenNodes = new NodeContainer<T>(initialKeySize, _factory);
             Path = pathToHere + "/" + string.Join("/", Prefix);
             if(Path == "/")
                 Path = "";
         }
         
         public string Path { get; private set;}
-        public ChildContainer<T> Services { get; private set;} = new ChildContainer<T>();
+        public ChildContainer<T> Services { get; private set; }
         public NodeContainer<T> ChildrenNodes => _childrenNodes;
         public string[] Prefix { get; private set; }
                 
         public Node<T> CloneWithNewPrefix(string[] newPrefix, string newPath)
         {
-            Node<T> newNode = new Node<T>(newPrefix, newPath);
+            Node<T> newNode = new Node<T>(newPrefix, newPath, _factory);
             newNode._childrenNodes = _childrenNodes;
             newNode.Services = Services;
 
@@ -71,7 +76,7 @@ namespace CondenserDotNet.Server.RoutingTrie
             if(route.Length >= children.KeyLength)
             {
                 //Create a new node and add it
-                Node<T> n = new Node<T>(route.Take(children.KeyLength).ToArray(), Path);
+                Node<T> n = new Node<T>(route.Take(children.KeyLength).ToArray(), Path, _factory);
                 n.AddRoute(route.Skip(children.KeyLength).ToArray(),service);
 
                 var newChildren = children.Clone();
@@ -83,7 +88,7 @@ namespace CondenserDotNet.Server.RoutingTrie
             {
                 //The key is smaller than the current key length so we are going to have to split before we add
                 var newChildren = ChildrenNodes.SplitContainer(route.Length, Path);
-                Node<T> n = new Node<T>(route, Path);
+                Node<T> n = new Node<T>(route, Path, _factory);
                 n.AddRoute(new string[0], service);
                 newChildren.Add(n.Prefix, n);
 
@@ -164,7 +169,7 @@ namespace CondenserDotNet.Server.RoutingTrie
 
             if (canCompress)
             {
-                var newMerged = new NodeContainer<T>(children.KeyLength + 1);
+                var newMerged = new NodeContainer<T>(children.KeyLength + 1, _factory);
                 foreach (var kv in children)
                 {
                     foreach (var childkv in kv.Value.ChildrenNodes)

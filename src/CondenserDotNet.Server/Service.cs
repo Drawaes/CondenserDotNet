@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -8,33 +9,29 @@ using Microsoft.AspNetCore.Routing;
 
 namespace CondenserDotNet.Server
 {
-    public class Service : IDisposable, IService
+    public class Service : IDisposable, IConsulService,
+        IUsageInfo
     {
 
-        private readonly HttpClient _httpClient;
+        private HttpClient _httpClient;
         private readonly System.Threading.CountdownEvent _waitUntilRequestsAreFinished = new System.Threading.CountdownEvent(1);
-        private readonly string _address;
-        private readonly int _port;
+        private string _address;
+        private int _port;
         private const string UrlPrefix = "urlprefix-";
         private CurrentState _stats;
+        private readonly IHttpClientConfig _clientFactory;
+        Stopwatch _watch = new Stopwatch();
+        public int Calls { get; private set; }
+        public double TotalRequestTime { get; private set; }
 
         public Service()
         {
         }
-        public Service(string serviceId,  
-            string nodeId, string[] tags,
-            string address, int port, CurrentState stats)
+        public Service(CurrentState stats,
+            IHttpClientConfig clientFactory)
         {
             _stats = stats;
-            _httpClient = new HttpClient(new HttpClientHandler());
-            _address = address;
-            _port = port;
-            Tags = tags;
-            Routes = RoutesFromTags(tags);
-            ServiceId = serviceId;
-            NodeId = nodeId;
-            
-            SupportedVersions = tags.Where(t => t.StartsWith("version=")).Select(t => new Version(t.Substring(8))).ToArray();
+            _clientFactory = clientFactory;
         }
 
         public Version[] SupportedVersions { get; private set; }
@@ -83,6 +80,7 @@ namespace CondenserDotNet.Server
             _waitUntilRequestsAreFinished.AddCount();
             try
             {
+                _watch.Start();
                 var hostString = $"{_address}:{_port}";
 
                 var routeData = context.GetRouteData();
@@ -146,6 +144,12 @@ namespace CondenserDotNet.Server
             }
             finally
             {
+                _watch.Stop();
+
+                TotalRequestTime += _watch.Elapsed.TotalMilliseconds;
+                Calls++;
+
+                _watch.Reset();
                 _waitUntilRequestsAreFinished.Signal();
             }
         }
@@ -177,6 +181,21 @@ namespace CondenserDotNet.Server
         public void UpdateRoutes(string[] routes)
         {
             Routes = routes;
+        }
+
+        public void Initialise(string serviceId, string nodeId, string[] tags, string address, int port)
+        {
+            _address = address;
+            _port = port;
+            Tags = tags;
+            Routes = RoutesFromTags(tags);
+            ServiceId = serviceId;
+            NodeId = nodeId;
+
+            SupportedVersions = tags.Where(t => t.StartsWith("version=")).Select(t => new Version(t.Substring(8))).ToArray();
+
+            _httpClient = _clientFactory?.Create(ServiceId) ??
+                          new HttpClient(new HttpClientHandler());
         }
 
         public void Dispose()

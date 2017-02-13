@@ -2,15 +2,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CondenserDotNet.Core;
+using CondenserDotNet.Core.Routing;
 
 namespace CondenserDotNet.Server.RoutingTrie
 {
     public class RadixTree<T>
     {
-        private readonly Node<T> _topNode = new Node<T>(new string[0], "");
+        private readonly Node<T> _topNode;
         private readonly object _writeLock = new object();
         private static readonly char[] _routeSplit = new char[] {'/'};
         private bool _killCase = true;
+
+        public RadixTree(Func<ChildContainer<T>> factory)
+        {
+            _topNode = new Node<T>(new string[0], "", factory);
+        }
 
         public Node<T> TopNode => _topNode;
 

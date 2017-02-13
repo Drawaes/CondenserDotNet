@@ -1,4 +1,6 @@
-﻿using CondenserDotNet.Server.DataContracts;
+﻿using System;
+using System.Net.Http;
+using CondenserDotNet.Server.DataContracts;
 using CondenserDotNet.Server.Extensions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel;
@@ -26,6 +28,11 @@ namespace Routing
                     Ok = true
                 })
                 .UsePreRouteMiddleware<MyMiddleware>()
+                .WithHttpClient(serviceId => new HttpClient
+                {
+                    Timeout = TimeSpan.FromSeconds(30)
+                            
+                })
                 .Build();
 
             host.Run();

@@ -13,7 +13,7 @@ namespace ServiceRegistration
     {
         public static void Main(string[] args)
         {
-            var serviceManager = new ServiceManager("TestService");
+            var serviceManager = new ServiceManager("TestService", "localhost", 8500);
 
             serviceManager.AddHttpHealthCheck("/Health",10)
                 .AddApiUrl("/testsample/test3/test2")
