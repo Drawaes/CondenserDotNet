@@ -6,12 +6,9 @@ using Newtonsoft.Json;
 
 namespace CondenserDotNet.Core
 {
-    public class BlockingWatcher<T>
-        where T : class
+    public class BlockingWatcher<T> where T : class
     {
-        
         private readonly AsyncManualResetEvent<bool> _haveFirstResults = new AsyncManualResetEvent<bool>();
-
         private readonly HttpClient _client;
         private readonly CancellationToken _cancel;
         private readonly Action<T> _onNew;
@@ -19,9 +16,7 @@ namespace CondenserDotNet.Core
         private T _instances;
         private WatcherState _state = WatcherState.NotInitialized;
 
-        public BlockingWatcher(string url,
-            HttpClient client, CancellationToken cancel, 
-            Action<T> onNew = null)
+        public BlockingWatcher(string url, HttpClient client, CancellationToken cancel, Action<T> onNew = null)
         {
             _client = client;
             _cancel = cancel;

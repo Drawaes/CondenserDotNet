@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\..\common.props" />
+  <PropertyGroup>
+    <TargetFramework>netcoreapp1.0</TargetFramework>
+    <AssemblyName>Condenser.Tests.Integration</AssemblyName>
+    <PackageId>Condenser.Tests.Integration</PackageId>
+    <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>
+    <RuntimeFrameworkVersion>1.1.0</RuntimeFrameworkVersion>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\CondenserDotNet.Client\CondenserDotNet.Client.csproj" />
+    <ProjectReference Include="..\..\src\CondenserDotNet.Server\CondenserDotNet.Server.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0-preview-20170210-02" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0-beta5-build1225" />
+    <PackageReference Include="xunit" Version="2.2.0-beta5-build3474" />
+    <PackageReference Include="OpenCover" Version="4.6.519" />
+    <PackageReference Include="Microsoft.CodeCoverage" Version="1.0.2" />
+    <PackageReference Include="coveralls.io" Version="1.3.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="1.1.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="1.1.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="1.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{82a7f48d-3b50-4b1e-b82e-3ada8210c358}" />
+  </ItemGroup>
+
+</Project>
