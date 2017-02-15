@@ -1,5 +1,0 @@
-#recipe Docs
-Settings[DocsKeys.SourceFiles] = "../src/**/{!bin,!obj,!packages,!*.Tests,}/**/*.cs";
-Settings[Keys.Host] = "drawaes.github.io";
-Settings[Keys.LinkRoot] = "/CondenserDotNet";
-Settings[DocsKeys.BaseEditUrl] = "https://github.com/Drawaes/CondenserDotNet/tree/master/input/";
