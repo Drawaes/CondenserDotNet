@@ -1,2 +1,2 @@
-dotnet test test/CondenserTests
-dotnet test test/Condenser.Tests.Integration
+dotnet test test/CondenserTests/CondenserTests.csproj
+dotnet test test/Condenser.Tests.Integration/Condenser.Tests.Integration.csproj

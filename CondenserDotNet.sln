@@ -38,6 +38,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CondenserDotNet.Server.Wind
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RoutingWithWindowsAuth", "samples\RoutingWithWindowsAuth\RoutingWithWindowsAuth.csproj", "{E6E9E36F-1A81-4C1D-8313-ABD21BC4A980}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "script", "script", "{09EDB6E2-E430-462F-BFE8-F38681ABCAD5}"
+	ProjectSection(SolutionItems) = preProject
+		script\runtests.bat = script\runtests.bat
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
