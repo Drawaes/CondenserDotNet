@@ -14,8 +14,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		.travis.yml = .travis.yml
 		appveyor.yml = appveyor.yml
 		common.props = common.props
+		depend.props = depend.props
 		NuGet.Config = NuGet.Config
 		README.md = README.md
+		version.props = version.props
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ServiceRegistration", "samples\ServiceRegistration\ServiceRegistration.csproj", "{763C29CE-F23C-496B-8DC4-D60E5399CFD4}"
@@ -46,6 +48,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsocketClient", "samples\WebsocketClient\WebsocketClient.csproj", "{0AFB9686-4548-404E-A937-52CFC447053C}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsocketSampleServer", "samples\WebsocketSampleServer\WebsocketSampleServer.csproj", "{A968DC7F-EDDB-427A-BA83-C1F1474E554D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PocWebsocketsSupport", "samples\PocWebsocketsSupport\PocWebsocketsSupport.csproj", "{D2ED418F-3B61-4B92-8F4A-37FA96D0BB1B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CondenserDotNet.Server.Websockets", "src\CondenserDotNet.Server.Websockets\CondenserDotNet.Server.Websockets.csproj", "{30143ABB-576F-4108-BFC8-420D1492B0DB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -201,6 +207,30 @@ Global
 		{A968DC7F-EDDB-427A-BA83-C1F1474E554D}.Release|x64.Build.0 = Release|x64
 		{A968DC7F-EDDB-427A-BA83-C1F1474E554D}.Release|x86.ActiveCfg = Release|x86
 		{A968DC7F-EDDB-427A-BA83-C1F1474E554D}.Release|x86.Build.0 = Release|x86
+		{D2ED418F-3B61-4B92-8F4A-37FA96D0BB1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D2ED418F-3B61-4B92-8F4A-37FA96D0BB1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D2ED418F-3B61-4B92-8F4A-37FA96D0BB1B}.Debug|x64.ActiveCfg = Debug|x64
+		{D2ED418F-3B61-4B92-8F4A-37FA96D0BB1B}.Debug|x64.Build.0 = Debug|x64
+		{D2ED418F-3B61-4B92-8F4A-37FA96D0BB1B}.Debug|x86.ActiveCfg = Debug|x86
+		{D2ED418F-3B61-4B92-8F4A-37FA96D0BB1B}.Debug|x86.Build.0 = Debug|x86
+		{D2ED418F-3B61-4B92-8F4A-37FA96D0BB1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D2ED418F-3B61-4B92-8F4A-37FA96D0BB1B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D2ED418F-3B61-4B92-8F4A-37FA96D0BB1B}.Release|x64.ActiveCfg = Release|x64
+		{D2ED418F-3B61-4B92-8F4A-37FA96D0BB1B}.Release|x64.Build.0 = Release|x64
+		{D2ED418F-3B61-4B92-8F4A-37FA96D0BB1B}.Release|x86.ActiveCfg = Release|x86
+		{D2ED418F-3B61-4B92-8F4A-37FA96D0BB1B}.Release|x86.Build.0 = Release|x86
+		{30143ABB-576F-4108-BFC8-420D1492B0DB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30143ABB-576F-4108-BFC8-420D1492B0DB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30143ABB-576F-4108-BFC8-420D1492B0DB}.Debug|x64.ActiveCfg = Debug|x64
+		{30143ABB-576F-4108-BFC8-420D1492B0DB}.Debug|x64.Build.0 = Debug|x64
+		{30143ABB-576F-4108-BFC8-420D1492B0DB}.Debug|x86.ActiveCfg = Debug|x86
+		{30143ABB-576F-4108-BFC8-420D1492B0DB}.Debug|x86.Build.0 = Debug|x86
+		{30143ABB-576F-4108-BFC8-420D1492B0DB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30143ABB-576F-4108-BFC8-420D1492B0DB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30143ABB-576F-4108-BFC8-420D1492B0DB}.Release|x64.ActiveCfg = Release|x64
+		{30143ABB-576F-4108-BFC8-420D1492B0DB}.Release|x64.Build.0 = Release|x64
+		{30143ABB-576F-4108-BFC8-420D1492B0DB}.Release|x86.ActiveCfg = Release|x86
+		{30143ABB-576F-4108-BFC8-420D1492B0DB}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -218,5 +248,7 @@ Global
 		{E6E9E36F-1A81-4C1D-8313-ABD21BC4A980} = {35C5514B-9E50-4AC6-BC6E-45BEAE7B7B4D}
 		{0AFB9686-4548-404E-A937-52CFC447053C} = {35C5514B-9E50-4AC6-BC6E-45BEAE7B7B4D}
 		{A968DC7F-EDDB-427A-BA83-C1F1474E554D} = {35C5514B-9E50-4AC6-BC6E-45BEAE7B7B4D}
+		{D2ED418F-3B61-4B92-8F4A-37FA96D0BB1B} = {35C5514B-9E50-4AC6-BC6E-45BEAE7B7B4D}
+		{30143ABB-576F-4108-BFC8-420D1492B0DB} = {CB18CD55-85E2-46FC-A55B-7DE23EABFAE5}
 	EndGlobalSection
 EndGlobal

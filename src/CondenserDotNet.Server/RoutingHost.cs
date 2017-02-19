@@ -46,7 +46,7 @@ namespace CondenserDotNet.Server
             }
         }
 
-        public IRouter Router => _router;
+        public CustomRouter Router => _router;
         public Action<Dictionary<string, List<IService>>> OnRouteBuilt { get; set; }
 
         private async void WatchLoop()

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
@@ -12,6 +13,7 @@ namespace CondenserDotNet.Server
         string ServiceId { get; }
         string NodeId { get; }
         Task CallService(HttpContext context);
+        IPEndPoint IpEndPoint { get; }
         void UpdateRoutes(string[] routes);
     }
 }

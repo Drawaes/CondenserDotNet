@@ -7,8 +7,8 @@ namespace CondenserDotNet.Server.Extensions
     {
         public static void UseCondenserRouter(this IApplicationBuilder self)
         {
-            var host = self.ApplicationServices.GetService<RoutingHost>();
-            self.UseRouter(host.Router);
+            //var host = self.ApplicationServices.GetService<RoutingHost>();
+            //self.UseRouter(host.Router);
         }
     }
 }

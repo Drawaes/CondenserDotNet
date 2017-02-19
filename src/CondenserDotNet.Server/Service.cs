@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using CondenserDotNet.Server.Routes;
@@ -20,10 +21,9 @@ namespace CondenserDotNet.Server
         private const string UrlPrefix = "urlprefix-";
         private CurrentState _stats;
         private readonly IHttpClientConfig _clientFactory;
-        Stopwatch _watch = new Stopwatch();
-        public int Calls { get; private set; }
-        public double TotalRequestTime { get; private set; }
-
+        private Stopwatch _watch = new Stopwatch();
+        private IPEndPoint _ipEndPoint;
+                
         public Service()
         {
         }
@@ -39,6 +39,9 @@ namespace CondenserDotNet.Server
         public string[] Routes { get; private set; }
         public string ServiceId { get; private set; }
         public string NodeId { get; private set; }
+        public int Calls { get; private set; }
+        public double TotalRequestTime { get; private set; }
+        public IPEndPoint IpEndPoint => _ipEndPoint;
 
         public static string[] RoutesFromTags(string[] tags)
         {
@@ -191,7 +194,7 @@ namespace CondenserDotNet.Server
             Routes = RoutesFromTags(tags);
             ServiceId = serviceId;
             NodeId = nodeId;
-
+            _ipEndPoint = new IPEndPoint(IPAddress.Parse(address), port);
             SupportedVersions = tags.Where(t => t.StartsWith("version=")).Select(t => new Version(t.Substring(8))).ToArray();
 
             _httpClient = _clientFactory?.Create(ServiceId) ??
