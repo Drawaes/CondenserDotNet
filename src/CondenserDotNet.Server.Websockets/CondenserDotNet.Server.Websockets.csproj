@@ -12,6 +12,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging" Version="$(AspNetVersion)" />
     <PackageReference Include="System.IO.Pipelines" Version="0.1.0-*" />
     <PackageReference Include="System.IO.Pipelines.Networking.Sockets" Version="0.1.0-*" />
+    <PackageReference Include="System.IO.Pipelines.Text.Primitives" Version="0.1.0-*" />
   </ItemGroup>
 
   <ItemGroup>

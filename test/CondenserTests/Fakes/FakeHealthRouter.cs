@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Net;
+using System.Threading.Tasks;
 using CondenserDotNet.Server;
 using Microsoft.AspNetCore.Http;
 
@@ -12,6 +14,8 @@ namespace CondenserTests.Fakes
         }
 
         public override string[] Routes { get; }
+
+        public override IPEndPoint IpEndPoint => throw new NotImplementedException();
 
         public override Task CallService(HttpContext context)
         {

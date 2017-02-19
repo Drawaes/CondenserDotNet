@@ -194,7 +194,9 @@ namespace CondenserDotNet.Server
             Routes = RoutesFromTags(tags);
             ServiceId = serviceId;
             NodeId = nodeId;
-            _ipEndPoint = new IPEndPoint(IPAddress.Parse(address), port);
+            var result = Dns.GetHostAddressesAsync(address);
+            result.Wait();
+            _ipEndPoint = new IPEndPoint(result.Result[0], port);
             SupportedVersions = tags.Where(t => t.StartsWith("version=")).Select(t => new Version(t.Substring(8))).ToArray();
 
             _httpClient = _clientFactory?.Create(ServiceId) ??

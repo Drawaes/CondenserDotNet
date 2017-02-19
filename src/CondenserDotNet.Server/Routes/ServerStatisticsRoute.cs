@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using CondenserDotNet.Server.DataContracts;
@@ -17,6 +18,8 @@ namespace CondenserDotNet.Server.Routes
         }
 
         public override string[] Routes { get; } = {CondenserRoutes.Statistics};
+
+        public override IPEndPoint IpEndPoint => throw new NotImplementedException();
 
         public override async Task CallService(HttpContext context)
         {
