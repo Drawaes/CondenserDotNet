@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Threading.Tasks;
 using CondenserDotNet.Server.Builder;
 using CondenserDotNet.Server.DataContracts;
@@ -21,6 +22,8 @@ namespace CondenserDotNet.Server.Routes
         }
 
         public override string[] Routes { get; }
+
+        public override IPEndPoint IpEndPoint => throw new NotImplementedException();
 
         public override async Task CallService(HttpContext context)
         {

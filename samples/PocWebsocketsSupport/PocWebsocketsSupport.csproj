@@ -1,27 +1,25 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\..\common.props" />
   <PropertyGroup>
-    <TargetFramework>netcoreapp1.1</TargetFramework>
     <AssemblyName>RoutingWithWindowsAuth</AssemblyName>
-    <OutputType>Exe</OutputType>
     <PackageId>RoutingWithWindowsAuth</PackageId>
-    <RuntimeFrameworkVersion>1.1.0</RuntimeFrameworkVersion>
-    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
-    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
-    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <TargetFrameworks>net451;netcoreapp1.1</TargetFrameworks>
+    <OutputType>Exe</OutputType>
+    <RuntimeIdentifier Condition="'$(TargetFramework)'!='netcoreapp1.1'">win7-x64</RuntimeIdentifier>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\CondenserDotNet.Core\CondenserDotNet.Core.csproj" />
+    <ProjectReference Include="..\..\src\CondenserDotNet.Server.Websockets\CondenserDotNet.Server.Websockets.csproj" />
     <ProjectReference Include="..\..\src\CondenserDotNet.Server\CondenserDotNet.Server.csproj" />
     <ProjectReference Include="..\..\src\CondenserDotNet.Server.WindowsAuthentication\CondenserDotNet.Server.WindowsAuthentication.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="1.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="1.1.1" />
     <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="1.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel.Https" Version="1.1.0" />
     <PackageReference Include="System.Net.Http" Version="4.3.0" />
   </ItemGroup>
-
 </Project>

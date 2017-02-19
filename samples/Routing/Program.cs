@@ -19,7 +19,7 @@ namespace Routing
             var host = new WebHostBuilder()
                 .UseKestrel()
                 .UseLoggerFactory(logger)
-                .UseUrls($"http://*:{50000}")
+                .UseUrls($"*://*:{50000}")
                 .AsCondenserRouter()
                 .WithHealthRoute("/condenser/health")
                 .WithHealthCheck(() => new HealthCheck

@@ -1,0 +1,118 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO.Pipelines.Text.Primitives;
+using System.IO.Pipelines;
+using System.Text;
+using System.Text.Formatting;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.Extensions.Logging;
+
+namespace CondenserDotNet.Server.Websockets
+{
+    public class WebsocketMiddleware
+    {
+        private RequestDelegate _next;
+        private ILogger _logger;
+        private static readonly byte[] _space = Encoding.UTF8.GetBytes(" ");
+        private static readonly byte[] _endOfLine = Encoding.UTF8.GetBytes("\r\n");
+        private static readonly byte[] _headersEnd = Encoding.UTF8.GetBytes("\r\n\r\n");
+        private static readonly byte[] _headerSplit = Encoding.UTF8.GetBytes(": ");
+
+        public WebsocketMiddleware(RequestDelegate next, ILoggerFactory loggerFactory)
+        {
+            _next = next;
+            _logger = loggerFactory?.CreateLogger<WebsocketMiddleware>();
+        }
+
+        public async Task Invoke(HttpContext context)
+        {
+            var upgradeFeature = context.Features.Get<IHttpUpgradeFeature>();
+            if (upgradeFeature != null && context.Features.Get<IHttpWebSocketFeature>() == null)
+            {
+                await DoWebSocket(context, upgradeFeature);
+                return;
+            }
+            await _next.Invoke(context);
+        }
+
+        private async Task DoWebSocket(HttpContext context, IHttpUpgradeFeature upgrade)
+        {
+            var service = context.Features.Get<IService>();
+            var endPoint = service.IpEndPoint;
+            var socket = await System.IO.Pipelines.Networking.Sockets.SocketConnection.ConnectAsync(endPoint);
+            var writer = socket.Output.Alloc();
+            
+            writer.Append(context.Request.Method, TextEncoder.Utf8);
+            writer.Write(_space);
+            writer.Append(context.Request.Path.Value, TextEncoder.Utf8);
+            writer.Write(_space);
+            writer.Append(context.Request.Protocol, TextEncoder.Utf8);
+            writer.Write(_endOfLine);
+            foreach(var header in context.Request.Headers)
+            {
+                writer.Append(header.Key, TextEncoder.Utf8);
+                writer.Write(_headerSplit);
+                writer.Append(string.Join(", ",header.Value), TextEncoder.Utf8);
+                writer.Write(_endOfLine);
+            }
+            writer.Write(_endOfLine);
+            await writer.FlushAsync();
+            while(true)
+            {
+                var reader = await socket.Input.ReadAsync();
+                var buffer = reader.Buffer;
+                try
+                {
+                    if(!buffer.TrySliceTo(_headersEnd, out ReadableBuffer headers, out ReadCursor cursor))
+                    {
+                        continue;
+                    }
+                    buffer = buffer.Slice(cursor).Slice(_headersEnd.Length);
+                    if(!headers.TrySliceTo(_endOfLine, out ReadableBuffer line, out cursor))
+                    {
+                        throw new InvalidOperationException();
+                    }
+                    var conndetails = line.GetUtf8String();
+                    headers = headers.Slice(cursor).Slice(_endOfLine.Length);
+                    while(headers.Length > 0)
+                    {
+                        if(!headers.TrySliceTo(_endOfLine, out ReadableBuffer headerLine, out cursor))
+                        {
+                            headerLine = headers;
+                            headers = headers.Slice(headers.Length);
+                        }
+                        else
+                        {
+                            headers = headers.Slice(cursor).Slice(_endOfLine.Length);
+                        }
+                        if(!headerLine.TrySliceTo(_headerSplit, out ReadableBuffer key, out cursor))
+                        {
+                            throw new NotImplementedException();
+                        }
+                        var keyString = key.GetUtf8String();
+                        var values = headerLine.Slice(cursor).Slice(_headerSplit.Length).GetUtf8String().Split(new string[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+                        context.Response.Headers[key.GetUtf8String()] = new Microsoft.Extensions.Primitives.StringValues(values);
+                    }
+                    break;
+                }
+                finally
+                {
+                    socket.Input.Advance(buffer.Start, buffer.End);
+                }
+            }
+            var upgradedStream = await upgrade.UpgradeAsync();
+            try
+            {
+                await Task.WhenAll(upgradedStream.CopyToEndAsync(socket.Output), socket.Input.CopyToEndAsync(upgradedStream));
+            }
+            finally
+            {
+                await socket.DisposeAsync();
+                upgradedStream.Dispose();
+            }
+        }
+    }
+}
+

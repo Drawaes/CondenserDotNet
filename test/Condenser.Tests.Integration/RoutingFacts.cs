@@ -45,7 +45,7 @@ namespace Condenser.Tests.Integration
                 RouteData = routeData
             };
 
-            await router.RouteAsync(routeContext);
+            //await router.RouteAsync(routeContext);
 
             await routeContext.Handler.Invoke(routeContext.HttpContext);
 
@@ -153,7 +153,7 @@ namespace Condenser.Tests.Integration
 
             var routeContext = new RouteContext(context);
 
-            await router.RouteAsync(routeContext);
+            //await router.RouteAsync(routeContext);
 
             if (routeContext.Handler == null)
             {

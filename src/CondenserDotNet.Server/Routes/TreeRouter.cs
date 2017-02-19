@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -21,6 +22,8 @@ namespace CondenserDotNet.Server.Routes
         }
 
         public override string[] Routes { get; }
+
+        public override IPEndPoint IpEndPoint => throw new NotImplementedException();
 
         public override Task CallService(HttpContext context)
         {

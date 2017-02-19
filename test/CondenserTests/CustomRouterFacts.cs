@@ -24,7 +24,7 @@ namespace CondenserTests
             context.Request.Path = "/test1/test2/test3/test4/test5/test6";
             var routeContext = new RouteContext(context);
 
-            await router.RouteAsync(routeContext);
+            //await router.RouteAsync(routeContext);
 
             Assert.Equal(service, routeContext.Handler.Target);
         }
@@ -43,7 +43,7 @@ namespace CondenserTests
             context.Request.Path = "/test2/test2/test3/test4/test5/test6";
             var routeContext = new RouteContext(context);
 
-            await router.RouteAsync(routeContext);
+            //await router.RouteAsync(routeContext);
 
             Assert.Null(routeContext.Handler);
         }

@@ -1,14 +1,21 @@
 <Project>
+  <Import Project="version.props" />
+  <Import Project="depend.props" />
+
   <PropertyGroup>
-    <VersionSuffix>$([System.DateTime]::Now.ToString(eyyMMdd-1))</VersionSuffix>
+    <Product>Condenser API Router</Product>
+    <VersionSuffix Condition="'$(VersionSuffix)'!='' AND '$(BuildNumber)' != ''">$(VersionSuffix)-$(BuildNumber)</VersionSuffix>
     <PackageLicenseUrl>https://github.com/Drawaes/CondenserDotNet/blob/master/LICENSE.md</PackageLicenseUrl>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <RepositoryType>git</RepositoryType>
     <RepositoryUrl>https://github.com/Drawaes/CondenserDotNet</RepositoryUrl>
     <Copyright>Drawaes Consulting Limited</Copyright>
-    <VersionPrefix>1.1.0</VersionPrefix>
     <Authors>Tim Seaward, Dean Shackley</Authors>
     <PackageIconUrl>http://go.microsoft.com/fwlink/?LinkID=288859</PackageIconUrl>
     <PackageProjectUrl>https://drawaes.github.io/CondenserDotNet/</PackageProjectUrl>
   </PropertyGroup>
+
+  <ItemGroup Condition="'$(TargetFrameworkIdentifier)'=='.NETFramework' AND '$(OutputType)'=='library'">
+    <PackageReference Include="NETStandard.Library" Version="$(NetStandardImplicitPackageVersion)" />
+  </ItemGroup>
 </Project>

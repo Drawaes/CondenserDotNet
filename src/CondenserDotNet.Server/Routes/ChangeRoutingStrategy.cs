@@ -27,7 +27,9 @@ namespace CondenserDotNet.Server.Routes
             _defaultRouting = defaultRouting;
         }
 
-        public override string[] Routes { get; } = { CondenserRoutes.Router };
+        public override string[] Routes => new string[]{ CondenserRoutes.Router };
+
+        public override IPEndPoint IpEndPoint => throw new NotImplementedException();
 
         public override async Task CallService(HttpContext context)
         {
