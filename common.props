@@ -11,7 +11,6 @@
     <RepositoryUrl>https://github.com/Drawaes/CondenserDotNet</RepositoryUrl>
     <Copyright>Drawaes Consulting Limited</Copyright>
     <Authors>Tim Seaward, Dean Shackley</Authors>
-    <PackageIconUrl>http://go.microsoft.com/fwlink/?LinkID=288859</PackageIconUrl>
     <PackageProjectUrl>https://drawaes.github.io/CondenserDotNet/</PackageProjectUrl>
   </PropertyGroup>
 
