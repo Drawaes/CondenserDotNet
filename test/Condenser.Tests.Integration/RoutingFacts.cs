@@ -32,24 +32,17 @@ namespace Condenser.Tests.Integration
             
             var router = BuildRouter();
             var service = new Service(null, null);
-            service.Initialise("service1", "node1", new[] { UrlPrefix + "/search" }, "www.google.com", 80);
+            await service.Initialise("service1", "node1", new[] { UrlPrefix + "/search" }, "www.google.com", 80);
             router.AddNewService(service);
 
             var context = new DefaultHttpContext();
             context.Request.Method = "GET";
             context.Request.Path = "/search";
-
-            var routeData = new RouteData();
-            var routeContext = new RouteContext(context)
-            {
-                RouteData = routeData
-            };
-
-            //await router.RouteAsync(routeContext);
-
-            await routeContext.Handler.Invoke(routeContext.HttpContext);
-
-            Assert.Equal(200, routeContext.HttpContext.Response.StatusCode);
+                        
+            var routedService = router.GetServiceFromRoute(context.Request.Path, out string matchedPath);
+            await routedService.CallService(context);
+                        
+            Assert.Equal(200, context.Response.StatusCode);
         }
 
         

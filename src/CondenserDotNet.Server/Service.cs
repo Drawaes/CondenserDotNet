@@ -10,66 +10,67 @@ using Microsoft.AspNetCore.Routing;
 
 namespace CondenserDotNet.Server
 {
-    public class Service : IDisposable, IConsulService,
-        IUsageInfo
+    public class Service : IDisposable, IConsulService, IUsageInfo
     {
-
+        private const string UrlPrefix = "urlprefix-";
         private HttpClient _httpClient;
         private readonly System.Threading.CountdownEvent _waitUntilRequestsAreFinished = new System.Threading.CountdownEvent(1);
         private string _address;
         private int _port;
-        private const string UrlPrefix = "urlprefix-";
         private CurrentState _stats;
         private readonly IHttpClientConfig _clientFactory;
-        private Stopwatch _watch = new Stopwatch();
         private IPEndPoint _ipEndPoint;
-                
+        private Version[] _supportedVersions;
+        private string[] _tags;
+        private string _serviceId;
+        private int _calls;
+        private int _totalRequestTime;
+
         public Service()
         {
         }
-        public Service(CurrentState stats,
-            IHttpClientConfig clientFactory)
+        public Service(CurrentState stats, IHttpClientConfig clientFactory)
         {
             _stats = stats;
             _clientFactory = clientFactory;
         }
 
-        public Version[] SupportedVersions { get; private set; }
-        public string[] Tags { get; private set; }
+        public Version[] SupportedVersions => _supportedVersions;
+        public string[] Tags => _tags;
         public string[] Routes { get; private set; }
-        public string ServiceId { get; private set; }
+        public string ServiceId => _serviceId;
         public string NodeId { get; private set; }
-        public int Calls { get; private set; }
-        public double TotalRequestTime { get; private set; }
+        public int Calls => _calls;
+        public double TotalRequestTime => _totalRequestTime;
         public IPEndPoint IpEndPoint => _ipEndPoint;
 
         public static string[] RoutesFromTags(string[] tags)
         {
             int returnCount = 0;
-            for(int i = 0; i < tags.Length;i++)
+            for (int i = 0; i < tags.Length; i++)
             {
-                if(!tags[i].StartsWith(UrlPrefix))
+                if (!tags[i].StartsWith(UrlPrefix))
                 {
                     continue;
                 }
-                returnCount ++;
+                returnCount++;
             }
             var returnValues = new string[returnCount];
-            returnCount =0;
-            for(int i = 0; i < tags.Length; i++)
+            returnCount = 0;
+            for (int i = 0; i < tags.Length; i++)
             {
-                if(!tags[i].StartsWith(UrlPrefix))
+                if (!tags[i].StartsWith(UrlPrefix))
                 {
                     continue;
                 }
                 var startSubstIndex = UrlPrefix.Length;
                 var endSubstIndex = tags[i].Length - UrlPrefix.Length;
-                if(tags[i][tags[i].Length -1] == '/')
+                if (tags[i][tags[i].Length - 1] == '/')
                 {
-                    endSubstIndex --;
+                    endSubstIndex--;
                 }
                 returnValues[returnCount] = tags[i].Substring(startSubstIndex, endSubstIndex);
-                if(returnValues[returnCount][0] != '/')
+                if (returnValues[returnCount][0] != '/')
                 {
                     returnValues[returnCount] = "/" + returnValues[returnCount];
                 }
@@ -80,10 +81,11 @@ namespace CondenserDotNet.Server
 
         public async Task CallService(HttpContext context)
         {
+            Stopwatch sw = new Stopwatch();
             _waitUntilRequestsAreFinished.AddCount();
             try
             {
-                _watch.Start();
+                sw.Start();
                 var hostString = $"{_address}:{_port}";
 
                 var routeData = context.GetRouteData();
@@ -91,7 +93,7 @@ namespace CondenserDotNet.Server
 
                 if (routeData != null)
                 {
-                    var apiPath = (string) routeData.DataTokens["apiPath"];
+                    var apiPath = (string)routeData.DataTokens["apiPath"];
                     string remainingPath = context.Request.Path.Value.Substring(apiPath.Length);
                     uriString = $"http://{hostString}{remainingPath}{context.Request.QueryString}";
                 }
@@ -147,12 +149,11 @@ namespace CondenserDotNet.Server
             }
             finally
             {
-                _watch.Stop();
+                sw.Stop();
 
-                TotalRequestTime += _watch.Elapsed.TotalMilliseconds;
-                Calls++;
+                System.Threading.Interlocked.Add(ref _totalRequestTime, (int)sw.Elapsed.TotalMilliseconds);
+                System.Threading.Interlocked.Increment(ref _calls);
 
-                _watch.Reset();
                 _waitUntilRequestsAreFinished.Signal();
             }
         }
@@ -167,7 +168,7 @@ namespace CondenserDotNet.Server
             var otherService = obj as Service;
             if (otherService != null)
             {
-                
+
                 if (otherService.ServiceId != ServiceId)
                 {
                     return false;
@@ -186,24 +187,23 @@ namespace CondenserDotNet.Server
             Routes = routes;
         }
 
-        public void Initialise(string serviceId, string nodeId, string[] tags, string address, int port)
+        public async Task Initialise(string serviceId, string nodeId, string[] tags, string address, int port)
         {
             _address = address;
             _port = port;
-            Tags = tags;
+            _tags = tags;
             Routes = RoutesFromTags(tags);
-            ServiceId = serviceId;
+            _serviceId = serviceId;
             NodeId = nodeId;
             try
             {
-                var result = Dns.GetHostAddressesAsync(address);
-                result.Wait();
-                _ipEndPoint = new IPEndPoint(result.Result[0], port);
+                var result = await Dns.GetHostAddressesAsync(address);
+                _ipEndPoint = new IPEndPoint(result[0], port);
             }
             catch
             {
             }
-            SupportedVersions = tags.Where(t => t.StartsWith("version=")).Select(t => new Version(t.Substring(8))).ToArray();
+            _supportedVersions = tags.Where(t => t.StartsWith("version=")).Select(t => new Version(t.Substring(8))).ToArray();
 
             _httpClient = _clientFactory?.Create(ServiceId) ??
                           new HttpClient(new HttpClientHandler());
