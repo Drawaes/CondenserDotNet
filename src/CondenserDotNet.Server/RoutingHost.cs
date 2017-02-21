@@ -63,9 +63,8 @@ namespace CondenserDotNet.Server
                     }
                     _lastConsulIndex = result.GetConsulIndex();
                     _logger?.LogInformation("Got new set of health information new index is {index}", _lastConsulIndex);
-
-                    var content = await result.Content.ReadAsStringAsync();
-                    var healthChecks = JsonConvert.DeserializeObject<HealthCheck[]>(content);
+                                        
+                    var healthChecks = await result.Content.GetObject<HealthCheck[]>();
                     await ProcessHealthChecks(healthChecks);
                 }
                 catch(Exception ex)
