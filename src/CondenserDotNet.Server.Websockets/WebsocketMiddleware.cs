@@ -29,7 +29,7 @@ namespace CondenserDotNet.Server.Websockets
         public async Task Invoke(HttpContext context)
         {
             var upgradeFeature = context.Features.Get<IHttpUpgradeFeature>();
-            if (upgradeFeature != null && context.Features.Get<IHttpWebSocketFeature>() == null)
+            if (upgradeFeature != null)
             {
                 await DoWebSocket(context, upgradeFeature);
                 return;
@@ -46,7 +46,9 @@ namespace CondenserDotNet.Server.Websockets
             
             writer.Append(context.Request.Method, TextEncoder.Utf8);
             writer.Write(_space);
-            writer.Append(context.Request.Path.Value, TextEncoder.Utf8);
+            context.Items.TryGetValue("matchedPath",out object matchedPath);
+            var pathLength = (matchedPath as string ?? string.Empty).Length;
+            writer.Append(context.Request.Path.Value.Substring(pathLength), TextEncoder.Utf8);
             writer.Write(_space);
             writer.Append(context.Request.Protocol, TextEncoder.Utf8);
             writer.Write(_endOfLine);

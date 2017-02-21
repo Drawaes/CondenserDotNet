@@ -82,9 +82,7 @@ namespace CondenserDotNet.Server
             RemoveDeadInstances(infoList);
             foreach (var service in _routingData.ServicesWithHealthChecks)
             {
-                var result = await _client.GetAsync(_serviceLookupUri + service.Key);
-                var content = await result.Content.ReadAsStringAsync();
-                var infoService = JsonConvert.DeserializeObject<ServiceInstance[]>(content);
+                var infoService = await _client.GetAsync<ServiceInstance[]>(_serviceLookupUri + service.Key);
                 foreach (var info in infoService)
                 {
                     var instance = GetInstance(info, service.Value);
