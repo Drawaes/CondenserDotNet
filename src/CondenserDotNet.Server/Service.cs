@@ -25,10 +25,8 @@ namespace CondenserDotNet.Server
         private string _serviceId;
         private int _calls;
         private int _totalRequestTime;
+        private string _hostString;
 
-        public Service()
-        {
-        }
         public Service(CurrentState stats, IHttpClientConfig clientFactory)
         {
             _stats = stats;
@@ -86,21 +84,7 @@ namespace CondenserDotNet.Server
             try
             {
                 sw.Start();
-                var hostString = $"{_address}:{_port}";
-
-                var routeData = context.GetRouteData();
-                string uriString;
-
-                if (routeData != null)
-                {
-                    var apiPath = (string)routeData.DataTokens["apiPath"];
-                    string remainingPath = context.Request.Path.Value.Substring(apiPath.Length);
-                    uriString = $"http://{hostString}{remainingPath}{context.Request.QueryString}";
-                }
-                else
-                {
-                    uriString = $"http://{hostString}{context.Request.Path.Value}{context.Request.QueryString}";
-                }
+                var uriString = $"http://{_hostString}{context.Request.Path.Value}{context.Request.QueryString}";
 
                 var uri = new Uri(uriString);
 
@@ -124,7 +108,7 @@ namespace CondenserDotNet.Server
                     }
                 }
 
-                requestMessage.Headers.Host = hostString;
+                requestMessage.Headers.Host = _hostString;
 
                 requestMessage.Method = new HttpMethod(context.Request.Method);
 
@@ -204,9 +188,8 @@ namespace CondenserDotNet.Server
             {
             }
             _supportedVersions = tags.Where(t => t.StartsWith("version=")).Select(t => new Version(t.Substring(8))).ToArray();
-
-            _httpClient = _clientFactory?.Create(ServiceId) ??
-                          new HttpClient(new HttpClientHandler());
+            _hostString = $"{_address}:{_port}";
+            _httpClient = _clientFactory?.Create(ServiceId) ?? new HttpClient();
         }
 
         public void Dispose()
