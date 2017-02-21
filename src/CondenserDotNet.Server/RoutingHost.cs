@@ -25,20 +25,17 @@ namespace CondenserDotNet.Server
         private readonly RoutingData _routingData;
         private readonly Func<IConsulService> _serviceFactory;
 
-        public RoutingHost(CustomRouter router,
-            CondenserConfiguration config, ILoggerFactory logger, 
-            RoutingData routingData, 
-            IEnumerable<IService> customRoutes,
-            Func<IConsulService> serviceFactory)
+        public RoutingHost(CustomRouter router, CondenserConfiguration config, ILoggerFactory logger,
+            RoutingData routingData, IEnumerable<IService> customRoutes, Func<IConsulService> serviceFactory)
         {
             _routingData = routingData;
             _serviceFactory = serviceFactory;
             _logger = logger?.CreateLogger<RoutingHost>();
             _client.Timeout = TimeSpan.FromMinutes(6);
-           _router = router;
+            _router = router;
             _healthCheckUri = $"http://{config.AgentAddress}:{config.AgentPort}{HttpUtils.HealthAnyUrl}?index=";
             _serviceLookupUri = $"http://{config.AgentAddress}:{config.AgentPort}{HttpUtils.SingleServiceCatalogUrl}";
-            WatchLoop();
+            var ignore = WatchLoop();
 
             foreach (var customRoute in customRoutes)
             {
@@ -49,12 +46,12 @@ namespace CondenserDotNet.Server
         public CustomRouter Router => _router;
         public Action<Dictionary<string, List<IService>>> OnRouteBuilt { get; set; }
 
-        private async void WatchLoop()
+        private async Task WatchLoop()
         {
             string index = string.Empty;
             while (!_cancel.IsCancellationRequested)
             {
-                _logger?.LogInformation("Looking for health changes with index {index}",index);
+                _logger?.LogInformation("Looking for health changes with index {index}", index);
                 var result = await _client.GetAsync(_healthCheckUri + index);
                 if (!result.IsSuccessStatusCode)
                 {
@@ -80,37 +77,44 @@ namespace CondenserDotNet.Server
                         var instance = GetInstance(info, service.Value);
                         if (instance == null)
                         {
-                            var consulInstance = _serviceFactory();
-                            consulInstance.Initialise(info.ServiceID, info.Node, info.ServiceTags, info.ServiceAddress, info.ServicePort);
-                            instance = consulInstance;
-                            
-                            _logger?.LogInformation("Adding a new service instance {serviceId} that is running the service {service} mapped to {routes}", instance.ServiceId, service.Key, instance.Routes);
-                            _router.AddNewService(instance);
-                            service.Value.Add(instance);
-                            continue;
-                        }
-                        var routes = Service.RoutesFromTags(info.ServiceTags);
-
-                        if (instance.Routes.SequenceEqual(routes))
+                            await CreateNewServiceInstance(service, info);
+                        }                        
+                        else
                         {
-                            continue;
+                            UpdateExistingRoutes(instance, info);
                         }
-
-                        foreach (var newTag in routes.Except(instance.Routes))
-                        {
-                            _router.AddServiceToRoute(newTag, instance);
-                        }
-
-                        foreach (var oldTag in instance.Routes.Except(routes))
-                        {
-                            _router.RemoveServiceFromRoute(oldTag, instance);
-                        }
-                        instance.UpdateRoutes(routes);
                     }
                 }
                 _router.CleanUpRoutes();
                 OnRouteBuilt?.Invoke(_routingData.ServicesWithHealthChecks);
             }
+        }
+
+        private async Task CreateNewServiceInstance(KeyValuePair<string,List<IService>> service, ServiceInstance info)
+        {
+            var instance = _serviceFactory();
+            await instance.Initialise(info.ServiceID, info.Node, info.ServiceTags, info.ServiceAddress, info.ServicePort);
+            _logger?.LogInformation("Adding a new service instance {serviceId} that is running the service {service} mapped to {routes}", instance.ServiceId, service.Key, instance.Routes);
+            _router.AddNewService(instance);
+            service.Value.Add(instance);
+        }
+
+        private void UpdateExistingRoutes(IService instance, ServiceInstance info)
+        {
+            var routes = Service.RoutesFromTags(info.ServiceTags);
+            if (instance.Routes.SequenceEqual(routes))
+            {
+                return;
+            }
+            foreach (var newTag in routes.Except(instance.Routes))
+            {
+                _router.AddServiceToRoute(newTag, instance);
+            }
+            foreach (var oldTag in instance.Routes.Except(routes))
+            {
+                _router.RemoveServiceFromRoute(oldTag, instance);
+            }
+            instance.UpdateRoutes(routes);
         }
 
         private IService GetInstance(ServiceInstance service, List<IService> instanceList)
@@ -136,7 +140,7 @@ namespace CondenserDotNet.Server
                     {
                         //Service is dead remove it
                         service.Value.Remove(instance);
-                        _logger?.LogInformation("The service instance {serviceId} for service {serviceName} was removed due to failing health",instance.ServiceId, service.Key);
+                        _logger?.LogInformation("The service instance {serviceId} for service {serviceName} was removed due to failing health", instance.ServiceId, service.Key);
                         _router.RemoveService(instance);
                     }
                 }
@@ -149,7 +153,7 @@ namespace CondenserDotNet.Server
             {
                 if (!_routingData.ServicesWithHealthChecks.ContainsKey(i.Service))
                 {
-                    _logger?.LogInformation("New service {serviceName} added because we have found instances of it",i.Service);
+                    _logger?.LogInformation("New service {serviceName} added because we have found instances of it", i.Service);
                     _routingData.ServicesWithHealthChecks[i.Service] = new List<IService>();
                 }
             }
@@ -167,7 +171,7 @@ namespace CondenserDotNet.Server
                     downNodes.Add(check.Node);
                 }
             }
-            _logger?.LogInformation("List of nodes that are currently down is {downNodes}",downNodes);
+            _logger?.LogInformation("List of nodes that are currently down is {downNodes}", downNodes);
             foreach (var check in healthChecks)
             {
                 if (!string.IsNullOrEmpty(check.ServiceID) && check.Status == HealthCheckStatus.Passing && !downNodes.Contains(check.Node))
