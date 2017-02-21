@@ -6,6 +6,7 @@ using CondenserDotNet.Core.Routing;
 using CondenserDotNet.Server;
 using CondenserDotNet.Server.RoutingTrie;
 using CondenserDotNet.Server.Websockets;
+using CondenserDotNet.Server.WindowsAuthentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
@@ -22,7 +23,7 @@ namespace PocWebsocketsSupport
 
         public void Configure(IApplicationBuilder app)
         {
-            app.UseWindowsAuth();
+            app.UseWindowsAuthentication();
             app.UseCondenser();
         }
     }

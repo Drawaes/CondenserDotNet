@@ -36,7 +36,12 @@ namespace CondenserDotNet.Server.WindowsAuthentication
             var t = httpContext.Features.Get<IHttpConnectionFeature>();
             var authFeature = httpContext.Features.Get<WindowsAuthFeature>();
 
-            if (authFeature == null || authFeature.Identity == null)
+            if (authFeature == null)
+            {
+                throw new InvalidOperationException("You need the connection filter installed to use windows authentication");
+            }
+            
+            if (authFeature.Identity == null)
             {
                 var sessionId = t.ConnectionId;
 
