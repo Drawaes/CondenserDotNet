@@ -3,7 +3,7 @@ using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
-namespace CondenserDotNet.Server
+namespace CondenserDotNet.Core
 {
     public interface IService
     {

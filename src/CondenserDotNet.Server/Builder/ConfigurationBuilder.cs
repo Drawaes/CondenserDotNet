@@ -57,20 +57,21 @@ namespace CondenserDotNet.Server.Builder
 
         public IWebHost Build()
         {
-            return
-                _builder.ConfigureServices(x =>
-                    {
-                        x.AddCondenserRouter(_agentAddress, _agentPort, this, this, this);
-                    })
-                    .Configure(x =>
-                    {
-                        foreach (var middleware in _preRoute)
-                        {
-                            x.UseMiddleware(middleware);
-                        }
-                        x.UseCondenserRouter();
-                    })
-                    .Build();
+            throw new NotImplementedException();
+            //return
+            //    _builder.ConfigureServices(x =>
+            //        {
+            //            x.AddCondenserRouter(_agentAddress, _agentPort, this, this, this);
+            //        })
+            //        .Configure(x =>
+            //        {
+            //            foreach (var middleware in _preRoute)
+            //            {
+            //                x.UseMiddleware(middleware);
+            //            }
+            //            x.UseCondenserRouter();
+            //        })
+            //        .Build();
         }
 
         public IConfigurationBuilder UsePreRouteMiddleware<T>()

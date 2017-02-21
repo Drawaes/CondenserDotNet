@@ -9,6 +9,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CondenserDotNet.Core\CondenserDotNet.Core.csproj" />
+    <ProjectReference Include="..\CondenserDotNet.Server.Websockets\CondenserDotNet.Server.Websockets.csproj" />
   </ItemGroup>
 
   <ItemGroup>

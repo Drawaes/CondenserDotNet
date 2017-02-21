@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
+using CondenserDotNet.Core;
 using CondenserDotNet.Server.DataContracts;
 using CondenserDotNet.Server.Extensions;
 using Microsoft.AspNetCore.Http;
@@ -24,14 +25,10 @@ namespace CondenserDotNet.Server.Routes
         public override async Task CallService(HttpContext context)
         {
             var index = context.Request.Path.Value.LastIndexOf('/');
-
             if (index > 0)
             {
                 var serviceName = context.Request.Path.Value.Substring(index + 1);
-
-                List<IService> services;
-
-                if (_routingData.ServicesWithHealthChecks.TryGetValue(serviceName, out services))
+                if (_routingData.ServicesWithHealthChecks.TryGetValue(serviceName, out List<IService> services))
                 {
                     var response = new ServerStats[services.Count];
 
@@ -44,8 +41,9 @@ namespace CondenserDotNet.Server.Routes
 
                         double averageRequestTime = 0;
                         if (usage.Calls > 0)
+                        {
                             averageRequestTime = usage.TotalRequestTime / usage.Calls;
-
+                        }
                         response[i] = new ServerStats
                         {
                             ServiceId = service.ServiceId,
@@ -56,12 +54,12 @@ namespace CondenserDotNet.Server.Routes
                     }
 
                     await context.Response.WriteJsonAsync(response);
-                    context.Response.StatusCode = (int) HttpStatusCode.OK;
+                    context.Response.StatusCode = (int)HttpStatusCode.OK;
                 }
                 else
                 {
                     await context.Response.WriteAsync("Unknown server " + serviceName);
-                    context.Response.StatusCode = (int) HttpStatusCode.NotFound;
+                    context.Response.StatusCode = (int)HttpStatusCode.NotFound;
                 }
             }
             else

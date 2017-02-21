@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Logging;
+using CondenserDotNet.Core;
 
 namespace CondenserDotNet.Server.Websockets
 {
@@ -26,15 +27,14 @@ namespace CondenserDotNet.Server.Websockets
             _logger = loggerFactory?.CreateLogger<WebsocketMiddleware>();
         }
 
-        public async Task Invoke(HttpContext context)
+        public Task Invoke(HttpContext context)
         {
             var upgradeFeature = context.Features.Get<IHttpUpgradeFeature>();
             if (upgradeFeature != null)
             {
-                await DoWebSocket(context, upgradeFeature);
-                return;
+                return DoWebSocket(context, upgradeFeature);
             }
-            await _next.Invoke(context);
+            return _next.Invoke(context);
         }
 
         private async Task DoWebSocket(HttpContext context, IHttpUpgradeFeature upgrade)

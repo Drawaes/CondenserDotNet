@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CondenserDotNet.Server\CondenserDotNet.Server.csproj" />
+    <ProjectReference Include="..\CondenserDotNet.Core\CondenserDotNet.Core.csproj" />
   </ItemGroup>
 
 </Project>
