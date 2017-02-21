@@ -46,9 +46,7 @@ namespace CondenserDotNet.Server.Websockets
             
             writer.Append(context.Request.Method, TextEncoder.Utf8);
             writer.Write(_space);
-            context.Items.TryGetValue("matchedPath",out object matchedPath);
-            var pathLength = (matchedPath as string ?? string.Empty).Length;
-            writer.Append(context.Request.Path.Value.Substring(pathLength), TextEncoder.Utf8);
+            writer.Append(context.Request.Path.Value, TextEncoder.Utf8);
             writer.Write(_space);
             writer.Append(context.Request.Protocol, TextEncoder.Utf8);
             writer.Write(_endOfLine);
