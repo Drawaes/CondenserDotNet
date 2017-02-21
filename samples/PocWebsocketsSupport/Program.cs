@@ -1,4 +1,5 @@
 ﻿using System;
+using CondenserDotNet.Server.WindowsAuthentication;
 using Microsoft.AspNetCore.Hosting;
 
 namespace PocWebsocketsSupport
@@ -8,7 +9,10 @@ namespace PocWebsocketsSupport
         static void Main(string[] args)
         {
             var host = new WebHostBuilder()
-               .UseKestrel()
+               .UseKestrel( options =>
+               {
+                   options.UseWindowsAuthentication();
+               })
                .UseUrls($"*://*:50000")
                .UseStartup<Startup>()
                .Build();

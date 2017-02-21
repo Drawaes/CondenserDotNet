@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Logging;
+using CondenserDotNet.Core;
 
 namespace CondenserDotNet.Server.Websockets
 {
@@ -26,15 +27,14 @@ namespace CondenserDotNet.Server.Websockets
             _logger = loggerFactory?.CreateLogger<WebsocketMiddleware>();
         }
 
-        public async Task Invoke(HttpContext context)
+        public Task Invoke(HttpContext context)
         {
             var upgradeFeature = context.Features.Get<IHttpUpgradeFeature>();
-            if (upgradeFeature != null && context.Features.Get<IHttpWebSocketFeature>() == null)
+            if (upgradeFeature != null)
             {
-                await DoWebSocket(context, upgradeFeature);
-                return;
+                return DoWebSocket(context, upgradeFeature);
             }
-            await _next.Invoke(context);
+            return _next.Invoke(context);
         }
 
         private async Task DoWebSocket(HttpContext context, IHttpUpgradeFeature upgrade)
@@ -46,7 +46,9 @@ namespace CondenserDotNet.Server.Websockets
             
             writer.Append(context.Request.Method, TextEncoder.Utf8);
             writer.Write(_space);
-            writer.Append(context.Request.Path.Value, TextEncoder.Utf8);
+            context.Items.TryGetValue("matchedPath",out object matchedPath);
+            var pathLength = (matchedPath as string ?? string.Empty).Length;
+            writer.Append(context.Request.Path.Value.Substring(pathLength), TextEncoder.Utf8);
             writer.Write(_space);
             writer.Append(context.Request.Protocol, TextEncoder.Utf8);
             writer.Write(_endOfLine);

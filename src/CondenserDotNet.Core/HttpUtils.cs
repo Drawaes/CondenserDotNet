@@ -4,6 +4,7 @@ using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace CondenserDotNet.Core
 {
@@ -29,6 +30,18 @@ namespace CondenserDotNet.Core
         {
             var returnValue = new StringContent(JsonConvert.SerializeObject(objectForContent, JsonSettings), Encoding.UTF8, "application/json");
             return returnValue;
+        }
+
+        public static async Task<T> GetObject<T>(this HttpContent content)
+        {
+            var stringConent = await content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<T>(stringConent);
+        }
+
+        public static async Task<T> GetAsync<T>(this HttpClient client, string uri)
+        {
+            var result = await client.GetStringAsync(uri);
+            return JsonConvert.DeserializeObject<T>(result);
         }
 
         public static StringContent GetStringContent(string stringForContent)

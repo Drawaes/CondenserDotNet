@@ -1,4 +1,5 @@
-﻿using CondenserDotNet.Core.Routing;
+﻿using CondenserDotNet.Core;
+using CondenserDotNet.Core.Routing;
 using CondenserDotNet.Server;
 using CondenserDotNet.Server.RoutingTrie;
 using CondenserTests.Fakes;

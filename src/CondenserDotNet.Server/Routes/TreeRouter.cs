@@ -7,6 +7,7 @@ using CondenserDotNet.Server.DataContracts;
 using CondenserDotNet.Server.Extensions;
 using CondenserDotNet.Server.RoutingTrie;
 using Microsoft.AspNetCore.Http;
+using CondenserDotNet.Core;
 
 namespace CondenserDotNet.Server.Routes
 {

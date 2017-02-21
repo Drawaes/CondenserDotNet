@@ -9,8 +9,7 @@ namespace CondenserDotNet.Server.Extensions
 {
     public static class HttpResponseExtensions
     {
-        public static Task WriteJsonAsync<T>
-            (this HttpResponse self, T item)
+        public static Task WriteJsonAsync<T>(this HttpResponse self, T item)
         {
             return self.WriteAsync(JsonConvert.SerializeObject(item));
         }

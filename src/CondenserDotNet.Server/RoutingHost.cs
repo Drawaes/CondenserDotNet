@@ -24,21 +24,19 @@ namespace CondenserDotNet.Server
         private readonly ILogger<RoutingHost> _logger;
         private readonly RoutingData _routingData;
         private readonly Func<IConsulService> _serviceFactory;
+        private string _lastConsulIndex;
 
-        public RoutingHost(CustomRouter router,
-            CondenserConfiguration config, ILoggerFactory logger, 
-            RoutingData routingData, 
-            IEnumerable<IService> customRoutes,
-            Func<IConsulService> serviceFactory)
+        public RoutingHost(CustomRouter router, CondenserConfiguration config, ILoggerFactory logger,
+            RoutingData routingData, IEnumerable<IService> customRoutes, Func<IConsulService> serviceFactory)
         {
             _routingData = routingData;
             _serviceFactory = serviceFactory;
             _logger = logger?.CreateLogger<RoutingHost>();
             _client.Timeout = TimeSpan.FromMinutes(6);
-           _router = router;
+            _router = router;
             _healthCheckUri = $"http://{config.AgentAddress}:{config.AgentPort}{HttpUtils.HealthAnyUrl}?index=";
             _serviceLookupUri = $"http://{config.AgentAddress}:{config.AgentPort}{HttpUtils.SingleServiceCatalogUrl}";
-            WatchLoop();
+            var ignore = WatchLoop();
 
             foreach (var customRoute in customRoutes)
             {
@@ -49,68 +47,84 @@ namespace CondenserDotNet.Server
         public CustomRouter Router => _router;
         public Action<Dictionary<string, List<IService>>> OnRouteBuilt { get; set; }
 
-        private async void WatchLoop()
+        private async Task WatchLoop()
         {
-            string index = string.Empty;
             while (!_cancel.IsCancellationRequested)
             {
-                _logger?.LogInformation("Looking for health changes with index {index}",index);
-                var result = await _client.GetAsync(_healthCheckUri + index);
-                if (!result.IsSuccessStatusCode)
+                try
                 {
-                    _logger?.LogWarning("Retrieved a response that was not success when getting the health status code was {code}", result.StatusCode);
-                    await Task.Delay(TimeSpan.FromSeconds(1));
-                    continue;
-                }
-                index = result.GetConsulIndex();
-                _logger?.LogInformation("Got new set of health information new index is {index}", index);
-
-                var content = await result.Content.ReadAsStringAsync();
-                var healthChecks = JsonConvert.DeserializeObject<HealthCheck[]>(content);
-                _logger?.LogInformation("Total number of health checks returned was {healthCheckCount}", healthChecks.Length);
-                List<InformationService> infoList = BuildListOfHealthyServiceInstances(healthChecks);
-                RemoveDeadInstances(infoList);
-                foreach (var service in _routingData.ServicesWithHealthChecks)
-                {
-                    result = await _client.GetAsync(_serviceLookupUri + service.Key);
-                    content = await result.Content.ReadAsStringAsync();
-                    var infoService = JsonConvert.DeserializeObject<ServiceInstance[]>(content);
-                    foreach (var info in infoService)
+                    _logger?.LogInformation("Looking for health changes with index {index}", _lastConsulIndex);
+                    var result = await _client.GetAsync(_healthCheckUri + _lastConsulIndex, _cancel.Token);
+                    if (!result.IsSuccessStatusCode)
                     {
-                        var instance = GetInstance(info, service.Value);
-                        if (instance == null)
-                        {
-                            var consulInstance = _serviceFactory();
-                            consulInstance.Initialise(info.ServiceID, info.Node, info.ServiceTags, info.ServiceAddress, info.ServicePort);
-                            instance = consulInstance;
-                            
-                            _logger?.LogInformation("Adding a new service instance {serviceId} that is running the service {service} mapped to {routes}", instance.ServiceId, service.Key, instance.Routes);
-                            _router.AddNewService(instance);
-                            service.Value.Add(instance);
-                            continue;
-                        }
-                        var routes = Service.RoutesFromTags(info.ServiceTags);
+                        _logger?.LogWarning("Retrieved a response that was not success when getting the health status code was {code}", result.StatusCode);
+                        await Task.Delay(TimeSpan.FromSeconds(1));
+                        continue;
+                    }
+                    _lastConsulIndex = result.GetConsulIndex();
+                    _logger?.LogInformation("Got new set of health information new index is {index}", _lastConsulIndex);
+                                        
+                    var healthChecks = await result.Content.GetObject<HealthCheck[]>();
+                    await ProcessHealthChecks(healthChecks);
+                }
+                catch(Exception ex)
+                {
+                    _logger.LogError(1000, ex, "There was an error getting available services from consul");
+                    await Task.Delay(TimeSpan.FromSeconds(1));
+                }
+            }
+        }
 
-                        if (instance.Routes.SequenceEqual(routes))
-                        {
-                            continue;
-                        }
-
-                        foreach (var newTag in routes.Except(instance.Routes))
-                        {
-                            _router.AddServiceToRoute(newTag, instance);
-                        }
-
-                        foreach (var oldTag in instance.Routes.Except(routes))
-                        {
-                            _router.RemoveServiceFromRoute(oldTag, instance);
-                        }
-                        instance.UpdateRoutes(routes);
+        private async Task ProcessHealthChecks(HealthCheck[] healthChecks)
+        {
+            _logger?.LogInformation("Total number of health checks returned was {healthCheckCount}", healthChecks.Length);
+            List<InformationService> infoList = BuildListOfHealthyServiceInstances(healthChecks);
+            RemoveDeadInstances(infoList);
+            foreach (var service in _routingData.ServicesWithHealthChecks)
+            {
+                var infoService = await _client.GetAsync<ServiceInstance[]>(_serviceLookupUri + service.Key);
+                foreach (var info in infoService)
+                {
+                    var instance = GetInstance(info, service.Value);
+                    if (instance == null)
+                    {
+                        await CreateNewServiceInstance(service, info);
+                    }
+                    else
+                    {
+                        UpdateExistingRoutes(instance, info);
                     }
                 }
-                _router.CleanUpRoutes();
-                OnRouteBuilt?.Invoke(_routingData.ServicesWithHealthChecks);
             }
+            _router.CleanUpRoutes();
+            OnRouteBuilt?.Invoke(_routingData.ServicesWithHealthChecks);
+        }
+
+        private async Task CreateNewServiceInstance(KeyValuePair<string,List<IService>> service, ServiceInstance info)
+        {
+            var instance = _serviceFactory();
+            await instance.Initialise(info.ServiceID, info.Node, info.ServiceTags, info.ServiceAddress, info.ServicePort);
+            _logger?.LogInformation("Adding a new service instance {serviceId} that is running the service {service} mapped to {routes}", instance.ServiceId, service.Key, instance.Routes);
+            _router.AddNewService(instance);
+            service.Value.Add(instance);
+        }
+
+        private void UpdateExistingRoutes(IService instance, ServiceInstance info)
+        {
+            var routes = Service.RoutesFromTags(info.ServiceTags);
+            if (instance.Routes.SequenceEqual(routes))
+            {
+                return;
+            }
+            foreach (var newTag in routes.Except(instance.Routes))
+            {
+                _router.AddServiceToRoute(newTag, instance);
+            }
+            foreach (var oldTag in instance.Routes.Except(routes))
+            {
+                _router.RemoveServiceFromRoute(oldTag, instance);
+            }
+            instance.UpdateRoutes(routes);
         }
 
         private IService GetInstance(ServiceInstance service, List<IService> instanceList)
@@ -136,7 +150,7 @@ namespace CondenserDotNet.Server
                     {
                         //Service is dead remove it
                         service.Value.Remove(instance);
-                        _logger?.LogInformation("The service instance {serviceId} for service {serviceName} was removed due to failing health",instance.ServiceId, service.Key);
+                        _logger?.LogInformation("The service instance {serviceId} for service {serviceName} was removed due to failing health", instance.ServiceId, service.Key);
                         _router.RemoveService(instance);
                     }
                 }
@@ -149,7 +163,7 @@ namespace CondenserDotNet.Server
             {
                 if (!_routingData.ServicesWithHealthChecks.ContainsKey(i.Service))
                 {
-                    _logger?.LogInformation("New service {serviceName} added because we have found instances of it",i.Service);
+                    _logger?.LogInformation("New service {serviceName} added because we have found instances of it", i.Service);
                     _routingData.ServicesWithHealthChecks[i.Service] = new List<IService>();
                 }
             }
@@ -167,7 +181,7 @@ namespace CondenserDotNet.Server
                     downNodes.Add(check.Node);
                 }
             }
-            _logger?.LogInformation("List of nodes that are currently down is {downNodes}",downNodes);
+            _logger?.LogInformation("List of nodes that are currently down is {downNodes}", downNodes);
             foreach (var check in healthChecks)
             {
                 if (!string.IsNullOrEmpty(check.ServiceID) && check.Status == HealthCheckStatus.Passing && !downNodes.Contains(check.Node))
