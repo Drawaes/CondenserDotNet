@@ -24,6 +24,7 @@ namespace CondenserDotNet.Server
         private readonly ILogger<RoutingHost> _logger;
         private readonly RoutingData _routingData;
         private readonly Func<IConsulService> _serviceFactory;
+        private string _lastConsulIndex;
 
         public RoutingHost(CustomRouter router, CondenserConfiguration config, ILoggerFactory logger,
             RoutingData routingData, IEnumerable<IService> customRoutes, Func<IConsulService> serviceFactory)
@@ -48,46 +49,58 @@ namespace CondenserDotNet.Server
 
         private async Task WatchLoop()
         {
-            string index = string.Empty;
             while (!_cancel.IsCancellationRequested)
             {
-                _logger?.LogInformation("Looking for health changes with index {index}", index);
-                var result = await _client.GetAsync(_healthCheckUri + index);
-                if (!result.IsSuccessStatusCode)
+                try
                 {
-                    _logger?.LogWarning("Retrieved a response that was not success when getting the health status code was {code}", result.StatusCode);
-                    await Task.Delay(TimeSpan.FromSeconds(1));
-                    continue;
-                }
-                index = result.GetConsulIndex();
-                _logger?.LogInformation("Got new set of health information new index is {index}", index);
-
-                var content = await result.Content.ReadAsStringAsync();
-                var healthChecks = JsonConvert.DeserializeObject<HealthCheck[]>(content);
-                _logger?.LogInformation("Total number of health checks returned was {healthCheckCount}", healthChecks.Length);
-                List<InformationService> infoList = BuildListOfHealthyServiceInstances(healthChecks);
-                RemoveDeadInstances(infoList);
-                foreach (var service in _routingData.ServicesWithHealthChecks)
-                {
-                    result = await _client.GetAsync(_serviceLookupUri + service.Key);
-                    content = await result.Content.ReadAsStringAsync();
-                    var infoService = JsonConvert.DeserializeObject<ServiceInstance[]>(content);
-                    foreach (var info in infoService)
+                    _logger?.LogInformation("Looking for health changes with index {index}", _lastConsulIndex);
+                    var result = await _client.GetAsync(_healthCheckUri + _lastConsulIndex, _cancel.Token);
+                    if (!result.IsSuccessStatusCode)
                     {
-                        var instance = GetInstance(info, service.Value);
-                        if (instance == null)
-                        {
-                            await CreateNewServiceInstance(service, info);
-                        }                        
-                        else
-                        {
-                            UpdateExistingRoutes(instance, info);
-                        }
+                        _logger?.LogWarning("Retrieved a response that was not success when getting the health status code was {code}", result.StatusCode);
+                        await Task.Delay(TimeSpan.FromSeconds(1));
+                        continue;
+                    }
+                    _lastConsulIndex = result.GetConsulIndex();
+                    _logger?.LogInformation("Got new set of health information new index is {index}", _lastConsulIndex);
+
+                    var content = await result.Content.ReadAsStringAsync();
+                    var healthChecks = JsonConvert.DeserializeObject<HealthCheck[]>(content);
+                    await ProcessHealthChecks(healthChecks);
+                }
+                catch(Exception ex)
+                {
+                    _logger.LogError(1000, ex, "There was an error getting available services from consul");
+                    await Task.Delay(TimeSpan.FromSeconds(1));
+                }
+            }
+        }
+
+        private async Task ProcessHealthChecks(HealthCheck[] healthChecks)
+        {
+            _logger?.LogInformation("Total number of health checks returned was {healthCheckCount}", healthChecks.Length);
+            List<InformationService> infoList = BuildListOfHealthyServiceInstances(healthChecks);
+            RemoveDeadInstances(infoList);
+            foreach (var service in _routingData.ServicesWithHealthChecks)
+            {
+                var result = await _client.GetAsync(_serviceLookupUri + service.Key);
+                var content = await result.Content.ReadAsStringAsync();
+                var infoService = JsonConvert.DeserializeObject<ServiceInstance[]>(content);
+                foreach (var info in infoService)
+                {
+                    var instance = GetInstance(info, service.Value);
+                    if (instance == null)
+                    {
+                        await CreateNewServiceInstance(service, info);
+                    }
+                    else
+                    {
+                        UpdateExistingRoutes(instance, info);
                     }
                 }
-                _router.CleanUpRoutes();
-                OnRouteBuilt?.Invoke(_routingData.ServicesWithHealthChecks);
             }
+            _router.CleanUpRoutes();
+            OnRouteBuilt?.Invoke(_routingData.ServicesWithHealthChecks);
         }
 
         private async Task CreateNewServiceInstance(KeyValuePair<string,List<IService>> service, ServiceInstance info)
