@@ -41,6 +41,7 @@ namespace CondenserDotNet.Server
         public int Calls => _calls;
         public double TotalRequestTime => _totalRequestTime;
         public IPEndPoint IpEndPoint => _ipEndPoint;
+        public bool RequiresAuthentication => true;
 
         public static string[] RoutesFromTags(string[] tags)
         {
