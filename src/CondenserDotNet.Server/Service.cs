@@ -18,7 +18,7 @@ namespace CondenserDotNet.Server
         private string _address;
         private int _port;
         private CurrentState _stats;
-        private readonly IHttpClientConfig _clientFactory;
+        private readonly Func<string, HttpClient> _clientFactory;
         private IPEndPoint _ipEndPoint;
         private Version[] _supportedVersions;
         private string[] _tags;
@@ -27,7 +27,7 @@ namespace CondenserDotNet.Server
         private int _totalRequestTime;
         private string _hostString;
 
-        public Service(CurrentState stats, IHttpClientConfig clientFactory)
+        public Service(CurrentState stats, Func<string, HttpClient> clientFactory)
         {
             _stats = stats;
             _clientFactory = clientFactory;
@@ -189,7 +189,7 @@ namespace CondenserDotNet.Server
             }
             _supportedVersions = tags.Where(t => t.StartsWith("version=")).Select(t => new Version(t.Substring(8))).ToArray();
             _hostString = $"{_address}:{_port}";
-            _httpClient = _clientFactory?.Create(ServiceId) ?? new HttpClient();
+            _httpClient = _clientFactory?.Invoke(ServiceId) ?? new HttpClient();
         }
 
         public void Dispose()

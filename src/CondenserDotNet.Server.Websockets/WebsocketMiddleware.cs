@@ -30,7 +30,7 @@ namespace CondenserDotNet.Server.Websockets
         public Task Invoke(HttpContext context)
         {
             var upgradeFeature = context.Features.Get<IHttpUpgradeFeature>();
-            if (upgradeFeature != null)
+            if (upgradeFeature != null && context.Request.Headers["Upgrade"].Count > 0)
             {
                 return DoWebSocket(context, upgradeFeature);
             }

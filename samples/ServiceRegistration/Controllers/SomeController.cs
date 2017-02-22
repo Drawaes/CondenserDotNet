@@ -1,20 +1,15 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Linq;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ServiceRegistration.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("/testSample/test3/test1")]
     public class SomeController : Controller
     {
-        [Route("SomeObject")]
-        public IActionResult Get()
-        {
-            return Ok("Some object");
-        }
-
-        [Route("SomeOtherObject")]
+        [HttpGet()]
         public IActionResult GetOther()
         {
-            return Ok("Some other object");
+            return Ok(Enumerable.Repeat("Quick Brown Fox",100));
         }
     }
 }

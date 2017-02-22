@@ -24,7 +24,9 @@ namespace PocWebsocketsSupport
         public void Configure(IApplicationBuilder app)
         {
             app.UseWindowsAuthentication();
-            app.UseCondenser();
+            app.UseMiddleware<RoutingMiddleware>();
+            app.UseMiddleware<WebsocketMiddleware>();
+            app.UseMiddleware<CondenserDotNet.Server.HttpPipelineClient.ServiceCallMiddleware>(); //
         }
     }
 }
