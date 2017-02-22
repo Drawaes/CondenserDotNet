@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using CondenserDotNet.Core;
 
-namespace CondenserDotNet.Server
+namespace CondenserDotNet.Core
 {
     public interface IConsulService : IService
     {

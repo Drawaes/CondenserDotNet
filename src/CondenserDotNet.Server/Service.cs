@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using CondenserDotNet.Core;
 using CondenserDotNet.Server.Routes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
