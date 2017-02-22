@@ -32,8 +32,8 @@ namespace CondenserDotNet.Server.HttpPipelineClient
         {
             var service = context.Features.Get<IService>();
             var endPoint = service.IpEndPoint;
-            var socket = await System.IO.Pipelines.Networking.Sockets.SocketConnection.ConnectAsync(endPoint);
-            var writer = socket.Output.Alloc();
+            _socket = await SocketConnection.ConnectAsync(endPoint);
+            var writer = _socket.Output.Alloc();
             writer.Append(context.Request.Method, TextEncoder.Utf8);
             writer.Write(_space);
             writer.Append(context.Request.Path.Value, TextEncoder.Utf8);
@@ -50,6 +50,7 @@ namespace CondenserDotNet.Server.HttpPipelineClient
             writer.Write(_endOfLine);
             await writer.FlushAsync();
             await ReadResponse(context);
+            await _socket.DisposeAsync();
         }
 
         private enum ParseMode
@@ -63,16 +64,17 @@ namespace CondenserDotNet.Server.HttpPipelineClient
         {
             var mode = ParseMode.InitialLine;
             bool isChunked = false;
-            int contentLength = 0;
+            int nextChunkSize = 0;
+            bool lastChunk = false;
             while (true)
             {
                 var reader = await _socket.Input.ReadAsync();
                 var buffer = reader.Buffer;
                 try
                 {
-                    if(mode == ParseMode.InitialLine)
+                    if (mode == ParseMode.InitialLine)
                     {
-                        if(!buffer.TrySliceTo(_endOfLine, out ReadableBuffer currentSlice, out ReadCursor cursor))
+                        if (!buffer.TrySliceTo(_endOfLine, out ReadableBuffer currentSlice, out ReadCursor cursor))
                         {
                             continue;
                         }
@@ -115,20 +117,62 @@ namespace CondenserDotNet.Server.HttpPipelineClient
                                     isChunked = true;
                                 }
                             }
+                            else if (keyString == "Content-Length")
+                            {
+                                context.Response.ContentLength = int.Parse(values[0]);
+                            }
                             context.Response.Headers[key.GetUtf8String()] = new Microsoft.Extensions.Primitives.StringValues(values);
                         }
-                        if(mode == ParseMode.Body)
+                        if (mode == ParseMode.Body)
                         {
-                            if(isChunked)
+                            if (isChunked)
                             {
-                                
+                                while (true)
+                                {
+                                    if (nextChunkSize == 0)
+                                    {
+                                        //looking for a length, slice a line
+                                        if (!buffer.TrySliceTo(_endOfLine, out ReadableBuffer lengthLine, out cursor))
+                                        {
+                                            break;
+                                        }
+                                        //We have the first line
+                                        await buffer.Slice(0, lengthLine.Length + _endOfLine.Length).CopyToAsync(context.Response.Body);
+                                        buffer = buffer.Slice(cursor).Slice(_endOfLine.Length);
+                                        nextChunkSize = int.Parse(lengthLine.GetAsciiString(), System.Globalization.NumberStyles.HexNumber);
+                                        if (nextChunkSize == 0)
+                                        {
+                                            lastChunk = true;
+                                        }
+                                        nextChunkSize+=2;
+                                    }
+                                    if (buffer.Length > 0)
+                                    {
+                                        var dataToSend = Math.Min(nextChunkSize, buffer.Length);
+                                        await buffer.Slice(0, dataToSend).CopyToAsync(context.Response.Body);
+                                        buffer = buffer.Slice(dataToSend);
+                                        nextChunkSize -= dataToSend;
+                                        if (nextChunkSize == 0 && lastChunk)
+                                        {
+                                            return;
+                                        }
+                                        if (buffer.Length == 0)
+                                        {
+                                            break;
+                                        }
+                                    }
+                                }
                             }
                             else
                             {
-                                if(context.Response.ContentLength == 0)
+                                if (context.Response.ContentLength == 0)
                                 {
                                     //Finished
                                     return;
+                                }
+                                else
+                                {
+                                    throw new NotImplementedException();
                                 }
                             }
                         }

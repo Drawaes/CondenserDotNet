@@ -26,7 +26,7 @@ namespace PocWebsocketsSupport
             app.UseWindowsAuthentication();
             app.UseMiddleware<RoutingMiddleware>();
             app.UseMiddleware<WebsocketMiddleware>();
-            app.UseMiddleware<CondenserDotNet.Server.HttpPipelineClient.ServiceCallMiddleware>(); //
+            app.UseMiddleware<ServiceCallMiddleware>(); //CondenserDotNet.Server.HttpPipelineClient.
         }
     }
 }

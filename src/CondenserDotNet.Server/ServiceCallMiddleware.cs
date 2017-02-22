@@ -21,11 +21,10 @@ namespace CondenserDotNet.Server
             _routeData = routeData;
         }
 
-        public async Task Invoke(HttpContext context)
+        public Task Invoke(HttpContext context)
         {
             var service = context.Features.Get<IService>();
-            await service.CallService(context);
-            await _next(context);
+            return service.CallService(context);
         }
     }
 }
