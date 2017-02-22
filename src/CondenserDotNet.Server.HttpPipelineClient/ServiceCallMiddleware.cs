@@ -120,6 +120,7 @@ namespace CondenserDotNet.Server.HttpPipelineClient
                             else if (keyString == "Content-Length")
                             {
                                 context.Response.ContentLength = int.Parse(values[0]);
+                                nextChunkSize = (int)context.Response.ContentLength.Value;
                             }
                             context.Response.Headers[key.GetUtf8String()] = new Microsoft.Extensions.Primitives.StringValues(values);
                         }
@@ -172,7 +173,14 @@ namespace CondenserDotNet.Server.HttpPipelineClient
                                 }
                                 else
                                 {
-                                    throw new NotImplementedException();
+                                    var amountTowrite = Math.Min(nextChunkSize, buffer.Length);
+                                    await buffer.Slice(0, amountTowrite).CopyToAsync( context.Response.Body);
+                                    nextChunkSize -= amountTowrite;
+                                    buffer = buffer.Slice(amountTowrite);
+                                    if(nextChunkSize == 0)
+                                    {
+                                        return;
+                                    }
                                 }
                             }
                         }
