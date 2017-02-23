@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CondenserDotNet.Core;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace CondenserDotNet.Server.HttpPipelineClient
 {
@@ -24,13 +25,15 @@ namespace CondenserDotNet.Server.HttpPipelineClient
         private Version[] _supportedVersions;
         private string[] _tags;
         private string _serviceId;
+        private ILogger _logger;
         private int _calls;
         private int _totalRequestTime;
         private string _hostString;
         private ConcurrentQueue<IPipeConnection> _pooledConnections = new ConcurrentQueue<IPipeConnection>();
 
-        public ServiceWithCustomClient(CurrentState stats)
+        public ServiceWithCustomClient(CurrentState stats, ILoggerFactory loggingFactory)
         {
+            _logger = loggingFactory.CreateLogger<ServiceWithCustomClient>();
             _stats = stats;
             _pooledConnections = new ConcurrentQueue<IPipeConnection>();
         }
@@ -52,11 +55,16 @@ namespace CondenserDotNet.Server.HttpPipelineClient
                 if (!_pooledConnections.TryDequeue(out IPipeConnection socket))
                 {
                     socket = await System.IO.Pipelines.Networking.Sockets.SocketConnection.ConnectAsync(IpEndPoint);
+                    _logger.LogInformation("Created new socket");
+                }
+                else
+                {
+                    _logger.LogInformation("Got connection from the pool, current pool size {poolSize}", _pooledConnections.Count);
                 }
                 await socket.WriteHeadersAsync(context, _host);
                 await socket.WriteBodyAsync(context);
-                await socket.ReceiveHeaderAsync(context);
-                await socket.ReceiveBodyAsync(context);
+                var buffer = await socket.ReceiveHeaderAsync(context);
+                await socket.ReceiveBodyAsync(context, buffer, _logger);
 
                 _pooledConnections.Enqueue(socket);
             }

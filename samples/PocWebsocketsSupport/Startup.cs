@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace PocWebsocketsSupport
 {
@@ -25,12 +26,13 @@ namespace PocWebsocketsSupport
             services.AddSingleton<Func<IConsulService>>(x => x.GetService<ServiceWithCustomClient>);
         }
 
-        public void Configure(IApplicationBuilder app)
+        public void Configure(IApplicationBuilder app, ILoggerFactory logger)
         {
-            app.UseWindowsAuthentication();
+            logger.AddConsole(LogLevel.Information, true);
+            //app.UseWindowsAuthentication();
             app.UseMiddleware<RoutingMiddleware>();
             app.UseMiddleware<WebsocketMiddleware>();
-            app.UseMiddleware<ServiceCallMiddleware>(); //CondenserDotNet.Server.HttpPipelineClient.
+            app.UseMiddleware<ServiceCallMiddleware>();
         }
     }
 }
