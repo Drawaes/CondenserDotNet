@@ -63,8 +63,8 @@ namespace CondenserDotNet.Server.HttpPipelineClient
                 }
                 await socket.WriteHeadersAsync(context, _host);
                 await socket.WriteBodyAsync(context);
-                var buffer = await socket.ReceiveHeaderAsync(context);
-                await socket.ReceiveBodyAsync(context, buffer, _logger);
+                await socket.ReceiveHeaderAsync(context);
+                await socket.ReceiveBodyAsync(context, _logger);
 
                 _pooledConnections.Enqueue(socket);
             }
