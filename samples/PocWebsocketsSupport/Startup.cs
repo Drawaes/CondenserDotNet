@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using CondenserDotNet.Core;
 using CondenserDotNet.Core.Routing;
 using CondenserDotNet.Server;
+using CondenserDotNet.Server.HttpPipelineClient;
 using CondenserDotNet.Server.RoutingTrie;
 using CondenserDotNet.Server.Websockets;
 using CondenserDotNet.Server.WindowsAuthentication;
@@ -19,6 +21,8 @@ namespace PocWebsocketsSupport
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCondenser();
+            services.AddTransient<ServiceWithCustomClient>();
+            services.AddSingleton<Func<IConsulService>>(x => x.GetService<ServiceWithCustomClient>);
         }
 
         public void Configure(IApplicationBuilder app)

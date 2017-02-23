@@ -1,0 +1,160 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO.Pipelines;
+using System.IO.Pipelines.Text.Primitives;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+
+namespace CondenserDotNet.Server.HttpPipelineClient
+{
+    public static class HttpResponseHelper
+    {
+        private static readonly Task _cachedTask = Task.FromResult(0);
+
+        public static async Task ReceiveHeaderAsync(this IPipeConnection connection, HttpContext context)
+        {
+            while (true)
+            {
+                var reader = await connection.Input.ReadAsync();
+                var buffer = reader.Buffer;
+                try
+                {
+                    if (!buffer.TrySliceTo(HttpConsts.HeadersEnd, out ReadableBuffer currentSlice, out ReadCursor cursor))
+                    {
+                        continue;
+                    }
+                    buffer = buffer.Slice(cursor).Slice(HttpConsts.HeadersEnd.Length);
+                    //first line
+                    if (!currentSlice.TrySliceTo(HttpConsts.EndOfLine, out ReadableBuffer currentLine, out cursor))
+                    {
+                        throw new InvalidOperationException();
+                    }
+                    context.Response.StatusCode = int.Parse(currentLine.Split(HttpConsts.Space[0]).Skip(1).First().GetAsciiString());
+                    currentSlice = currentSlice.Slice(cursor).Slice(HttpConsts.EndOfLine.Length);
+
+                    while (currentSlice.Length > 0)
+                    {
+                        if (!currentSlice.TrySliceTo(HttpConsts.EndOfLine, out ReadableBuffer headerLine, out cursor))
+                        {
+                            headerLine = currentSlice;
+                            currentSlice = currentSlice.Slice(currentSlice.Length);
+                        }
+                        else
+                        {
+                            currentSlice = currentSlice.Slice(cursor).Slice(HttpConsts.EndOfLine.Length);
+                        }
+                        if (!headerLine.TrySliceTo(HttpConsts.HeaderSplit, out ReadableBuffer key, out cursor))
+                        {
+                            throw new NotImplementedException();
+                        }
+                        var keyString = key.GetUtf8String();
+                        var values = headerLine.Slice(cursor).Slice(HttpConsts.HeaderSplit.Length).GetUtf8String().Split(new string[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+                        if (keyString == "Content-Length")
+                        {
+                            context.Response.ContentLength = int.Parse(values[0]);
+                        }
+                        context.Response.Headers[key.GetUtf8String()] = new Microsoft.Extensions.Primitives.StringValues(values);
+                    }
+                    return;
+                }
+                finally
+                {
+                    connection.Input.Advance(buffer.Start, buffer.End);
+                }
+            }
+        }
+
+        public static Task ReceiveBodyAsync(this IPipeConnection connection, HttpContext context)
+        {
+            if (context.Request.Headers["Transfer-Encoding"] == "chunked")
+            {
+                return connection.ReceiveChunkedBody(context);
+            }
+            if (context.Request.ContentLength > 0)
+            {
+                return connection.ReceiveContentLengthBody(context);
+            }
+            return _cachedTask;
+        }
+
+        private static async Task ReceiveContentLengthBody(this IPipeConnection connection, HttpContext context)
+        {
+            var contentSize = (int)context.Response.ContentLength.Value;
+            while (true)
+            {
+                var reader = await connection.Input.ReadAsync();
+                var buffer = reader.Buffer;
+                try
+                {
+                    var amountTowrite = Math.Min(contentSize, buffer.Length);
+                    await buffer.Slice(0, amountTowrite).CopyToAsync(context.Response.Body);
+                    contentSize -= amountTowrite;
+                    buffer = buffer.Slice(amountTowrite);
+                    if (contentSize == 0)
+                    {
+                        return;
+                    }
+                }
+                finally
+                {
+                    connection.Input.Advance(buffer.Start, buffer.End);
+                }
+            }
+        }
+    
+        private static async Task ReceiveChunkedBody(this IPipeConnection connection, HttpContext context)
+        {
+            var nextChunkSize = 0;
+            var lastChunk = false;
+            while (true)
+            {
+                var reader = await connection.Input.ReadAsync();
+                var buffer = reader.Buffer;
+                try
+                {
+                    while (true)
+                    {
+                        if (nextChunkSize == 0)
+                        {
+                            //looking for a length, slice a line
+                            if (!buffer.TrySliceTo(HttpConsts.EndOfLine, out ReadableBuffer lengthLine, out ReadCursor cursor))
+                            {
+                                break;
+                            }
+                            //We have the first line
+                            await buffer.Slice(0, lengthLine.Length + HttpConsts.EndOfLine.Length).CopyToAsync(context.Response.Body);
+                            buffer = buffer.Slice(cursor).Slice(HttpConsts.EndOfLine.Length);
+                            nextChunkSize = int.Parse(lengthLine.GetAsciiString(), System.Globalization.NumberStyles.HexNumber);
+                            if (nextChunkSize == 0)
+                            {
+                                lastChunk = true;
+                            }
+                            nextChunkSize+=2;
+                        }
+                        if (buffer.Length > 0)
+                        {
+                            var dataToSend = Math.Min(nextChunkSize, buffer.Length);
+                            await buffer.Slice(0, dataToSend).CopyToAsync(context.Response.Body);
+                            buffer = buffer.Slice(dataToSend);
+                            nextChunkSize -= dataToSend;
+                            if (nextChunkSize == 0 && lastChunk)
+                            {
+                                return;
+                            }
+                            if (buffer.Length == 0)
+                            {
+                                break;
+                            }
+                        }
+                    }
+                }
+                finally
+                {
+                    connection.Input.Advance(buffer.Start, buffer.End);
+                }
+            }
+        }
+    }
+}

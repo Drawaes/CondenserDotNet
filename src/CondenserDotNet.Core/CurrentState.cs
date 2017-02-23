@@ -1,7 +1,7 @@
 ﻿using System;
 using Microsoft.Extensions.Logging;
 
-namespace CondenserDotNet.Server.Routes
+namespace CondenserDotNet.Core
 {
     public class CurrentState
     {
@@ -16,7 +16,7 @@ namespace CondenserDotNet.Server.Routes
             public int Http300Responses;
             public int Http400Responses;
             public int Http500Responses;
-            public TimeSpan UpTime { get;set;}
+            public TimeSpan UpTime;
         }
 
         public CurrentState(ILoggerFactory logger)

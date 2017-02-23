@@ -13,7 +13,6 @@ namespace CondenserDotNet.Server
 {
     public class Service : IDisposable, IConsulService, IUsageInfo
     {
-        private const string UrlPrefix = "urlprefix-";
         private HttpClient _httpClient;
         private readonly System.Threading.CountdownEvent _waitUntilRequestsAreFinished = new System.Threading.CountdownEvent(1);
         private string _address;
@@ -43,41 +42,6 @@ namespace CondenserDotNet.Server
         public double TotalRequestTime => _totalRequestTime;
         public IPEndPoint IpEndPoint => _ipEndPoint;
         public bool RequiresAuthentication => true;
-
-        public static string[] RoutesFromTags(string[] tags)
-        {
-            int returnCount = 0;
-            for (int i = 0; i < tags.Length; i++)
-            {
-                if (!tags[i].StartsWith(UrlPrefix))
-                {
-                    continue;
-                }
-                returnCount++;
-            }
-            var returnValues = new string[returnCount];
-            returnCount = 0;
-            for (int i = 0; i < tags.Length; i++)
-            {
-                if (!tags[i].StartsWith(UrlPrefix))
-                {
-                    continue;
-                }
-                var startSubstIndex = UrlPrefix.Length;
-                var endSubstIndex = tags[i].Length - UrlPrefix.Length;
-                if (tags[i][tags[i].Length - 1] == '/')
-                {
-                    endSubstIndex--;
-                }
-                returnValues[returnCount] = tags[i].Substring(startSubstIndex, endSubstIndex);
-                if (returnValues[returnCount][0] != '/')
-                {
-                    returnValues[returnCount] = "/" + returnValues[returnCount];
-                }
-                returnCount++;
-            }
-            return returnValues;
-        }
 
         public async Task CallService(HttpContext context)
         {
@@ -178,7 +142,7 @@ namespace CondenserDotNet.Server
             _address = address;
             _port = port;
             _tags = tags;
-            Routes = RoutesFromTags(tags);
+            Routes = ServiceUtils.RoutesFromTags(tags);
             _serviceId = serviceId;
             NodeId = nodeId;
             try

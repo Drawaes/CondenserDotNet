@@ -111,7 +111,7 @@ namespace CondenserDotNet.Server
 
         private void UpdateExistingRoutes(IService instance, ServiceInstance info)
         {
-            var routes = Service.RoutesFromTags(info.ServiceTags);
+            var routes = ServiceUtils.RoutesFromTags(info.ServiceTags);
             if (instance.Routes.SequenceEqual(routes))
             {
                 return;

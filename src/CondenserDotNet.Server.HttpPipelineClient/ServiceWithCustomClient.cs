@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO.Pipelines;
+using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using CondenserDotNet.Core;
@@ -12,40 +15,113 @@ namespace CondenserDotNet.Server.HttpPipelineClient
 {
     public class ServiceWithCustomClient : IService, IConsulService
     {
+        private readonly System.Threading.CountdownEvent _waitUntilRequestsAreFinished = new System.Threading.CountdownEvent(1);
+        private string _address;
+        private int _port;
+        private string _host;
+        private CurrentState _stats;
+        private IPEndPoint _ipEndPoint;
+        private Version[] _supportedVersions;
+        private string[] _tags;
         private string _serviceId;
-        private string _nodeId;
+        private int _calls;
+        private int _totalRequestTime;
+        private string _hostString;
         private ConcurrentQueue<IPipeConnection> _pooledConnections = new ConcurrentQueue<IPipeConnection>();
 
-        public ServiceWithCustomClient()
+        public ServiceWithCustomClient(CurrentState stats)
         {
+            _stats = stats;
             _pooledConnections = new ConcurrentQueue<IPipeConnection>();
         }
 
-        public Version[] SupportedVersions => throw new NotImplementedException();
-        public string[] Tags => throw new NotImplementedException();
-        public string[] Routes => throw new NotImplementedException();
+        public Version[] SupportedVersions => _supportedVersions;
+        public string[] Tags => _tags;
+        public string[] Routes { get; private set; }
         public string ServiceId => _serviceId;
-        public string NodeId => _nodeId;
-        public IPEndPoint IpEndPoint => throw new NotImplementedException();
+        public string NodeId { get; private set; }
+        public int Calls => _calls;
+        public double TotalRequestTime => _totalRequestTime;
+        public IPEndPoint IpEndPoint => _ipEndPoint;
         public bool RequiresAuthentication => true;
 
         public async Task CallService(HttpContext context)
         {
-            if(!_pooledConnections.TryDequeue(out IPipeConnection socket))
+            try
             {
-                socket = await System.IO.Pipelines.Networking.Sockets.SocketConnection.ConnectAsync(IpEndPoint);
+                if (!_pooledConnections.TryDequeue(out IPipeConnection socket))
+                {
+                    socket = await System.IO.Pipelines.Networking.Sockets.SocketConnection.ConnectAsync(IpEndPoint);
+                }
+                await socket.WriteHeadersAsync(context, _host);
+                await socket.WriteBodyAsync(context);
+                await socket.ReceiveHeaderAsync(context);
+                await socket.ReceiveBodyAsync(context);
+
+                _pooledConnections.Enqueue(socket);
             }
-            await socket.WriteHeadersAsync(context);
+            catch
+            {
+                Debug.Assert(false);
+            }
+
         }
 
-        public Task Initialise(string serviceId, string nodeId, string[] tags, string address, int port)
+        public override int GetHashCode()
         {
-            throw new NotImplementedException();
+            return ServiceId.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            var otherService = obj as ServiceWithCustomClient;
+            if (otherService != null)
+            {
+
+                if (otherService.ServiceId != ServiceId)
+                {
+                    return false;
+                }
+                if (!Tags.SequenceEqual(otherService.Tags))
+                {
+                    return false;
+                }
+                return true;
+            }
+            return false;
         }
 
         public void UpdateRoutes(string[] routes)
         {
-            throw new NotImplementedException();
+            Routes = routes;
+        }
+
+        public async Task Initialise(string serviceId, string nodeId, string[] tags, string address, int port)
+        {
+            _address = address;
+            _port = port;
+            _tags = tags;
+            Routes = ServiceUtils.RoutesFromTags(tags);
+            _serviceId = serviceId;
+            NodeId = nodeId;
+            _host = $"{_address}:{_port}";
+            try
+            {
+                var result = await Dns.GetHostAddressesAsync(address);
+                _ipEndPoint = new IPEndPoint(result[0], port);
+            }
+            catch
+            {
+            }
+            _supportedVersions = tags.Where(t => t.StartsWith("version=")).Select(t => new Version(t.Substring(8))).ToArray();
+            _hostString = $"{_address}:{_port}";
+        }
+
+        public void Dispose()
+        {
+            _waitUntilRequestsAreFinished.Signal();
+            _waitUntilRequestsAreFinished.Wait(5000);
+            _waitUntilRequestsAreFinished.Dispose();
         }
     }
 }

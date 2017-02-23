@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
+using CondenserDotNet.Core;
 using CondenserDotNet.Server.Builder;
 using CondenserDotNet.Server.DataContracts;
 using CondenserDotNet.Server.Extensions;

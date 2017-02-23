@@ -16,4 +16,13 @@
   <ItemGroup>
     <ProjectReference Include="..\CondenserDotNet.Core\CondenserDotNet.Core.csproj" />
   </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
+    <PackageReference Include="System.Net.NameResolution" Version="$(CoreFxVersion)" />
+  </ItemGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net451' ">
+    <Reference Include="System.Net.Http" />
+  </ItemGroup>
+
 </Project>
