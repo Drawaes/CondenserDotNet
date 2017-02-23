@@ -24,15 +24,16 @@ namespace CondenserDotNet.Server
 
         public Task Invoke(HttpContext httpContext)
         {
-            using (var scope = _logger.BeginScope("Started request scope {path}", httpContext.Request.Path))
+            using (var scope = _logger?.BeginScope("Started request scope {path}", httpContext.Request.Path))
             {
                 var service = _routeData.Router.GetServiceFromRoute(httpContext.Request.Path, out string matchedPath);
                 if (service == null)
                 {
-                    _logger?.LogTrace("No matching route for {path}", httpContext.Request.Path);
+                    _logger?.LogInformation("No matching route for {path}", httpContext.Request.Path);
                     httpContext.Response.StatusCode = (int)HttpStatusCode.NotFound;
                     return _completedTask;
                 }
+                _logger?.LogInformation("Found matching path {path} to service {serviceName}", httpContext.Request.Path, service.ServiceId);
                 httpContext.Features.Set(service);
                 httpContext.Items.Add("matchedPath", matchedPath);
                 return _next.Invoke(httpContext);

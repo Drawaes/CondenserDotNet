@@ -33,7 +33,7 @@ namespace CondenserDotNet.Server.HttpPipelineClient
 
         public ServiceWithCustomClient(CurrentState stats, ILoggerFactory loggingFactory)
         {
-            _logger = loggingFactory.CreateLogger<ServiceWithCustomClient>();
+            _logger = loggingFactory?.CreateLogger<ServiceWithCustomClient>();
             _stats = stats;
             _pooledConnections = new ConcurrentQueue<IPipeConnection>();
         }
@@ -55,11 +55,11 @@ namespace CondenserDotNet.Server.HttpPipelineClient
                 if (!_pooledConnections.TryDequeue(out IPipeConnection socket))
                 {
                     socket = await System.IO.Pipelines.Networking.Sockets.SocketConnection.ConnectAsync(IpEndPoint);
-                    _logger.LogInformation("Created new socket");
+                    _logger?.LogInformation("Created new socket");
                 }
                 else
                 {
-                    _logger.LogInformation("Got connection from the pool, current pool size {poolSize}", _pooledConnections.Count);
+                    _logger?.LogInformation("Got a connection from the pool, current pool size {poolSize}", _pooledConnections.Count);
                 }
                 await socket.WriteHeadersAsync(context, _host);
                 await socket.WriteBodyAsync(context);
@@ -70,7 +70,7 @@ namespace CondenserDotNet.Server.HttpPipelineClient
             }
             catch
             {
-                Debug.Assert(false);
+                throw new NotImplementedException();
             }
 
         }
@@ -82,10 +82,8 @@ namespace CondenserDotNet.Server.HttpPipelineClient
 
         public override bool Equals(object obj)
         {
-            var otherService = obj as ServiceWithCustomClient;
-            if (otherService != null)
+            if (obj is ServiceWithCustomClient otherService)
             {
-
                 if (otherService.ServiceId != ServiceId)
                 {
                     return false;

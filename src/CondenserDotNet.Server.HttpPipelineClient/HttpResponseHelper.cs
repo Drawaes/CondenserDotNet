@@ -151,7 +151,7 @@ namespace CondenserDotNet.Server.HttpPipelineClient
                             nextChunkSize -= dataToSend;
                             if (nextChunkSize == 0 && lastChunk)
                             {
-                                logger.LogInformation("Finished sending chunked data remaining buffer size {bufferSize}", buffer.Length);
+                                logger?.LogInformation("Finished sending chunked data remaining buffer size {bufferSize}", buffer.Length);
                                 return;
                             }
                             if (buffer.Length == 0)

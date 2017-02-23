@@ -69,7 +69,7 @@ namespace CondenserDotNet.Server
                 }
                 catch(Exception ex)
                 {
-                    _logger.LogError(1000, ex, "There was an error getting available services from consul");
+                    _logger?.LogError(1000, ex, "There was an error getting available services from consul");
                     await Task.Delay(TimeSpan.FromSeconds(1));
                 }
             }

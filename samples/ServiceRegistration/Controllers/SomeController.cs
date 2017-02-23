@@ -6,10 +6,12 @@ namespace ServiceRegistration.Controllers
     [Route("/testSample/test3/test1")]
     public class SomeController : Controller
     {
+        private readonly static string[] _content = Enumerable.Repeat("Quick Brown Fox", 100).ToArray();
+
         [HttpGet()]
         public IActionResult GetOther()
         {
-            return Ok(Enumerable.Repeat("Quick Brown Fox",100));
+            return Ok(_content);
         }
     }
 }
