@@ -11,8 +11,8 @@ namespace CondenserDotNet.Server.HttpPipelineClient
     public static class HttpRequestHelper
     {
         private static readonly Task _cachedTask = Task.FromResult(0);
-        
-        public static WritableBufferAwaitable WriteHeadersAsync(this IPipeConnection connection, HttpContext context,string host)
+
+        public static WritableBufferAwaitable WriteHeadersAsync(this IPipeConnection connection, HttpContext context, string host)
         {
             var writer = connection.Output.Alloc();
             writer.Append(context.Request.Method, TextEncoder.Utf8);
@@ -45,18 +45,35 @@ namespace CondenserDotNet.Server.HttpPipelineClient
         {
             if (context.Request.Headers["Transfer-Encoding"] == "chunked")
             {
-                
+                return connection.WriteChunkedBody(context);
             }
             if (context.Request.ContentLength > 0)
             {
-                throw new NotImplementedException();
+                return connection.WriteBody(context);
             }
             return _cachedTask;
         }
 
+        private static async Task WriteBody(this IPipeConnection connection, HttpContext context)
+        {
+            long bytesToWrite = context.Request.ContentLength.Value;
+            while (bytesToWrite > 0)
+            {
+                var buffer = connection.Output.Alloc();
+                if (!buffer.Memory.TryGetArray(out ArraySegment<byte> byteArray))
+                {
+                    throw new NotImplementedException();
+                }
+                var byteCount = await context.Request.Body.ReadAsync(byteArray.Array, byteArray.Offset, byteArray.Count);
+                buffer.Advance(byteCount);
+                bytesToWrite -= byteCount;
+                await buffer.FlushAsync();
+            }
+        }
+
         private static async Task WriteChunkedBody(this IPipeConnection connection, HttpContext context)
         {
-            while(true)
+            while (true)
             {
                 var buffer = connection.Output.Alloc(512);
                 try
