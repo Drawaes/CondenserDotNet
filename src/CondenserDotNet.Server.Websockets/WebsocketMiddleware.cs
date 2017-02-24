@@ -63,6 +63,7 @@ namespace CondenserDotNet.Server.Websockets
             {
                 var reader = await socket.Input.ReadAsync();
                 var buffer = reader.Buffer;
+
                 try
                 {
                     if(!buffer.TrySliceTo(_headersEnd, out ReadableBuffer headers, out ReadCursor cursor))
