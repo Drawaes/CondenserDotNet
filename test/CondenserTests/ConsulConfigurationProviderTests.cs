@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using CondenserDotNet.Client.Configuration;
+using CondenserDotNet.Configuration;
 using CondenserTests.Fakes;
 using Microsoft.Extensions.Configuration;
 using Xunit;
@@ -16,7 +16,7 @@ namespace CondenserTests
             registry.SetKeyAsync("FakeConfig:Setting2", "def");
 
             var builder = new ConfigurationBuilder()
-                .AddJsonConsul(registry)
+                .AddConfigurationRegistry(registry)
                 .Build();
 
             var config = new FakeConfig();
@@ -36,7 +36,7 @@ namespace CondenserTests
             registry.SetKeyAsync("my/config/section/objectlist:1:Setting2", "4");
 
             var builder = new ConfigurationBuilder()
-                .AddJsonConsul(registry)
+                .AddConfigurationRegistry(registry)
                 .Build();
 
             var config = new List<FakeConfig>();
@@ -56,12 +56,11 @@ namespace CondenserTests
             const string keyValue = "value1";
 
             var registry = new FakeConfigurationRegistry();
-            var sut = new ConsulProvider(registry);
+            var sut = new ConfigurationRegistryProvider(registry);
 
             registry.SetKeyAsync(key, keyValue);
 
-            string value;
-            sut.TryGet(key, out value);
+            sut.TryGet(key, out string value);
             Assert.Equal(keyValue, value);
         }
 
@@ -72,12 +71,10 @@ namespace CondenserTests
             var reloaded = false;
 
             var registry = new FakeConfigurationRegistry();
-            var sut = new ConsulProvider(registry);
+            var sut = new ConfigurationRegistryProvider(registry);
 
             sut.Load();
-
-            sut.GetReloadToken()
-                .RegisterChangeCallback(_ => reloaded = true, null);
+            sut.GetReloadToken().RegisterChangeCallback(_ => reloaded = true, null);
 
             registry.FakeReload();
 
@@ -91,12 +88,11 @@ namespace CondenserTests
             const string keyValue = "value1";
 
             var registry = new FakeConfigurationRegistry();
-            var sut = new ConsulProvider(registry);
+            var sut = new ConfigurationRegistryProvider(registry);
 
             sut.Set(key, keyValue);
 
-            string value;
-            sut.TryGet(key, out value);
+            sut.TryGet(key, out string value);
             Assert.Equal(keyValue, value);
         }
     }

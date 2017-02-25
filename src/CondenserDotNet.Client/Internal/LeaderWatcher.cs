@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CondenserDotNet.Client.DataContracts;
 using CondenserDotNet.Core;
+using CondenserDotNet.Core.Consul;
 using CondenserDotNet.Core.DataContracts;
 using Newtonsoft.Json;
 
@@ -18,6 +19,7 @@ namespace CondenserDotNet.Client.Internal
         private readonly IServiceManager _serviceManager;
         private readonly string _keyToWatch;
         private Guid _sessionId;
+        private const string KeyPath = "/v1/kv/";
 
         internal LeaderWatcher(IServiceManager serviceManager, string keyToWatch)
         {
@@ -54,7 +56,7 @@ namespace CondenserDotNet.Client.Internal
                 //If we are here we don't know who is the leader
                 _electedLeaderEvent.Reset();
                 _currentLeaderEvent.Reset();
-                var leaderResult = await _serviceManager.Client.PutAsync($"{HttpUtils.KeyUrl}{_keyToWatch}?acquire={_sessionId}", GetServiceInformation());
+                var leaderResult = await _serviceManager.Client.PutAsync($"{KeyPath}{_keyToWatch}?acquire={_sessionId}", GetServiceInformation());
                 if (!leaderResult.IsSuccessStatusCode)
                 {
                     //error so we need to get a new session
@@ -68,7 +70,7 @@ namespace CondenserDotNet.Client.Internal
                 }
                 for (int i = 0; i < 2; i++)
                 {
-                    leaderResult = await _serviceManager.Client.GetAsync($"{HttpUtils.KeyUrl}{_keyToWatch}?index={consulIndex}");
+                    leaderResult = await _serviceManager.Client.GetAsync($"{KeyPath}{_keyToWatch}?index={consulIndex}");
                     if (!leaderResult.IsSuccessStatusCode)
                     {
                         //error so return to create session

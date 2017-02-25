@@ -19,7 +19,6 @@ namespace CondenserDotNet.Client
         private HealthCheck _httpCheck;
         private ITtlCheck _ttlCheck;
         private readonly CancellationTokenSource _cancel = new CancellationTokenSource();
-        private readonly ConfigurationRegistry _config;
         private readonly ServiceRegistry _services;
         private readonly LeaderRegistry _leaders;
         private const int ConsulPort = 8500;
@@ -33,7 +32,6 @@ namespace CondenserDotNet.Client
             _httpClient = new HttpClient { BaseAddress = new Uri($"http://{agentAddress}:{agentPort}") };
             _serviceId = serviceId;
             _serviceName = serviceName;
-            _config = new ConfigurationRegistry(this);
             _services = new ServiceRegistry(_httpClient, Cancelled);
             _leaders = new LeaderRegistry(this);
             ServiceAddress = Dns.GetHostName();
@@ -43,8 +41,7 @@ namespace CondenserDotNet.Client
         public List<string> SupportedUrls => _supportedUrls;
         public HttpClient Client => _httpClient;
         public HealthCheck HttpCheck { get { return _httpCheck; } set { _httpCheck = value; } }
-        public DataContracts.Service RegisteredService { get; set; }
-        public IConfigurationRegistry Config => _config;
+        public Service RegisteredService { get; set; }
         public string ServiceId => _serviceId;
         public string ServiceName => _serviceName;
         public TimeSpan DeregisterIfCriticalAfter { get; set; }

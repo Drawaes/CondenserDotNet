@@ -5,31 +5,36 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using CondenserDotNet.Client.Configuration;
-using CondenserDotNet.Client.DataContracts;
-using CondenserDotNet.Client.Internal;
-using CondenserDotNet.Core;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
-namespace CondenserDotNet.Client
+namespace CondenserDotNet.Configuration.Consul
 {
     /// <summary>
     /// This manages the configuration keys you load as well as watching live keys and allowing you to add or update keys.
     /// </summary>
-    public class ConfigurationRegistry : IConfigurationRegistry
+    public class ConsulRegistry : IConfigurationRegistry
     {
         private const string ConsulPath = "/";
         private const char ConsulPathChar = '/';
         private const char CorePath = ':';
+        private const string ConsulKeyPath = "/v1/kv/";
+        private const string IndexHeader = "X-Consul-Index";
 
-        private readonly IServiceManager _serviceManager;
         private readonly List<Dictionary<string, string>> _configKeys = new List<Dictionary<string, string>>();
         private readonly List<ConfigurationWatcher> _configWatchers = new List<ConfigurationWatcher>();
-        private IKeyParser _parser = SimpleKeyValueParser.Instance;
+        private IKeyParser _parser;
+        private readonly string _agentAddress;
+        private readonly HttpClient _httpClient;
+        private CancellationTokenSource _disposed = new CancellationTokenSource();
 
-        internal ConfigurationRegistry(IServiceManager serviceManager)
+        public ConsulRegistry(IOptions<ConsulRegistryConfig> agentConfig)
         {
-            _serviceManager = serviceManager;
+            var agentInfo = agentConfig?.Value ?? new ConsulRegistryConfig();
+            _agentAddress = $"http://{agentInfo.AgentAddress}:{agentInfo.AgentPort}";
+            _parser = agentInfo.KeyParser;
+            _httpClient = new HttpClient();
+            _httpClient.BaseAddress = new Uri(_agentAddress);
         }
 
         /// <summary>
@@ -54,7 +59,7 @@ namespace CondenserDotNet.Client
 
         private async Task<int> AddInitialKeyPathAsync(string keyPath)
         {
-            var response = await _serviceManager.Client.GetAsync($"{HttpUtils.KeyUrl}{keyPath}?recurse");
+            var response = await _httpClient.GetAsync($"{ConsulKeyPath}{keyPath}?recurse");
             if (!response.IsSuccessStatusCode)
             {
                 return -1;
@@ -90,11 +95,11 @@ namespace CondenserDotNet.Client
             try
             {
                 var consulIndex = "0";
-                string url = $"{HttpUtils.KeyUrl}{keyPath}?recurse&wait=300s&index=";
+                string url = $"{ConsulKeyPath}{keyPath}?recurse&wait=300s&index=";
                 while (true)
                 {
-                    var response = await _serviceManager.Client.GetAsync(url + consulIndex, _serviceManager.Cancelled);
-                    consulIndex = response.GetConsulIndex();
+                    var response = await _httpClient.GetAsync(url + consulIndex, _disposed.Token);
+                    consulIndex = GetConsulIndex(response);
                     if (!response.IsSuccessStatusCode)
                     {
                         //There is some error we need to do something 
@@ -135,8 +140,7 @@ namespace CondenserDotNet.Client
                     }
                     else
                     {
-                        string newValue;
-                        TryGetValue(watch.KeyToWatch, out newValue);
+                        TryGetValue(watch.KeyToWatch, out string newValue);
                         if (StringComparer.OrdinalIgnoreCase.Compare(watch.CurrentValue, newValue) != 0)
                         {
                             watch.CurrentValue = newValue;
@@ -222,13 +226,43 @@ namespace CondenserDotNet.Client
         /// <returns></returns>
         public async Task<bool> SetKeyAsync(string keyPath, string value)
         {
-            keyPath = HttpUtils.StripFrontAndBackSlashes(keyPath);
-            var response = await _serviceManager.Client.PutAsync($"{HttpUtils.KeyUrl}{keyPath}", HttpUtils.GetStringContent(value));
+            keyPath = StripFrontAndBackSlashes(keyPath);
+            var response = await _httpClient.PutAsync($"{ConsulKeyPath}{keyPath}", GetStringContent(value));
             if (!response.IsSuccessStatusCode)
             {
                 return false;
             }
             return true;
+        }
+
+        public static string GetConsulIndex(HttpResponseMessage response)
+        {
+            if (!response.Headers.TryGetValues(IndexHeader, out IEnumerable<string> results))
+            {
+                return string.Empty;
+            }
+            return results.FirstOrDefault();
+        }
+
+        public static string StripFrontAndBackSlashes(string inputString)
+        {
+            int startIndex = inputString.StartsWith("/") ? 1 : 0;
+            return inputString.Substring(startIndex, (inputString.Length - startIndex) - (inputString.EndsWith("/") ? 1 : 0));
+        }
+
+        public static StringContent GetStringContent(string stringForContent)
+        {
+            if (stringForContent == null)
+            {
+                return null;
+            }
+            var returnValue = new StringContent(stringForContent, Encoding.UTF8);
+            return returnValue;
+        }
+
+        public void Dispose()
+        {
+
         }
     }
 }

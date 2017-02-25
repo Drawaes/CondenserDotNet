@@ -9,7 +9,6 @@ namespace CondenserDotNet.Client
 {
     public interface IServiceManager : IDisposable
     {
-        IConfigurationRegistry Config { get; }
         string ServiceId { get; }
         string ServiceName { get; }
         TimeSpan DeregisterIfCriticalAfter { get; set; }

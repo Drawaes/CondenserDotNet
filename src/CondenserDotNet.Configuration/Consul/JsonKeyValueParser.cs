@@ -2,12 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using CondenserDotNet.Client.DataContracts;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace CondenserDotNet.Client.Configuration
+namespace CondenserDotNet.Configuration.Consul
 {
     public class JsonKeyValueParser : IKeyParser
     {

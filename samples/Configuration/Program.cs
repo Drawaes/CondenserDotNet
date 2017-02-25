@@ -10,7 +10,7 @@ namespace Configuration
         public static void Main(string[] args)
         {
             var serviceManager = new ServiceManager("TestService");
-
+            
             //This setup would be done outside of this sample.  
             //The environment variable is passed to the startup to bootstrap
             var environment = "Org1";
@@ -22,8 +22,8 @@ namespace Configuration
                 Setting = "Test"
             };
 
-            serviceManager.Config.SetKeyJsonAsync($"{environment}/ConsulConfig", config)
-                .Wait();
+            //serviceManager.Config.SetKeyJsonAsync($"{environment}/ConsulConfig", config)
+            //    .Wait();
 
             //End of set up
 

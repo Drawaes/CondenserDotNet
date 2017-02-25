@@ -1,7 +1,8 @@
+﻿using System;
 using System.Collections.Generic;
-using CondenserDotNet.Client.DataContracts;
+using System.Text;
 
-namespace CondenserDotNet.Client.Configuration
+namespace CondenserDotNet.Configuration.Consul
 {
     public interface IKeyParser
     {

@@ -13,7 +13,6 @@ namespace CondenserDotNet.Core
         private static readonly string _indexHeader = "X-Consul-Index";
         public static readonly JsonSerializerSettings JsonSettings;
         public static readonly string ApiUrl = "/v1/";
-        public static readonly string KeyUrl = ApiUrl + "kv/";
         public static readonly string ServiceCatalogUrl = ApiUrl + "catalog/services";
         public static readonly string DatacenterCatalogUrl = ApiUrl + "catalog/datacenters";
         public static readonly string SingleServiceCatalogUrl = ApiUrl + "catalog/service/";
@@ -56,8 +55,7 @@ namespace CondenserDotNet.Core
 
         public static string GetConsulIndex(this HttpResponseMessage response)
         {
-            IEnumerable<string> results;
-            if (!response.Headers.TryGetValues(_indexHeader, out results))
+            if (!response.Headers.TryGetValues(_indexHeader, out IEnumerable<string> results))
             {
                 return string.Empty;
             }

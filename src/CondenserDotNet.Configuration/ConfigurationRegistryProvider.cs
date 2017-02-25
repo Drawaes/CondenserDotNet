@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.Extensions.Configuration;
 
-namespace CondenserDotNet.Client.Configuration
+namespace CondenserDotNet.Configuration
 {
-    public class ConsulProvider : ConfigurationProvider
+    public class ConfigurationRegistryProvider : ConfigurationProvider
     {
         private readonly IConfigurationRegistry _configurationRegistry;
 
-        public ConsulProvider(IConfigurationRegistry configurationRegistry)
+        public ConfigurationRegistryProvider(IConfigurationRegistry configurationRegistry)
         {
             _configurationRegistry = configurationRegistry;
             _configurationRegistry.AddWatchOnEntireConfig(Load);

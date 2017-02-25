@@ -1,6 +1,7 @@
 ﻿using System;
 using CondenserDotNet.Client;
-using CondenserDotNet.Client.Configuration;
+using CondenserDotNet.Configuration;
+using CondenserDotNet.Configuration.Consul;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -8,43 +9,38 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Configuration
 {
-    public class Startup : IStartup
+    public class Startup
     {
         private readonly ServiceManager _manager;
 
-        public Startup(IHostingEnvironment env,
-            ServiceManager manager)
+        public Startup(IHostingEnvironment env, ServiceManager manager)
         {
             _manager = manager;
 
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonConsul(manager.Config);
-
-            manager.Config
-                .AddUpdatingPathAsync(env.EnvironmentName)
-                .Wait();
-
-            Configuration = builder.Build();
+            
+            //manager.Config
+            //    .AddUpdatingPathAsync(env.EnvironmentName)
+            //    .Wait();
         }
-
-        public IConfiguration Configuration { get; }
-
+        
         public void Configure(IApplicationBuilder app)
         {
             app.UseMvcWithDefaultRoute();
         }
 
-        IServiceProvider IStartup.ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
+            services.AddTransient<IKeyParser>((sp) => new JsonKeyValueParser());
+            services.AddSingleton<IConfigurationRegistry,ConsulRegistry>();
+            
             services.AddMvc();
             services.AddRouting();
 
             services.AddOptions();
-            services.ConfigureReloadable<ConsulConfig>(Configuration, _manager.Config);
+            //services.ConfigureReloadable<ConsulConfig>();
 
-            services.AddSingleton(Configuration);
-            return services.BuildServiceProvider();
+            //services.AddSingleton(Configuration);
+            //return services.BuildServiceProvider();
         }
     }
 }

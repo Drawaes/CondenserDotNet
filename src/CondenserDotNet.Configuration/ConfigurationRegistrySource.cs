@@ -1,19 +1,19 @@
 ﻿using Microsoft.Extensions.Configuration;
 
-namespace CondenserDotNet.Client.Configuration
+namespace CondenserDotNet.Configuration
 {
-    public class ConsulSource : IConfigurationSource
+    public class ConfigurationRegistrySource : IConfigurationSource
     {
         private readonly IConfigurationRegistry _configurationRegistry;
 
-        public ConsulSource(IConfigurationRegistry configurationRegistry)
+        public ConfigurationRegistrySource(IConfigurationRegistry configurationRegistry)
         {
             _configurationRegistry = configurationRegistry;
         }
 
         public IConfigurationProvider Build(IConfigurationBuilder builder)
         {
-            return new ConsulProvider(_configurationRegistry);
+            return new ConfigurationRegistryProvider(_configurationRegistry);
         }
     }
 }

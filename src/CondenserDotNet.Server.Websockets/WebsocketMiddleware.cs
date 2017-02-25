@@ -25,6 +25,7 @@ namespace CondenserDotNet.Server.Websockets
         public WebsocketMiddleware(RequestDelegate next, ILoggerFactory loggerFactory, PipeFactory factory)
         {
             _next = next;
+            _factory = factory;
             _logger = loggerFactory?.CreateLogger<WebsocketMiddleware>();
         }
 

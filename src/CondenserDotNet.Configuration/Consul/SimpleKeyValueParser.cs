@@ -1,7 +1,6 @@
 using System.Collections.Generic;
-using CondenserDotNet.Client.DataContracts;
 
-namespace CondenserDotNet.Client.Configuration
+namespace CondenserDotNet.Configuration.Consul
 {
     internal class SimpleKeyValueParser : IKeyParser
     {

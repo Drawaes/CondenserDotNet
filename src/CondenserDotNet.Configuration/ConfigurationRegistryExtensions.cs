@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using Newtonsoft.Json;
 
-namespace CondenserDotNet.Client
+namespace CondenserDotNet.Configuration
 {
     public static class ConfigurationRegistryExtensions
     {

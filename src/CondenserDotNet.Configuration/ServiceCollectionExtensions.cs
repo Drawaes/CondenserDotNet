@@ -2,10 +2,11 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CondenserDotNet.Client
+namespace CondenserDotNet.Configuration
 {
     public static class ServiceCollectionExtensions
     {
+        
         public static IServiceCollection ConfigureReloadable<TConfig>(this IServiceCollection self,
             IConfiguration configuration, IConfigurationRegistry registry)
             where TConfig : class
