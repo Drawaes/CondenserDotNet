@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net.Http;
 using CondenserDotNet.Core;
 using CondenserDotNet.Core.Routing;
 using CondenserDotNet.Server.Builder;
@@ -25,9 +26,11 @@ namespace CondenserDotNet.Server
             self.AddSingleton(config);
             self.AddTransient<Service>();
             self.AddSingleton<Func<IConsulService>>(x => x.GetService<Service>);
+            self.AddSingleton<CurrentState>();
             self.AddTransient<IRoutingStrategy<IService>, RandomRoutingStrategy<IService>>();
             self.AddTransient<IRoutingStrategy<IService>, RoundRobinRoutingStrategy<IService>>();
             self.AddSingleton<IDefaultRouting<IService>, DefaultRouting<IService>>();
+            self.AddSingleton<Func<string, HttpClient>>(s => new HttpClient());
             Func<ChildContainer<IService>> factory = () =>
             {
                 var randomRoutingStrategy = new RandomRoutingStrategy<IService>();

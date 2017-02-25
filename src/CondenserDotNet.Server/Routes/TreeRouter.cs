@@ -23,7 +23,7 @@ namespace CondenserDotNet.Server.Routes
         }
 
         public override string[] Routes { get; }
-
+        public override bool RequiresAuthentication => true;
         public override IPEndPoint IpEndPoint => throw new NotImplementedException();
 
         public override Task CallService(HttpContext context)
@@ -47,8 +47,8 @@ namespace CondenserDotNet.Server.Routes
             for (var i = 0; i < node.ChildrenNodes.Count; i++)
             {
                 var nodeDto = new Node();
-                children.Add(node.ChildrenNodes.ElementAt(i).Key, nodeDto);
-                MapTo(node.ChildrenNodes.ElementAt(i).Value, nodeDto);
+                children.Add(node.ChildrenNodes.ElementAt(i).Item1, nodeDto);
+                MapTo(node.ChildrenNodes.ElementAt(i).Item2, nodeDto);
             }
         }
     }

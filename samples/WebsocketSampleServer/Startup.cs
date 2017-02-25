@@ -53,7 +53,7 @@ namespace WebsocketSampleServer
                     if (content.Equals("ServerClose"))
                     {
                         await webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closing from Server", CancellationToken.None);
-                        logger.LogDebug($"Sent Frame Close: {WebSocketCloseStatus.NormalClosure} Closing from Server");
+                        logger?.LogDebug($"Sent Frame Close: {WebSocketCloseStatus.NormalClosure} Closing from Server");
                         return;
                     }
                     else if (content.Equals("ServerAbort"))
@@ -63,7 +63,7 @@ namespace WebsocketSampleServer
                 }
 
                 await webSocket.SendAsync(new ArraySegment<byte>(buffer, 0, result.Count), result.MessageType, result.EndOfMessage, CancellationToken.None);
-                logger.LogDebug($"Sent Frame {result.MessageType}: Len={result.Count}, Fin={result.EndOfMessage}: {content}");
+                logger?.LogDebug($"Sent Frame {result.MessageType}: Len={result.Count}, Fin={result.EndOfMessage}: {content}");
 
                 result = await webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
                 LogFrame(logger, result, buffer);
@@ -88,7 +88,7 @@ namespace WebsocketSampleServer
                 }
                 message = $"{frame.MessageType}: Len={frame.Count}, Fin={frame.EndOfMessage}: {content}";
             }
-            logger.LogDebug("Received Frame " + message);
+            logger?.LogDebug("Received Frame " + message);
         }
     }
 }

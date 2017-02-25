@@ -9,6 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="$(NewtonJson)" />
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="$(AspNetVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="$(AspNetVersion)" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net451' ">

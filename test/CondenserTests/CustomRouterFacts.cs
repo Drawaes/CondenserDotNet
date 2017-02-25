@@ -34,7 +34,7 @@ namespace CondenserTests
             var router = BuildRouter();
 
             var service = new Service(null, null);
-            service.Initialise("Service1Test", "node1", new string[] { UrlPrefix + "/test1/test2/test3/test4/test5" }, "Address1Test", 10000);
+            await service.Initialise("Service1Test", "node1", new string[] { UrlPrefix + "/test1/test2/test3/test4/test5" }, "Address1Test", 10000);
             router.AddNewService(service);
 
             var context = new DefaultHttpContext();

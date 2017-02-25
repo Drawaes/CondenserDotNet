@@ -69,7 +69,7 @@ namespace CondenserDotNet.Server
                 }
                 catch(Exception ex)
                 {
-                    _logger.LogError(1000, ex, "There was an error getting available services from consul");
+                    _logger?.LogError(1000, ex, "There was an error getting available services from consul");
                     await Task.Delay(TimeSpan.FromSeconds(1));
                 }
             }
@@ -111,7 +111,7 @@ namespace CondenserDotNet.Server
 
         private void UpdateExistingRoutes(IService instance, ServiceInstance info)
         {
-            var routes = Service.RoutesFromTags(info.ServiceTags);
+            var routes = ServiceUtils.RoutesFromTags(info.ServiceTags);
             if (instance.Routes.SequenceEqual(routes))
             {
                 return;

@@ -6,30 +6,40 @@ using System.Threading.Tasks;
 
 namespace CondenserDotNet.Server.RoutingTrie
 {
-    public class NodeContainer<T>:IEnumerable<KeyValuePair<string[], Node<T>>>
+    public class NodeContainer<T> : IEnumerable<Tuple<string[], Node<T>>>
     {
-        public NodeContainer(int keyLength, 
-            Func<ChildContainer<T>> factory)
+        private readonly int _keylength;
+        private readonly Func<ChildContainer<T>> _factory;
+        private readonly NodeComparer _comparer;
+        private List<Tuple<string[], Node<T>>> _children;
+
+        public NodeContainer(int keyLength, Func<ChildContainer<T>> factory)
         {
             _keylength = keyLength;
+            _comparer = new NodeComparer(_keylength);
             _factory = factory;
-            _children = new Dictionary<string[], Node<T>>(new NodeComparer(_keylength));
+            _children = new List<Tuple<string[], Node<T>>>(5);
         }
 
-        int _keylength;
-        private readonly Func<ChildContainer<T>> _factory;
-        Dictionary<string[], Node<T>> _children;
-
-        public int KeyLength { get { return _keylength; } }
+        public int Count => _children.Count;
+        public int KeyLength => _keylength;
 
         public Node<T> FindFirstNodeThatMatches(string[] route, int compareLength)
         {
-            NodeComparer compare = new NodeComparer(compareLength);
-            foreach(var kv in _children)
+            NodeComparer compare;
+            if (compareLength != _keylength)
             {
-                if(compare.Equals(kv.Key, route))
+                compare = new NodeComparer(compareLength);
+            }
+            else
+            {
+                compare = new NodeComparer(compareLength);
+            }
+            foreach(var child in _children)
+            {
+                if (compare.Equals(child.Item1, route))
                 {
-                    return kv.Value;
+                    return child.Item2;
                 }
             }
             return null;
@@ -37,7 +47,7 @@ namespace CondenserDotNet.Server.RoutingTrie
 
         public void Add(string[] route, Node<T> node)
         {
-            _children.Add(route, node);
+            _children.Add(Tuple.Create(route,node));
         }
 
         public NodeContainer<T> SplitContainer(int newKeyLength, string currentPath)
@@ -45,69 +55,72 @@ namespace CondenserDotNet.Server.RoutingTrie
             var newContainer = new NodeContainer<T>(newKeyLength, _factory);
             foreach(var kv in _children)
             {
-                var newPrefix = kv.Key.Take(newKeyLength).ToArray();
-                var newTailPrefix = kv.Key.Skip(newKeyLength).ToArray();
-                Node<T> newHeadNode;
-                if(!newContainer._children.TryGetValue(newPrefix, out newHeadNode))
+                var newPrefix = kv.Item1.Take(newKeyLength).ToArray();
+                var newTailPrefix = kv.Item1.Skip(newKeyLength).ToArray();
+                if (!newContainer.TryGetValue(newPrefix, out Node<T> newHeadNode))
                 {
                     newHeadNode = new Node<T>(newPrefix, currentPath, KeyLength - newKeyLength, _factory);
                     newContainer.Add(newPrefix, newHeadNode);
                 }
-                var oldNode = kv.Value.CloneWithNewPrefix(newTailPrefix, newHeadNode.Path);
+                var oldNode = kv.Item2.CloneWithNewPrefix(newTailPrefix, newHeadNode.Path);
                 newHeadNode.ChildrenNodes.Add(newTailPrefix, oldNode);
             }
-
             return newContainer;
         }
 
-        public IEnumerator<KeyValuePair<string[], Node<T>>> GetEnumerator()
+        public bool TryGetValue(string[] searchValue, out Node<T> node)
+        {
+            foreach(var child in _children)
+            { 
+                if (_comparer.Equals(child.Item1, searchValue))
+                {
+                    node = child.Item2;
+                    return true;
+                }
+            }
+            node = null;
+            return false;
+        }
+
+        public IEnumerator<Tuple<string[], Node<T>>> GetEnumerator()
         {
             return _children.GetEnumerator();
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return _children.GetEnumerator();
-        }
-
-        public Node<T> this [string[] key]
+        public Node<T> this[string[] key]
         {
             get
             {
-                return _children[key];
+                if (TryGetValue(key, out Node<T> node))
+                {
+                    return node;
+                }
+                throw new ArgumentOutOfRangeException();
             }
-            set
-            {
-                _children[key] = value;
-            }
-        }
-
-        public int Count
-        {
-            get { return _children.Count;}
-        }
-
-        public bool TryGetValue(string[] route, out Node<T> node)
-        {
-            return _children.TryGetValue(route,out node);
         }
 
         public int MaxNodeDepth()
         {
             int nodeDepth = 0;
-            foreach(var n in _children.Values)
+            foreach (var n in _children)
             {
-                nodeDepth = Math.Max(n.MaxDepth(), nodeDepth);
+                nodeDepth = Math.Max(n.Item2.MaxDepth(), nodeDepth);
             }
             return nodeDepth;
         }
 
         internal NodeContainer<T> Clone()
         {
-            var container = new NodeContainer<T>(KeyLength, _factory);
-            container._children = new Dictionary<string[], Node<T>>(_children, new NodeComparer(KeyLength));
-
+            var container = new NodeContainer<T>(KeyLength, _factory)
+            {
+                _children = _children.ToList()
+            };
             return container;
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 }

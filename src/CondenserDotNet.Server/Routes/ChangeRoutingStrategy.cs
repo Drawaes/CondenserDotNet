@@ -28,7 +28,7 @@ namespace CondenserDotNet.Server.Routes
         }
 
         public override string[] Routes => new string[]{ CondenserRoutes.Router };
-
+        public override bool RequiresAuthentication => true;
         public override IPEndPoint IpEndPoint => throw new NotImplementedException();
 
         public override async Task CallService(HttpContext context)
@@ -67,8 +67,8 @@ namespace CondenserDotNet.Server.Routes
         {
             foreach (var child in node.ChildrenNodes)
             {
-                child.Value.Services.SetRoutingStrategy(strategy);
-                ReplaceStrategy(child.Value, strategy);
+                child.Item2.Services.SetRoutingStrategy(strategy);
+                ReplaceStrategy(child.Item2, strategy);
             }
         }
     }

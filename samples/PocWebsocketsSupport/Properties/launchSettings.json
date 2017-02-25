@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "PocWebsocketsSupport": {
+      "commandName": "Project",
+      "commandLineArgs": "pipe"
+    }
+  }
+}

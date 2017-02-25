@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
+using CondenserDotNet.Core;
 using CondenserDotNet.Server.Routes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
@@ -12,13 +13,12 @@ namespace CondenserDotNet.Server
 {
     public class Service : IDisposable, IConsulService, IUsageInfo
     {
-        private const string UrlPrefix = "urlprefix-";
         private HttpClient _httpClient;
         private readonly System.Threading.CountdownEvent _waitUntilRequestsAreFinished = new System.Threading.CountdownEvent(1);
         private string _address;
         private int _port;
         private CurrentState _stats;
-        private readonly IHttpClientConfig _clientFactory;
+        private readonly Func<string, HttpClient> _clientFactory;
         private IPEndPoint _ipEndPoint;
         private Version[] _supportedVersions;
         private string[] _tags;
@@ -27,7 +27,7 @@ namespace CondenserDotNet.Server
         private int _totalRequestTime;
         private string _hostString;
 
-        public Service(CurrentState stats, IHttpClientConfig clientFactory)
+        public Service(CurrentState stats, Func<string, HttpClient> clientFactory)
         {
             _stats = stats;
             _clientFactory = clientFactory;
@@ -41,41 +41,7 @@ namespace CondenserDotNet.Server
         public int Calls => _calls;
         public double TotalRequestTime => _totalRequestTime;
         public IPEndPoint IpEndPoint => _ipEndPoint;
-
-        public static string[] RoutesFromTags(string[] tags)
-        {
-            int returnCount = 0;
-            for (int i = 0; i < tags.Length; i++)
-            {
-                if (!tags[i].StartsWith(UrlPrefix))
-                {
-                    continue;
-                }
-                returnCount++;
-            }
-            var returnValues = new string[returnCount];
-            returnCount = 0;
-            for (int i = 0; i < tags.Length; i++)
-            {
-                if (!tags[i].StartsWith(UrlPrefix))
-                {
-                    continue;
-                }
-                var startSubstIndex = UrlPrefix.Length;
-                var endSubstIndex = tags[i].Length - UrlPrefix.Length;
-                if (tags[i][tags[i].Length - 1] == '/')
-                {
-                    endSubstIndex--;
-                }
-                returnValues[returnCount] = tags[i].Substring(startSubstIndex, endSubstIndex);
-                if (returnValues[returnCount][0] != '/')
-                {
-                    returnValues[returnCount] = "/" + returnValues[returnCount];
-                }
-                returnCount++;
-            }
-            return returnValues;
-        }
+        public bool RequiresAuthentication => true;
 
         public async Task CallService(HttpContext context)
         {
@@ -176,7 +142,7 @@ namespace CondenserDotNet.Server
             _address = address;
             _port = port;
             _tags = tags;
-            Routes = RoutesFromTags(tags);
+            Routes = ServiceUtils.RoutesFromTags(tags);
             _serviceId = serviceId;
             NodeId = nodeId;
             try
@@ -189,7 +155,7 @@ namespace CondenserDotNet.Server
             }
             _supportedVersions = tags.Where(t => t.StartsWith("version=")).Select(t => new Version(t.Substring(8))).ToArray();
             _hostString = $"{_address}:{_port}";
-            _httpClient = _clientFactory?.Create(ServiceId) ?? new HttpClient();
+            _httpClient = _clientFactory?.Invoke(ServiceId) ?? new HttpClient();
         }
 
         public void Dispose()
