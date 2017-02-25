@@ -19,7 +19,7 @@ namespace CondenserDotNet.Server.HttpPipelineClient
         private readonly System.Threading.CountdownEvent _waitUntilRequestsAreFinished = new System.Threading.CountdownEvent(1);
         private string _address;
         private int _port;
-        private string _host;
+        private byte[] _hostHeader;
         private CurrentState _stats;
         private IPEndPoint _ipEndPoint;
         private Version[] _supportedVersions;
@@ -28,7 +28,6 @@ namespace CondenserDotNet.Server.HttpPipelineClient
         private ILogger _logger;
         private int _calls;
         private int _totalRequestTime;
-        private string _hostString;
         private ConcurrentQueue<IPipeConnection> _pooledConnections = new ConcurrentQueue<IPipeConnection>();
         private PipeFactory _factory;
 
@@ -63,7 +62,7 @@ namespace CondenserDotNet.Server.HttpPipelineClient
                 {
                     _logger?.LogInformation("Got a connection from the pool, current pool size {poolSize}", _pooledConnections.Count);
                 }
-                await socket.WriteHeadersAsync(context, _host);
+                await socket.WriteHeadersAsync(context, _hostHeader);
                 await socket.WriteBodyAsync(context);
                 await socket.ReceiveHeaderAsync(context);
                 await socket.ReceiveBodyAsync(context, _logger);
@@ -110,7 +109,7 @@ namespace CondenserDotNet.Server.HttpPipelineClient
             Routes = ServiceUtils.RoutesFromTags(tags);
             _serviceId = serviceId;
             NodeId = nodeId;
-            _host = $"{_address}:{_port}";
+            _hostHeader = Encoding.UTF8.GetBytes($"Host: {_address}:{_port}\r\n");
             try
             {
                 var result = await Dns.GetHostAddressesAsync(address);
@@ -120,7 +119,6 @@ namespace CondenserDotNet.Server.HttpPipelineClient
             {
             }
             _supportedVersions = tags.Where(t => t.StartsWith("version=")).Select(t => new Version(t.Substring(8))).ToArray();
-            _hostString = $"{_address}:{_port}";
         }
 
         public void Dispose()

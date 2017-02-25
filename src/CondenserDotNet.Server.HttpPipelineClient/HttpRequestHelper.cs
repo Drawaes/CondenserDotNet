@@ -12,7 +12,7 @@ namespace CondenserDotNet.Server.HttpPipelineClient
     {
         private static readonly Task _cachedTask = Task.FromResult(0);
 
-        public static WritableBufferAwaitable WriteHeadersAsync(this IPipeConnection connection, HttpContext context, string host)
+        public static WritableBufferAwaitable WriteHeadersAsync(this IPipeConnection connection, HttpContext context, byte[] host)
         {
             var writer = connection.Output.Alloc();
             writer.Append(context.Request.Method, TextEncoder.Utf8);
@@ -23,22 +23,14 @@ namespace CondenserDotNet.Server.HttpPipelineClient
             writer.Write(HttpConsts.EndOfLine);
             foreach (var header in context.Request.Headers)
             {
-                if (header.Key == "Host")
-                {
-                    writer.Append(header.Key, TextEncoder.Utf8);
-                    writer.Write(HttpConsts.HeaderSplit);
-                    writer.Append(host, TextEncoder.Utf8);
-                    writer.Write(HttpConsts.EndOfLine);
-                    continue;
-                }
-                if (header.Key == "Connection") { }
+                if (header.Key == "Host" || header.Key == "Connection") { }
                 writer.Append(header.Key, TextEncoder.Utf8);
                 writer.Write(HttpConsts.HeaderSplit);
                 writer.Append(string.Join(", ", header.Value), TextEncoder.Utf8);
                 writer.Write(HttpConsts.EndOfLine);
             }
-            writer.Append("Connection: keep-alive\r\n", TextEncoder.Utf8);
-            writer.Write(HttpConsts.EndOfLine);
+            writer.Write(host);
+            writer.Write(HttpConsts.ConnectionHeader);
             return writer.FlushAsync();
         }
 
@@ -79,7 +71,7 @@ namespace CondenserDotNet.Server.HttpPipelineClient
                 var buffer = connection.Output.Alloc();
                 try
                 {
-                    buffer.Ensure(12044);
+                    buffer.Ensure(1024);
                     var bookMark = buffer.Memory;
                     buffer.Advance(3);
                     buffer.Write(HttpConsts.EndOfLine);
