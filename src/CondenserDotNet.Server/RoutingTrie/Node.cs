@@ -124,7 +124,7 @@ namespace CondenserDotNet.Server.RoutingTrie
             Services.RemoveService(service);
             foreach(var kv in children)
             {
-                kv.Value.RemoveService(service);
+                kv.Item2.RemoveService(service);
             }
         }
 
@@ -157,10 +157,9 @@ namespace CondenserDotNet.Server.RoutingTrie
             var children = System.Threading.Volatile.Read(ref _childrenNodes);
 
             if(children.Count == 0) return;
-
             foreach (var kv in children)
             {
-                if (kv.Value.Services.Count > 0)
+                if (kv.Item2.Services.Count > 0)
                 {
                     canCompress = false;
                     break;
@@ -172,14 +171,14 @@ namespace CondenserDotNet.Server.RoutingTrie
                 var newMerged = new NodeContainer<T>(children.KeyLength + 1, _factory);
                 foreach (var kv in children)
                 {
-                    foreach (var childkv in kv.Value.ChildrenNodes)
+                    foreach (var childkv in kv.Item2.ChildrenNodes)
                     {
                         //This will prune out orphaned trees
-                        if (childkv.Value.Services.Count > 0 || childkv.Value.ChildrenNodes.Count > 0)
+                        if (childkv.Item2.Services.Count > 0 || childkv.Item2.ChildrenNodes.Count > 0)
                         {
-                            var mergedKey = Enumerable.Concat(kv.Key, childkv.Key).ToArray();
-                            var newNode = childkv.Value.CloneWithNewPrefix(mergedKey, Path);
-                            newMerged[newNode.Prefix] = newNode;
+                            var mergedKey = Enumerable.Concat(kv.Item1, childkv.Item1).ToArray();
+                            var newNode = childkv.Item2.CloneWithNewPrefix(mergedKey, Path);
+                            newMerged.Add(newNode.Prefix, newNode);
                         }
                     }
                 }
@@ -190,7 +189,7 @@ namespace CondenserDotNet.Server.RoutingTrie
             {
                 foreach (var kv in children)
                 {
-                    kv.Value.Compress();
+                    kv.Item2.Compress();
                 }
             }
         }

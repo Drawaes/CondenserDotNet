@@ -31,12 +31,13 @@ namespace CondenserDotNet.Server.HttpPipelineClient
                     writer.Write(HttpConsts.EndOfLine);
                     continue;
                 }
-
+                if (header.Key == "Connection") { }
                 writer.Append(header.Key, TextEncoder.Utf8);
                 writer.Write(HttpConsts.HeaderSplit);
                 writer.Append(string.Join(", ", header.Value), TextEncoder.Utf8);
                 writer.Write(HttpConsts.EndOfLine);
             }
+            writer.Append("Connection: keep-alive\r\n", TextEncoder.Utf8);
             writer.Write(HttpConsts.EndOfLine);
             return writer.FlushAsync();
         }
@@ -59,7 +60,7 @@ namespace CondenserDotNet.Server.HttpPipelineClient
             long bytesToWrite = context.Request.ContentLength.Value;
             while (bytesToWrite > 0)
             {
-                var buffer = connection.Output.Alloc();
+                var buffer = connection.Output.Alloc(1024);
                 if (!buffer.Memory.TryGetArray(out ArraySegment<byte> byteArray))
                 {
                     throw new NotImplementedException();
@@ -75,10 +76,10 @@ namespace CondenserDotNet.Server.HttpPipelineClient
         {
             while (true)
             {
-                var buffer = connection.Output.Alloc(512);
+                var buffer = connection.Output.Alloc();
                 try
                 {
-                    buffer.Ensure(3);
+                    buffer.Ensure(12044);
                     var bookMark = buffer.Memory;
                     buffer.Advance(3);
                     buffer.Write(HttpConsts.EndOfLine);

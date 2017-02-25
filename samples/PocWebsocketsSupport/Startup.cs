@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO.Pipelines;
 using System.Text;
 using System.Threading.Tasks;
 using CondenserDotNet.Core;
@@ -19,16 +20,22 @@ namespace PocWebsocketsSupport
 {
     public class Startup
     {
+        public static bool UsePipes { get; internal set; }
+
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddCondenser();
-            services.AddTransient<ServiceWithCustomClient>();
-            services.AddSingleton<Func<IConsulService>>(x => x.GetService<ServiceWithCustomClient>);
+            services.AddSingleton(new PipeFactory());
+            if (UsePipes)
+            {
+                services.AddTransient<ServiceWithCustomClient>();
+                services.AddSingleton<Func<IConsulService>>(x => x.GetService<ServiceWithCustomClient>);
+            }
         }
 
         public void Configure(IApplicationBuilder app, ILoggerFactory logger)
         {
-            logger.AddConsole(LogLevel.Information, true);
+            //logger.AddConsole(LogLevel.Information, true);
             //app.UseWindowsAuthentication();
             app.UseMiddleware<RoutingMiddleware>();
             app.UseMiddleware<WebsocketMiddleware>();

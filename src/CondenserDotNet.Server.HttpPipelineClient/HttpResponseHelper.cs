@@ -12,7 +12,7 @@ namespace CondenserDotNet.Server.HttpPipelineClient
 {
     public static class HttpResponseHelper
     {
-        private static readonly Task _cachedTask = Task.FromResult(0);
+        private static readonly Task<bool> _cachedTask = Task.FromResult(false);
 
         public static async Task ReceiveHeaderAsync(this IPipeConnection connection, HttpContext context)
         {
@@ -76,7 +76,7 @@ namespace CondenserDotNet.Server.HttpPipelineClient
             }
         }
 
-        public static Task ReceiveBodyAsync(this IPipeConnection connection, HttpContext context, ILogger logger)
+        public static Task<bool> ReceiveBodyAsync(this IPipeConnection connection, HttpContext context, ILogger logger)
         {
             if (context.Response.Headers["Transfer-Encoding"] == "chunked")
             {
@@ -89,7 +89,7 @@ namespace CondenserDotNet.Server.HttpPipelineClient
             return _cachedTask;
         }
 
-        private static async Task ReceiveContentLengthBody(this IPipeConnection connection, HttpContext context)
+        private static async Task<bool> ReceiveContentLengthBody(this IPipeConnection connection, HttpContext context)
         {
             var contentSize = (int)context.Response.ContentLength.Value;
             while (true)
@@ -104,7 +104,7 @@ namespace CondenserDotNet.Server.HttpPipelineClient
                     buffer = buffer.Slice(amountTowrite);
                     if (contentSize == 0)
                     {
-                        return;
+                        return !reader.IsCompleted;
                     }
                 }
                 finally
@@ -114,7 +114,7 @@ namespace CondenserDotNet.Server.HttpPipelineClient
             }
         }
 
-        private static async Task ReceiveChunkedBody(this IPipeConnection connection, HttpContext context, ILogger logger)
+        private static async Task<bool> ReceiveChunkedBody(this IPipeConnection connection, HttpContext context, ILogger logger)
         {
             var nextChunkSize = 0;
             var lastChunk = false;
@@ -152,7 +152,7 @@ namespace CondenserDotNet.Server.HttpPipelineClient
                             if (nextChunkSize == 0 && lastChunk)
                             {
                                 logger?.LogInformation("Finished sending chunked data remaining buffer size {bufferSize}", buffer.Length);
-                                return;
+                                return !reader.IsCompleted;
                             }
                             if (buffer.Length == 0)
                             {

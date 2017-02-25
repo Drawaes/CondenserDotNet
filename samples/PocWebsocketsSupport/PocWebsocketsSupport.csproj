@@ -1,11 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\..\common.props" />
   <PropertyGroup>
-    <AssemblyName>RoutingWithWindowsAuth</AssemblyName>
-    <PackageId>RoutingWithWindowsAuth</PackageId>
+    <AssemblyName>PocWebsocketSupport</AssemblyName>
+    <PackageId>PocWebsocketSupport</PackageId>
     <TargetFramework>netcoreapp1.1</TargetFramework>
     <OutputType>Exe</OutputType>
     <RuntimeFrameworkVersion>1.1.0</RuntimeFrameworkVersion>
+    <ServerGarbageCollection>true</ServerGarbageCollection>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,6 +15,7 @@
     <ProjectReference Include="..\..\src\CondenserDotNet.Server.Websockets\CondenserDotNet.Server.Websockets.csproj" />
     <ProjectReference Include="..\..\src\CondenserDotNet.Server\CondenserDotNet.Server.csproj" />
     <ProjectReference Include="..\..\src\CondenserDotNet.Server.WindowsAuthentication\CondenserDotNet.Server.WindowsAuthentication.csproj" />
+    <PackageReference Include="System.IO.Pipelines" Version="0.1.0-e170223-1" />
   </ItemGroup>
 
   <ItemGroup>

@@ -15,9 +15,9 @@ namespace CondenserTests
             var tree = CreateDefault();
             
             var service = new Service(null, null);
-            service.Initialise("Service1Test", "node1", new string[0], "Adress1Test", 10000);
+            service.Initialise("Service1Test", "node1", new string[0], "Adress1Test", 10000).Wait();
             var service2 = new Service(null, null);
-            service2.Initialise("Service1Test", "node1", new string[0], "Address2Test", 10000);
+            service2.Initialise("Service1Test", "node1", new string[0], "Address2Test", 10000).Wait();
             tree.AddServiceToRoute("/test1/test2/test3/test4/test5", service);
             tree.AddServiceToRoute("/test1/test2/test3/test4/test5/test6", service);
 
@@ -37,7 +37,7 @@ namespace CondenserTests
             //check the keys are consistant
             foreach (var kv in commonNode.ChildrenNodes)
             {
-                Assert.Equal(kv.Key.Length, commonNode.ChildrenNodes.KeyLength);
+                Assert.Equal(kv.Item1.Length, commonNode.ChildrenNodes.KeyLength);
             }
         }
 
@@ -47,9 +47,9 @@ namespace CondenserTests
             var tree = CreateDefault();
 
             var service = new Service(null, null);
-            service.Initialise("Service1Test", "node1", new string[0], "Address1Test", 10000);
+            service.Initialise("Service1Test", "node1", new string[0], "Address1Test", 10000).Wait();
             var service2 = new Service(null, null);
-            service2.Initialise("Service1Test", "node1", new string[0], "Address2Test", 10000);
+            service2.Initialise("Service1Test", "node1", new string[0], "Address2Test", 10000).Wait();
 
             tree.AddServiceToRoute("/test1/test2/test3/test4/test5", service);
             tree.AddServiceToRoute("/test1/test2/test3/test4/test5/test6", service2);
@@ -76,15 +76,14 @@ namespace CondenserTests
             var tree = CreateDefault();
 
             var service = new Service(null, null);
-            service.Initialise("Service1Test", "node1", new string[0], "Address1Test", 10000);
+            service.Initialise("Service1Test", "node1", new string[0], "Address1Test", 10000).Wait();
             var service2 = new Service(null, null);
-            service2.Initialise("Service1Test", "node1", new string[0], "Address2Test", 10000);
+            service2.Initialise("Service1Test", "node1", new string[0], "Address2Test", 10000).Wait();
 
             tree.AddServiceToRoute("/test1/test2/test3/test4/test5", service);
             tree.AddServiceToRoute("/test1/test2/test3/test4/test5/test6", service2);
 
-            string matchedpath;
-            var returnservice = tree.GetServiceFromRoute("/test1/test2/test3/test4/test5/test7", out matchedpath);
+            var returnservice = tree.GetServiceFromRoute("/test1/test2/test3/test4/test5/test7", out string matchedpath);
             Assert.Equal("/test1/test2/test3/test4/test5".ToUpperInvariant(), matchedpath);
 
             ////now remove the service

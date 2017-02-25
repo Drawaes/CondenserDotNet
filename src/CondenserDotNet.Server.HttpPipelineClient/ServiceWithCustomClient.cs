@@ -30,12 +30,14 @@ namespace CondenserDotNet.Server.HttpPipelineClient
         private int _totalRequestTime;
         private string _hostString;
         private ConcurrentQueue<IPipeConnection> _pooledConnections = new ConcurrentQueue<IPipeConnection>();
+        private PipeFactory _factory;
 
-        public ServiceWithCustomClient(CurrentState stats, ILoggerFactory loggingFactory)
+        public ServiceWithCustomClient(CurrentState stats, ILoggerFactory loggingFactory, PipeFactory factory)
         {
             _logger = loggingFactory?.CreateLogger<ServiceWithCustomClient>();
             _stats = stats;
             _pooledConnections = new ConcurrentQueue<IPipeConnection>();
+            _factory = factory;
         }
 
         public Version[] SupportedVersions => _supportedVersions;
@@ -65,14 +67,12 @@ namespace CondenserDotNet.Server.HttpPipelineClient
                 await socket.WriteBodyAsync(context);
                 await socket.ReceiveHeaderAsync(context);
                 await socket.ReceiveBodyAsync(context, _logger);
-
                 _pooledConnections.Enqueue(socket);
             }
             catch
             {
                 throw new NotImplementedException();
             }
-
         }
 
         public override int GetHashCode()

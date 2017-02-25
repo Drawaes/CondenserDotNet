@@ -8,12 +8,16 @@ namespace PocWebsocketsSupport
     {
         static void Main(string[] args)
         {
+            if(args[0] == "pipe")
+            {
+                Startup.UsePipes = true;
+            }
             var host = new WebHostBuilder()
                .UseKestrel( options =>
                {
-                   options.UseWindowsAuthentication();
+                   //options.UseWindowsAuthentication();
                })
-               .UseUrls($"*://*:50000")
+               .UseUrls($"*://10.0.76.1:50000")
                .UseStartup<Startup>()
                .Build();
 

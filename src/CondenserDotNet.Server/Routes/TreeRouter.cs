@@ -47,8 +47,8 @@ namespace CondenserDotNet.Server.Routes
             for (var i = 0; i < node.ChildrenNodes.Count; i++)
             {
                 var nodeDto = new Node();
-                children.Add(node.ChildrenNodes.ElementAt(i).Key, nodeDto);
-                MapTo(node.ChildrenNodes.ElementAt(i).Value, nodeDto);
+                children.Add(node.ChildrenNodes.ElementAt(i).Item1, nodeDto);
+                MapTo(node.ChildrenNodes.ElementAt(i).Item2, nodeDto);
             }
         }
     }

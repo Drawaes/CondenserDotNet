@@ -67,8 +67,8 @@ namespace CondenserDotNet.Server.Routes
         {
             foreach (var child in node.ChildrenNodes)
             {
-                child.Value.Services.SetRoutingStrategy(strategy);
-                ReplaceStrategy(child.Value, strategy);
+                child.Item2.Services.SetRoutingStrategy(strategy);
+                ReplaceStrategy(child.Item2, strategy);
             }
         }
     }
