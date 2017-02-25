@@ -17,7 +17,7 @@ namespace CondenserDotNet.Client
         
 
         
-        DataContracts.Service RegisteredService { get; set; }
+      
 
     }
 }

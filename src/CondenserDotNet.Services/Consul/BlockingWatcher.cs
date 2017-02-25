@@ -2,9 +2,10 @@
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using CondenserDotNet.Services.Internal;
 using Newtonsoft.Json;
 
-namespace CondenserDotNet.Core
+namespace CondenserDotNet.Services.Consul
 {
     public class BlockingWatcher<T> where T : class
     {

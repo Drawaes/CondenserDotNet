@@ -1,5 +1,4 @@
 ﻿using System;
-using CondenserDotNet.Client;
 using CondenserDotNet.Configuration;
 using CondenserDotNet.Configuration.Consul;
 using Microsoft.AspNetCore.Builder;
@@ -16,7 +15,7 @@ namespace Configuration
         public Startup(IHostingEnvironment env, ServiceManager manager)
         {
             _manager = manager;
-
+            
             
             //manager.Config
             //    .AddUpdatingPathAsync(env.EnvironmentName)
