@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 
-namespace CondenserDotNet.Client.DataContracts
+namespace CondenserDotNet.Services.Consul
 {
     public class Service
     {

@@ -1,5 +1,4 @@
 ﻿using System;
-using CondenserDotNet.Client;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 

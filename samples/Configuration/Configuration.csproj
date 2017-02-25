@@ -15,7 +15,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\CondenserDotNet.Client\CondenserDotNet.Client.csproj" />
     <ProjectReference Include="..\..\src\CondenserDotNet.Configuration\CondenserDotNet.Configuration.csproj" />
   </ItemGroup>
 
