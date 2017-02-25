@@ -57,6 +57,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CondenserDotNet.Server.Http
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CondenserDotNet.Configuration", "src\CondenserDotNet.Configuration\CondenserDotNet.Configuration.csproj", "{6850B566-5210-4234-B9F6-6F543B73ED05}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CondenserDotNet.Services", "src\CondenserDotNet.Services\CondenserDotNet.Services.csproj", "{552760B0-2620-4F54-8F8A-E3B1942AF9D6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -259,6 +261,18 @@ Global
 		{6850B566-5210-4234-B9F6-6F543B73ED05}.Release|x64.Build.0 = Release|x64
 		{6850B566-5210-4234-B9F6-6F543B73ED05}.Release|x86.ActiveCfg = Release|x86
 		{6850B566-5210-4234-B9F6-6F543B73ED05}.Release|x86.Build.0 = Release|x86
+		{552760B0-2620-4F54-8F8A-E3B1942AF9D6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{552760B0-2620-4F54-8F8A-E3B1942AF9D6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{552760B0-2620-4F54-8F8A-E3B1942AF9D6}.Debug|x64.ActiveCfg = Debug|x64
+		{552760B0-2620-4F54-8F8A-E3B1942AF9D6}.Debug|x64.Build.0 = Debug|x64
+		{552760B0-2620-4F54-8F8A-E3B1942AF9D6}.Debug|x86.ActiveCfg = Debug|x86
+		{552760B0-2620-4F54-8F8A-E3B1942AF9D6}.Debug|x86.Build.0 = Debug|x86
+		{552760B0-2620-4F54-8F8A-E3B1942AF9D6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{552760B0-2620-4F54-8F8A-E3B1942AF9D6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{552760B0-2620-4F54-8F8A-E3B1942AF9D6}.Release|x64.ActiveCfg = Release|x64
+		{552760B0-2620-4F54-8F8A-E3B1942AF9D6}.Release|x64.Build.0 = Release|x64
+		{552760B0-2620-4F54-8F8A-E3B1942AF9D6}.Release|x86.ActiveCfg = Release|x86
+		{552760B0-2620-4F54-8F8A-E3B1942AF9D6}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -280,5 +294,6 @@ Global
 		{30143ABB-576F-4108-BFC8-420D1492B0DB} = {CB18CD55-85E2-46FC-A55B-7DE23EABFAE5}
 		{27056898-07EF-4BE6-A2A3-B396BEAF1B09} = {CB18CD55-85E2-46FC-A55B-7DE23EABFAE5}
 		{6850B566-5210-4234-B9F6-6F543B73ED05} = {CB18CD55-85E2-46FC-A55B-7DE23EABFAE5}
+		{552760B0-2620-4F54-8F8A-E3B1942AF9D6} = {CB18CD55-85E2-46FC-A55B-7DE23EABFAE5}
 	EndGlobalSection
 EndGlobal

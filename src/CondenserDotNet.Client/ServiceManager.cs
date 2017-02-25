@@ -11,7 +11,7 @@ namespace CondenserDotNet.Client
 {
     public class ServiceManager : IServiceManager
     {
-        private readonly HttpClient _httpClient;
+        
         private bool _disposed;
         private readonly string _serviceName;
         private readonly string _serviceId;
