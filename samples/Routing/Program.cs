@@ -13,26 +13,10 @@ namespace Routing
     {
         public static void Main(string[] args)
         {
-            var logger = new LoggerFactory();
-            logger.AddConsole().AddDebug(LogLevel.Trace);
-
             var host = new WebHostBuilder()
                 .UseKestrel()
-                .UseLoggerFactory(logger)
                 .UseUrls($"*://*:{50000}")
-                .AsCondenserRouter()
-                .WithHealthRoute("/condenser/health")
-                .WithHealthCheck(() => new HealthCheck
-                {
-                    Name = "Default",
-                    Ok = true
-                })
-                .UsePreRouteMiddleware<MyMiddleware>()
-                .WithHttpClient(serviceId => new HttpClient
-                {
-                    Timeout = TimeSpan.FromSeconds(30)
-                            
-                })
+                .UseStartup<Startup>()
                 .Build();
 
             host.Run();

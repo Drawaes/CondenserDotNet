@@ -6,22 +6,15 @@
     <AssemblyName>CondenserDotNet.Server</AssemblyName>
     <PackageId>CondenserDotNet.Server</PackageId>
   </PropertyGroup>
-
+  
   <ItemGroup>
-    <ProjectReference Include="..\CondenserDotNet.Core\CondenserDotNet.Core.csproj" />
-    <ProjectReference Include="..\CondenserDotNet.Server.Websockets\CondenserDotNet.Server.Websockets.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Routing.Abstractions" Version="$(AspNetVersion)" />
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="$(AspNetVersion)" />
-    <PackageReference Include="Microsoft.AspNetCore.Routing" Version="$(AspNetVersion)" />
     <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="$(AspNetVersion)" />
     <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="$(AspNetVersion)" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="$(AspNetVersion)" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="$(AspNetVersion)" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="$(AspNetVersion)" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="$(AspNetVersion)" />
     <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="$(AspNetVersion)" />
+    <PackageReference Include="Newtonsoft.Json" Version="$(NewtonJson)" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
@@ -30,6 +23,10 @@
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'net451' ">
     <Reference Include="System.Net.Http" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CondenserDotNet.Core\CondenserDotNet.Core.csproj" />
   </ItemGroup>
 
 </Project>

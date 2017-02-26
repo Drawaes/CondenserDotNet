@@ -13,16 +13,11 @@ namespace ServiceRegistration
     {
         public static void Main(string[] args)
         {
-            var serviceManager = new ServiceManager("TestService", "localhost", 8500);
-
-            serviceManager.AddHttpHealthCheck("/Health",10)
-                .AddApiUrl("/testsample/test3/test2")
-                .AddApiUrl("/testSample/test3/test1")
-                .RegisterServiceAsync().Wait();
-            
+            var port = ServiceManagerConfig.GetNextAvailablePort();
+                                    
             var host = new WebHostBuilder()
                 .UseKestrel()
-                .UseUrls($"http://*:{serviceManager.ServicePort}")
+                .UseUrls($"http://*:{port}")
                 .UseStartup<Startup>()
                 .Build();
 

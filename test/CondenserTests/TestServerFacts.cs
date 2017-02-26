@@ -1,6 +1,6 @@
 ﻿using System;
 using CondenserDotNet.Client;
-using CondenserDotNet.Client.Configuration;
+using CondenserDotNet.Configuration;
 using CondenserDotNet.Server;
 using CondenserTests.Fakes;
 using Microsoft.AspNetCore.Builder;
@@ -24,7 +24,7 @@ namespace CondenserTests
             await registry.SetKeyAsync("FakeConfig:Setting2", "def");
 
             var root = new ConfigurationBuilder()
-                .AddJsonConsul(registry)
+                .AddConfigurationRegistry(registry)
                 .Build();
 
             var builder = new WebHostBuilder()

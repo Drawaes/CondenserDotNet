@@ -1,42 +1,21 @@
 ﻿using System;
-using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Text;
+using CondenserDotNet.Client.Leadership;
+using CondenserDotNet.Client.Services;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CondenserDotNet.Client
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection ConfigureReloadable<TConfig>(this IServiceCollection self,
-            IConfiguration configuration, IConfigurationRegistry registry)
-            where TConfig : class
+        public static IServiceCollection AddConsulServices(this IServiceCollection self)
         {
-            return self.ConfigureReloadable<TConfig>(configuration, registry, typeof(TConfig).Name);
-        }
-
-        public static IServiceCollection ConfigureReloadable<TConfig>(this IServiceCollection self,
-            IConfiguration configuration, IConfigurationRegistry registry,
-            string sectionName)
-            where TConfig : class
-        {
-            var initialised = false;
-            self.Configure<TConfig>
-            (config =>
-            {
-                Action bind = () =>
-                {
-                    var section = configuration.GetSection(sectionName);
-                    section.Bind(config);
-                };
-
-                if (!initialised)
-                {
-                    registry.AddWatchOnEntireConfig(bind);
-                    initialised = true;
-                }
-
-                bind();
-            });
-
+            self.AddSingleton<Func<HttpClient>>(() => new HttpClient() { BaseAddress = new Uri($"http://localhost:8500") });
+            self.AddSingleton<ILeaderRegistry>();
+            self.AddSingleton<IServiceRegistry,ServiceRegistry>();
+            self.AddSingleton<IServiceManager, ServiceManager>();
             return self;
         }
     }

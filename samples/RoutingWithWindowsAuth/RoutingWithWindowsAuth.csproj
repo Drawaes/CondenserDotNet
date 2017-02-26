@@ -12,6 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\CondenserDotNet.Server.Extensions\CondenserDotNet.Server.Extensions.csproj" />
     <ProjectReference Include="..\..\src\CondenserDotNet.Server\CondenserDotNet.Server.csproj" />
     <ProjectReference Include="..\..\src\CondenserDotNet.Server.WindowsAuthentication\CondenserDotNet.Server.WindowsAuthentication.csproj" />
   </ItemGroup>

@@ -6,8 +6,10 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using CondenserDotNet.Client;
-using CondenserDotNet.Client.Configuration;
+using CondenserDotNet.Configuration;
+using CondenserDotNet.Configuration.Consul;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Xunit;
 
 namespace Condenser.Tests.Integration
@@ -23,15 +25,15 @@ namespace Condenser.Tests.Integration
         public async Task TestRegister()
         {
             var keyname = Guid.NewGuid().ToString();
-            using (var manager = new ServiceManager("TestService"))
+            using (var configRegistry = new ConsulRegistry(null))
             {
-                await manager.Config.SetKeyAsync($"org/{keyname}/test1", _value1);
-                await manager.Config.SetKeyAsync($"org/{keyname}/test2", _value2);
+                await configRegistry.SetKeyAsync($"org/{keyname}/test1", _value1);
+                await configRegistry.SetKeyAsync($"org/{keyname}/test2", _value2);
 
-                var result = await manager.Config.AddStaticKeyPathAsync($"org/{keyname}");
+                var result = await configRegistry.AddStaticKeyPathAsync($"org/{keyname}");
 
-                var firstValue = manager.Config["test1"];
-                var secondValue = manager.Config["test2"];
+                var firstValue = configRegistry["test1"];
+                var secondValue = configRegistry["test2"];
 
                 Assert.Equal(_value1, firstValue);
                 Assert.Equal(_value2, secondValue);
@@ -42,15 +44,15 @@ namespace Condenser.Tests.Integration
         public async Task DontPickUpChangesFact()
         {
             var keyname = Guid.NewGuid().ToString();
-            using (var manager = new ServiceManager("TestService"))
+            using (var configRegistry = new ConsulRegistry(null))
             {
-                await manager.Config.SetKeyAsync($"org/{keyname}/test1", _value1);
+                await configRegistry.SetKeyAsync($"org/{keyname}/test1", _value1);
 
-                var result = await manager.Config.AddStaticKeyPathAsync($"org/{keyname}");
-                await manager.Config.SetKeyAsync($"org/{keyname}/test1", _value2);
+                var result = await configRegistry.AddStaticKeyPathAsync($"org/{keyname}");
+                await configRegistry.SetKeyAsync($"org/{keyname}/test1", _value2);
 
                 await Task.Delay(500); //give some time to sync
-                var firstValue = manager.Config["test1"];
+                var firstValue = configRegistry["test1"];
                 Assert.Equal(_value1, firstValue);
             }
         }
@@ -59,18 +61,18 @@ namespace Condenser.Tests.Integration
         public async Task PickUpChangesFact()
         {
             string keyid = Guid.NewGuid().ToString();
-            using (var manager = new ServiceManager("TestService"))
+            using (var configRegistry = new ConsulRegistry(null))
             {
-                await manager.Config.SetKeyAsync($"org/{keyid}/test2", _value1);
-                await manager.Config.AddUpdatingPathAsync($"org/{keyid}/");
+                await configRegistry.SetKeyAsync($"org/{keyid}/test2", _value1);
+                await configRegistry.AddUpdatingPathAsync($"org/{keyid}/");
 
                 await Task.Delay(500);
 
-                Assert.Equal(_value1, manager.Config["test2"]);
-                await manager.Config.SetKeyAsync($"org/{keyid}/test2", _value2);
+                Assert.Equal(_value1, configRegistry["test2"]);
+                await configRegistry.SetKeyAsync($"org/{keyid}/test2", _value2);
 
                 await Task.Delay(500); //give some time to sync
-                Assert.Equal(_value2, manager.Config["test2"]);
+                Assert.Equal(_value2, configRegistry["test2"]);
             }
         }
 
@@ -79,17 +81,17 @@ namespace Condenser.Tests.Integration
         {
             Console.WriteLine(nameof(GetCallbackForSpecificKey));
             string keyid = Guid.NewGuid().ToString();
-            using (var manager = new ServiceManager("TestService"))
+            using (var configRegistry = new ConsulRegistry(null))
             {
                 var e = new ManualResetEvent(false);
-                manager.Config.AddWatchOnSingleKey("test1", keyValue => e.Set());
+                configRegistry.AddWatchOnSingleKey("test1", keyValue => e.Set());
 
-                await manager.Config.SetKeyAsync($"org/{keyid}/test1", _value1);
-                await manager.Config.AddUpdatingPathAsync($"org/{keyid}/");
+                await configRegistry.SetKeyAsync($"org/{keyid}/test1", _value1);
+                await configRegistry.AddUpdatingPathAsync($"org/{keyid}/");
 
                 await Task.Delay(1000);
 
-                await manager.Config.SetKeyAsync($"org/{keyid}/test1", _value2);
+                await configRegistry.SetKeyAsync($"org/{keyid}/test1", _value2);
 
                 //Wait for a max of 1 second for the change to notify us
                 Assert.True(e.WaitOne(2000));
@@ -100,17 +102,17 @@ namespace Condenser.Tests.Integration
         public async Task GetCallbackForKeyThatIsAdded()
         {
             string keyid = Guid.NewGuid().ToString();
-            using (var manager = new ServiceManager("TestService"))
+            using (var configRegistry = new ConsulRegistry(null))
             {
                 var e = new ManualResetEvent(false);
-                manager.Config.AddWatchOnSingleKey("test1", keyValue => e.Set());
+                configRegistry.AddWatchOnSingleKey("test1", keyValue => e.Set());
 
-                await manager.Config.AddUpdatingPathAsync($"org/{keyid}/");
+                await configRegistry.AddUpdatingPathAsync($"org/{keyid}/");
 
                 //give it time to register
                 await Task.Delay(1000);
 
-                await manager.Config.SetKeyAsync($"org/{keyid}/test1", _value2);
+                await configRegistry.SetKeyAsync($"org/{keyid}/test1", _value2);
 
                 //Wait for a max of 1 second for the change to notify us
                 Assert.True(e.WaitOne(2000));
@@ -122,19 +124,19 @@ namespace Condenser.Tests.Integration
         {
             Console.WriteLine(nameof(GetCallbackForAnyKey));
             string keyid = Guid.NewGuid().ToString();
-            using (var manager = new ServiceManager("TestService"))
+            using (var configRegistry = new ConsulRegistry(null))
             {
-                await manager.Config.SetKeyAsync($"org/{keyid}/test1", _value1);
+                await configRegistry.SetKeyAsync($"org/{keyid}/test1", _value1);
 
-                await manager.Config.AddUpdatingPathAsync($"org/{keyid}");
+                await configRegistry.AddUpdatingPathAsync($"org/{keyid}");
 
                 var e = new ManualResetEvent(false);
-                manager.Config.AddWatchOnEntireConfig(() => e.Set());
+                configRegistry.AddWatchOnEntireConfig(() => e.Set());
 
                 //give the registration time to complete registration
                 await Task.Delay(1000);
 
-                await manager.Config.SetKeyAsync($"org/{keyid}/test1", _value2);
+                await configRegistry.SetKeyAsync($"org/{keyid}/test1", _value2);
 
                 //Wait for a max of 1 second for the change to notify us
                 Assert.True(e.WaitOne(2000));
@@ -145,17 +147,17 @@ namespace Condenser.Tests.Integration
         public async Task CanLoadUsingConsulConfigurationProvider()
         {
             var keyname = Guid.NewGuid().ToString();
-            using (var manager = new ServiceManager("TestService"))
+            using (var configRegistry = new ConsulRegistry(null))
             {
-                await manager.Config.SetKeyAsync($"org/{keyname}/test1", _value1);
-                await manager.Config.SetKeyAsync($"org/{keyname}/test2", _value2);
-                await manager.Config.SetKeyAsync($"org/{keyname}/Nested/test3", _value3);
-                await manager.Config.SetKeyAsync($"org/{keyname}/Nested/test4", _value4);
+                await configRegistry.SetKeyAsync($"org/{keyname}/test1", _value1);
+                await configRegistry.SetKeyAsync($"org/{keyname}/test2", _value2);
+                await configRegistry.SetKeyAsync($"org/{keyname}/Nested/test3", _value3);
+                await configRegistry.SetKeyAsync($"org/{keyname}/Nested/test4", _value4);
 
-                await manager.Config.AddStaticKeyPathAsync($"org");
+                await configRegistry.AddStaticKeyPathAsync($"org");
 
                 var config = new ConfigurationBuilder()
-                    .AddConsul(manager.Config)
+                    .AddConfigurationRegistry(configRegistry)
                     .Build();
                 
                 var simpleSettings = new SimpleSettings();
@@ -173,7 +175,7 @@ namespace Condenser.Tests.Integration
         public async Task CanLoadUsingConsulJsonConfigurationProvider()
         {
             var keyname = Guid.NewGuid().ToString();
-            using (var manager = new ServiceManager("TestService"))
+            using (var configRegistry = new ConsulRegistry(Options.Create<ConsulRegistryConfig>(new ConsulRegistryConfig() { KeyParser = new JsonKeyValueParser() })))
             {
                 var settings = new SimpleSettings
                 {
@@ -186,14 +188,14 @@ namespace Condenser.Tests.Integration
                     }
                 };
 
-                await manager.Config.SetKeyJsonAsync($"org/{keyname}/Settings", settings);
+                await configRegistry.SetKeyJsonAsync($"org/{keyname}/Settings", settings);
 
                 var config = new ConfigurationBuilder()
-                    .AddJsonConsul(manager.Config)
+                    .AddConfigurationRegistry(configRegistry)
                     .Build();
 
                 //TODO: At the moment require this line after builder as it sets parser.  Probably need to rethink this.
-                await manager.Config.AddStaticKeyPathAsync($"org/{keyname}");
+                await configRegistry.AddStaticKeyPathAsync($"org/{keyname}");
 
                 var simpleSettings = new SimpleSettings();
                 var configSection = config.GetSection("Settings");

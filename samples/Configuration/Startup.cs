@@ -1,50 +1,45 @@
 ﻿using System;
 using CondenserDotNet.Client;
-using CondenserDotNet.Client.Configuration;
+using CondenserDotNet.Configuration;
+using CondenserDotNet.Configuration.Consul;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace Configuration
 {
-    public class Startup : IStartup
+    public class Startup
     {
-        private readonly ServiceManager _manager;
-
-        public Startup(IHostingEnvironment env,
-            ServiceManager manager)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env
+            , IConfigurationRegistry configRegistry, IServiceCollection services)
         {
-            _manager = manager;
+            var config = new ConsulConfig
+            {
+                Setting = "Test"
+            };
 
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonConsul(manager.Config);
+            configRegistry.SetKeyJsonAsync($"{env.EnvironmentName}/ConsulConfig", config).Wait();
+            configRegistry.AddUpdatingPathAsync(env.EnvironmentName).Wait();
 
-            manager.Config
-                .AddUpdatingPathAsync(env.EnvironmentName)
-                .Wait();
+            var configBuilder = new ConfigurationBuilder()
+                .AddConfigurationRegistry(configRegistry).Build();
+            
+            services.ConfigureReloadable<IConfigurationRegistry>(configBuilder, configRegistry);
 
-            Configuration = builder.Build();
-        }
-
-        public IConfiguration Configuration { get; }
-
-        public void Configure(IApplicationBuilder app)
-        {
             app.UseMvcWithDefaultRoute();
         }
 
-        IServiceProvider IStartup.ConfigureServices(IServiceCollection services)
+        public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
-            services.AddRouting();
-
             services.AddOptions();
-            services.ConfigureReloadable<ConsulConfig>(Configuration, _manager.Config);
-
-            services.AddSingleton(Configuration);
-            return services.BuildServiceProvider();
+                   
+            services
+                .AddSingleton<IConfigurationRegistry,ConsulRegistry>()
+                .Configure<ConsulRegistryConfig>(ops => ops.KeyParser = new JsonKeyValueParser())
+                .AddRouting()
+                .AddMvc();
         }
     }
 }

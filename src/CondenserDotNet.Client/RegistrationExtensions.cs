@@ -6,7 +6,6 @@ using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using CondenserDotNet.Client.DataContracts;
-using CondenserDotNet.Client.Internal;
 using CondenserDotNet.Core;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -61,7 +60,7 @@ namespace CondenserDotNet.Client
 
         public static async Task<bool> RegisterServiceAsync(this IServiceManager serviceManager)
         {
-            DataContracts.Service s = new DataContracts.Service()
+            var s = new Service()
             {
                 Address = serviceManager.ServiceAddress,
                 EnableTagOverride = false,
@@ -69,8 +68,7 @@ namespace CondenserDotNet.Client
                 Name = serviceManager.ServiceName,
                 Port = serviceManager.ServicePort,
                 Checks = new List<HealthCheck>(),
-                Tags = new List<string>(
-                    serviceManager.SupportedUrls.Select(u => $"urlprefix-{u}"))
+                Tags = new List<string>(serviceManager.SupportedUrls.Select(u => $"urlprefix-{u}"))
             };
             if (serviceManager.HttpCheck != null)
             {
