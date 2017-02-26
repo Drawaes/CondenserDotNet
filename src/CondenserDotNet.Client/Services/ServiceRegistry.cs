@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using CondenserDotNet.Core;
 using CondenserDotNet.Core.DataContracts;
 using CondenserDotNet.Core.Routing;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
 namespace CondenserDotNet.Client.Services
@@ -16,9 +17,9 @@ namespace CondenserDotNet.Client.Services
         private readonly CancellationTokenSource _cancel = new CancellationTokenSource();
         private readonly Dictionary<string, ServiceWatcher> _watchedServices = new Dictionary<string, ServiceWatcher>(StringComparer.OrdinalIgnoreCase);
         
-        public ServiceRegistry(Func<HttpClient> httpClientFactory)
+        public ServiceRegistry(Func<HttpClient> httpClientFactory = null)
         {
-            _client = httpClientFactory();
+            _client = httpClientFactory?.Invoke() ?? new HttpClient() { BaseAddress = new Uri("http://localhost:8500") };
         }
 
         public async Task<IEnumerable<string>> GetAvailableServicesAsync()

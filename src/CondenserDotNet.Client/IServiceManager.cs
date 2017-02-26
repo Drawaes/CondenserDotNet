@@ -13,13 +13,11 @@ namespace CondenserDotNet.Client
         string ServiceId { get; }
         string ServiceName { get; }
         TimeSpan DeregisterIfCriticalAfter { get; set; }
-        IServiceRegistry Services { get; }
         bool IsRegistered { get; }
         ITtlCheck TtlCheck { get; set; }
-        string ServiceAddress { get; set; }
-        int ServicePort { get; set; }
+        string ServiceAddress { get; }
+        int ServicePort { get; }
         CancellationToken Cancelled { get; }
-        ILeaderRegistry Leaders { get; }
         HttpClient Client { get; }
         List<string> SupportedUrls { get; }
         HealthCheck HttpCheck { get; set; }

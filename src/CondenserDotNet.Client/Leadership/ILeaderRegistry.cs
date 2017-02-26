@@ -1,6 +1,5 @@
-﻿using CondenserDotNet.Client.Internal;
-
-namespace CondenserDotNet.Client
+﻿
+namespace CondenserDotNet.Client.Leadership
 {
     public interface ILeaderRegistry
     {

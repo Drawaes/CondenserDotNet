@@ -23,10 +23,7 @@ namespace WebsocketSampleServer
             services.AddRouting();
             services.AddOptions();
 
-            services.AddSingleton<IServiceManager,ServiceManager>();
-            services.AddSingleton<Func<HttpClient>>(() => new HttpClient());
-            services
-                .AddSingleton<IServiceRegistry, ServiceRegistry>()
+            services.AddConsulServices()
                 .Configure<ServiceManagerConfig>((ops) => ops.ServicePort = 2222);
         }
 

@@ -18,6 +18,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging" Version="$(AspNetVersion)" />
     <PackageReference Include="Newtonsoft.Json" Version="$(NewtonJson)" />
     <PackageReference Include="System.Reflection" Version="$(CoreFxVersion)" />
+    <PackageReference Include="Microsoft.AspNetCore.Hosting.Server.Abstractions" Version="$(AspNetVersion)" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">

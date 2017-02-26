@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net;
+using System.Linq;
 using System.Net.Http;
-using System.Net.Sockets;
 using System.Threading;
 using CondenserDotNet.Client.DataContracts;
-using CondenserDotNet.Client.Services;
-using CondenserDotNet.Core;
+using Microsoft.AspNetCore.Hosting.Server;
+using Microsoft.AspNetCore.Hosting.Server.Features;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace CondenserDotNet.Client
@@ -20,21 +20,30 @@ namespace CondenserDotNet.Client
         private readonly List<string> _supportedUrls = new List<string>();
         private ITtlCheck _ttlCheck;
         private readonly CancellationTokenSource _cancel = new CancellationTokenSource();
-        private readonly IServiceRegistry _services;
-        private readonly LeaderRegistry _leaders;
-        private const int ConsulPort = 8500;
-        private const string LocalHost = "localhost";
+        private readonly ILogger _logger;
 
-        public ServiceManager(IOptions<ServiceManagerConfig> optionsConfig, IServiceRegistry serviceRegistry)
+        public ServiceManager(IOptions<ServiceManagerConfig> optionsConfig, Func<HttpClient> httpClientFactory = null, ILoggerFactory logFactory = null, IServer server = null)
         {
+            if (optionsConfig.Value.ServicePort == 0 && server == null)
+            {
+                throw new ArgumentOutOfRangeException($"A valid server port needs to be set through either the options or the hosting server");
+            }
+
             var config = optionsConfig.Value;
-            _httpClient = new HttpClient { BaseAddress = new Uri($"http://{config.AgentAddress}:{config.AgentPort}") };
+            _logger = logFactory?.CreateLogger<ServiceManager>();
+            _httpClient = httpClientFactory?.Invoke() ?? new HttpClient() { BaseAddress = new Uri("http://localhost:8500") };
             _serviceId = config.ServiceId;
             _serviceName = config.ServiceName;
-            _services = serviceRegistry;
-            _leaders = new LeaderRegistry(this);
             ServiceAddress = config.ServiceAddress;
-            ServicePort = config.ServicePort;
+            if (config.ServicePort > 0)
+            {
+                ServicePort = config.ServicePort;
+            }
+            else
+            {
+                var feature = server.Features.Get<IServerAddressesFeature>();
+                ServicePort = new Uri(feature.Addresses.First()).Port;
+            }
         }
 
         public List<string> SupportedUrls => _supportedUrls;
@@ -44,14 +53,11 @@ namespace CondenserDotNet.Client
         public string ServiceId => _serviceId;
         public string ServiceName => _serviceName;
         public TimeSpan DeregisterIfCriticalAfter { get; set; }
-        public IServiceRegistry Services => _services;
         public bool IsRegistered => RegisteredService != null;
-        public ITtlCheck TtlCheck { get { return TtlCheck1; } set { TtlCheck1 = value; } }
-        public string ServiceAddress { get; set; }
-        public int ServicePort { get; set; }
+        public ITtlCheck TtlCheck { get => TtlCheck1; set => TtlCheck1 = value; }
+        public string ServiceAddress { get; }
+        public int ServicePort { get; }
         public CancellationToken Cancelled => _cancel.Token;
-        public ILeaderRegistry Leaders => _leaders;
-
         public ITtlCheck TtlCheck1 { get => _ttlCheck; set => _ttlCheck = value; }
 
         public void Dispose()
@@ -62,12 +68,8 @@ namespace CondenserDotNet.Client
 
         protected void Dispose(bool disposing)
         {
-            if (_disposed)
-                return;
+            if (_disposed) return;
 
-            if (disposing)
-            {
-            }
             try
             {
                 _cancel.Cancel();

@@ -10,7 +10,7 @@ using CondenserDotNet.Core.Consul;
 using CondenserDotNet.Core.DataContracts;
 using Newtonsoft.Json;
 
-namespace CondenserDotNet.Client.Internal
+namespace CondenserDotNet.Client.Leadership
 {
     public class LeaderWatcher : ILeaderWatcher
     {

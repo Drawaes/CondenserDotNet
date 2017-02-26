@@ -30,9 +30,7 @@ namespace CondenserDotNet.Configuration
             OnReload();
         }
 
-        public override IEnumerable<string> GetChildKeys(
-            IEnumerable<string> earlierKeys,
-            string parentPath)
+        public override IEnumerable<string> GetChildKeys(IEnumerable<string> earlierKeys, string parentPath)
         {
             var prefix = parentPath == null ? string.Empty : parentPath + ConfigurationPath.KeyDelimiter;
 

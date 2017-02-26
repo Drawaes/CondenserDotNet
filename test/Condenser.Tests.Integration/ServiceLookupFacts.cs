@@ -16,21 +16,20 @@ namespace Condenser.Tests.Integration
         public async Task TestRegisterAndCheckRegistered()
         {
             var key = Guid.NewGuid().ToString();
-            var opts = Options.Create(new ServiceManagerConfig() { ServiceName = key, ServiceId = key + "Id1"});
-            var opts2 = Options.Create(new ServiceManagerConfig() { ServiceName = key, ServiceId = key + "Id2"});
-            using (var manager = new ServiceManager(opts, new ServiceRegistry(() => new HttpClient())))
+            var opts = Options.Create(new ServiceManagerConfig() { ServiceName = key, ServiceId = key + "Id1", ServicePort = 2222 });
+            var opts2 = Options.Create(new ServiceManagerConfig() { ServiceName = key, ServiceId = key + "Id2", ServicePort = 2222 });
+            using (var manager = new ServiceManager(opts))
+            using (var manager2 = new ServiceManager(opts2))
+            using (var serviceRegistry = new ServiceRegistry())
             {
-                using (var manager2 = new ServiceManager(opts2, new ServiceRegistry(() => new HttpClient())))
-                {
-                    var registrationResult = await manager.RegisterServiceAsync();
-                    Assert.Equal(true, registrationResult);
+                var registrationResult = await manager.RegisterServiceAsync();
+                Assert.Equal(true, registrationResult);
 
-                    var registrationResult2 = await manager2.RegisterServiceAsync();
-                    Assert.Equal(true, registrationResult2);
+                var registrationResult2 = await manager2.RegisterServiceAsync();
+                Assert.Equal(true, registrationResult2);
 
-                    var service = await manager.Services.GetServiceInstanceAsync(key);
-                    Assert.Equal(key, service.Service);
-                }
+                var service = await serviceRegistry.GetServiceInstanceAsync(key);
+                Assert.Equal(key, service.Service);
             }
         }
 
@@ -39,14 +38,15 @@ namespace Condenser.Tests.Integration
         {
             Console.WriteLine(nameof(TestRegisterAndCheckUpdates));
             var serviceName = Guid.NewGuid().ToString();
-            var opts = Options.Create(new ServiceManagerConfig() { ServiceName = serviceName, ServiceId = serviceName });
-            using (var manager = new ServiceManager(opts, new ServiceRegistry(() => new HttpClient())))
+            var opts = Options.Create(new ServiceManagerConfig() { ServiceName = serviceName, ServiceId = serviceName, ServicePort = 2222 });
+            using (var manager = new ServiceManager(opts))
+            using (var serviceRegistry = new ServiceRegistry())
             {
-                Assert.Null(await manager.Services.GetServiceInstanceAsync(serviceName));
+                Assert.Null(await serviceRegistry.GetServiceInstanceAsync(serviceName));
                 await manager.RegisterServiceAsync();
                 //Give it 500ms to update with the new service
                 await Task.Delay(500);
-                Assert.NotNull(await manager.Services.GetServiceInstanceAsync(serviceName));
+                Assert.NotNull(await serviceRegistry.GetServiceInstanceAsync(serviceName));
             }
         }
     }

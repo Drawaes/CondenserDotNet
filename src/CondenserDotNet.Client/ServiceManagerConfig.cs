@@ -14,17 +14,13 @@ namespace CondenserDotNet.Client
             ServiceAddress = Dns.GetHostName();
             ServiceName = System.IO.Path.GetFileNameWithoutExtension(Assembly.GetEntryAssembly().Location);
             ServiceId = $"{ServiceName}:{ServiceAddress}";
-            AgentAddress = "localhost";
-            AgentPort = 8500;
         }
 
         public string ServiceName { get;set;}
         public string ServiceId { get; set; }
         public string ServiceAddress { get; set; }
         public int ServicePort { get;set; }
-        public string AgentAddress { get;set;} 
-        public int AgentPort { get;set;}
-
+        
         public static int GetNextAvailablePort()
         {
             var l = new TcpListener(IPAddress.Loopback, 0);
