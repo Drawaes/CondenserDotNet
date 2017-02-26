@@ -7,10 +7,7 @@ using System.Threading.Tasks;
 using CondenserDotNet.Core;
 using CondenserDotNet.Core.DataContracts;
 using CondenserDotNet.Server.DataContracts;
-using CondenserDotNet.Server.Routes;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
-using IRouter = Microsoft.AspNetCore.Routing.IRouter;
 
 namespace CondenserDotNet.Server
 {

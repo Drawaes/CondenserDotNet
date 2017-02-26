@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using CondenserDotNet.Client;
+using CondenserDotNet.Client.Services;
+using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Xunit;
 
@@ -14,10 +16,11 @@ namespace Condenser.Tests.Integration
         public async Task TestRegisterAndCheckRegistered()
         {
             var key = Guid.NewGuid().ToString();
-            Console.WriteLine(nameof(TestRegisterAndCheckRegistered));
-            using (var manager = new ServiceManager(key, key + "Id1"))
+            var opts = Options.Create(new ServiceManagerConfig() { ServiceName = key, ServiceId = key + "Id1"});
+            var opts2 = Options.Create(new ServiceManagerConfig() { ServiceName = key, ServiceId = key + "Id2"});
+            using (var manager = new ServiceManager(opts, new ServiceRegistry(() => new HttpClient())))
             {
-                using (var manager2 = new ServiceManager(key, key + "Id2"))
+                using (var manager2 = new ServiceManager(opts2, new ServiceRegistry(() => new HttpClient())))
                 {
                     var registrationResult = await manager.RegisterServiceAsync();
                     Assert.Equal(true, registrationResult);
@@ -36,7 +39,8 @@ namespace Condenser.Tests.Integration
         {
             Console.WriteLine(nameof(TestRegisterAndCheckUpdates));
             var serviceName = Guid.NewGuid().ToString();
-            using (var manager = new ServiceManager(serviceName))
+            var opts = Options.Create(new ServiceManagerConfig() { ServiceName = serviceName, ServiceId = serviceName });
+            using (var manager = new ServiceManager(opts, new ServiceRegistry(() => new HttpClient())))
             {
                 Assert.Null(await manager.Services.GetServiceInstanceAsync(serviceName));
                 await manager.RegisterServiceAsync();

@@ -3,27 +3,32 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using CondenserDotNet.Core.Routing;
+using CondenserDotNet.Server.Builder;
 using CondenserDotNet.Server.DataContracts;
 using CondenserDotNet.Server.Extensions;
 using CondenserDotNet.Server.Routes;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace CondenserDotNet.Server.Builder
+namespace CondenserDotNet.Server
 {
-    public class ConfigurationBuilder : IHealthConfig, IConfigurationBuilder,
-        IRoutingConfig, IHttpClientConfig
+    public class ConfigurationBuilder : IHealthConfig, IConfigurationBuilder, IRoutingConfig, IHttpClientConfig
     {
-        private readonly IWebHostBuilder _builder;
+        private readonly IServiceCollection _collection;
         private readonly List<Type> _preRoute = new List<Type>();
         private string _agentAddress = "localhost";
         private int _agentPort = 8500;
         private Func<string, HttpClient> _clientFactory;
 
-        public ConfigurationBuilder(IWebHostBuilder builder)
+        public ConfigurationBuilder(IServiceCollection collection)
         {
-            _builder = builder;
+            _collection = collection;
         }
+
+        public List<Func<Task<HealthCheck>>> Checks { get; } = new List<Func<Task<HealthCheck>>>();
+        public string Route { get; private set; } = CondenserRoutes.Health;
+        public string DefaultRouteStrategy { get; private set; } = RouteStrategy.Random.ToString();
 
         public IConfigurationBuilder WithAgentAddress(string agentAdress)
         {
@@ -55,31 +60,11 @@ namespace CondenserDotNet.Server.Builder
             return this;
         }
 
-        public IWebHost Build()
+        public IServiceCollection Build()
         {
-            throw new NotImplementedException();
-            //return
-            //    _builder.ConfigureServices(x =>
-            //        {
-            //            x.AddCondenserRouter(_agentAddress, _agentPort, this, this, this);
-            //        })
-            //        .Configure(x =>
-            //        {
-            //            foreach (var middleware in _preRoute)
-            //            {
-            //                x.UseMiddleware(middleware);
-            //            }
-            //            x.UseCondenserRouter();
-            //        })
-            //        .Build();
+            return _collection.AddCondenser(_agentAddress,_agentPort, this,this,this);
         }
-
-        public IConfigurationBuilder UsePreRouteMiddleware<T>()
-        {
-            _preRoute.Add(typeof(T));
-            return this;
-        }
-
+        
         public IConfigurationBuilder WithRoutingStrategy(RouteStrategy name)
         {
             DefaultRouteStrategy = name.ToString();
@@ -91,12 +76,7 @@ namespace CondenserDotNet.Server.Builder
             _clientFactory = clientFactory;
             return this;
         }
-
-        public List<Func<Task<HealthCheck>>> Checks { get; } = new List<Func<Task<HealthCheck>>>();
-
-        public string Route { get; private set; } = CondenserRoutes.Health;
-
-        public string DefaultRouteStrategy { get; private set; } = RouteStrategy.Random.ToString();
+        
         public HttpClient Create(string serviceId)
         {
             return _clientFactory?.Invoke(serviceId);

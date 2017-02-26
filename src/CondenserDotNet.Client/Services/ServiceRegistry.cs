@@ -3,23 +3,22 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using CondenserDotNet.Core;
 using CondenserDotNet.Core.DataContracts;
 using CondenserDotNet.Core.Routing;
 using Newtonsoft.Json;
 
-namespace CondenserDotNet.Core
+namespace CondenserDotNet.Client.Services
 {
-    public class ServiceRegistry : IServiceRegistry
+    public class ServiceRegistry : IServiceRegistry, IDisposable
     {
         private readonly HttpClient _client;
-        private readonly CancellationToken _cancel;
+        private readonly CancellationTokenSource _cancel = new CancellationTokenSource();
         private readonly Dictionary<string, ServiceWatcher> _watchedServices = new Dictionary<string, ServiceWatcher>(StringComparer.OrdinalIgnoreCase);
-
-        public ServiceRegistry(
-            HttpClient client, CancellationToken cancel)
+        
+        public ServiceRegistry(Func<HttpClient> httpClientFactory)
         {
-            _client = client;
-            _cancel = cancel;
+            _client = httpClientFactory();
         }
 
         public async Task<IEnumerable<string>> GetAvailableServicesAsync()
@@ -30,8 +29,7 @@ namespace CondenserDotNet.Core
 
         public async Task<Dictionary<string, string[]>> GetAvailableServicesWithTagsAsync()
         {
-            var result = await _client.GetAsync(
-                HttpUtils.ServiceCatalogUrl, _cancel);
+            var result = await _client.GetAsync(HttpUtils.ServiceCatalogUrl, _cancel.Token);
             if (!result.IsSuccessStatusCode)
             {
                 return null;
@@ -41,20 +39,26 @@ namespace CondenserDotNet.Core
             return serviceList;
         }
 
-        public Task<DataContracts.InformationService> GetServiceInstanceAsync(string serviceName)
+        public Task<InformationService> GetServiceInstanceAsync(string serviceName)
         {
             ServiceWatcher watcher;
             lock (_watchedServices)
             {
                 if (!_watchedServices.TryGetValue(serviceName, out watcher))
                 {
-                    watcher = new ServiceWatcher(serviceName, _client, _cancel, 
+                    watcher = new ServiceWatcher(serviceName, _client, _cancel.Token, 
                         new RandomRoutingStrategy<InformationServiceSet>());
                     _watchedServices.Add(serviceName, watcher);
                 }
             }
             //We either have one or have made one now so lets carry on
             return watcher.GetNextServiceInstanceAsync();
+        }
+
+        public void Dispose()
+        {
+            _cancel.Cancel();
+            _client.Dispose();
         }
     }
 }

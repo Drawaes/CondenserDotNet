@@ -37,9 +37,7 @@ namespace PocWebsocketsSupport
         {
             //logger.AddConsole(LogLevel.Information, true);
             //app.UseWindowsAuthentication();
-            app.UseMiddleware<RoutingMiddleware>();
-            app.UseMiddleware<WebsocketMiddleware>();
-            app.UseMiddleware<ServiceCallMiddleware>();
+            app.UseCondenser();
         }
     }
 }

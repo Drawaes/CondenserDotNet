@@ -7,7 +7,7 @@ namespace CondenserDotNet.Server.Routes
 {
     public class HealthResponse
     {
-        public Core.CurrentState.ThreadStats Stats { get; set; }
+        public CurrentState.ThreadStats Stats { get; set; }
         public DataContracts.HealthCheck[] HealthChecks { get; set; }
     }
 }

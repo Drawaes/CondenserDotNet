@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using CondenserDotNet.Client;
+using CondenserDotNet.Client.Services;
+using Microsoft.Extensions.Options;
 using Xunit;
 
 namespace Condenser.Tests.Integration
@@ -13,7 +16,8 @@ namespace Condenser.Tests.Integration
         public async Task TestRegister()
         {
             var serviceName = Guid.NewGuid().ToString();
-            using (var manager = new ServiceManager(serviceName))
+            var opts = Options.Create(new ServiceManagerConfig());
+            using (var manager = new ServiceManager(opts, null))
             {
                 manager.AddApiUrl("api/testurl");
                 var registrationResult = await manager.RegisterServiceAsync();
@@ -25,7 +29,8 @@ namespace Condenser.Tests.Integration
         public async Task TestRegisterAndSetPassTtl()
         {
             var serviceName = Guid.NewGuid().ToString();
-            using (var manager = new ServiceManager(serviceName))
+            var opts = Options.Create(new ServiceManagerConfig());
+            using (var manager = new ServiceManager(opts, null))
             {
                 manager.AddTtlHealthCheck(10);
                 var registerResult = await manager.RegisterServiceAsync();
@@ -38,7 +43,8 @@ namespace Condenser.Tests.Integration
         public async Task TestRegisterAndCheckRegistered()
         {
             var serviceName = Guid.NewGuid().ToString();
-            using (var manager = new ServiceManager(serviceName))
+            var opts = Options.Create(new ServiceManagerConfig());
+            using (var manager = new ServiceManager(opts, new ServiceRegistry(() => new HttpClient())))
             {
                 var registrationResult = await manager.RegisterServiceAsync();
                 Assert.Equal(true, registrationResult);

@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\CondenserDotNet.Core\CondenserDotNet.Core.csproj" />
+    <ProjectReference Include="..\..\src\CondenserDotNet.Server.Extensions\CondenserDotNet.Server.Extensions.csproj" />
     <ProjectReference Include="..\..\src\CondenserDotNet.Server.HttpPipelineClient\CondenserDotNet.Server.HttpPipelineClient.csproj" />
     <ProjectReference Include="..\..\src\CondenserDotNet.Server.Websockets\CondenserDotNet.Server.Websockets.csproj" />
     <ProjectReference Include="..\..\src\CondenserDotNet.Server\CondenserDotNet.Server.csproj" />

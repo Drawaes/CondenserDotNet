@@ -6,41 +6,40 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace Configuration
 {
     public class Startup
     {
-        private readonly ServiceManager _manager;
-
-        public Startup(IHostingEnvironment env, ServiceManager manager)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env
+            , IConfigurationRegistry configRegistry, IServiceCollection services)
         {
-            _manager = manager;
+            var config = new ConsulConfig
+            {
+                Setting = "Test"
+            };
 
+            configRegistry.SetKeyJsonAsync($"{env.EnvironmentName}/ConsulConfig", config).Wait();
+            configRegistry.AddUpdatingPathAsync(env.EnvironmentName).Wait();
+
+            var configBuilder = new ConfigurationBuilder()
+                .AddConfigurationRegistry(configRegistry).Build();
             
-            //manager.Config
-            //    .AddUpdatingPathAsync(env.EnvironmentName)
-            //    .Wait();
-        }
-        
-        public void Configure(IApplicationBuilder app)
-        {
+            services.ConfigureReloadable<IConfigurationRegistry>(configBuilder, configRegistry);
+
             app.UseMvcWithDefaultRoute();
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddTransient<IKeyParser>((sp) => new JsonKeyValueParser());
-            services.AddSingleton<IConfigurationRegistry,ConsulRegistry>();
-            
-            services.AddMvc();
-            services.AddRouting();
-
             services.AddOptions();
-            //services.ConfigureReloadable<ConsulConfig>();
-
-            //services.AddSingleton(Configuration);
-            //return services.BuildServiceProvider();
+                   
+            services
+                .AddSingleton<IConfigurationRegistry,ConsulRegistry>()
+                .Configure<ConsulRegistryConfig>(ops => ops.KeyParser = new JsonKeyValueParser())
+                .AddRouting()
+                .AddMvc();
         }
     }
 }

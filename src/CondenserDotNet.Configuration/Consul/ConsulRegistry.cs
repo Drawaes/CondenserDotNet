@@ -33,8 +33,10 @@ namespace CondenserDotNet.Configuration.Consul
             var agentInfo = agentConfig?.Value ?? new ConsulRegistryConfig();
             _agentAddress = $"http://{agentInfo.AgentAddress}:{agentInfo.AgentPort}";
             _parser = agentInfo.KeyParser;
-            _httpClient = new HttpClient();
-            _httpClient.BaseAddress = new Uri(_agentAddress);
+            _httpClient = new HttpClient()
+            {
+                BaseAddress = new Uri(_agentAddress)
+            };
         }
 
         /// <summary>

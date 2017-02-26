@@ -25,9 +25,7 @@ namespace CondenserDotNet.Client.Internal
         {
             _serviceManager = serviceManager;
             _keyToWatch = keyToWatch;
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-            StartSession();
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            var ignore = StartSession();
         }
 
         private async Task StartSession()
@@ -36,7 +34,6 @@ namespace CondenserDotNet.Client.Internal
             {
                 _currentLeaderEvent.Reset();
                 _electedLeaderEvent.Reset();
-                //try to get session
                 var result = await _serviceManager.Client.PutAsync(HttpUtils.SessionCreateUrl, GetCreateSession());
                 if (!result.IsSuccessStatusCode)
                 {
@@ -83,17 +80,14 @@ namespace CondenserDotNet.Client.Internal
                         _electedLeaderEvent.Reset();
                         break;
                     }
+                    _currentLeaderEvent.Set(JsonConvert.DeserializeObject<InformationService>(kv[0].ValueFromBase64()));
+                    if (Guid.Parse(kv[0].Session) == _sessionId)
+                    {
+                        _electedLeaderEvent.Set(true);
+                    }
                     else
                     {
-                        _currentLeaderEvent.Set(JsonConvert.DeserializeObject<InformationService>(kv[0].ValueFromBase64()));
-                        if (Guid.Parse(kv[0].Session) == _sessionId)
-                        {
-                            _electedLeaderEvent.Set(true);
-                        }
-                        else
-                        {
-                            _electedLeaderEvent.Reset();
-                        }
+                        _electedLeaderEvent.Reset();
                     }
                 }
             }
@@ -129,14 +123,7 @@ namespace CondenserDotNet.Client.Internal
             return HttpUtils.GetStringContent(sessionCreate);
         }
 
-        public Task<InformationService> GetCurrentLeaderAsync()
-        {
-            return _currentLeaderEvent.WaitAsync();
-        }
-
-        public Task GetLeadershipAsync()
-        {
-            return _electedLeaderEvent.WaitAsync();
-        }
+        public Task<InformationService> GetCurrentLeaderAsync() => _currentLeaderEvent.WaitAsync();
+        public Task GetLeadershipAsync() => _electedLeaderEvent.WaitAsync();
     }
 }

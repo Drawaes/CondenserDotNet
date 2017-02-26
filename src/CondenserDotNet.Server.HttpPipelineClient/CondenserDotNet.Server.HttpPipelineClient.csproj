@@ -15,6 +15,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CondenserDotNet.Core\CondenserDotNet.Core.csproj" />
+    <ProjectReference Include="..\CondenserDotNet.Server\CondenserDotNet.Server.csproj" />
   </ItemGroup>
 
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">

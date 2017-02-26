@@ -2,11 +2,12 @@
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
+using CondenserDotNet.Core;
 using Newtonsoft.Json;
 
-namespace CondenserDotNet.Core
+namespace CondenserDotNet.Client.Services
 {
-    public class BlockingWatcher<T> where T : class
+    internal class BlockingWatcher<T> where T : class
     {
         private readonly AsyncManualResetEvent<bool> _haveFirstResults = new AsyncManualResetEvent<bool>();
         private readonly HttpClient _client;

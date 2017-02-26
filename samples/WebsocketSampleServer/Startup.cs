@@ -9,6 +9,9 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
 using System.Threading;
+using CondenserDotNet.Client.Services;
+using System.Net.Http;
+using CondenserDotNet.Client;
 
 namespace WebsocketSampleServer
 {
@@ -18,10 +21,21 @@ namespace WebsocketSampleServer
         {
             services.AddMvc();
             services.AddRouting();
+            services.AddOptions();
+
+            services.AddSingleton<IServiceManager,ServiceManager>();
+            services.AddSingleton<Func<HttpClient>>(() => new HttpClient());
+            services
+                .AddSingleton<IServiceRegistry, ServiceRegistry>()
+                .Configure<ServiceManagerConfig>((ops) => ops.ServicePort = 2222);
         }
 
-        public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory)
+        public void Configure(IApplicationBuilder app, ILoggerFactory loggerFactory, IServiceManager serviceManager)
         {
+            serviceManager.AddHttpHealthCheck("/Health", 10)
+                .AddApiUrl("/testsample/test3/test2")
+                .RegisterServiceAsync().Wait();
+            
             app.UseWebSockets();
             app.Use(async (context, next) =>
             {

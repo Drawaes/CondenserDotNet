@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using Microsoft.Extensions.Logging;
 
-namespace CondenserDotNet.Core
+namespace CondenserDotNet.Server
 {
     public class CurrentState
     {
@@ -25,16 +27,11 @@ namespace CondenserDotNet.Core
             _startedTime = DateTime.UtcNow;
         }
 
-        public CurrentState()
-        {
-
-        }
-
         public ThreadStats Stats => _stats.Value;
 
         public ThreadStats GetSummary()
         {
-            ThreadStats returnValue = new ThreadStats();
+            var returnValue = new ThreadStats();
             try
             {
                 foreach (var stat in _stats.Values)
@@ -46,9 +43,9 @@ namespace CondenserDotNet.Core
                     returnValue.Http500Responses += stat.Http500Responses;
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                _logger?.LogWarning(new EventId(), ex, "Exception while calculating the health summary");
+                _logger?.LogWarning(0, ex, "Exception while calculating the health summary");
             }
             returnValue.UpTime = DateTime.UtcNow - _startedTime;
             return returnValue;
