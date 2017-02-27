@@ -12,6 +12,7 @@
     <Copyright>Drawaes Consulting Limited</Copyright>
     <Authors>Tim Seaward, Dean Shackley</Authors>
     <PackageProjectUrl>https://drawaes.github.io/CondenserDotNet/</PackageProjectUrl>
+    <DebugType>full</DebugType>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFrameworkIdentifier)'=='.NETFramework' AND '$(OutputType)'=='library'">
