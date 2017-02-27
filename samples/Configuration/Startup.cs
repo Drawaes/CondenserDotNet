@@ -27,15 +27,12 @@ namespace Configuration
                 .AddConfigurationRegistry(configRegistry).Build();
             
             services.ConfigureReloadable<IConfigurationRegistry>(configBuilder, configRegistry);
-
             app.UseMvcWithDefaultRoute();
         }
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddOptions();
-                   
-            services
+            services.AddOptions()
                 .AddSingleton<IConfigurationRegistry,ConsulRegistry>()
                 .Configure<ConsulRegistryConfig>(ops => ops.KeyParser = new JsonKeyValueParser())
                 .AddRouting()

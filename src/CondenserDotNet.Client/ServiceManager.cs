@@ -13,15 +13,11 @@ namespace CondenserDotNet.Client
 {
     public class ServiceManager : IServiceManager
     {
-        private readonly HttpClient _httpClient;
         private bool _disposed;
-        private readonly string _serviceName;
-        private readonly string _serviceId;
         private readonly List<string> _supportedUrls = new List<string>();
         private ITtlCheck _ttlCheck;
         private readonly CancellationTokenSource _cancel = new CancellationTokenSource();
-        private readonly ILogger _logger;
-
+        
         public ServiceManager(IOptions<ServiceManagerConfig> optionsConfig, Func<HttpClient> httpClientFactory = null, ILoggerFactory logFactory = null, IServer server = null)
         {
             if (optionsConfig.Value.ServicePort == 0 && server == null)
@@ -30,10 +26,10 @@ namespace CondenserDotNet.Client
             }
 
             var config = optionsConfig.Value;
-            _logger = logFactory?.CreateLogger<ServiceManager>();
-            _httpClient = httpClientFactory?.Invoke() ?? new HttpClient() { BaseAddress = new Uri("http://localhost:8500") };
-            _serviceId = config.ServiceId;
-            _serviceName = config.ServiceName;
+            Logger = logFactory?.CreateLogger<ServiceManager>();
+            Client = httpClientFactory?.Invoke() ?? new HttpClient() { BaseAddress = new Uri("http://localhost:8500") };
+            ServiceId = config.ServiceId;
+            ServiceName = config.ServiceName;
             ServiceAddress = config.ServiceAddress;
             if (config.ServicePort > 0)
             {
@@ -47,11 +43,12 @@ namespace CondenserDotNet.Client
         }
 
         public List<string> SupportedUrls => _supportedUrls;
-        public HttpClient Client => _httpClient;
+        public ILogger Logger { get; }
+        public HttpClient Client { get; }
         public HealthCheck HttpCheck { get; set; }
         public Service RegisteredService { get; set; }
-        public string ServiceId => _serviceId;
-        public string ServiceName => _serviceName;
+        public string ServiceId { get; }
+        public string ServiceName { get; }
         public TimeSpan DeregisterIfCriticalAfter { get; set; }
         public bool IsRegistered => RegisteredService != null;
         public ITtlCheck TtlCheck { get => TtlCheck1; set => TtlCheck1 = value; }
@@ -76,7 +73,7 @@ namespace CondenserDotNet.Client
             }
             finally
             {
-                _httpClient.Dispose();
+                Client.Dispose();
                 _disposed = true;
             }
         }
