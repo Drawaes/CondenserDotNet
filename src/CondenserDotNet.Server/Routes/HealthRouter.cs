@@ -28,7 +28,7 @@ namespace CondenserDotNet.Server.Routes
 
         public override async Task CallService(HttpContext context)
         {
-            var response = new HealthResponse {Stats = _state?.GetSummary()};
+            var response = new HealthResponse {Stats = _state?.GetSummary() ?? default(CurrentState.Summary)};
 
             if (_config.Checks?.Count > 0)
             {
