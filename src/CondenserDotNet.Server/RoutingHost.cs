@@ -51,7 +51,7 @@ namespace CondenserDotNet.Server
                 try
                 {
                     _logger?.LogInformation("Looking for health changes with index {index}", _lastConsulIndex);
-                    var result = await _client.GetAsync(_healthCheckUri + _lastConsulIndex, _cancel.Token);
+                    var result = await _client.GetAsync(_healthCheckUri + _lastConsulIndex.ToString(), _cancel.Token);
                     if (!result.IsSuccessStatusCode)
                     {
                         _logger?.LogWarning("Retrieved a response that was not success when getting the health status code was {code}", result.StatusCode);

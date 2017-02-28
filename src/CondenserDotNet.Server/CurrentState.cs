@@ -7,18 +7,19 @@ namespace CondenserDotNet.Server
 {
     public class CurrentState
     {
-        private System.Threading.ThreadLocal<ThreadStats> _stats = new System.Threading.ThreadLocal<ThreadStats>(() => new ThreadStats(), true);
+        private System.Threading.ThreadLocal<ThreadStats> _stats 
+            = new System.Threading.ThreadLocal<ThreadStats>(() => new ThreadStats(), true);
         private ILogger<CurrentState> _logger;
         private DateTime _startedTime;
 
-        public class ThreadStats
+        internal class ThreadStats
         {
             public int Http100Responses;
             public int Http200Responses;
             public int Http300Responses;
             public int Http400Responses;
             public int Http500Responses;
-            public TimeSpan UpTime;
+            public int HttpUnknownResponse;
         }
 
         public CurrentState(ILoggerFactory logger)
@@ -27,11 +28,11 @@ namespace CondenserDotNet.Server
             _startedTime = DateTime.UtcNow;
         }
 
-        public ThreadStats Stats => _stats.Value;
+        internal ThreadStats Stats => _stats.Value;
 
-        public ThreadStats GetSummary()
+        public Summary GetSummary()
         {
-            var returnValue = new ThreadStats();
+            var returnValue = new Summary();
             try
             {
                 foreach (var stat in _stats.Values)
@@ -51,33 +52,42 @@ namespace CondenserDotNet.Server
             return returnValue;
         }
 
+        public struct Summary
+        {
+            public int Http100Responses;
+            public int Http200Responses;
+            public int Http300Responses;
+            public int Http400Responses;
+            public int Http500Responses;
+            public TimeSpan UpTime;
+            public int HttpUnknownResponse;
+        }
+
         public void RecordResponse(int responseCode)
         {
-            if (responseCode > 499)
+            var resCode = (int)(responseCode / 100);
+            switch(resCode)
             {
-                Stats.Http500Responses++;
-                return;
+                case 500:
+                    Stats.Http500Responses++;
+                    break;
+                case 400:
+                    Stats.Http400Responses++;
+                    break;
+                case 300:
+                    Stats.Http300Responses++;
+                    break;
+                case 200:
+                    Stats.Http200Responses++;
+                    break;
+                case 100:
+                    Stats.Http100Responses++;
+                    break;
+                default:
+                    Stats.HttpUnknownResponse++;
+                    break;
             }
-            if (responseCode > 399)
-            {
-                Stats.Http400Responses++;
-                return;
-            }
-            if (responseCode > 299)
-            {
-                Stats.Http300Responses++;
-                return;
-            }
-            if (responseCode > 199)
-            {
-                Stats.Http200Responses++;
-                return;
-            }
-            if (responseCode > 99)
-            {
-                Stats.Http100Responses++;
-                return;
-            }
+            
         }
     }
 }

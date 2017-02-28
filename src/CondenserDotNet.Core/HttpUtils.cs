@@ -57,7 +57,7 @@ namespace CondenserDotNet.Core
         {
             if (!response.Headers.TryGetValues(_indexHeader, out IEnumerable<string> results))
             {
-                return string.Empty;
+                return "0";
             }
             return results.FirstOrDefault();
         }

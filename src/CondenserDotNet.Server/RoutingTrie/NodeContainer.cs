@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace CondenserDotNet.Server.RoutingTrie
 {
@@ -35,7 +34,7 @@ namespace CondenserDotNet.Server.RoutingTrie
             {
                 compare = new NodeComparer(compareLength);
             }
-            foreach(var child in _children)
+            foreach (var child in _children)
             {
                 if (compare.Equals(child.Item1, route))
                 {
@@ -45,15 +44,12 @@ namespace CondenserDotNet.Server.RoutingTrie
             return null;
         }
 
-        public void Add(string[] route, Node<T> node)
-        {
-            _children.Add(Tuple.Create(route,node));
-        }
+        public void Add(string[] route, Node<T> node) => _children.Add(Tuple.Create(route, node));
 
         public NodeContainer<T> SplitContainer(int newKeyLength, string currentPath)
         {
             var newContainer = new NodeContainer<T>(newKeyLength, _factory);
-            foreach(var kv in _children)
+            foreach (var kv in _children)
             {
                 var newPrefix = kv.Item1.Take(newKeyLength).ToArray();
                 var newTailPrefix = kv.Item1.Skip(newKeyLength).ToArray();
@@ -70,8 +66,8 @@ namespace CondenserDotNet.Server.RoutingTrie
 
         public bool TryGetValue(string[] searchValue, out Node<T> node)
         {
-            foreach(var child in _children)
-            { 
+            foreach (var child in _children)
+            {
                 if (_comparer.Equals(child.Item1, searchValue))
                 {
                     node = child.Item2;
@@ -82,10 +78,7 @@ namespace CondenserDotNet.Server.RoutingTrie
             return false;
         }
 
-        public IEnumerator<Tuple<string[], Node<T>>> GetEnumerator()
-        {
-            return _children.GetEnumerator();
-        }
+        public IEnumerator<Tuple<string[], Node<T>>> GetEnumerator() => _children.GetEnumerator();
 
         public Node<T> this[string[] key]
         {

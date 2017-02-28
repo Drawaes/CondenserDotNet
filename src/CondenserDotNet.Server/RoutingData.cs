@@ -14,7 +14,6 @@ namespace CondenserDotNet.Server
         }
 
         public Dictionary<string, List<IService>> ServicesWithHealthChecks { get; } = new Dictionary<string, List<IService>>();
-
         public RadixTree<IService> Tree { get; }
 
         public static RoutingData BuildDefault()
@@ -22,10 +21,9 @@ namespace CondenserDotNet.Server
             Func<ChildContainer<IService>> factory = () =>
             {
                 var randomRoutingStrategy = new RandomRoutingStrategy<IService>();
-                return new ChildContainer<IService>(new DefaultRouting<IService>(new [] {randomRoutingStrategy}, null));
+                return new ChildContainer<IService>(new DefaultRouting<IService>(new[] { randomRoutingStrategy }, null));
             };
             return new RoutingData(new RadixTree<IService>(factory));
         }
-
     }
 }

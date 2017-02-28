@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
@@ -13,15 +14,17 @@ namespace CondenserDotNet.Client.Services
     {
         private readonly BlockingWatcher<List<InformationServiceSet>> _watcher;
         private readonly IRoutingStrategy<InformationServiceSet> _routingStrategy;
+        private readonly Task _watcherTask;
 
-        public ServiceWatcher(string serviceName,
-            HttpClient client, CancellationToken cancel,
+        internal ServiceWatcher(string serviceName, HttpClient client, CancellationToken cancel,
             IRoutingStrategy<InformationServiceSet> routingStrategy)
         {
             _routingStrategy = routingStrategy;
-            string lookupUrl = $"{HttpUtils.ServiceHealthUrl}{serviceName}";
-            _watcher = new BlockingWatcher<List<InformationServiceSet>>(lookupUrl, client, cancel);
-            var ignore = _watcher.WatchLoop();
+            string lookupUrl = $"{HttpUtils.ServiceHealthUrl}{serviceName}?passing&index=";
+            Func<string,Task<HttpResponseMessage>> action = 
+                (consulIndex) => client.GetAsync(lookupUrl + consulIndex, cancel);
+            _watcher = new BlockingWatcher<List<InformationServiceSet>>(action);
+            _watcherTask = _watcher.WatchLoop();
         }
 
         internal async Task<InformationService> GetNextServiceInstanceAsync()

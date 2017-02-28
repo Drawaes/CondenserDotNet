@@ -1,14 +1,9 @@
-﻿using System;
-using System.Threading.Tasks;
-using CondenserDotNet.Core;
-using CondenserDotNet.Core.Routing;
-using CondenserDotNet.Server.RoutingTrie;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
 namespace CondenserDotNet.Server
 {
-    public class CustomRouter 
+    public class CustomRouter
     {
         private readonly RoutingData _routingData;
         private readonly ILogger<CustomRouter> _log;
@@ -18,10 +13,12 @@ namespace CondenserDotNet.Server
             _routingData = routingData;
             _log = factory?.CreateLogger<CustomRouter>();
         }
-        
+
         public IService GetServiceFromRoute(PathString path, out string matchedPath)
         {
-            return _routingData.Tree.GetServiceFromRoute(path, out matchedPath);
+            var service = _routingData.Tree.GetServiceFromRoute(path, out matchedPath);
+            _log?.LogTrace("Looked for a service for the path {path} and got {service}", path, service);
+            return service;
         }
 
         public void AddServiceToRoute(string route, IService serviceToAdd)
@@ -44,9 +41,10 @@ namespace CondenserDotNet.Server
 
         public void RemoveServiceFromRoute(string route, IService serviceToRemove)
         {
+            _log?.LogTrace("Removing {service} from {route}", serviceToRemove, route);
             _routingData.Tree.RemoveServiceFromRoute(route, serviceToRemove);
         }
-        
+
         internal void CleanUpRoutes()
         {
             _log?.LogTrace("Compressing Trie Current Depth {maxDepth}", _routingData.Tree.MaxDepth());

@@ -154,6 +154,11 @@ namespace CondenserDotNet.Server
             _httpClient = _clientFactory?.Invoke(ServiceId) ?? new HttpClient();
         }
 
+        public override string ToString()
+        {
+            return _serviceId;
+        }
+
         public void Dispose()
         {
             _waitUntilRequestsAreFinished.Signal();

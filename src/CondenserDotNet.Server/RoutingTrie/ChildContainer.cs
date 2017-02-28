@@ -8,15 +8,15 @@ namespace CondenserDotNet.Server.RoutingTrie
     public class ChildContainer<T>
     {
         private IRoutingStrategy<T> _routingStrategy;
-        
+        private List<T> _services = new List<T>();
+
         public ChildContainer(IDefaultRouting<T> defaultStrategy)
         {
             _routingStrategy = defaultStrategy.Default;
         }
 
-
-        List<T> _services = new List<T>();
-
+        public int Count => Volatile.Read(ref _services).Count;
+       
         public void SetRoutingStrategy(IRoutingStrategy<T> routingStrategy)
         {
             _routingStrategy = routingStrategy;
@@ -24,8 +24,10 @@ namespace CondenserDotNet.Server.RoutingTrie
 
         public void AddService(T service)
         {
-            var newServices = new List<T>(Volatile.Read(ref _services));
-            newServices.Add(service);
+            var newServices = new List<T>(Volatile.Read(ref _services))
+            {
+                service
+            };
             Volatile.Write(ref _services, newServices);
         }
 
@@ -48,19 +50,9 @@ namespace CondenserDotNet.Server.RoutingTrie
             return default(T);
         }
 
-        public int Count
-        {
-            get
-            {
-                return Volatile.Read(ref _services).Count;
-            }
-        }
-
         public override string ToString()
         {
             return $"Total Services Registered {_services.Count}";
         }
     }
 }
-
-

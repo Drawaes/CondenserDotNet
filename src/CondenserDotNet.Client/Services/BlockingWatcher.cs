@@ -10,19 +10,15 @@ namespace CondenserDotNet.Client.Services
     internal class BlockingWatcher<T> where T : class
     {
         private readonly AsyncManualResetEvent<bool> _haveFirstResults = new AsyncManualResetEvent<bool>();
-        private readonly HttpClient _client;
-        private readonly CancellationToken _cancel;
+        private readonly Func<string, Task<HttpResponseMessage>> _client;
         private readonly Action<T> _onNew;
-        private readonly string _lookupUrl;
         private T _instances;
         private WatcherState _state = WatcherState.NotInitialized;
-
-        public BlockingWatcher(string url, HttpClient client, CancellationToken cancel, Action<T> onNew = null)
+        
+        public BlockingWatcher(Func<string, Task<HttpResponseMessage>> client, Action<T> onNew = null)
         {
             _client = client;
-            _cancel = cancel;
             _onNew = onNew;
-            _lookupUrl = $"{url}?passing&index=";
         }
 
         public async Task<T> ReadAsync()
@@ -42,8 +38,7 @@ namespace CondenserDotNet.Client.Services
                 string consulIndex = "0";
                 while (true)
                 {
-                    var result = await _client.GetAsync(_lookupUrl + consulIndex,
-                        _cancel);
+                    var result = await _client(consulIndex);
                     if (!result.IsSuccessStatusCode)
                     {
                         if (_state == WatcherState.UsingLiveValues)

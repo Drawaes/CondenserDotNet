@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using CondenserDotNet.Core;
-using CondenserDotNet.Core.Routing;
 
 namespace CondenserDotNet.Server.RoutingTrie
 {
@@ -11,7 +6,7 @@ namespace CondenserDotNet.Server.RoutingTrie
     {
         private readonly Node<T> _topNode;
         private readonly object _writeLock = new object();
-        private static readonly char[] _routeSplit = new char[] {'/'};
+        private static readonly char[] _routeSplit = new char[] { '/' };
         private bool _killCase = true;
 
         public RadixTree(Func<ChildContainer<T>> factory)
@@ -49,7 +44,7 @@ namespace CondenserDotNet.Server.RoutingTrie
                 _topNode.Compress();
             }
         }
-        
+
         public void RemoveService(T service)
         {
             lock (_writeLock)
