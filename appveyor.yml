@@ -28,6 +28,7 @@ after_test:
   - dotnet pack -c Release src/CondenserDotNet.Client
   - dotnet pack -c Release src/CondenserDotNet.Server
   - dotnet pack -c Release src/CondenserDotNet.Core
+  - dotnet pack -c Release src/CondenserDotNet.Configuration
   - dotnet pack -c Release src/CondenserDotNet.Server.WindowsAuthentication
   
 artifacts:
