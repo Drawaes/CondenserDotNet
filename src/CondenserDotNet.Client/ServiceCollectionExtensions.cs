@@ -13,7 +13,7 @@ namespace CondenserDotNet.Client
         public static IServiceCollection AddConsulServices(this IServiceCollection self)
         {
             self.AddSingleton<Func<HttpClient>>(() => new HttpClient() { BaseAddress = new Uri($"http://localhost:8500") });
-            self.AddSingleton<ILeaderRegistry>();
+            self.AddSingleton<ILeaderRegistry, LeaderRegistry>();
             self.AddSingleton<IServiceRegistry,ServiceRegistry>();
             self.AddSingleton<IServiceManager, ServiceManager>();
             return self;
