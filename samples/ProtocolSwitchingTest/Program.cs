@@ -1,0 +1,24 @@
+﻿using System;
+using CondenserDotNet.ProtocolSwitcher;
+using Microsoft.AspNetCore.Hosting;
+
+namespace ProtocolSwitchingTest
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            var host = new WebHostBuilder()
+                .UseKestrel(options =>
+                {
+                    options.UseProtocolSwitching();
+                    options.UseHttps("testCert.pfx", "testPassword");
+                })
+                .UseUrls($"*://*:5000")
+                .UseStartup<Startup>()
+                .Build();
+
+            host.Run();
+        }
+    }
+}

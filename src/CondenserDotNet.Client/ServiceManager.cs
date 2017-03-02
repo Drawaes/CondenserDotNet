@@ -38,7 +38,8 @@ namespace CondenserDotNet.Client
             else
             {
                 var feature = server.Features.Get<IServerAddressesFeature>();
-                ServicePort = new Uri(feature.Addresses.First()).Port;
+                var add = feature.Addresses.First().Replace("*","test");
+                ServicePort = new Uri(add).Port;
             }
         }
 

@@ -20,7 +20,7 @@ namespace ServiceRegistration
 
         public void Configure(IApplicationBuilder app, IServiceManager manager)
         {
-            var ignore = manager.AddHttpHealthCheck("/health",5).AddApiUrl("/testSample/test3/test1").RegisterServiceAsync();
+            manager.AddHttpHealthCheck("/health",5).AddApiUrl("/testSample/test3/test1").RegisterServiceAsync().Wait();
             app.UseMvcWithDefaultRoute();
         }
     }
