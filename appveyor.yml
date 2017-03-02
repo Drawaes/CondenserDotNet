@@ -25,11 +25,12 @@ after_test:
   # Build and pack source
   - ps: iex ((Get-ChildItem ($env:USERPROFILE + '\.nuget\packages\OpenCover'))[0].FullName + '\tools\OpenCover.Console.exe' + ' -register:user -target:".\script\runtests.bat" -searchdirs:"..\test\Condenser.Tests.Integration\bin\Debug\netcoreapp1.1;..\test\CondenserTests\bin\debug\netcoreapp1.1" -oldstyle -output:coverage.xml -skipautoprops -returntargetcode -filter:"+[Condenser*]* -[*Test*]*"')
   - ps: iex ((Get-ChildItem ($env:USERPROFILE + '\.nuget\packages\coveralls.io'))[0].FullName + '\tools\coveralls.net.exe' + ' --opencover coverage.xml')
-  - dotnet pack -c Release src/CondenserDotNet.Client
-  - dotnet pack -c Release src/CondenserDotNet.Server
-  - dotnet pack -c Release src/CondenserDotNet.Core
-  - dotnet pack -c Release src/CondenserDotNet.Configuration
-  - dotnet pack -c Release src/CondenserDotNet.Server.WindowsAuthentication
+  - ps: $version = -join($env:APPVEYOR_REPO_BRANCH, "-", $env:APPVEYOR_BUILD_NUMBER);
+        dotnet pack -c Release src/CondenserDotNet.Client --version-suffix $version;
+        dotnet pack -c Release src/CondenserDotNet.Server --version-suffix $version;
+        dotnet pack -c Release src/CondenserDotNet.Core --version-suffix $version;
+        dotnet pack -c Release src/CondenserDotNet.Configuration --version-suffix $version;
+        dotnet pack -c Release src/CondenserDotNet.Server.WindowsAuthentication --version-suffix $version;
   
 artifacts:
   path: '**/*.nupkg'
