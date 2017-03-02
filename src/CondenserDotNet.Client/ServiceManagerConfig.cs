@@ -9,11 +9,30 @@ namespace CondenserDotNet.Client
 {
     public class ServiceManagerConfig
     {
+        private readonly static string[] _endsToStrip = {".Host", ".Library", ".Service"};
+
         public ServiceManagerConfig()
         {
-            ServiceAddress = Dns.GetHostName();
-            ServiceName = System.IO.Path.GetFileNameWithoutExtension(Assembly.GetEntryAssembly().Location);
-            ServiceId = $"{ServiceName}:{ServiceAddress}";
+            var ipAwait = Dns.GetHostAddressesAsync(Dns.GetHostName());
+            ipAwait.Wait();
+            foreach(var ipAddress in ipAwait.Result)
+            {
+                if(ipAddress.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    ServiceAddress = ipAddress.ToString();
+                    break;
+                }
+            }
+            var assemblyName = System.IO.Path.GetFileNameWithoutExtension(Assembly.GetEntryAssembly().Location);
+            foreach(var strip in _endsToStrip)
+            {
+                if(assemblyName.EndsWith(strip))
+                {
+                    assemblyName.Substring(0,assemblyName.Length - strip.Length);
+                }
+            }
+            ServiceName = assemblyName;
+            ServiceId = $"{ServiceName}:{Dns.GetHostName()}";
         }
 
         public string ServiceName { get;set;}
