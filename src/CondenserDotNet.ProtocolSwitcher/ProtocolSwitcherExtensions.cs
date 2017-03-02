@@ -8,7 +8,7 @@ namespace CondenserDotNet.ProtocolSwitcher
 {
     public static class ProtocolSwitcherExtensions
     {
-        public static KestrelServerOptions UseProtocolSwitching(this KestrelServerOptions options)
+        public static KestrelServerOptions Switcheroo(this KestrelServerOptions options)
         {
             var prevFilter = options.ConnectionFilter ?? new NoOpConnectionFilter();
             options.ConnectionFilter = new ProtocolSwitchConnectionFilter(prevFilter);

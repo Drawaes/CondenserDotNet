@@ -11,7 +11,7 @@ namespace ProtocolSwitchingTest
             var host = new WebHostBuilder()
                 .UseKestrel(options =>
                 {
-                    options.UseProtocolSwitching();
+                    options.Switcheroo();
                     options.UseHttps("testCert.pfx", "testPassword");
                 })
                 .UseUrls($"*://*:5000")
