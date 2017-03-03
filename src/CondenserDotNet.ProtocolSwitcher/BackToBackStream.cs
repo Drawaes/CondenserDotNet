@@ -9,9 +9,9 @@ namespace CondenserDotNet.ProtocolSwitcher
 {
     public class BackToBackStream : Stream
     {
-        private byte _firstByte;
+        private readonly byte _firstByte;
         private bool _usedFirstByte;
-        private Stream _innerStream;
+        private readonly Stream _innerStream;
 
         public BackToBackStream(byte firstByte, Stream innerStream)
         {

@@ -1,4 +1,6 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using CondenserDotNet.Middleware;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ServiceRegistration.Controllers
@@ -11,6 +13,7 @@ namespace ServiceRegistration.Controllers
         [HttpGet()]
         public IActionResult GetOther()
         {
+            HttpContext.Features.Get<ITrailingHeadersFeature>().RegisterHeader("TimsHeader", () => DateTime.UtcNow.ToString());
             return Ok(_content);
         }
     }

@@ -9,7 +9,7 @@ namespace CondenserDotNet.Client.Services
 {
     public class ServiceBasedHttpHandler : HttpClientHandler
     {
-        private IServiceRegistry _serviceRegistry;
+        private readonly IServiceRegistry _serviceRegistry;
 
         public ServiceBasedHttpHandler(IServiceRegistry serviceRegistry)
         {

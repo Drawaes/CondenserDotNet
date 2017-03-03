@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using CondenserDotNet.Core;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Logging;
 
 namespace CondenserDotNet.Server
 {
@@ -15,7 +16,7 @@ namespace CondenserDotNet.Server
         private readonly System.Threading.CountdownEvent _waitUntilRequestsAreFinished = new System.Threading.CountdownEvent(1);
         private string _address;
         private int _port;
-        private CurrentState _stats;
+        private readonly CurrentState _stats;
         private readonly Func<string, HttpClient> _clientFactory;
         private IPEndPoint _ipEndPoint;
         private Version[] _supportedVersions;
@@ -24,9 +25,11 @@ namespace CondenserDotNet.Server
         private int _calls;
         private int _totalRequestTime;
         private string _hostString;
+        private readonly ILogger _logger;
 
-        public Service(CurrentState stats, Func<string, HttpClient> clientFactory)
+        public Service(CurrentState stats, Func<string, HttpClient> clientFactory, ILoggerFactory logger)
         {
+            _logger = logger?.CreateLogger<Service>();
             _stats = stats;
             _clientFactory = clientFactory;
         }
@@ -148,6 +151,7 @@ namespace CondenserDotNet.Server
             }
             catch
             {
+                _logger?.LogWarning("Unable to resolve the host address for {address} when adding the service",address);
             }
             _supportedVersions = tags.Where(t => t.StartsWith("version=")).Select(t => new Version(t.Substring(8))).ToArray();
             _hostString = $"{_address}:{_port}";

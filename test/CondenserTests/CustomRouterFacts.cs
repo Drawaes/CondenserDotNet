@@ -15,7 +15,7 @@ namespace CondenserTests
         public async void SetupCustomRouterAndRouteToService()
         {
             var router = BuildRouter();
-            var service = new Service(null, null);
+            var service = new Service(null, null, null);
             await service.Initialise("Service1Test", "node1", new string[] { UrlPrefix + "/test1/test2/test3/test4/test5" }, "Address1Test", 10000);
             router.AddNewService(service);
 
@@ -33,7 +33,7 @@ namespace CondenserTests
         {
             var router = BuildRouter();
 
-            var service = new Service(null, null);
+            var service = new Service(null, null, null);
             await service.Initialise("Service1Test", "node1", new string[] { UrlPrefix + "/test1/test2/test3/test4/test5" }, "Address1Test", 10000);
             router.AddNewService(service);
 

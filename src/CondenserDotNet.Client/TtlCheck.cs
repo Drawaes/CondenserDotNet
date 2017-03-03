@@ -8,9 +8,9 @@ namespace CondenserDotNet.Client
 {
     public class TtlCheck : ITtlCheck
     {
-        private IServiceManager _parentManager;
-        private int _timeToLiveSeconds;
-        private HealthCheck _healthCheck;
+        private readonly IServiceManager _parentManager;
+        private readonly int _timeToLiveSeconds;
+        private readonly HealthCheck _healthCheck;
 
         internal TtlCheck(IServiceManager parentManager, int timeToLiveSeconds)
         {

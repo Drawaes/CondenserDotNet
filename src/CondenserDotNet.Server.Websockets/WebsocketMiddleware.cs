@@ -14,9 +14,9 @@ namespace CondenserDotNet.Server.Websockets
 {
     public class WebsocketMiddleware
     {
-        private RequestDelegate _next;
-        private ILogger _logger;
-        private PipeFactory _factory;
+        private readonly RequestDelegate _next;
+        private readonly ILogger _logger;
+        private readonly PipeFactory _factory;
         private static readonly byte[] _space = Encoding.UTF8.GetBytes(" ");
         private static readonly byte[] _endOfLine = Encoding.UTF8.GetBytes("\r\n");
         private static readonly byte[] _headersEnd = Encoding.UTF8.GetBytes("\r\n\r\n");
@@ -58,7 +58,7 @@ namespace CondenserDotNet.Server.Websockets
                 {
                     writer.Append(header.Key, TextEncoder.Utf8);
                     writer.Write(_headerSplit);
-                    writer.Append(string.Join(", ", header.Value), TextEncoder.Utf8);
+                    writer.Append(string.Join(", ",(IEnumerable<string>) header.Value), TextEncoder.Utf8);
                     writer.Write(_endOfLine);
                 }
                 writer.Write(_endOfLine);
@@ -78,7 +78,6 @@ namespace CondenserDotNet.Server.Websockets
                         {
                             throw new InvalidOperationException();
                         }
-                        var conndetails = line.GetUtf8String();
                         headers = headers.Slice(cursor).Slice(_endOfLine.Length);
                         while (headers.Length > 0)
                         {
@@ -95,7 +94,6 @@ namespace CondenserDotNet.Server.Websockets
                             {
                                 throw new NotImplementedException();
                             }
-                            var keyString = key.GetUtf8String();
                             var values = headerLine.Slice(cursor).Slice(_headerSplit.Length).GetUtf8String().Split(new string[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
                             context.Response.Headers[key.GetUtf8String()] = new Microsoft.Extensions.Primitives.StringValues(values);
                         }

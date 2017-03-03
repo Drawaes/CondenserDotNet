@@ -7,7 +7,7 @@ namespace CondenserDotNet.Server.RoutingTrie
         private readonly Node<T> _topNode;
         private readonly object _writeLock = new object();
         private static readonly char[] _routeSplit = new char[] { '/' };
-        private bool _killCase = true;
+        private readonly bool _killCase = true;
 
         public RadixTree(Func<ChildContainer<T>> factory)
         {

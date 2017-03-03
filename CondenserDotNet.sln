@@ -64,6 +64,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CondenserDotNet.ProtocolSwi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProtocolSwitchingTest", "samples\ProtocolSwitchingTest\ProtocolSwitchingTest.csproj", "{6FA1CF9F-FEB3-4275-AA3B-6F7C2273B51E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CondenserDotNet.Middleware", "src\CondenserDotNet.Middleware\CondenserDotNet.Middleware.csproj", "{97225C52-1E71-4EAC-B1D8-A67D746C5D31}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -302,6 +304,18 @@ Global
 		{6FA1CF9F-FEB3-4275-AA3B-6F7C2273B51E}.Release|x64.Build.0 = Release|x64
 		{6FA1CF9F-FEB3-4275-AA3B-6F7C2273B51E}.Release|x86.ActiveCfg = Release|x86
 		{6FA1CF9F-FEB3-4275-AA3B-6F7C2273B51E}.Release|x86.Build.0 = Release|x86
+		{97225C52-1E71-4EAC-B1D8-A67D746C5D31}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{97225C52-1E71-4EAC-B1D8-A67D746C5D31}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{97225C52-1E71-4EAC-B1D8-A67D746C5D31}.Debug|x64.ActiveCfg = Debug|x64
+		{97225C52-1E71-4EAC-B1D8-A67D746C5D31}.Debug|x64.Build.0 = Debug|x64
+		{97225C52-1E71-4EAC-B1D8-A67D746C5D31}.Debug|x86.ActiveCfg = Debug|x86
+		{97225C52-1E71-4EAC-B1D8-A67D746C5D31}.Debug|x86.Build.0 = Debug|x86
+		{97225C52-1E71-4EAC-B1D8-A67D746C5D31}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{97225C52-1E71-4EAC-B1D8-A67D746C5D31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{97225C52-1E71-4EAC-B1D8-A67D746C5D31}.Release|x64.ActiveCfg = Release|x64
+		{97225C52-1E71-4EAC-B1D8-A67D746C5D31}.Release|x64.Build.0 = Release|x64
+		{97225C52-1E71-4EAC-B1D8-A67D746C5D31}.Release|x86.ActiveCfg = Release|x86
+		{97225C52-1E71-4EAC-B1D8-A67D746C5D31}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -326,5 +340,6 @@ Global
 		{99180374-30F2-43A2-B040-3EAA36B59227} = {CB18CD55-85E2-46FC-A55B-7DE23EABFAE5}
 		{BE7F37A8-F84E-4DF9-B5C9-20E377EBDD8B} = {CB18CD55-85E2-46FC-A55B-7DE23EABFAE5}
 		{6FA1CF9F-FEB3-4275-AA3B-6F7C2273B51E} = {35C5514B-9E50-4AC6-BC6E-45BEAE7B7B4D}
+		{97225C52-1E71-4EAC-B1D8-A67D746C5D31} = {CB18CD55-85E2-46FC-A55B-7DE23EABFAE5}
 	EndGlobalSection
 EndGlobal

@@ -30,7 +30,7 @@ namespace Condenser.Tests.Integration
             };
 
             var router = BuildRouter();
-            var service = new Service(null, null);
+            var service = new Service(null, null, null);
             await service.Initialise("service1", "node1", new[] { UrlPrefix + "/search" }, "www.google.com", 80);
             router.AddNewService(service);
 

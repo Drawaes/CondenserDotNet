@@ -47,7 +47,7 @@ namespace CondenserDotNet.Client.Leadership
 
         private async Task TryForElection()
         {
-            var consulIndex = "0";
+            string consulIndex;
             while (true)
             {
                 //If we are here we don't know who is the leader

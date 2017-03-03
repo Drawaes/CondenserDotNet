@@ -7,7 +7,7 @@ namespace CondenserDotNet.Server.RoutingTrie
 {
     public class NodeComparer : IEqualityComparer<string[]>
     {
-        private int _compareLength;
+        private readonly int _compareLength;
 
         public NodeComparer(int compareLength)
         {

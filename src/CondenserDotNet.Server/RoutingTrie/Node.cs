@@ -147,46 +147,47 @@ namespace CondenserDotNet.Server.RoutingTrie
             return Services.GetService();
         }
 
-        public void Compress()
+        private bool CanCompress(NodeContainer<T> children)
         {
-            bool canCompress = true;
-            var children = System.Threading.Volatile.Read(ref _childrenNodes);
-            if (children.Count == 0) return;
-
             foreach (var kv in children)
             {
                 if (kv.Item2.Services.Count > 0)
                 {
-                    canCompress = false;
-                    break;
+                    return false;
                 }
             }
-            if (canCompress)
-            {
-                var newMerged = new NodeContainer<T>(children.KeyLength + 1, _factory);
-                foreach (var kv in children)
-                {
-                    foreach (var childkv in kv.Item2.ChildrenNodes)
-                    {
-                        //This will prune out orphaned trees
-                        if (childkv.Item2.Services.Count > 0 || childkv.Item2.ChildrenNodes.Count > 0)
-                        {
-                            var mergedKey = Enumerable.Concat(kv.Item1, childkv.Item1).ToArray();
-                            var newNode = childkv.Item2.CloneWithNewPrefix(mergedKey, Path);
-                            newMerged.Add(newNode.Prefix, newNode);
-                        }
-                    }
-                }
-                System.Threading.Volatile.Write(ref _childrenNodes, newMerged);
-                Compress();
-            }
-            else
+            return true;
+        }
+
+        public void Compress()
+        {
+            var children = System.Threading.Volatile.Read(ref _childrenNodes);
+            if (children.Count == 0) return;
+            bool canCompress = CanCompress(children);
+            if (!canCompress)
             {
                 foreach (var kv in children)
                 {
                     kv.Item2.Compress();
                 }
+                return;
             }
+            var newMerged = new NodeContainer<T>(children.KeyLength + 1, _factory);
+            foreach (var kv in children)
+            {
+                foreach (var childkv in kv.Item2.ChildrenNodes)
+                {
+                    //This will prune out orphaned trees
+                    if (childkv.Item2.Services.Count > 0 || childkv.Item2.ChildrenNodes.Count > 0)
+                    {
+                        var mergedKey = Enumerable.Concat(kv.Item1, childkv.Item1).ToArray();
+                        var newNode = childkv.Item2.CloneWithNewPrefix(mergedKey, Path);
+                        newMerged.Add(newNode.Prefix, newNode);
+                    }
+                }
+            }
+            System.Threading.Volatile.Write(ref _childrenNodes, newMerged);
+            Compress();
         }
 
         public override string ToString()

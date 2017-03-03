@@ -32,7 +32,7 @@ namespace CondenserDotNet.Server.RoutingTrie
             }
             else
             {
-                compare = new NodeComparer(compareLength);
+                compare = _comparer;
             }
             foreach (var child in _children)
             {

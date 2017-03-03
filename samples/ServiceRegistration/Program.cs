@@ -13,7 +13,7 @@ namespace ServiceRegistration
     {
         public static void Main(string[] args)
         {
-            var port = ServiceManagerConfig.GetNextAvailablePort();
+            var port = 5000;// ServiceManagerConfig.GetNextAvailablePort();
                                     
             var host = new WebHostBuilder()
                 .UseKestrel()

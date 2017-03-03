@@ -7,10 +7,10 @@ namespace CondenserDotNet.Server
 {
     public class CurrentState
     {
-        private System.Threading.ThreadLocal<ThreadStats> _stats 
+        private readonly System.Threading.ThreadLocal<ThreadStats> _stats 
             = new System.Threading.ThreadLocal<ThreadStats>(() => new ThreadStats(), true);
-        private ILogger<CurrentState> _logger;
-        private DateTime _startedTime;
+        private readonly ILogger<CurrentState> _logger;
+        private readonly DateTime _startedTime;
 
         internal class ThreadStats
         {

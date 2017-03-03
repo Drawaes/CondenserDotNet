@@ -26,7 +26,7 @@ namespace CondenserDotNet.Configuration.Consul
         private IKeyParser _parser;
         private readonly string _agentAddress;
         private readonly HttpClient _httpClient;
-        private CancellationTokenSource _disposed = new CancellationTokenSource();
+        private readonly CancellationTokenSource _disposed = new CancellationTokenSource();
 
         public ConsulRegistry(IOptions<ConsulRegistryConfig> agentConfig)
         {
@@ -87,9 +87,7 @@ namespace CondenserDotNet.Configuration.Consul
                 initialDictionary = AddNewDictionaryToList(newDictionary);
             }
             //We got values so lets start watching but we aren't waiting for this we will let it run
-#pragma warning disable CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
-            WatchingLoop(initialDictionary, keyPath);
-#pragma warning restore CS4014 // Because this call is not awaited, execution of the current method continues before the call is completed
+            var ignore = WatchingLoop(initialDictionary, keyPath);
         }
 
         private async Task WatchingLoop(int indexOfDictionary, string keyPath)
@@ -264,7 +262,7 @@ namespace CondenserDotNet.Configuration.Consul
 
         public void Dispose()
         {
-
+            //Currently there is nothing to shutdown, but we should cleanup by writing some info
         }
     }
 }

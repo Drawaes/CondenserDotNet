@@ -1,6 +1,6 @@
 ﻿namespace CondenserDotNet.Server.Routes
 {
-    public class CondenserRoutes
+    public static class CondenserRoutes
     {
         public const string Tree = "/admin/condenser/tree";
         public const string Summary = "/admin/condenser/routes/summmary";

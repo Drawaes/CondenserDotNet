@@ -45,7 +45,7 @@ namespace CondenserDotNet.Client
                 {
                     if (assemblyName.EndsWith(strip))
                     {
-                        assemblyName.Substring(0, assemblyName.Length - strip.Length);
+                        assemblyName = assemblyName.Substring(0, assemblyName.Length - strip.Length);
                     }
                 }
                 ServiceName = assemblyName;

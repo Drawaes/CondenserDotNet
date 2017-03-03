@@ -10,9 +10,9 @@ namespace CondenserDotNet.Server
 {
     public class ServiceCallMiddleware
     {
-        private RequestDelegate _next;
-        private ILogger _logger;
-        private RoutingHost _routeData;
+        private readonly RequestDelegate _next;
+        private readonly ILogger _logger;
+        private readonly RoutingHost _routeData;
 
         public ServiceCallMiddleware(RequestDelegate next, ILoggerFactory loggerFactory, RoutingHost routeData)
         {

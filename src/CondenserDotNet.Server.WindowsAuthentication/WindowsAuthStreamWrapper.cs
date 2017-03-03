@@ -9,7 +9,7 @@ namespace CondenserDotNet.Server.WindowsAuthentication
 {
     public class WindowsAuthStreamWrapper :Stream
     {
-        private Stream _innerStream;
+        private readonly Stream _innerStream;
         private WindowsAuthFeature _authFeature;
 
         public WindowsAuthStreamWrapper(Stream inStream, WindowsAuthFeature authFeature)
