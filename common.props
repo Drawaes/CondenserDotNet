@@ -11,8 +11,9 @@
     <RepositoryUrl>https://github.com/Drawaes/CondenserDotNet</RepositoryUrl>
     <Copyright>Drawaes Consulting Limited</Copyright>
     <Authors>Tim Seaward, Dean Shackley</Authors>
-    <PackageProjectUrl>https://drawaes.github.io/CondenserDotNet/</PackageProjectUrl>
+    <PackageProjectUrl>https://drawaes.github.io/CondenserDocs/</PackageProjectUrl>
     <DebugType>full</DebugType>
+    <PackageIconUrl>https://drawaes.github.io/CondenserDocs/assets/img/logo.png</PackageIconUrl>
   </PropertyGroup>
 
   <ItemGroup Condition="'$(TargetFrameworkIdentifier)'=='.NETFramework' AND '$(OutputType)'=='library'">

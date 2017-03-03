@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CondenserDotNet.Client.Services
 {
-    public class ServiceBasedHttpHandler : DelegatingHandler
+    public class ServiceBasedHttpHandler : HttpClientHandler
     {
         private IServiceRegistry _serviceRegistry;
 
