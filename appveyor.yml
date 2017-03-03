@@ -14,8 +14,8 @@ install:
 
 before_test:
   - dotnet --info
-  - dotnet restore
   - VersionNumber.bat
+  - dotnet restore
   
 test_script:
   # Build sample
