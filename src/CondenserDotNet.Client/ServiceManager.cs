@@ -28,19 +28,11 @@ namespace CondenserDotNet.Client
             var config = optionsConfig.Value;
             Logger = logFactory?.CreateLogger<ServiceManager>();
             Client = httpClientFactory?.Invoke() ?? new HttpClient() { BaseAddress = new Uri("http://localhost:8500") };
+            config.SetDefaults(server);
             ServiceId = config.ServiceId;
             ServiceName = config.ServiceName;
             ServiceAddress = config.ServiceAddress;
-            if (config.ServicePort > 0)
-            {
-                ServicePort = config.ServicePort;
-            }
-            else
-            {
-                var feature = server.Features.Get<IServerAddressesFeature>();
-                var add = feature.Addresses.First().Replace("*","test");
-                ServicePort = new Uri(add).Port;
-            }
+            ServicePort = config.ServicePort;
         }
 
         public List<string> SupportedUrls => _supportedUrls;

@@ -86,9 +86,9 @@ namespace CondenserDotNet.ProtocolSwitcher
             return _innerStream.WriteAsync(buffer, offset, count, cancellationToken);
         }
 
-        public override void Close()
+        protected override void Dispose(bool disposing)
         {
-            _innerStream.Close();
+            _innerStream.Dispose();
         }
     }
 }

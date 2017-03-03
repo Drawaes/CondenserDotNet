@@ -61,5 +61,10 @@ namespace CondenserDotNet.Client.Services
             _cancel.Cancel();
             _client.Dispose();
         }
+
+        public ServiceBasedHttpHandler GetHttpHandler()
+        {
+            return new ServiceBasedHttpHandler(this);
+        }
     }
 }
