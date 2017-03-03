@@ -43,6 +43,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "script", "script", "{09EDB6E2-E430-462F-BFE8-F38681ABCAD5}"
 	ProjectSection(SolutionItems) = preProject
 		script\runtests.bat = script\runtests.bat
+		VersionNumber.bat = VersionNumber.bat
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebsocketClient", "samples\WebsocketClient\WebsocketClient.csproj", "{0AFB9686-4548-404E-A937-52CFC447053C}"
