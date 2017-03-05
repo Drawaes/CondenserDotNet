@@ -5,7 +5,7 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CondenserDotNet.ProtocolSwitcher
+namespace CondenserDotNet.Middleware.ProtocolSwitcher
 {
     public class BackToBackStream : Stream
     {

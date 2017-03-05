@@ -20,7 +20,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\CondenserDotNet.ProtocolSwitcher\CondenserDotNet.ProtocolSwitcher.csproj" />
+    <ProjectReference Include="..\..\src\CondenserDotNet.Middleware\CondenserDotNet.Middleware.csproj" />
   </ItemGroup>
 
   <ItemGroup>

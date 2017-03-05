@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Server.Kestrel;
 using Microsoft.AspNetCore.Server.Kestrel.Filter;
 
-namespace CondenserDotNet.Server.WindowsAuthentication
+namespace CondenserDotNet.Middleware.WindowsAuthentication
 {
     public static class WindowsAuthenticationExtensions
     {

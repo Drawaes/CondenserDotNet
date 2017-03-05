@@ -1,5 +1,5 @@
 ﻿using System;
-using CondenserDotNet.ProtocolSwitcher;
+using CondenserDotNet.Middleware.ProtocolSwitcher;
 using Microsoft.AspNetCore.Hosting;
 
 namespace ProtocolSwitchingTest

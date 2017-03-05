@@ -11,11 +11,11 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\CondenserDotNet.Core\CondenserDotNet.Core.csproj" />
+    <ProjectReference Include="..\..\src\CondenserDotNet.Middleware\CondenserDotNet.Middleware.csproj" />
     <ProjectReference Include="..\..\src\CondenserDotNet.Server.Extensions\CondenserDotNet.Server.Extensions.csproj" />
     <ProjectReference Include="..\..\src\CondenserDotNet.Server.HttpPipelineClient\CondenserDotNet.Server.HttpPipelineClient.csproj" />
     <ProjectReference Include="..\..\src\CondenserDotNet.Server.Websockets\CondenserDotNet.Server.Websockets.csproj" />
     <ProjectReference Include="..\..\src\CondenserDotNet.Server\CondenserDotNet.Server.csproj" />
-    <ProjectReference Include="..\..\src\CondenserDotNet.Server.WindowsAuthentication\CondenserDotNet.Server.WindowsAuthentication.csproj" />
     <PackageReference Include="System.IO.Pipelines" Version="0.1.0-e170223-1" />
   </ItemGroup>
 

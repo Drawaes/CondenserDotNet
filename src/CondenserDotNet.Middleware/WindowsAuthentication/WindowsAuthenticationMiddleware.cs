@@ -2,16 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Text.Encodings.Web;
+using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authentication;
+using CondenserDotNet.Middleware.WindowsAuthentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
-using Microsoft.AspNetCore.Http.Features.Authentication;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 
-namespace CondenserDotNet.Server.WindowsAuthentication
+namespace CondenserDotNet.Middleware.WindowsAuthentication
 {
     public class WindowsAuthenticationMiddleware
     {
@@ -22,8 +20,9 @@ namespace CondenserDotNet.Server.WindowsAuthentication
         private static readonly string[] _supportedTokens = new[] { "NTLM", "Negotiate" };
         private RequestDelegate _next;
         private ILogger<WindowsAuthenticationMiddleware> _logger;
-        private static readonly WindowsAuthHandshakeCache _cache = new WindowsAuthHandshakeCache();
         private static readonly Task _cachedTask = Task.FromResult(0);
+
+        public static Task CachedTask => _cachedTask;
 
         public WindowsAuthenticationMiddleware(RequestDelegate next, ILoggerFactory loggerFactory)
         {
@@ -40,7 +39,7 @@ namespace CondenserDotNet.Server.WindowsAuthentication
             {
                 throw new InvalidOperationException("You need the connection filter installed to use windows authentication");
             }
-            
+
             if (authFeature.Identity == null)
             {
                 var sessionId = t.ConnectionId;
@@ -51,14 +50,14 @@ namespace CondenserDotNet.Server.WindowsAuthentication
                 {
                     httpContext.Response.Headers.Add(WWWAuthenticateHeader, _supportedTokens);
                     httpContext.Response.StatusCode = 401;
-                    return _cachedTask;
+                    return CachedTask;
                 }
                 tokenHeader = tokenHeader.Substring(tokenHeader.IndexOf(' ') + 1);
                 var token = Convert.FromBase64String(tokenHeader);
                 string result = null;
                 try
                 {
-                    result = _cache.ProcessHandshake(token, sessionId);
+                    result = authFeature.ProcessHandshake(token);
                 }
                 catch
                 {
@@ -68,12 +67,12 @@ namespace CondenserDotNet.Server.WindowsAuthentication
                 {
                     httpContext.Response.Headers.Add(WWWAuthenticateHeader, new[] { result });
                 }
-                var user = _cache.GetUser(sessionId);
+                var user = authFeature.GetUser();
                 if (user == null)
                 {
                     httpContext.Response.StatusCode = 401;
                     httpContext.Response.ContentLength = 0;
-                    return _cachedTask;
+                    return CachedTask;
                 }
                 authFeature.Identity = user;
             }

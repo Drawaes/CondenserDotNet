@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http.Features.Authentication;
 using Microsoft.AspNetCore.Server.Kestrel.Filter;
 
-namespace CondenserDotNet.Server.WindowsAuthentication
+namespace CondenserDotNet.Middleware.WindowsAuthentication
 {
     public class AuthenticationConnectionFilter : IConnectionFilter
     {

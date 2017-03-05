@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using CondenserDotNet.Server.DataContracts;
 using CondenserDotNet.Server.Extensions;
-using CondenserDotNet.Server.WindowsAuthentication;
+using CondenserDotNet.Middleware.WindowsAuthentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 

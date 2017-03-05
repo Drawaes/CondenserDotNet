@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CondenserDotNet.Client;
-using CondenserDotNet.Middleware;
+using CondenserDotNet.Middleware.TrailingHeaders;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,13 +16,11 @@ namespace ServiceRegistration
         {
             services.AddMvc();
             services.AddRouting();
-            //services.AddConsulServices();
         }
 
-        public void Configure(IApplicationBuilder app) //, IServiceManager manager)
-        {
+        public void Configure(IApplicationBuilder app)
+        { 
             app.UseMiddleware<TrailingHeadersMiddleware>();
-            //manager.AddHttpHealthCheck("/health",5).AddApiUrl("/testSample/test3/test1").RegisterServiceAsync().Wait();
             app.UseMvcWithDefaultRoute();
         }
     }

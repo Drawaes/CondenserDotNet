@@ -31,6 +31,7 @@ namespace Condenser.Tests.Integration
                 await configRegistry.SetKeyAsync($"org/{keyname}/test2", _value2);
 
                 var result = await configRegistry.AddStaticKeyPathAsync($"org/{keyname}");
+                Assert.Equal(true,result);
 
                 var firstValue = configRegistry["test1"];
                 var secondValue = configRegistry["test2"];

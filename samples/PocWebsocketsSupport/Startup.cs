@@ -9,7 +9,7 @@ using CondenserDotNet.Server;
 using CondenserDotNet.Server.HttpPipelineClient;
 using CondenserDotNet.Server.RoutingTrie;
 using CondenserDotNet.Server.Websockets;
-using CondenserDotNet.Server.WindowsAuthentication;
+using CondenserDotNet.Middleware.WindowsAuthentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;

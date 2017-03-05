@@ -2,11 +2,11 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Server.Kestrel.Filter;
 
-namespace CondenserDotNet.ProtocolSwitcher
+namespace CondenserDotNet.Middleware.ProtocolSwitcher
 {
     public class ProtocolSwitchConnectionFilter:IConnectionFilter
     {
-        private IConnectionFilter _previous;
+        private readonly IConnectionFilter _previous;
         
         public ProtocolSwitchConnectionFilter(IConnectionFilter previous)
         {
@@ -24,7 +24,7 @@ namespace CondenserDotNet.ProtocolSwitcher
             var previousRequest = context.PrepareRequest;
             var firstByte = new byte[1];
 
-            var byteCount = await context.Connection.ReadAsync(firstByte, 0, 1);
+            await context.Connection.ReadAsync(firstByte, 0, 1);
             
             if (firstByte[0] == 0x16)
             {

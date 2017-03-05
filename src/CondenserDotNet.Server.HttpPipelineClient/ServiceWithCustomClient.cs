@@ -12,22 +12,22 @@ using Microsoft.Extensions.Logging;
 
 namespace CondenserDotNet.Server.HttpPipelineClient
 {
-    public class ServiceWithCustomClient : IService, IConsulService
+    public class ServiceWithCustomClient : IConsulService, IDisposable
     {
         private readonly System.Threading.CountdownEvent _waitUntilRequestsAreFinished = new System.Threading.CountdownEvent(1);
         private string _address;
         private int _port;
         private byte[] _hostHeader;
-        private CurrentState _stats;
+        private readonly CurrentState _stats;
         private IPEndPoint _ipEndPoint;
         private Version[] _supportedVersions;
         private string[] _tags;
         private string _serviceId;
-        private ILogger _logger;
+        private readonly ILogger _logger;
         private int _calls;
         private int _totalRequestTime;
-        private ConcurrentQueue<IPipeConnection> _pooledConnections = new ConcurrentQueue<IPipeConnection>();
-        private PipeFactory _factory;
+        private readonly ConcurrentQueue<IPipeConnection> _pooledConnections = new ConcurrentQueue<IPipeConnection>();
+        private readonly PipeFactory _factory;
 
         public ServiceWithCustomClient(CurrentState stats, ILoggerFactory loggingFactory, PipeFactory factory)
         {
@@ -115,6 +115,7 @@ namespace CondenserDotNet.Server.HttpPipelineClient
             }
             catch
             {
+                _logger.LogError("Unable to get an ip address for {serverAddress}",address);
             }
             _supportedVersions = tags.Where(t => t.StartsWith("version=")).Select(t => new Version(t.Substring(8))).ToArray();
         }
