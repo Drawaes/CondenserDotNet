@@ -5,12 +5,12 @@ using System.Text;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 
-namespace CondenserDotNet.Middleware
+namespace CondenserDotNet.Middleware.TrailingHeaders
 {
     public class TrailingHeadersFeature : ITrailingHeadersFeature
     {
-        private List<Tuple<string, Func<string>>> _headers = new List<Tuple<string, Func<string>>>();
-        private HttpContext _context; 
+        private readonly List<Tuple<string, Func<string>>> _headers = new List<Tuple<string, Func<string>>>();
+        private readonly HttpContext _context; 
 
         public TrailingHeadersFeature(HttpContext context)
         {

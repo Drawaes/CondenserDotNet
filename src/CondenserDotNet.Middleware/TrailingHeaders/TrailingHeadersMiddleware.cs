@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Server.Kestrel.Internal.Http;
 
-namespace CondenserDotNet.Middleware
+namespace CondenserDotNet.Middleware.TrailingHeaders
 {
     public class TrailingHeadersMiddleware
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Linq;
-using CondenserDotNet.Middleware;
+using CondenserDotNet.Middleware.TrailingHeaders;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ServiceRegistration.Controllers

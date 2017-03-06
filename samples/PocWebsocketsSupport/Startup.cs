@@ -6,15 +6,14 @@ using System.Threading.Tasks;
 using CondenserDotNet.Core;
 using CondenserDotNet.Core.Routing;
 using CondenserDotNet.Server;
-using CondenserDotNet.Server.HttpPipelineClient;
 using CondenserDotNet.Server.RoutingTrie;
-using CondenserDotNet.Server.Websockets;
-using CondenserDotNet.Server.WindowsAuthentication;
+using CondenserDotNet.Middleware.WindowsAuthentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using CondenserDotNet.Middleware.Pipelines;
 
 namespace PocWebsocketsSupport
 {

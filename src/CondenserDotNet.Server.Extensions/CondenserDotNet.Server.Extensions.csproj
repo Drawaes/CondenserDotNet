@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CondenserDotNet.Server.Websockets\CondenserDotNet.Server.Websockets.csproj" />
     <ProjectReference Include="..\CondenserDotNet.Server\CondenserDotNet.Server.csproj" />
   </ItemGroup>
 </Project>

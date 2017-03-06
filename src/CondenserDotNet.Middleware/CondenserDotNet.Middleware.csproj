@@ -4,6 +4,7 @@
     <TargetFrameworks>netstandard1.6;net451</TargetFrameworks>
     <AssemblyName>CondenserDotNet.Middleware</AssemblyName>
     <PackageId>CondenserDotNet.Middleware</PackageId>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="$(AspNetVersion)" />

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace CondenserDotNet.Server.WindowsAuthentication
+namespace CondenserDotNet.Middleware.WindowsAuthentication
 {
     public class WindowsAuthStreamWrapper :Stream
     {

@@ -1,5 +1,5 @@
 ﻿using System;
-using CondenserDotNet.Server.WindowsAuthentication;
+using CondenserDotNet.Middleware.WindowsAuthentication;
 using Microsoft.AspNetCore.Hosting;
 
 namespace PocWebsocketsSupport

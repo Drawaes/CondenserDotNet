@@ -4,7 +4,7 @@ using System.Text;
 using Microsoft.AspNetCore.Server.Kestrel;
 using Microsoft.AspNetCore.Server.Kestrel.Filter;
 
-namespace CondenserDotNet.ProtocolSwitcher
+namespace CondenserDotNet.Middleware.ProtocolSwitcher
 {
     public static class ProtocolSwitcherExtensions
     {

@@ -3,8 +3,8 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard1.6;net451</TargetFrameworks>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <AssemblyName>CondenserDotNet.Server.HttpPipelineClient</AssemblyName>
-    <PackageId>CondenserDotNet.Server.HttpPipelineClient</PackageId>
+    <AssemblyName>CondenserDotNet.Middleware.Pipelines</AssemblyName>
+    <PackageId>CondenserDotNet.Middleware.Pipelines</PackageId>
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="$(AspNetVersion)" />

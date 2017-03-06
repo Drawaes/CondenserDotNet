@@ -6,28 +6,25 @@ using System.Security.Principal;
 using System.Threading.Tasks;
 using static Interop.Secur32;
 
-namespace CondenserDotNet.Server.WindowsAuthentication
+namespace CondenserDotNet.Middleware.WindowsAuthentication
 {
     public sealed class WindowsHandshake:IDisposable
     {
         private SecurityHandle _context;
-        private string _sessionId;
         private SecurityHandle _ntlmHandle;
         private WindowsIdentity _identity;
         private readonly DateTime _dateStarted = DateTime.UtcNow;
         private static readonly ASC_REQ _requestType = ASC_REQ.ASC_REQ_CONFIDENTIALITY | ASC_REQ.ASC_REQ_REPLAY_DETECT
             | ASC_REQ.ASC_REQ_SEQUENCE_DETECT | ASC_REQ.ASC_REQ_CONNECTION;
 
-        internal WindowsHandshake(string sessionId, SecurityHandle ntlmHandle)
+        internal WindowsHandshake(SecurityHandle ntlmHandle)
         {
-            _sessionId = sessionId;
             _ntlmHandle = ntlmHandle;
         }
 
         public WindowsIdentity User => _identity;
         public DateTime DateStarted => _dateStarted;
-        public string SessionId => _sessionId;
-
+        
         public unsafe string AcceptSecurityToken(byte[] token)
         {
             fixed (byte* bufferPtr = token)
@@ -80,14 +77,13 @@ namespace CondenserDotNet.Server.WindowsAuthentication
 
                 if (result == SEC_RESULT.SEC_E_OK)
                 {
-                    IntPtr handle;
                     if (outBuffer[0].cbBuffer > 0)
                     {
                         var byteSpan = new byte[(int)outBuffer[0].cbBuffer];
                         Marshal.Copy((IntPtr)outBufferPtr, byteSpan, 0, byteSpan.Length);
                         returnToken = "Negotiate " + Convert.ToBase64String(byteSpan);
                     }
-                    result = QuerySecurityContextToken(ref _context, out handle);
+                    QuerySecurityContextToken(ref _context, out IntPtr handle);
                     _identity = new WindowsIdentity(handle);
                     Interop.Kernel32.CloseHandle(handle);
                     return returnToken;
