@@ -1,16 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO.Pipelines.Text.Primitives;
 using System.IO.Pipelines;
+using System.IO.Pipelines.Text.Primitives;
 using System.Text;
 using System.Text.Formatting;
 using System.Threading.Tasks;
+using CondenserDotNet.Server;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Extensions.Logging;
-using CondenserDotNet.Server;
 
-namespace CondenserDotNet.Server.Websockets
+namespace CondenserDotNet.Middleware.Pipelines
 {
     public class WebsocketMiddleware
     {
@@ -58,7 +58,7 @@ namespace CondenserDotNet.Server.Websockets
                 {
                     writer.Append(header.Key, TextEncoder.Utf8);
                     writer.Write(_headerSplit);
-                    writer.Append(string.Join(", ",(IEnumerable<string>) header.Value), TextEncoder.Utf8);
+                    writer.Append(string.Join(", ", (IEnumerable<string>)header.Value), TextEncoder.Utf8);
                     writer.Write(_endOfLine);
                 }
                 writer.Write(_endOfLine);
@@ -115,4 +115,3 @@ namespace CondenserDotNet.Server.Websockets
         }
     }
 }
-

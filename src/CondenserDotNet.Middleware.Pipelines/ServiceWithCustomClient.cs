@@ -7,10 +7,11 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using CondenserDotNet.Core;
+using CondenserDotNet.Server;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-namespace CondenserDotNet.Server.HttpPipelineClient
+namespace CondenserDotNet.Middleware.Pipelines
 {
     public class ServiceWithCustomClient : IConsulService, IDisposable
     {

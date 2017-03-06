@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 
-namespace CondenserDotNet.Server.HttpPipelineClient
+namespace CondenserDotNet.Middleware.Pipelines
 {
     public static class HttpResponseHelper
     {
@@ -38,26 +38,7 @@ namespace CondenserDotNet.Server.HttpPipelineClient
 
                     while (currentSlice.Length > 0)
                     {
-                        if (!currentSlice.TrySliceTo(HttpConsts.EndOfLine, out ReadableBuffer headerLine, out cursor))
-                        {
-                            headerLine = currentSlice;
-                            currentSlice = currentSlice.Slice(currentSlice.Length);
-                        }
-                        else
-                        {
-                            currentSlice = currentSlice.Slice(cursor).Slice(HttpConsts.EndOfLine.Length);
-                        }
-                        if (!headerLine.TrySliceTo(HttpConsts.HeaderSplit, out ReadableBuffer key, out cursor))
-                        {
-                            throw new NotImplementedException();
-                        }
-                        var keyString = key.GetUtf8String();
-                        var values = headerLine.Slice(cursor).Slice(HttpConsts.HeaderSplit.Length).GetUtf8String().Split(new string[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
-                        if (keyString == "Content-Length")
-                        {
-                            context.Response.ContentLength = int.Parse(values[0]);
-                        }
-                        context.Response.Headers[key.GetUtf8String()] = new Microsoft.Extensions.Primitives.StringValues(values);
+                        cursor = ProcessHeader(context, ref currentSlice);
                     }
                     finished = true;
                     return;
@@ -76,9 +57,34 @@ namespace CondenserDotNet.Server.HttpPipelineClient
             }
         }
 
+        private static ReadCursor ProcessHeader(HttpContext context, ref ReadableBuffer currentSlice)
+        {
+            if (!currentSlice.TrySliceTo(HttpConsts.EndOfLine, out ReadableBuffer headerLine, out ReadCursor cursor))
+            {
+                headerLine = currentSlice;
+                currentSlice = currentSlice.Slice(currentSlice.Length);
+            }
+            else
+            {
+                currentSlice = currentSlice.Slice(cursor).Slice(HttpConsts.EndOfLine.Length);
+            }
+            if (!headerLine.TrySliceTo(HttpConsts.HeaderSplit, out ReadableBuffer key, out cursor))
+            {
+                throw new NotImplementedException();
+            }
+            var keyString = key.GetUtf8String();
+            var values = headerLine.Slice(cursor).Slice(HttpConsts.HeaderSplit.Length).GetUtf8String().Split(new string[] { ", " }, StringSplitOptions.RemoveEmptyEntries);
+            if (keyString == HttpConsts.ContentLengthHeader)
+            {
+                context.Response.ContentLength = int.Parse(values[0]);
+            }
+            context.Response.Headers[keyString] = new Microsoft.Extensions.Primitives.StringValues(values);
+            return cursor;
+        }
+
         public static Task<bool> ReceiveBodyAsync(this IPipeConnection connection, HttpContext context, ILogger logger)
         {
-            if (context.Response.Headers["Transfer-Encoding"] == "chunked")
+            if (context.Response.Headers[HttpConsts.TransferEncodingHeader] == HttpConsts.ChunkedContentType)
             {
                 return connection.ReceiveChunkedBody(context, logger);
             }

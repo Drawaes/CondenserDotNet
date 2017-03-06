@@ -6,7 +6,7 @@ using System.Text.Formatting;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 
-namespace CondenserDotNet.Server.HttpPipelineClient
+namespace CondenserDotNet.Middleware.Pipelines
 {
     public static class HttpRequestHelper
     {
@@ -30,7 +30,7 @@ namespace CondenserDotNet.Server.HttpPipelineClient
                 writer.Write(HttpConsts.EndOfLine);
             }
             writer.Write(host);
-            writer.Write(HttpConsts.ConnectionHeader);
+            writer.Write(HttpConsts.ConnectionHeaderBytes);
             return writer.FlushAsync();
         }
 
