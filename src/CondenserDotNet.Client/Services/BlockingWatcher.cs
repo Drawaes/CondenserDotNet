@@ -14,6 +14,7 @@ namespace CondenserDotNet.Client.Services
         private readonly Action<T> _onNew;
         private T _instances;
         private WatcherState _state = WatcherState.NotInitialized;
+        private static int s_getServiceDelay = System.Diagnostics.Debugger.IsAttached ? 30000 : 2000;
         
         public BlockingWatcher(Func<string, Task<HttpResponseMessage>> client, Action<T> onNew = null)
         {
@@ -23,7 +24,9 @@ namespace CondenserDotNet.Client.Services
 
         public async Task<T> ReadAsync()
         {
-            if (!await _haveFirstResults.WaitAsync())
+            var delayTask = Task.Delay(s_getServiceDelay);
+            var taskThatFinished = await Task.WhenAny(delayTask,_haveFirstResults.WaitAsync());
+            if (delayTask == taskThatFinished)
             {
                 return null;
             }

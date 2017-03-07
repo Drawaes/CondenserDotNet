@@ -34,9 +34,17 @@ namespace Condenser.Tests.Integration
         }
 
         [Fact]
+        public async Task TestThatAnErrorIsReturnedWhenConsulIsNotAvailable()
+        {
+            using (var serviceRegistry = new ServiceRegistry(() => new HttpClient() { BaseAddress = "http://localhost:7000" }))
+            {
+                await Assert.ThrowsAsync<NoServiceInstanceFoundException>(() => serviceRegistry.GetServiceInstanceAsync("TestService"));
+            }
+        }
+
+        [Fact]
         public async Task TestRegisterAndCheckUpdates()
         {
-            Console.WriteLine(nameof(TestRegisterAndCheckUpdates));
             var serviceName = Guid.NewGuid().ToString();
             var opts = Options.Create(new ServiceManagerConfig() { ServiceName = serviceName, ServiceId = serviceName, ServicePort = 2222 });
             using (var manager = new ServiceManager(opts))
