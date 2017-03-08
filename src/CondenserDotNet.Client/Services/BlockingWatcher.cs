@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CondenserDotNet.Core;
 using Newtonsoft.Json;
+using Microsoft.Extensions.Logging;
 
 namespace CondenserDotNet.Client.Services
 {
@@ -11,15 +12,17 @@ namespace CondenserDotNet.Client.Services
     {
         private readonly AsyncManualResetEvent<bool> _haveFirstResults = new AsyncManualResetEvent<bool>();
         private readonly Func<string, Task<HttpResponseMessage>> _client;
-        private readonly Action<T> _onNew;
         private T _instances;
         private WatcherState _state = WatcherState.NotInitialized;
         private static int s_getServiceDelay = 2000;
-        
-        public BlockingWatcher(Func<string, Task<HttpResponseMessage>> client, Action<T> onNew = null)
+        private readonly ILogger _logger;
+        private CancellationToken _token;
+
+        public BlockingWatcher(Func<string, Task<HttpResponseMessage>> client, ILogger logger, CancellationToken token)
         {
+            _token = token;
             _client = client;
-            _onNew = onNew;
+            _logger = logger;
         }
 
         public async Task<T> ReadAsync()
@@ -31,7 +34,7 @@ namespace CondenserDotNet.Client.Services
                 var taskThatFinished = await Task.WhenAny(delayTask, _haveFirstResults.WaitAsync());
                 if (delayTask == taskThatFinished)
                 {
-                    throw new System.Net.Sockets.SocketException();
+                    throw new NoConsulConnectionException();
                 }
                 instances = Volatile.Read(ref _instances);
             }
@@ -40,32 +43,39 @@ namespace CondenserDotNet.Client.Services
 
         public async Task WatchLoop()
         {
-            try
+            while (true)
             {
-                string consulIndex = "0";
-                while (true)
+                try
                 {
-                    var result = await _client(consulIndex);
-                    if (!result.IsSuccessStatusCode)
+                    string consulIndex = "0";
+                    while (!_token.IsCancellationRequested)
                     {
-                        if (_state == WatcherState.UsingLiveValues)
+                        var result = await _client(consulIndex);
+                        if (!result.IsSuccessStatusCode)
                         {
-                            _state = WatcherState.UsingCachedValues;
+                            if (_state == WatcherState.UsingLiveValues)
+                            {
+                                _state = WatcherState.UsingCachedValues;
+                            }
+                            await Task.Delay(1000);
+                            continue;
                         }
-                        await Task.Delay(1000);
-                        continue;
+                        consulIndex = result.GetConsulIndex();
+                        var content = await result.Content.ReadAsStringAsync();
+                        var instance = JsonConvert.DeserializeObject<T>(content);
+                        Interlocked.Exchange(ref _instances, instance);
+                        _state = WatcherState.UsingLiveValues;
+                        _haveFirstResults.Set(true);
                     }
-                    consulIndex = result.GetConsulIndex();
-                    var content = await result.Content.ReadAsStringAsync();
-                    var instance = JsonConvert.DeserializeObject<T>(content);
-                    Interlocked.Exchange(ref _instances, instance);
-                    _state = WatcherState.UsingLiveValues;
-                    _haveFirstResults.Set(true);
-                    _onNew?.Invoke(instance);
                 }
+                catch (TaskCanceledException) { /*nom nom */}
+                catch (ObjectDisposedException) { /*nom nom */}
+                catch (Exception ex)
+                {
+                    _logger?.LogWarning(0, ex, "Error in blocking watcher watching consul");
+                }
+                await Task.Delay(s_getServiceDelay);
             }
-            catch (TaskCanceledException) { /*nom nom */}
-            catch (ObjectDisposedException) { /*nom nom */}
         }
     }
 }

@@ -26,24 +26,16 @@ namespace CondenserDotNet.Client.Services
             _logger = logger;
             _routingStrategy = routingStrategy;
             string lookupUrl = $"{HttpUtils.ServiceHealthUrl}{serviceName}?passing&index=";
-            Func<string,Task<HttpResponseMessage>> action = 
+            Func<string, Task<HttpResponseMessage>> action =
                 (consulIndex) => client.GetAsync(lookupUrl + consulIndex, cancel);
-            _watcher = new BlockingWatcher<List<InformationServiceSet>>(action);
+            _watcher = new BlockingWatcher<List<InformationServiceSet>>(action, _logger, cancel);
             _watcherTask = _watcher.WatchLoop();
         }
 
         internal async Task<InformationService> GetNextServiceInstanceAsync()
         {
-            try
-            {
-                var instances = await _watcher.ReadAsync();
-                return _routingStrategy.RouteTo(instances)?.Service;
-            }
-            catch(Exception ex)
-            {
-                _logger?.LogError("Unable to get an instance of {serviceName} the error was {excception}",_serviceName, ex);
-                throw new NoServiceInstanceFoundException(_serviceName,ex);
-            }
+            var instances = await _watcher.ReadAsync();
+            return _routingStrategy.RouteTo(instances)?.Service;
         }
     }
 }

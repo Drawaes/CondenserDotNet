@@ -38,10 +38,20 @@ namespace Condenser.Tests.Integration
         {
             using (var serviceRegistry = new ServiceRegistry(() => new HttpClient() { BaseAddress = new Uri( "http://localhost:7000" )}))
             {
-                await Assert.ThrowsAsync<NoServiceInstanceFoundException>(async () => await serviceRegistry.GetServiceInstanceAsync("TestService"));
+                await Assert.ThrowsAsync<NoConsulConnectionException>(async () => await serviceRegistry.GetServiceInstanceAsync("TestService"));
             }
         }
 
+        [Fact]
+        public async Task TestThatAnErrorIsReturnedWhenNoServiceIsAvailableInTheHandler()
+        {
+            using (var serviceRegistry = new ServiceRegistry())
+            {
+                var handler = serviceRegistry.GetHttpHandler();
+                var httpClient = new HttpClient(handler);
+                await Assert.ThrowsAsync<NoServiceInstanceFoundException>(async () => await httpClient.GetAsync($"http://{Guid.NewGuid().ToString()}"));
+            }
+        }
         [Fact]
         public async Task TestRegisterAndCheckUpdates()
         {
