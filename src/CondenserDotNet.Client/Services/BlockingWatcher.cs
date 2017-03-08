@@ -14,6 +14,7 @@ namespace CondenserDotNet.Client.Services
         private readonly Action<T> _onNew;
         private T _instances;
         private WatcherState _state = WatcherState.NotInitialized;
+        private static int s_getServiceDelay = 2000;
         
         public BlockingWatcher(Func<string, Task<HttpResponseMessage>> client, Action<T> onNew = null)
         {
@@ -23,11 +24,17 @@ namespace CondenserDotNet.Client.Services
 
         public async Task<T> ReadAsync()
         {
-            if (!await _haveFirstResults.WaitAsync())
-            {
-                return null;
-            }
             T instances = Volatile.Read(ref _instances);
+            if (instances == null)
+            {
+                var delayTask = Task.Delay(s_getServiceDelay);
+                var taskThatFinished = await Task.WhenAny(delayTask, _haveFirstResults.WaitAsync());
+                if (delayTask == taskThatFinished)
+                {
+                    throw new System.Net.Sockets.SocketException();
+                }
+                instances = Volatile.Read(ref _instances);
+            }
             return instances;
         }
 

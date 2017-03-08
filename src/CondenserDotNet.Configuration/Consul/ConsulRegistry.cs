@@ -172,8 +172,7 @@ namespace CondenserDotNet.Configuration.Consul
         {
             get
             {
-                string returnValue;
-                if (TryGetValue(key, out returnValue))
+                if (TryGetValue(key, out string returnValue))
                 {
                     return returnValue;
                 }
@@ -211,8 +210,7 @@ namespace CondenserDotNet.Configuration.Consul
             {
                 lock (_configKeys)
                 {
-                    string currentValue;
-                    TryGetValue(keyToWatch, out currentValue);
+                    TryGetValue(keyToWatch, out string currentValue);
                     _configWatchers.Add(new ConfigurationWatcher() { CallBack = callback, KeyToWatch = keyToWatch, CurrentValue = currentValue });
                 }
             }
