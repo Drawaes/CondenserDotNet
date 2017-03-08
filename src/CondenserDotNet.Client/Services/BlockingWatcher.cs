@@ -24,13 +24,17 @@ namespace CondenserDotNet.Client.Services
 
         public async Task<T> ReadAsync()
         {
-            var delayTask = Task.Delay(s_getServiceDelay);
-            var taskThatFinished = await Task.WhenAny(delayTask,_haveFirstResults.WaitAsync());
-            if (delayTask == taskThatFinished)
-            {
-                throw new System.Net.Sockets.SocketException();
-            }
             T instances = Volatile.Read(ref _instances);
+            if (instances == null)
+            {
+                var delayTask = Task.Delay(s_getServiceDelay);
+                var taskThatFinished = await Task.WhenAny(delayTask, _haveFirstResults.WaitAsync());
+                if (delayTask == taskThatFinished)
+                {
+                    throw new System.Net.Sockets.SocketException();
+                }
+                instances = Volatile.Read(ref _instances);
+            }
             return instances;
         }
 
