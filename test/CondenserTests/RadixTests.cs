@@ -64,8 +64,7 @@ namespace CondenserTests
             //The key length should be 5 long
             Assert.Equal(5, tree.GetTopNode().ChildrenNodes.KeyLength);
 
-            string matchedpath;
-            var returnservice = tree.GetServiceFromRoute("/test1/test2/test3/test4/test5/test7",out matchedpath);
+            var returnservice = tree.GetServiceFromRoute("/test1/test2/test3/test4/test5/test7", out string matchedpath);
             Assert.Equal("/test1/test2/test3/test4/test5".ToUpperInvariant(), matchedpath);
             //Assert.Equal(returnservice.ServiceId, service.ServiceId);
         }

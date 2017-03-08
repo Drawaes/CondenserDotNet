@@ -36,9 +36,9 @@ namespace Condenser.Tests.Integration
         [Fact]
         public async Task TestThatAnErrorIsReturnedWhenConsulIsNotAvailable()
         {
-            using (var serviceRegistry = new ServiceRegistry(() => new HttpClient() { BaseAddress = "http://localhost:7000" }))
+            using (var serviceRegistry = new ServiceRegistry(() => new HttpClient() { BaseAddress = new Uri( "http://localhost:7000" )}))
             {
-                await Assert.ThrowsAsync<NoServiceInstanceFoundException>(() => serviceRegistry.GetServiceInstanceAsync("TestService"));
+                await Assert.ThrowsAsync<NoServiceInstanceFoundException>(async () => await serviceRegistry.GetServiceInstanceAsync("TestService"));
             }
         }
 

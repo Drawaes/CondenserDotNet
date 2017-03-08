@@ -13,5 +13,10 @@ namespace CondenserDotNet.Client.Services
         }
 
         public string ServiceName { get;}
+
+        public override string ToString()
+        {
+            return Message;
+        }
     }
 }

@@ -18,8 +18,10 @@ namespace CondenserDotNet.Middleware.TrailingHeaders
         public async Task Invoke(HttpContext context)
         {
             var trailingHeaders = new TrailingHeadersFeature(context);
-            var stream = new ChunkingStream();
-            stream.InnerStream = context.Response.Body;
+            var stream = new ChunkingStream()
+            {
+                InnerStream = context.Response.Body
+            };
             context.Response.Body = stream;
             context.Response.Headers["Transfer-Encoding"] = "chunked";
             context.Features.Set<ITrailingHeadersFeature>(trailingHeaders);

@@ -43,8 +43,7 @@ namespace CondenserDotNet.Server.Routes
             }
             var queryDictionary = QueryHelpers.ParseQuery(query.Value);
 
-            StringValues values;
-            if (queryDictionary.TryGetValue("strategy", out values))
+            if (queryDictionary.TryGetValue("strategy", out StringValues values))
             {
                 var router = _provider.GetServices<IRoutingStrategy<IService>>()
                     .SingleOrDefault(x => x.Name.Equals(values[0], StringComparison.OrdinalIgnoreCase));
@@ -59,7 +58,7 @@ namespace CondenserDotNet.Server.Routes
             else
             {
                 await context.Response.WriteAsync("No query string args");
-                context.Response.StatusCode = (int) HttpStatusCode.BadRequest;
+                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
             }
         }
 

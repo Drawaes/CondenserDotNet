@@ -10,6 +10,7 @@ using CondenserDotNet.Core;
 using CondenserDotNet.Server;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using System.Diagnostics;
 
 namespace CondenserDotNet.Middleware.Pipelines
 {
@@ -26,7 +27,7 @@ namespace CondenserDotNet.Middleware.Pipelines
         private string _serviceId;
         private readonly ILogger _logger;
         private int _calls;
-        private int _totalRequestTime;
+        private long _totalRequestTime;
         private readonly ConcurrentQueue<IPipeConnection> _pooledConnections = new ConcurrentQueue<IPipeConnection>();
         private readonly PipeFactory _factory;
 
@@ -50,6 +51,8 @@ namespace CondenserDotNet.Middleware.Pipelines
 
         public async Task CallService(HttpContext context)
         {
+            System.Threading.Interlocked.Increment(ref _calls);
+            var sw = Stopwatch.StartNew();
             try
             {
                 if (!_pooledConnections.TryDequeue(out IPipeConnection socket))
@@ -71,6 +74,8 @@ namespace CondenserDotNet.Middleware.Pipelines
             {
                 throw new NotImplementedException();
             }
+            sw.Stop();
+            System.Threading.Interlocked.Add(ref _totalRequestTime, sw.ElapsedMilliseconds);
         }
 
         public override int GetHashCode()
