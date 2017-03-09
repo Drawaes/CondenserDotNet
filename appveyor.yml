@@ -33,6 +33,8 @@ after_test:
   - dotnet pack -c Release src/CondenserDotNet.Core --version-suffix %suffix%
   - dotnet pack -c Release src/CondenserDotNet.Configuration --version-suffix %suffix%
   - dotnet pack -c Release src/CondenserDotNet.Middleware --version-suffix %suffix%
+  - dotnet pack -c Release src/CondenserDotNet.Server.Extensions --version-suffix %suffix%
+      
   
 artifacts:
   path: '**/*.nupkg'
