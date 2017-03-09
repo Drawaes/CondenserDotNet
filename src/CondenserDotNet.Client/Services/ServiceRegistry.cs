@@ -9,6 +9,7 @@ using CondenserDotNet.Core.Routing;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
+using System.Runtime.CompilerServices;
 
 namespace CondenserDotNet.Client.Services
 {
@@ -50,8 +51,8 @@ namespace CondenserDotNet.Client.Services
             {
                 if (!_watchedServices.TryGetValue(serviceName, out watcher))
                 {
-                    watcher = new ServiceWatcher(serviceName, _client, _cancel.Token, 
-                        new RandomRoutingStrategy<InformationServiceSet>(), _logger);
+                    watcher = new ServiceWatcher(serviceName, _client
+                        , new RandomRoutingStrategy<InformationServiceSet>(), _logger);
                     _watchedServices.Add(serviceName, watcher);
                 }
             }
