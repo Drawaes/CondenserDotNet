@@ -16,7 +16,6 @@ namespace CondenserDotNet.Client.Services
     public class ServiceRegistry : IServiceRegistry, IDisposable
     {
         private readonly HttpClient _client;
-        private readonly CancellationTokenSource _cancel = new CancellationTokenSource();
         private readonly Dictionary<string, ServiceWatcher> _watchedServices = new Dictionary<string, ServiceWatcher>(StringComparer.OrdinalIgnoreCase);
         private readonly ILogger _logger;
 
@@ -34,7 +33,7 @@ namespace CondenserDotNet.Client.Services
 
         public async Task<Dictionary<string, string[]>> GetAvailableServicesWithTagsAsync()
         {
-            var result = await _client.GetAsync(HttpUtils.ServiceCatalogUrl, _cancel.Token);
+            var result = await _client.GetAsync(HttpUtils.ServiceCatalogUrl);
             if (!result.IsSuccessStatusCode)
             {
                 return null;
@@ -62,8 +61,13 @@ namespace CondenserDotNet.Client.Services
 
         public void Dispose()
         {
-            _cancel.Cancel();
-            _client.Dispose();
+            lock(_watchedServices)
+            {
+                foreach(var kv in _watchedServices)
+                {
+                    kv.Value.Dispose();
+                }
+            }
         }
 
         public ServiceBasedHttpHandler GetHttpHandler()

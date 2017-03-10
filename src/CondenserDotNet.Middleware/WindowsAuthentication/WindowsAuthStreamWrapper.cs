@@ -23,6 +23,7 @@ namespace CondenserDotNet.Middleware.WindowsAuthentication
         public override bool CanWrite => _innerStream.CanWrite;
         public override long Length => _innerStream.Length;
         public override long Position { get { return _innerStream.Position; } set { _innerStream.Position = value; } }
+        public IWindowsAuthFeature AuthFeature => _authFeature;
 
         public override void Flush()
         {
