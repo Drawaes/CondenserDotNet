@@ -45,25 +45,38 @@ namespace CondenserDotNet.Client.Services
 
         public Task<InformationService> GetServiceInstanceAsync(string serviceName)
         {
-            ServiceWatcher watcher;
             lock (_watchedServices)
             {
-                if (!_watchedServices.TryGetValue(serviceName, out watcher))
+                if (!_watchedServices.TryGetValue(serviceName, out ServiceWatcher watcher))
                 {
                     watcher = new ServiceWatcher(serviceName, _client
                         , new RandomRoutingStrategy<InformationServiceSet>(), _logger);
                     _watchedServices.Add(serviceName, watcher);
                 }
+                //We either have one or have made one now so lets carry on
+                return watcher.GetNextServiceInstanceAsync();
             }
-            //We either have one or have made one now so lets carry on
-            return watcher.GetNextServiceInstanceAsync();
+        }
+
+        public WatcherState GetServiceCurrentState(string serviceName)
+        {
+            lock (_watchedServices)
+            {
+                if (!_watchedServices.TryGetValue(serviceName, out ServiceWatcher watcher))
+                {
+                    watcher = new ServiceWatcher(serviceName, _client
+                        , new RandomRoutingStrategy<InformationServiceSet>(), _logger);
+                    _watchedServices.Add(serviceName, watcher);
+                }
+                return watcher.State;
+            }
         }
 
         public void Dispose()
         {
-            lock(_watchedServices)
+            lock (_watchedServices)
             {
-                foreach(var kv in _watchedServices)
+                foreach (var kv in _watchedServices)
                 {
                     kv.Value.Dispose();
                 }
