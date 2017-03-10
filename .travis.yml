@@ -47,7 +47,7 @@ install:
       exit 1;
     fi
   # Restore dependencies
-  - dotnet restore -f https://dotnet.myget.org/F/dotnet-corefxlab/
+  - dotnet restore
 
 before_script:
   # Install consul
