@@ -23,7 +23,7 @@ before_install:
       brew link --force openssl;
       export DOTNET_SDK_URL="https://go.microsoft.com/fwlink/?linkid=843444";
     else
-      export DOTNET_SDK_URL="https://go.microsoft.com/fwlink/?linkid=843415";
+      export DOTNET_SDK_URL="https://go.microsoft.com/fwlink/?linkid=843450";
     fi
 
   - export DOTNET_INSTALL_DIR="$PWD/.dotnetcli"
