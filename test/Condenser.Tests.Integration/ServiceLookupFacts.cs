@@ -43,6 +43,21 @@ namespace Condenser.Tests.Integration
         }
 
         [Fact]
+        public async Task CheckStateIsReportedCorrectly()
+        {
+            using (var serviceRegistry = new ServiceRegistry())
+            {
+                var key = Guid.NewGuid().ToString();
+                var state = serviceRegistry.GetServiceCurrentState(key);
+                Assert.Equal(WatcherState.NotInitialized, state);
+
+                var instance = await serviceRegistry.GetServiceInstanceAsync(key);
+                state = serviceRegistry.GetServiceCurrentState(key);
+                Assert.Equal(WatcherState.UsingLiveValues, state);
+            }
+        }
+
+        [Fact]
         public async Task TestThatAnErrorIsReturnedWhenNoServiceIsAvailableInTheHandler()
         {
             using (var serviceRegistry = new ServiceRegistry())

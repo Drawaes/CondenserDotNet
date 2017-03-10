@@ -1,6 +1,6 @@
 ﻿namespace CondenserDotNet.Client.Services
 {
-    internal enum WatcherState
+    public enum WatcherState
     {
         NotInitialized,
         UsingCachedValues,

@@ -10,5 +10,6 @@ namespace CondenserDotNet.Client.Services
         Task<Dictionary<string, string[]>> GetAvailableServicesWithTagsAsync();
         Task<InformationService> GetServiceInstanceAsync(string serviceName);
         ServiceBasedHttpHandler GetHttpHandler();
+        WatcherState GetServiceCurrentState(string serviceName);
     }
 }
