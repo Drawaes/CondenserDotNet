@@ -25,7 +25,7 @@ namespace CondenserDotNet.Middleware.WindowsAuthentication
         public WindowsIdentity User => _identity;
         public DateTime DateStarted => _dateStarted;
         
-        public unsafe string AcceptSecurityToken(byte[] token)
+        public unsafe string AcceptSecurityToken(string returnTokenType, byte[] token)
         {
             fixed (byte* bufferPtr = token)
             {
@@ -71,7 +71,7 @@ namespace CondenserDotNet.Middleware.WindowsAuthentication
                 {
                     var byteSpan = new byte[(int)outBuffer[0].cbBuffer];
                     Marshal.Copy((IntPtr)outBufferPtr, byteSpan,0, byteSpan.Length);
-                    returnToken = "Negotiate " + Convert.ToBase64String(byteSpan);
+                    returnToken = returnTokenType  + Convert.ToBase64String(byteSpan);
                     return returnToken;
                 }
 

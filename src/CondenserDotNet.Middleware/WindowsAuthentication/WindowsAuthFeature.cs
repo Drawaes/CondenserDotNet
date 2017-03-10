@@ -7,7 +7,7 @@ using static Interop.Secur32;
 
 namespace CondenserDotNet.Middleware.WindowsAuthentication
 {
-    public class WindowsAuthFeature : IDisposable
+    public class WindowsAuthFeature : IDisposable, IWindowsAuthFeature
     {
         private static SecurityHandle _credentialsHandle;
         private WindowsHandshake _handshake;
@@ -22,6 +22,11 @@ namespace CondenserDotNet.Middleware.WindowsAuthentication
             }
         }
 
+        public WindowsAuthFeature()
+        {
+            _handshake = new WindowsHandshake(_credentialsHandle);
+        }
+
         public WindowsIdentity Identity { get; set; }
 
         public void Dispose()
@@ -31,18 +36,18 @@ namespace CondenserDotNet.Middleware.WindowsAuthentication
             Identity = null;
         }
 
-        public string ProcessHandshake(byte[] token)
+        public string ProcessHandshake(string tokenName, byte[] token)
         {
-            if(_handshake == null)
-            {
-                _handshake = new WindowsHandshake(_credentialsHandle);
-            }
-            return _handshake.AcceptSecurityToken(token);
+            return _handshake.AcceptSecurityToken(tokenName, token);
         }
 
         public WindowsIdentity GetUser()
         {
             var user = _handshake.User;
+            if (user == null)
+            {
+                return null;
+            }
             _handshake.Dispose();
             _handshake = null;
             return user;

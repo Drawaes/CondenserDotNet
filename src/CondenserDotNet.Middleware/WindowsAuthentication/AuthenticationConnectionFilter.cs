@@ -31,7 +31,7 @@ namespace CondenserDotNet.Middleware.WindowsAuthentication
             context.PrepareRequest = features =>
             {
                 previousRequest?.Invoke(features);
-                features.Set(feature);
+                features.Set(((WindowsAuthStreamWrapper)context.Connection).AuthFeature);
             };
             
         }

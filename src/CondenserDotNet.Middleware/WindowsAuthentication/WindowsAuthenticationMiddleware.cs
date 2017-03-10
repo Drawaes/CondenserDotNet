@@ -33,7 +33,7 @@ namespace CondenserDotNet.Middleware.WindowsAuthentication
         public Task Invoke(HttpContext httpContext)
         {
             var t = httpContext.Features.Get<IHttpConnectionFeature>();
-            var authFeature = httpContext.Features.Get<WindowsAuthFeature>();
+            var authFeature = httpContext.Features.Get<IWindowsAuthFeature>();
 
             if (authFeature == null)
             {
@@ -52,12 +52,13 @@ namespace CondenserDotNet.Middleware.WindowsAuthentication
                     httpContext.Response.StatusCode = 401;
                     return CachedTask;
                 }
+                var tokenName = tokenHeader.Substring(0, tokenHeader.IndexOf(' ') + 1);
                 tokenHeader = tokenHeader.Substring(tokenHeader.IndexOf(' ') + 1);
                 var token = Convert.FromBase64String(tokenHeader);
                 string result = null;
                 try
                 {
-                    result = authFeature.ProcessHandshake(token);
+                    result = authFeature.ProcessHandshake(tokenName, token);
                 }
                 catch
                 {
