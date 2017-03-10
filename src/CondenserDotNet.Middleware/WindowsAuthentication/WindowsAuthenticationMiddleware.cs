@@ -22,8 +22,6 @@ namespace CondenserDotNet.Middleware.WindowsAuthentication
         private ILogger<WindowsAuthenticationMiddleware> _logger;
         private static readonly Task _cachedTask = Task.FromResult(0);
 
-        public static Task CachedTask => _cachedTask;
-
         public WindowsAuthenticationMiddleware(RequestDelegate next, ILoggerFactory loggerFactory)
         {
             _next = next;
@@ -50,7 +48,7 @@ namespace CondenserDotNet.Middleware.WindowsAuthentication
                 {
                     httpContext.Response.Headers.Add(WWWAuthenticateHeader, _supportedTokens);
                     httpContext.Response.StatusCode = 401;
-                    return CachedTask;
+                    return _cachedTask;
                 }
                 var tokenName = tokenHeader.Substring(0, tokenHeader.IndexOf(' ') + 1);
                 tokenHeader = tokenHeader.Substring(tokenHeader.IndexOf(' ') + 1);
@@ -73,7 +71,7 @@ namespace CondenserDotNet.Middleware.WindowsAuthentication
                 {
                     httpContext.Response.StatusCode = 401;
                     httpContext.Response.ContentLength = 0;
-                    return CachedTask;
+                    return _cachedTask;
                 }
                 authFeature.Identity = user;
             }

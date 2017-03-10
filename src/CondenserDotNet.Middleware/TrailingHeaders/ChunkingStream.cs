@@ -19,21 +19,12 @@ namespace CondenserDotNet.Middleware.TrailingHeaders
         }
 
         public override bool CanRead => throw new NotImplementedException();
-
         public override bool CanSeek => throw new NotImplementedException();
-
         public override bool CanWrite => true;
-
         public override long Length => throw new NotImplementedException();
-
         public override long Position { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-
         public Stream InnerStream { get => _innerStream; set => _innerStream = value; }
-
-        public override void Flush()
-        {
-            _innerStream.Flush();
-        }
+        public override void Flush() => _innerStream.Flush();
 
         public override Task FlushAsync(CancellationToken cancellationToken)
         {

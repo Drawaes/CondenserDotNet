@@ -71,9 +71,6 @@ namespace CondenserDotNet.Client
             }
         }
 
-        ~ServiceManager()
-        {
-            Dispose(false);
-        }
+        ~ServiceManager() => Dispose(false);
     }
 }

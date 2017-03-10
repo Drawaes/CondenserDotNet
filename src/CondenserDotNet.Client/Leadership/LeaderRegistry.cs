@@ -8,10 +8,7 @@ namespace CondenserDotNet.Client.Leadership
         private readonly IServiceManager _serviceManager;
         private readonly Dictionary<string, LeaderWatcher> _leaderWatchers = new Dictionary<string, LeaderWatcher>(StringComparer.OrdinalIgnoreCase);
 
-        public LeaderRegistry(IServiceManager serviceManager)
-        {
-            _serviceManager = serviceManager;
-        }
+        public LeaderRegistry(IServiceManager serviceManager) => _serviceManager = serviceManager;
 
         public ILeaderWatcher GetLeaderWatcher(string keyForLeadership)
         {

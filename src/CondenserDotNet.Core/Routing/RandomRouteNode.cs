@@ -9,8 +9,9 @@ namespace CondenserDotNet.Core.Routing
         public T RouteTo(List<T> instances)
         {
             if ((instances != null) && (instances.Count > 0))
+            {
                 return instances[RandHelper.Next(0, instances.Count)];
-
+            }
             return default(T);
         }
 

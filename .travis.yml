@@ -64,5 +64,5 @@ script:
   # Start Consul
   - ./consul agent -server -bootstrap-expect 1 -data-dir /tmp/consul -advertise=127.0.0.1 &
   # Build sample
-  - dotnet test test/CondenserTests
-  - dotnet test test/Condenser.Tests.Integration
+  - dotnet test test/CondenserTests/CondenserTests.csproj
+  - dotnet test test/Condenser.Tests.Integration/Condenser.Tests.Integration.csproj

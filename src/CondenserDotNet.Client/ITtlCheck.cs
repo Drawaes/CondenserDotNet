@@ -8,7 +8,6 @@ namespace CondenserDotNet.Client
         Task<bool> ReportPassingAsync();
         Task<bool> ReportWarningAsync();
         Task<bool> ReportFailAsync();
-
         HealthCheck HealthCheck { get; }
     }
 }

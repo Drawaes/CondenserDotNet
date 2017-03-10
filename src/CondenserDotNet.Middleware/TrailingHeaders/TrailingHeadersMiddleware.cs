@@ -10,11 +10,8 @@ namespace CondenserDotNet.Middleware.TrailingHeaders
     {
         private readonly RequestDelegate _next;
 
-        public TrailingHeadersMiddleware(RequestDelegate next)
-        {
-            _next = next;
-        }
-
+        public TrailingHeadersMiddleware(RequestDelegate next) => _next = next;
+        
         public async Task Invoke(HttpContext context)
         {
             var trailingHeaders = new TrailingHeadersFeature(context);

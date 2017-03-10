@@ -6,6 +6,5 @@ namespace CondenserDotNet.Core.Routing
     {
         T RouteTo(List<T> services);
         string Name { get; }
-        
     }
 }

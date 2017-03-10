@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace CondenserDotNet.Configuration
 {
-    public interface IConfigurationRegistry:IDisposable
+    public interface IConfigurationRegistry : IDisposable
     {
         string this[string key] { get; }
         Task<bool> AddStaticKeyPathAsync(string keyPath);

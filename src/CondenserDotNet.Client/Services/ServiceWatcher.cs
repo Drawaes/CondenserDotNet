@@ -98,9 +98,6 @@ namespace CondenserDotNet.Client.Services
             }
         }
 
-        public void Dispose()
-        {
-            _cancelationToken.Cancel();
-        }
+        public void Dispose() => _cancelationToken.Cancel();
     }
 }

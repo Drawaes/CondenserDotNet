@@ -15,9 +15,6 @@ namespace CondenserDotNet.Core.Routing
         }
 
         public IRoutingStrategy<T> Default { get; private set; }
-        public void SetDefault(IRoutingStrategy<T> strategy)
-        {
-            Default = strategy;
-        }
+        public void SetDefault(IRoutingStrategy<T> strategy) => Default = strategy;
     }
 }

@@ -83,9 +83,6 @@ namespace CondenserDotNet.Client.Services
             }
         }
 
-        public ServiceBasedHttpHandler GetHttpHandler()
-        {
-            return new ServiceBasedHttpHandler(this);
-        }
+        public ServiceBasedHttpHandler GetHttpHandler() => new ServiceBasedHttpHandler(this);
     }
 }

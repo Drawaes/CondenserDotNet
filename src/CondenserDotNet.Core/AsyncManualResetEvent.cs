@@ -8,7 +8,7 @@ namespace CondenserDotNet.Core
     {
         private volatile TaskCompletionSource<T> m_tcs = new TaskCompletionSource<T>();
 
-        public Task<T> WaitAsync() { return m_tcs.Task; }
+        public Task<T> WaitAsync() => m_tcs.Task; 
 
         public void Set(T result)
         {

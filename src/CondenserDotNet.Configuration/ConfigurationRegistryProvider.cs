@@ -15,20 +15,9 @@ namespace CondenserDotNet.Configuration
             _configurationRegistry.AddWatchOnEntireConfig(Load);
         }
 
-        public override bool TryGet(string key, out string value)
-        {
-            return _configurationRegistry.TryGetValue(key, out value);
-        }
-
-        public override void Set(string key, string value)
-        {
-            _configurationRegistry.SetKeyAsync(key, value).Wait();
-        }
-
-        public override void Load()
-        {
-            OnReload();
-        }
+        public override bool TryGet(string key, out string value) => _configurationRegistry.TryGetValue(key, out value);
+        public override void Set(string key, string value) => _configurationRegistry.SetKeyAsync(key, value).Wait();
+        public override void Load() => OnReload();
 
         public override IEnumerable<string> GetChildKeys(IEnumerable<string> earlierKeys, string parentPath)
         {

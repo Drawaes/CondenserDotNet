@@ -22,7 +22,11 @@ namespace CondenserDotNet.Core
 
         static HttpUtils()
         {
-            JsonSettings = new JsonSerializerSettings { ContractResolver = new DefaultContractResolver(), NullValueHandling = NullValueHandling.Ignore };
+            JsonSettings = new JsonSerializerSettings
+            {
+                ContractResolver = new DefaultContractResolver(),
+                NullValueHandling = NullValueHandling.Ignore
+            };
         }
 
         public static StringContent GetStringContent<T>(T objectForContent)
@@ -45,7 +49,7 @@ namespace CondenserDotNet.Core
 
         public static StringContent GetStringContent(string stringForContent)
         {
-            if(stringForContent == null)
+            if (stringForContent == null)
             {
                 return null;
             }

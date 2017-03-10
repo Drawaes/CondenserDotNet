@@ -13,9 +13,6 @@ namespace CondenserDotNet.Core.Consul
         public string Session { get; set; }
         public bool IsDerivedKey { get; set; }
 
-        public string ValueFromBase64()
-        {
-            return Encoding.UTF8.GetString(Convert.FromBase64String(Value));
-        }
+        public string ValueFromBase64() => Encoding.UTF8.GetString(Convert.FromBase64String(Value));
     }
 }
