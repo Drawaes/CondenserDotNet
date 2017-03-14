@@ -15,6 +15,8 @@ matrix:
     - os: linux
       dist: trusty
       sudo: required
+    - os: osx
+      sudo: required
 
 before_install:
   # Install OpenSSL
