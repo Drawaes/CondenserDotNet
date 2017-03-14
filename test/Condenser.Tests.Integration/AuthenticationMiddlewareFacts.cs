@@ -8,12 +8,13 @@ using Microsoft.AspNetCore.Http;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
+using Condenser.Tests.Integration.Internal;
 
 namespace Condenser.Tests.Integration
 {
     public class AuthenticationMiddlewareFacts
     {
-        [Fact]
+        [WindowsOnlyFact]
         public async Task CanAuthenticateWithNtlm()
         {
             var host = new WebHostBuilder()
