@@ -21,7 +21,7 @@ namespace CondenserDotNet.Server
         private readonly ILogger<RoutingHost> _logger;
         private readonly RoutingData _routingData;
         private readonly Func<IConsulService> _serviceFactory;
-        private string _lastConsulIndex;
+        private string _lastConsulIndex = string.Empty;
 
         public RoutingHost(CustomRouter router, CondenserConfiguration config, ILoggerFactory logger,
             RoutingData routingData, IEnumerable<IService> customRoutes, Func<IConsulService> serviceFactory)
