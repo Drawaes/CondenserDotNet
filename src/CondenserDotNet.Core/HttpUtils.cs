@@ -11,7 +11,11 @@ namespace CondenserDotNet.Core
     public static class HttpUtils
     {
         private static readonly string _indexHeader = "X-Consul-Index";
-        public static readonly JsonSerializerSettings JsonSettings;
+        public static readonly JsonSerializerSettings JsonSettings = new JsonSerializerSettings
+        {
+            ContractResolver = new DefaultContractResolver(),
+            NullValueHandling = NullValueHandling.Ignore
+        };
         public static readonly string ApiUrl = "/v1/";
         public static readonly string ServiceCatalogUrl = ApiUrl + "catalog/services";
         public static readonly string DatacenterCatalogUrl = ApiUrl + "catalog/datacenters";
@@ -19,16 +23,7 @@ namespace CondenserDotNet.Core
         public static readonly string ServiceHealthUrl = ApiUrl + "health/service/";
         public static readonly string SessionCreateUrl = ApiUrl + "session/create";
         public static readonly string HealthAnyUrl = ApiUrl + "/health/state/any";
-
-        static HttpUtils()
-        {
-            JsonSettings = new JsonSerializerSettings
-            {
-                ContractResolver = new DefaultContractResolver(),
-                NullValueHandling = NullValueHandling.Ignore
-            };
-        }
-
+        
         public static StringContent GetStringContent<T>(T objectForContent)
         {
             var returnValue = new StringContent(JsonConvert.SerializeObject(objectForContent, JsonSettings), Encoding.UTF8, "application/json");

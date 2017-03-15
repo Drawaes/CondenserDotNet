@@ -97,7 +97,7 @@ namespace CondenserDotNet.Middleware.WindowsAuthentication
             if(_context.HighPart != IntPtr.Zero || _context.LowPart != IntPtr.Zero)
             {
                 FreeCredentialsHandle(_context);
-                _context = new SecurityHandle(0);
+                _context = default(SecurityHandle);
             }
             GC.SuppressFinalize(this);
         }

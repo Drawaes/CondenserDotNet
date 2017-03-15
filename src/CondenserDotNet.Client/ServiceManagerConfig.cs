@@ -64,7 +64,7 @@ namespace CondenserDotNet.Client
                 }
             }
             ServiceId = $"{ServiceName}:{Dns.GetHostName()}";
-            if(ServicePort == 0)
+            if (ServicePort == 0)
             {
                 var feature = server.Features.Get<IServerAddressesFeature>();
                 var add = feature.Addresses.First().Replace("*", "test");

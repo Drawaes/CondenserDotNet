@@ -13,11 +13,7 @@ namespace CondenserDotNet.Middleware.WindowsAuthentication
 
         public AuthenticationConnectionFilter(IConnectionFilter previous)
         {
-            _previous = previous;
-            if(_previous == null)
-            {
-                throw new ArgumentNullException();
-            }
+            _previous = previous ?? throw new ArgumentNullException();
         }
         
         public async Task OnConnectionAsync(ConnectionFilterContext context)

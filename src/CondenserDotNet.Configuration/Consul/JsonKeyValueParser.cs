@@ -11,12 +11,9 @@ namespace CondenserDotNet.Configuration.Consul
     public class JsonKeyValueParser : IKeyParser
     {
         private readonly Stack<string> _context = new Stack<string>();
-
         private readonly SortedDictionary<string, string> _data =
             new SortedDictionary<string, string>(StringComparer.OrdinalIgnoreCase);
-
         private string _currentPath;
-
         private JsonTextReader _reader;
 
         public IEnumerable<KeyValue> Parse(KeyValue key)
@@ -35,12 +32,14 @@ namespace CondenserDotNet.Configuration.Consul
             VisitToken(jsonConfig);
 
             foreach (var kv in _data)
+            {
                 yield return new KeyValue
                 {
                     Key = key.Key + ConfigurationPath.KeyDelimiter + kv.Key,
                     Value = kv.Value,
                     IsDerivedKey = true
                 };
+            }
         }
 
         private void VisitJObject(JObject jObject)
@@ -69,7 +68,6 @@ namespace CondenserDotNet.Configuration.Consul
                 case JTokenType.Array:
                     VisitArray(token.Value<JArray>());
                     break;
-
                 case JTokenType.Integer:
                 case JTokenType.Float:
                 case JTokenType.String:
@@ -79,7 +77,6 @@ namespace CondenserDotNet.Configuration.Consul
                 case JTokenType.Null:
                     VisitPrimitive(token);
                     break;
-
                 default:
                     throw new FormatException(
                         $"Unsupported JSON token '{_reader.TokenType}' was found. Path '{_reader.Path}', line {_reader.LineNumber} position {_reader.LinePosition}.");
@@ -99,10 +96,10 @@ namespace CondenserDotNet.Configuration.Consul
         private void VisitPrimitive(JToken data)
         {
             var key = _currentPath;
-
             if (_data.ContainsKey(key))
+            {
                 throw new FormatException($"A duplicate key '{key}' was found.");
-
+            }
             _data[key] = data.ToString();
         }
 

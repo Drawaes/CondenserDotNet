@@ -5,12 +5,9 @@ namespace CondenserDotNet.Core.Routing
 {
     public class DefaultRouting<T> : IDefaultRouting<T>
     {
-        public DefaultRouting(IEnumerable<IRoutingStrategy<T>> strategy,
-            IRoutingConfig config)
+        public DefaultRouting(IEnumerable<IRoutingStrategy<T>> strategy, IRoutingConfig config)
         {
-            var name = (config?.DefaultRouteStrategy
-                         ?? RouteStrategy.Random.ToString());
-
+            var name = (config?.DefaultRouteStrategy ?? RouteStrategy.Random.ToString());
             Default = strategy.Single(x => x.Name == name);
         }
 

@@ -28,7 +28,7 @@ namespace CondenserDotNet.Client
                 Interval = $"{intervalInSeconds}s",
                 Name = $"{serviceManager.ServiceId}:HttpCheck"
             };
-            if(!check.HTTP.StartsWith("HTTP",StringComparison.OrdinalIgnoreCase))
+            if (!check.HTTP.StartsWith("HTTP", StringComparison.OrdinalIgnoreCase))
             {
                 check.HTTP = "http://" + check.HTTP;
             }
@@ -44,13 +44,13 @@ namespace CondenserDotNet.Client
 
         public static IServiceManager WithDeregisterIfCriticalAfterMinutes(this IServiceManager serviceManager, int minutes)
         {
-            serviceManager.DeregisterIfCriticalAfter = new TimeSpan(0,minutes,0);
+            serviceManager.DeregisterIfCriticalAfter = new TimeSpan(0, minutes, 0);
             return serviceManager;
         }
 
         public static IServiceManager WithDeregisterIfCriticalAfter(this IServiceManager serviceManager, TimeSpan timeSpan)
         {
-            if(timeSpan.TotalMilliseconds < 0)
+            if (timeSpan.TotalMilliseconds < 0)
             {
                 throw new ArgumentOutOfRangeException("You are required to register with a timespan that is more than zero milliseconds");
             }

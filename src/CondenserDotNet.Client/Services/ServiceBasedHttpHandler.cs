@@ -11,13 +11,13 @@ namespace CondenserDotNet.Client.Services
     {
         private readonly IServiceRegistry _serviceRegistry;
 
-        public ServiceBasedHttpHandler(IServiceRegistry serviceRegistry) => _serviceRegistry = serviceRegistry;    
-        
+        public ServiceBasedHttpHandler(IServiceRegistry serviceRegistry) => _serviceRegistry = serviceRegistry;
+
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             var currentUri = request.RequestUri;
             var serviceInstance = await _serviceRegistry.GetServiceInstanceAsync(currentUri.Host);
-            if(serviceInstance == null)
+            if (serviceInstance == null)
             {
                 throw new NoServiceInstanceFoundException(currentUri.Host, null);
             }

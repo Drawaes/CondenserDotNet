@@ -10,11 +10,6 @@ internal partial class Interop
         {
             public IntPtr LowPart;
             public IntPtr HighPart;
-
-            public SecurityHandle(int dummy)
-            {
-                LowPart = HighPart = IntPtr.Zero;
-            }
         }
     }
 }

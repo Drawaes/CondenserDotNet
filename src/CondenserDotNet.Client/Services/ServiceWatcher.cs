@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 
 namespace CondenserDotNet.Client.Services
 {
-    internal class ServiceWatcher:IDisposable
+    internal class ServiceWatcher : IDisposable
     {
         private readonly IRoutingStrategy<InformationServiceSet> _routingStrategy;
         private readonly ILogger _logger;

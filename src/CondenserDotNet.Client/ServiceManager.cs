@@ -13,11 +13,11 @@ namespace CondenserDotNet.Client
 {
     public class ServiceManager : IServiceManager
     {
-        private bool _disposed;
         private readonly List<string> _supportedUrls = new List<string>();
-        private ITtlCheck _ttlCheck;
         private readonly CancellationTokenSource _cancel = new CancellationTokenSource();
-        
+        private bool _disposed;
+        private ITtlCheck _ttlCheck;
+
         public ServiceManager(IOptions<ServiceManagerConfig> optionsConfig, Func<HttpClient> httpClientFactory = null, ILoggerFactory logFactory = null, IServer server = null)
         {
             if (optionsConfig.Value.ServicePort == 0 && server == null)
@@ -59,7 +59,6 @@ namespace CondenserDotNet.Client
         protected void Dispose(bool disposing)
         {
             if (_disposed) return;
-
             try
             {
                 _cancel.Cancel();

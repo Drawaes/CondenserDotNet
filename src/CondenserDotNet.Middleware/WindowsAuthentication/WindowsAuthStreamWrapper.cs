@@ -14,8 +14,8 @@ namespace CondenserDotNet.Middleware.WindowsAuthentication
 
         public WindowsAuthStreamWrapper(Stream inStream, WindowsAuthFeature authFeature)
         {
-            _authFeature = authFeature;
-            _innerStream = inStream;
+            _authFeature = authFeature ?? throw new ArgumentNullException(nameof(authFeature));
+            _innerStream = inStream ?? throw new ArgumentNullException(nameof(inStream));
         }
 
         public override bool CanRead => _innerStream.CanRead;

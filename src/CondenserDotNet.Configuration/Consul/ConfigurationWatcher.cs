@@ -9,7 +9,7 @@ namespace CondenserDotNet.Configuration.Consul
     {
         public string CurrentValue { get; set; }
         public Action<string> CallBack { get; set; }
-        public Action CallbackAllKeys { get;set;}
+        public Action CallbackAllKeys { get; set; }
         public string KeyToWatch { get; set; }
     }
 }

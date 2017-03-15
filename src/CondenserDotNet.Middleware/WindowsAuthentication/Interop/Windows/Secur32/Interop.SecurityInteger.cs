@@ -10,11 +10,6 @@ internal partial class Interop
         {
             public uint LowPart;
             public int HighPart;
-            public SecurityInteger(int dummy)
-            {
-                LowPart = 0;
-                HighPart = 0;
-            }
         }
     }
 }
