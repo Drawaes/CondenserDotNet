@@ -27,13 +27,20 @@ namespace Condenser.Tests.Integration
                 .Build();
             host.Start();
 
-            var client = new HttpClient(new HttpClientHandler()
+            try
             {
-                UseDefaultCredentials = true
-            });
-            var result = await client.GetAsync($"http://localhost:55555");
-            var name = await result.Content.ReadAsStringAsync();
-            Assert.Equal(System.Security.Principal.WindowsIdentity.GetCurrent().Name, name);
+                var client = new HttpClient(new HttpClientHandler()
+                {
+                    UseDefaultCredentials = true
+                });
+                var result = await client.GetAsync($"http://localhost:55555");
+                var name = await result.Content.ReadAsStringAsync();
+                Assert.Equal(System.Security.Principal.WindowsIdentity.GetCurrent().Name, name);
+            }
+            finally
+            {
+                host.Dispose();
+            }
         }
 
         public class Startup
