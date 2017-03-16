@@ -49,6 +49,7 @@ namespace CondenserDotNet.Client
         public int ServicePort { get; }
         public CancellationToken Cancelled => _cancel.Token;
         public ITtlCheck TtlCheck1 { get => _ttlCheck; set => _ttlCheck = value; }
+        public string ProtocolSchemeTag { get; set; }
 
         public void Dispose()
         {
