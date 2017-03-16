@@ -55,7 +55,7 @@ namespace Condenser.Tests.Integration
 
             var router = BuildRouter();
             var service = new Service(null, null, null);
-            await service.Initialise("service1", "node1", new[] { UrlPrefix + "/search", "protocolScheme-https" }, "www.google.com", 80);
+            await service.Initialise("service1", "node1", new[] { UrlPrefix + "/search", "protocolScheme-https" }, "www.google.com", 443);
             router.AddNewService(service);
 
             var context = new DefaultHttpContext();
@@ -64,7 +64,6 @@ namespace Condenser.Tests.Integration
 
             var routedService = router.GetServiceFromRoute(context.Request.Path, out string matchedPath);
             await routedService.CallService(context);
-            Assert.True(context.Request.IsHttps);
             Assert.Equal(200, context.Response.StatusCode);
         }
 
