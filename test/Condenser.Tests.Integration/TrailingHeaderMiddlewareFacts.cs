@@ -9,12 +9,13 @@ using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 using System.Linq;
+using Condenser.Tests.Integration.Internal;
 
 namespace Condenser.Tests.Integration
 {
     public class TrailingHeaderMiddlewareFacts
     {
-        [Fact]
+        [WindowsOnlyFact]
         public async Task HeaderIsAdded()
         {
             var port = ServiceManagerConfig.GetNextAvailablePort();
