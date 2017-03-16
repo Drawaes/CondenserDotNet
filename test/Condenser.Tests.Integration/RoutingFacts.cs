@@ -44,6 +44,29 @@ namespace Condenser.Tests.Integration
             Assert.Equal(200, context.Response.StatusCode);
         }
 
+        [Fact]
+        public async Task CanWeFindARouteAndGetAPageHttps()
+        {
+            var informationService = new InformationService
+            {
+                Address = "www.google.com",
+                Port = 80
+            };
+
+            var router = BuildRouter();
+            var service = new Service(null, null, null);
+            await service.Initialise("service1", "node1", new[] { UrlPrefix + "/search", "protocolScheme-https" }, "www.google.com", 443);
+            router.AddNewService(service);
+
+            var context = new DefaultHttpContext();
+            context.Request.Method = "GET";
+            context.Request.Path = "/search";
+
+            var routedService = router.GetServiceFromRoute(context.Request.Path, out string matchedPath);
+            await routedService.CallService(context);
+            Assert.Equal(200, context.Response.StatusCode);
+        }
+
         private CustomRouter BuildRouter()
         {
             Func<ChildContainer<IService>> createNode = () =>

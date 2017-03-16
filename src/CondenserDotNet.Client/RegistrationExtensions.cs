@@ -36,6 +36,12 @@ namespace CondenserDotNet.Client
             return serviceManager;
         }
 
+        public static IServiceManager UseHttps(this IServiceManager serviceManager)
+        {
+            serviceManager.ProtocolSchemeTag = "https";
+            return serviceManager;
+        }
+
         public static IServiceManager AddTtlHealthCheck(this IServiceManager serviceManager, int timetoLiveInSeconds)
         {
             serviceManager.TtlCheck = new TtlCheck(serviceManager, timetoLiveInSeconds);
@@ -70,6 +76,10 @@ namespace CondenserDotNet.Client
                 Checks = new List<HealthCheck>(),
                 Tags = new List<string>(serviceManager.SupportedUrls.Select(u => $"urlprefix-{u}"))
             };
+            if(serviceManager.ProtocolSchemeTag != null)
+            {
+                s.Tags.Add($"protocolScheme-{serviceManager.ProtocolSchemeTag}");
+            }
             if (serviceManager.HttpCheck != null)
             {
                 s.Checks.Add(serviceManager.HttpCheck);

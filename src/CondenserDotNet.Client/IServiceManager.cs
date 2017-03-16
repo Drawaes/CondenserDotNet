@@ -22,5 +22,6 @@ namespace CondenserDotNet.Client
         List<string> SupportedUrls { get; }
         HealthCheck HttpCheck { get; set; }
         Service RegisteredService { get; set; }
+        string ProtocolSchemeTag { get; set; }
     }
 }

@@ -26,6 +26,7 @@ namespace CondenserDotNet.Server
         private int _totalRequestTime;
         private string _hostString;
         private readonly ILogger _logger;
+        private string _protocolScheme;
 
         public Service(CurrentState stats, Func<string, HttpClient> clientFactory, ILoggerFactory logger)
         {
@@ -51,7 +52,7 @@ namespace CondenserDotNet.Server
             try
             {
                 sw.Start();
-                var uriString = $"http://{_hostString}{context.Request.Path.Value}{context.Request.QueryString}";
+                var uriString = $"{_protocolScheme}://{_hostString}{context.Request.Path.Value}{context.Request.QueryString}";
 
                 var uri = new Uri(uriString);
 
@@ -154,6 +155,9 @@ namespace CondenserDotNet.Server
                 _logger?.LogWarning("Unable to resolve the host address for {address} when adding the service",address);
             }
             _supportedVersions = tags.Where(t => t.StartsWith("version=")).Select(t => new Version(t.Substring(8))).ToArray();
+            _protocolScheme = tags.Where(t => t.StartsWith("protocolScheme-"))
+                .Select(t => t.Substring("protocolScheme-".Length)).FirstOrDefault() ?? "http";
+
             _hostString = $"{_address}:{_port}";
             _httpClient = _clientFactory?.Invoke(ServiceId) ?? new HttpClient();
         }
