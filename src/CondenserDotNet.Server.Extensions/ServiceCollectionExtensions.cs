@@ -55,7 +55,7 @@ namespace CondenserDotNet.Server
             self.AddSingleton(config);
             self.AddSingleton(health);
             self.AddSingleton(routingConfig);
-            self.AddSingleton(httpClientConfig);
+            self.AddSingleton<Func<string, HttpClient>>(httpClientConfig.Create);
 
             self.AddSingleton<RoutingData>();
             self.AddSingleton<IService, HealthRouter>();
