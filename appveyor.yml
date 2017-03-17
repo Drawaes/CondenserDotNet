@@ -13,6 +13,7 @@ install:
   - ps: $MyProcess = Start-Process C:\Consul\consul.exe -ArgumentList "agent -server -bootstrap-expect 1 -data-dir C:\Consul\Data -advertise=127.0.0.1" -PassThru
 
 before_test:
+  - ECHO %APPVEYOR_REPO_COMMIT_MESSAGE%
   - dotnet --info
   - VersionNumber.bat
   - dotnet restore
