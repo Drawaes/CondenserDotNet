@@ -144,9 +144,9 @@ namespace Condenser.Tests.Integration.Routing
             
         }
 
-        public Task<bool> WaitForRegistrationAsync()
+        public Task WaitForRegistrationAsync()
         {
-            return _wait.WaitAsync();
+            return Task.WhenAny(new[] { _wait.WaitAsync(), Task.Delay(30 * 1000) });
         }
 
         private void SignalWhenAllRegistered(Dictionary<string, List<IService>> data)
