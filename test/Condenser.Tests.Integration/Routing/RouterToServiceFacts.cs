@@ -6,33 +6,30 @@ using Xunit;
 namespace Condenser.Tests.Integration.Routing
 {
 
-    public class RouterToServiceFacts : IClassFixture<RoutingFixture>
+    public class RouterToServiceFacts
     {
-        RoutingFixture _fixture;
-
-        public RouterToServiceFacts(RoutingFixture fixture)
-        {
-            _fixture = fixture;
-        }
-
-        [Fact(Skip ="Hang")]
+        [Fact]
         public async Task CanWeRunRegisteredServicesThroughRouter()
         {
-            var serviceName1 = _fixture.GetNewServiceName();
-            var route1 = "/myservice1";
+            using (var fixture = new RoutingFixture())
+            {
 
-            _fixture.AddService(serviceName1, route1);
-            _fixture.AddRouter();
+                var serviceName1 = fixture.GetNewServiceName();
+                var route1 = "/myservice1";
 
-            _fixture.StartAll();
+                fixture.AddService(serviceName1, route1);
+                fixture.AddRouter();
 
-            await _fixture.WaitForRegistrationAsync();
+                fixture.StartAll();
 
-            var response = await _fixture.CallRouterAsync("/myservice1");
+                await fixture.WaitForRegistrationAsync();
 
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
-            var content = await response.Content.ReadAsStringAsync();
-            Assert.Equal("Called me " + serviceName1, content);
+                var response = await fixture.CallRouterAsync("/myservice1");
+
+                Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+                var content = await response.Content.ReadAsStringAsync();
+                Assert.Equal("Called me " + serviceName1, content);
+            }
         }
     }
 }
