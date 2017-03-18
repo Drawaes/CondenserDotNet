@@ -13,6 +13,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Condenser.Tests.Integration.Routing
 {
@@ -129,13 +130,13 @@ namespace Condenser.Tests.Integration.Routing
                 .UseUrls($"http://*:{routerPort}")
                 .ConfigureServices(x =>
                 {
-                    x.AddCondenserWithBuilder()
-                    .Build();
+                    x.AddCondenser();
                 })
                 .Configure(app =>
                 {
-                    _host = (RoutingHost)app.ApplicationServices.GetService(typeof(RoutingHost));
+                    _host = app.ApplicationServices.GetService<RoutingHost>();
                     _host.OnRouteBuilt = SignalWhenAllRegistered;
+                    
 
                     app.UseCondenser();
                 })
@@ -149,12 +150,26 @@ namespace Condenser.Tests.Integration.Routing
             return Task.WhenAny(new[] { _wait.WaitAsync(), Task.Delay(30 * 1000) });
         }
 
+        private bool AllRegistered(Dictionary<string, List<IService>> data)
+        {
+            return _hosts.All(h => data.Keys.Contains(h.Key, StringComparer.OrdinalIgnoreCase));
+        }
+
+        public bool AreAllRegistered()
+        {
+            if (_currentRegistrations == null)
+                return false;
+
+            return AllRegistered(_currentRegistrations);
+        }
+
         private void SignalWhenAllRegistered(Dictionary<string, List<IService>> data)
         {
-            if (_hosts.All(h => data.Keys.Contains(h.Key)))
+            if (AllRegistered(data))
             {
                 _wait.Set(true);
             }
+
             Interlocked.Exchange(ref _currentRegistrations, data);
         }
 

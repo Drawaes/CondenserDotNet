@@ -41,13 +41,14 @@ namespace CondenserDotNet.Server.Routes
             dto.Prefix = node.Prefix;
             dto.Services = node.Services.ToString();
 
-            var children = new Dictionary<string[], Node>(node.ChildrenNodes.Count);
+            var children = new Dictionary<string, Node>(node.ChildrenNodes.Count);
             dto.Nodes = children;
 
             for (var i = 0; i < node.ChildrenNodes.Count; i++)
             {
                 var nodeDto = new Node();
-                children.Add(node.ChildrenNodes.ElementAt(i).Item1, nodeDto);
+                string key = string.Join(",", node.ChildrenNodes.ElementAt(i).Item1);
+                children.Add(key, nodeDto);
                 MapTo(node.ChildrenNodes.ElementAt(i).Item2, nodeDto);
             }
         }

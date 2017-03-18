@@ -21,7 +21,6 @@ namespace Condenser.Tests.Integration.Routing
         {
             using (var fixture = new RoutingFixture())
             {
-
                 var serviceName1 = fixture.GetNewServiceName();
                 var route1 = "/myservice2";
 
@@ -40,7 +39,9 @@ namespace Condenser.Tests.Integration.Routing
                 Assert.Equal(HttpStatusCode.OK, routerResponse.StatusCode);
                 var content = await routerResponse.Content.ReadAsStringAsync();
 
-                Assert.Contains(route1.ToUpper(), content);
+                var node = JsonConvert.DeserializeObject<Node>(content);
+
+                Assert.NotNull(node);
             }
         }
     }
