@@ -14,38 +14,34 @@ using Xunit;
 
 namespace Condenser.Tests.Integration.Routing
 {
-    public class RouterTreeApiFacts : IClassFixture<RoutingFixture>
+    public class RouterTreeApiFacts
     {
-        RoutingFixture _fixture;
-
-        public RouterTreeApiFacts(RoutingFixture fixture)
-        {
-            _fixture = fixture;
-        }
-
-        [Fact(Skip ="Not passing")]
+        [Fact]
         public async Task CanCallRouterTreeForRegisteredService()
         {
-            var serviceName1 = _fixture.GetNewServiceName();
-            var route1 = "/myservice2";
+            using (var fixture = new RoutingFixture())
+            {
 
-            _fixture.AddService(serviceName1, route1);
-            _fixture.AddRouter();
+                var serviceName1 = fixture.GetNewServiceName();
+                var route1 = "/myservice2";
 
-            _fixture.StartAll();
+                fixture.AddService(serviceName1, route1);
+                fixture.AddRouter();
 
-            await _fixture.WaitForRegistrationAsync();
+                fixture.StartAll();
 
-            var responseService = await _fixture.CallRouterAsync("/myservice2");
-            Assert.Equal(HttpStatusCode.OK, responseService.StatusCode);
+                await fixture.WaitForRegistrationAsync();
 
-            var routerResponse = await _fixture.CallRouterAsync("/admin/condenser/tree");
+                var responseService = await fixture.CallRouterAsync("/myservice2");
+                Assert.Equal(HttpStatusCode.OK, responseService.StatusCode);
 
-            Assert.Equal(HttpStatusCode.OK, routerResponse.StatusCode);
-            var content = await routerResponse.Content.ReadAsStringAsync();
-            
-            //var node = JsonConvert.DeserializeObject<Node>(content);
-            Assert.Contains(route1.ToUpper(), content);
+                var routerResponse = await fixture.CallRouterAsync("/admin/condenser/tree");
+
+                Assert.Equal(HttpStatusCode.OK, routerResponse.StatusCode);
+                var content = await routerResponse.Content.ReadAsStringAsync();
+
+                Assert.Contains(route1.ToUpper(), content);
+            }
         }
     }
 }

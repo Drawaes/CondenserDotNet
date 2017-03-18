@@ -29,7 +29,7 @@ namespace Condenser.Tests.Integration.Routing
 
         public RoutingFixture()
         {
-
+            Console.WriteLine("Created Routing Fixture");
         }
 
         public void SetServiceHealth(string name, bool isHealthy)

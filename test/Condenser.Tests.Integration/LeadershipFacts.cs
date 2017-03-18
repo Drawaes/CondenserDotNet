@@ -12,7 +12,7 @@ namespace Condenser.Tests.Integration
 {
     public class LeadershipFacts
     {
-        [Fact(Skip = "Flakey")]
+        [Fact]
         public async Task TestGetLeadership()
         {
             var key = Guid.NewGuid().ToString();
@@ -32,7 +32,7 @@ namespace Condenser.Tests.Integration
             }
         }
 
-        [Fact(Skip ="Flakey")]
+        [Fact]
         public async Task TestLeadershipFailOver()
         {
             var key = Guid.NewGuid().ToString();
