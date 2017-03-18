@@ -15,7 +15,7 @@
     <ProjectReference Include="..\..\src\CondenserDotNet.Middleware\CondenserDotNet.Middleware.csproj" />
     <ProjectReference Include="..\..\src\CondenserDotNet.Server.Extensions\CondenserDotNet.Server.Extensions.csproj" />
     <ProjectReference Include="..\..\src\CondenserDotNet.Server\CondenserDotNet.Server.csproj" />
-    <PackageReference Include="System.IO.Pipelines" Version="0.1.0-e170223-1" />
+    <PackageReference Include="System.IO.Pipelines" Version="0.1.0-e170318-5" />
   </ItemGroup>
 
   <ItemGroup>
