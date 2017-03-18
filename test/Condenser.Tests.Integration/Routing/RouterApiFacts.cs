@@ -18,7 +18,7 @@ namespace Condenser.Tests.Integration.Routing
             _fixture = fixture;
         }
 
-        [Fact]
+        [Fact(Skip ="Hang")]
         public async Task CanCallRouterHealthCheck()
         {
             var serviceName1 = _fixture.GetNewServiceName();
