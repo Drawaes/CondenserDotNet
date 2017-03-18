@@ -65,8 +65,7 @@ namespace CondenserDotNet.Server
 
         public void RecordResponse(int responseCode)
         {
-            var resCode = (int)(responseCode / 100);
-            switch(resCode)
+            switch(responseCode)
             {
                 case 500:
                     Stats.Http500Responses++;
