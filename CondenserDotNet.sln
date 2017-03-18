@@ -60,6 +60,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CondenserDotNet.Middleware"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CondenserDotNet.Middleware.Pipelines", "src\CondenserDotNet.Middleware.Pipelines\CondenserDotNet.Middleware.Pipelines.csproj", "{411FFD0F-5117-45E3-8344-86B551067547}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Release Notes", "Release Notes", "{06591E48-DAE7-4EEE-81C8-2469894B9EAF}"
+	ProjectSection(SolutionItems) = preProject
+		2.1.1.props = 2.1.1.props
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

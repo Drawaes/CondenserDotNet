@@ -1,0 +1,9 @@
+<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+      * Added more unit tests
+      * Fixed bug - response code stats not correctly recording
+      * Fixed bug - incorrect registration of http client factory when using builder
+    </PackageReleaseNotes>
+  </PropertyGroup>
+</Project>
