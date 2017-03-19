@@ -62,7 +62,7 @@ namespace Condenser.Tests.Integration.Routing
             serviceManager
                 .AddHttpHealthCheck(HealthRoute, 10)
                 .AddApiUrl(route)
-                .RegisterServiceAsync().Wait();
+                .RegisterServiceAsync();
         }
 
         public RoutingFixture AddService(string name, string route)

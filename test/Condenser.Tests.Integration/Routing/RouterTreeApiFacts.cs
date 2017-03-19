@@ -16,7 +16,7 @@ namespace Condenser.Tests.Integration.Routing
 {
     public class RouterTreeApiFacts
     {
-        [Fact(Skip ="Hanging")]
+        [Fact]
         public async Task CanCallRouterTreeForRegisteredService()
         {
             using (var fixture = new RoutingFixture())
