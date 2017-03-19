@@ -19,28 +19,11 @@ namespace CondenserDotNet.Server
 
         private static IServiceCollection AddCondenser(this IServiceCollection self, string agentAddress, int agentPort)
         {
-            var config = new CondenserConfiguration
-            {
-                AgentPort = agentPort,
-                AgentAddress = agentAddress
-            };
-            self.AddSingleton(config);
-            self.AddTransient<Service>();
-            self.AddSingleton<Func<IConsulService>>(x => x.GetService<Service>);
-            self.AddSingleton<CurrentState>();
-            self.AddTransient<IRoutingStrategy<IService>, RandomRoutingStrategy<IService>>();
-            self.AddTransient<IRoutingStrategy<IService>, RoundRobinRoutingStrategy<IService>>();
-            self.AddSingleton<IDefaultRouting<IService>, DefaultRouting<IService>>();
-            self.AddSingleton<Func<string, HttpClient>>(s => new HttpClient());
-            Func<ChildContainer<IService>> factory = () =>
-            {
-                var randomRoutingStrategy = new RandomRoutingStrategy<IService>();
-                return new ChildContainer<IService>(new DefaultRouting<IService>(new[] { randomRoutingStrategy }, null));
-            };
-            self.AddSingleton(new RoutingData(new RadixTree<IService>(factory)));
-            self.AddSingleton<CustomRouter>();
-            self.AddSingleton<RoutingHost>();
-            return self;
+            return self.AddCondenserWithBuilder()
+                .WithAgentAddress(agentAddress)
+                .WithAgentPort(agentPort)
+                .WithHttpClient(s => new HttpClient())
+                .Build();
         }
 
         public static IServiceCollection AddCondenser(this IServiceCollection self, string agentAddress, int agentPort,

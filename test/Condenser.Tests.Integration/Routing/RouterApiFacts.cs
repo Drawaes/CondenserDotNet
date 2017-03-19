@@ -9,38 +9,34 @@ using Xunit;
 
 namespace Condenser.Tests.Integration.Routing
 {
-    public class RouterApiFacts : IClassFixture<RoutingFixture>
+    public class RouterApiFacts 
     {
-        RoutingFixture _fixture;
-
-        public RouterApiFacts(RoutingFixture fixture)
-        {
-            _fixture = fixture;
-        }
-
-        [Fact(Skip ="Hang")]
+        [Fact]
         public async Task CanCallRouterHealthCheck()
         {
-            var serviceName1 = _fixture.GetNewServiceName();
-            var route1 = "/myservice3";
+            using (RoutingFixture fixture = new RoutingFixture())
+            {
+                var serviceName1 = fixture.GetNewServiceName();
+                var route1 = "/myservice3";
 
-            _fixture.AddService(serviceName1, route1);
-            _fixture.AddRouter();
+                fixture.AddService(serviceName1, route1);
+                fixture.AddRouter();
 
-            _fixture.StartAll();
+                fixture.StartAll();
 
-            await _fixture.WaitForRegistrationAsync();
+                await fixture.WaitForRegistrationAsync();
 
-            var responseService = await _fixture.CallRouterAsync("/myservice3");
-            Assert.Equal(HttpStatusCode.OK, responseService.StatusCode);
+                var responseService = await fixture.CallRouterAsync("/myservice3");
+                Assert.Equal(HttpStatusCode.OK, responseService.StatusCode);
 
-            var routerResponse = await _fixture.CallRouterAsync("/admin/condenser/health");
+                var routerResponse = await fixture.CallRouterAsync("/admin/condenser/health");
 
-            Assert.Equal(HttpStatusCode.OK, routerResponse.StatusCode);
-            var content = await routerResponse.Content.ReadAsStringAsync();
+                Assert.Equal(HttpStatusCode.OK, routerResponse.StatusCode);
+                var content = await routerResponse.Content.ReadAsStringAsync();
 
-            var health =JsonConvert.DeserializeObject<HealthResponse>(content);
-            Assert.Equal(1, health.Stats.Http200Responses);
+                var health = JsonConvert.DeserializeObject<HealthResponse>(content);
+                Assert.Equal(1, health.Stats.Http200Responses);
+            }
         }
     }    
 }
