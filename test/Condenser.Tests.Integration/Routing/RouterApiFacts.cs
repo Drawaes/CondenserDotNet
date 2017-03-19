@@ -11,7 +11,7 @@ namespace Condenser.Tests.Integration.Routing
 {
     public class RouterApiFacts 
     {
-        [Fact(Skip = "Hanging")]
+        [Fact]
         public async Task CanCallRouterHealthCheck()
         {
             using (RoutingFixture fixture = new RoutingFixture())
