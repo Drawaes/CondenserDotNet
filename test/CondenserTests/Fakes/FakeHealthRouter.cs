@@ -10,7 +10,7 @@ namespace CondenserTests.Fakes
     {
         public FakeHealthRouter(string route)
         {
-            Routes = new [] { route};
+            Routes = new[] { route };
         }
 
         public override string[] Routes { get; }

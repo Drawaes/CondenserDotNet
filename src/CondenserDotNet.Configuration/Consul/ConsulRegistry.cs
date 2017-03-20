@@ -66,7 +66,7 @@ namespace CondenserDotNet.Configuration.Consul
             {
                 return -1;
             }
-            
+
             var dictionary = await BuildDictionaryAsync(keyPath, response);
 
             return AddNewDictionaryToList(dictionary);
@@ -79,7 +79,7 @@ namespace CondenserDotNet.Configuration.Consul
         /// <returns></returns>
         public async Task AddUpdatingPathAsync(string keyPath)
         {
-            if(!keyPath.EndsWith(ConsulPath)) keyPath = keyPath + ConsulPath;
+            if (!keyPath.EndsWith(ConsulPath)) keyPath = keyPath + ConsulPath;
             var initialDictionary = await AddInitialKeyPathAsync(keyPath);
             if (initialDictionary == -1)
             {
@@ -162,8 +162,8 @@ namespace CondenserDotNet.Configuration.Consul
 
         private void UpdateDictionaryInList(int index, Dictionary<string, string> dictionaryToAdd)
         {
-            lock(_configKeys)
-            { 
+            lock (_configKeys)
+            {
                 _configKeys[index] = dictionaryToAdd;
             }
         }

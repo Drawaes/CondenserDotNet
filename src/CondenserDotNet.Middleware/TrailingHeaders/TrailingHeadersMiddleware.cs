@@ -1,8 +1,6 @@
-﻿using System;
-using System.Text;
+﻿using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Server.Kestrel.Internal.Http;
 
 namespace CondenserDotNet.Middleware.TrailingHeaders
 {
@@ -11,7 +9,7 @@ namespace CondenserDotNet.Middleware.TrailingHeaders
         private readonly RequestDelegate _next;
 
         public TrailingHeadersMiddleware(RequestDelegate next) => _next = next;
-        
+
         public async Task Invoke(HttpContext context)
         {
             var trailingHeaders = new TrailingHeadersFeature(context);

@@ -1,14 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
-using System.Threading.Tasks;
 using static Interop.Secur32;
 
 namespace CondenserDotNet.Middleware.WindowsAuthentication
 {
-    public sealed class WindowsHandshake:IDisposable
+    public sealed class WindowsHandshake : IDisposable
     {
         private SecurityHandle _context;
         private SecurityHandle _ntlmHandle;
@@ -24,7 +21,7 @@ namespace CondenserDotNet.Middleware.WindowsAuthentication
 
         public WindowsIdentity User => _identity;
         public DateTime DateStarted => _dateStarted;
-        
+
         public unsafe string AcceptSecurityToken(string returnTokenType, byte[] token)
         {
             fixed (byte* bufferPtr = token)
@@ -70,8 +67,8 @@ namespace CondenserDotNet.Middleware.WindowsAuthentication
                 if (result == SEC_RESULT.SEC_I_CONTINUE_NEEDED)
                 {
                     var byteSpan = new byte[(int)outBuffer[0].cbBuffer];
-                    Marshal.Copy((IntPtr)outBufferPtr, byteSpan,0, byteSpan.Length);
-                    returnToken = returnTokenType  + Convert.ToBase64String(byteSpan);
+                    Marshal.Copy((IntPtr)outBufferPtr, byteSpan, 0, byteSpan.Length);
+                    returnToken = returnTokenType + Convert.ToBase64String(byteSpan);
                     return returnToken;
                 }
 
@@ -94,7 +91,7 @@ namespace CondenserDotNet.Middleware.WindowsAuthentication
 
         public void Dispose()
         {
-            if(_context.HighPart != IntPtr.Zero || _context.LowPart != IntPtr.Zero)
+            if (_context.HighPart != IntPtr.Zero || _context.LowPart != IntPtr.Zero)
             {
                 FreeCredentialsHandle(_context);
                 _context = default(SecurityHandle);

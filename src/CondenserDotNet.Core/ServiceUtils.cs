@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace CondenserDotNet.Core
+﻿namespace CondenserDotNet.Core
 {
     public static class ServiceUtils
     {

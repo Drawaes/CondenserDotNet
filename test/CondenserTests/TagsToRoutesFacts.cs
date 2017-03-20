@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Xunit;
+﻿using Xunit;
 
 namespace CondenserTests
 {
@@ -12,7 +9,7 @@ namespace CondenserTests
         [Fact]
         public void TagsWithoutRoute()
         {
-            var routes = CondenserDotNet.Core.ServiceUtils.RoutesFromTags(new string[] {$"{UrlPrefix}/this/url/is/cool","thisTagIsnt"});
+            var routes = CondenserDotNet.Core.ServiceUtils.RoutesFromTags(new string[] { $"{UrlPrefix}/this/url/is/cool", "thisTagIsnt" });
             Assert.Equal(1, routes.Length);
             Assert.Equal("/this/url/is/cool", routes[0]);
         }

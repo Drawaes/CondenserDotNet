@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
-using CondenserDotNet.Core;
 using CondenserDotNet.Server.DataContracts;
 using CondenserDotNet.Server.Extensions;
 using Microsoft.AspNetCore.Http;
@@ -18,7 +17,7 @@ namespace CondenserDotNet.Server.Routes
             _routingData = routingData;
         }
 
-        public override string[] Routes { get; } = {CondenserRoutes.Statistics};
+        public override string[] Routes { get; } = { CondenserRoutes.Statistics };
         public override bool RequiresAuthentication => true;
         public override IPEndPoint IpEndPoint => throw new NotImplementedException();
 

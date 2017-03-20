@@ -1,11 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Dynamic;
-using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using CondenserDotNet.Client;
 using CondenserDotNet.Configuration;
 using CondenserDotNet.Configuration.Consul;
 using Microsoft.Extensions.Configuration;
@@ -31,7 +26,7 @@ namespace Condenser.Tests.Integration
                 await configRegistry.SetKeyAsync($"org/{keyname}/test2", _value2);
 
                 var result = await configRegistry.AddStaticKeyPathAsync($"org/{keyname}");
-                Assert.Equal(true,result);
+                Assert.Equal(true, result);
 
                 var firstValue = configRegistry["test1"];
                 var secondValue = configRegistry["test2"];
@@ -160,7 +155,7 @@ namespace Condenser.Tests.Integration
                 var config = new ConfigurationBuilder()
                     .AddConfigurationRegistry(configRegistry)
                     .Build();
-                
+
                 var simpleSettings = new SimpleSettings();
                 var configSection = config.GetSection(keyname);
                 configSection.Bind(simpleSettings);
@@ -222,6 +217,6 @@ namespace Condenser.Tests.Integration
             public string Test3 { get; set; }
             public string Test4 { get; set; }
         }
-        
+
     }
 }

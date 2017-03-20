@@ -1,14 +1,6 @@
 ﻿using CondenserDotNet.Server.DataContracts;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Reflection;
-using System.Runtime.Serialization.Formatters;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 

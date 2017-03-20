@@ -1,9 +1,7 @@
 ﻿using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -43,29 +41,28 @@ namespace Condenser.Tests.Integration.Routing
                 Assert.Equal(1, registration.Nodes.Length);
 
                 Assert.Equal(Environment.MachineName.ToLower(), registration.Nodes[0].NodeId.ToLower());
-                Assert.Equal((serviceName1+":"+Environment.MachineName).ToLower(), 
+                Assert.Equal((serviceName1 + ":" + Environment.MachineName).ToLower(),
                     registration.Nodes[0].ServiceId.ToLower());
-                Assert.Equal(new[] { route1}, registration.Nodes[0].Routes);
-                Assert.Equal(new[] { "urlprefix-"+route1 }, registration.Nodes[0].Tags);
+                Assert.Equal(new[] { route1 }, registration.Nodes[0].Routes);
+                Assert.Equal(new[] { "urlprefix-" + route1 }, registration.Nodes[0].Tags);
 
 
             }
         }
 
-            public class Summary
-            {
-                public string Service { get; set; }
-                public Node[] Nodes { get; set; }
+        public class Summary
+        {
+            public string Service { get; set; }
+            public Node[] Nodes { get; set; }
         }
+
         public class Node
         {
             public string NodeId { get; set; }
             public string ServiceId { get; set; }
-
             public string[] Routes { get; set; }
-
             public string[] Tags { get; set; }
         }
-        
+
     }
 }

@@ -1,14 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Threading.Tasks;
 using CondenserDotNet.Client.DataContracts;
 using CondenserDotNet.Core;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
 
 namespace CondenserDotNet.Client
 {
@@ -76,7 +71,7 @@ namespace CondenserDotNet.Client
                 Checks = new List<HealthCheck>(),
                 Tags = new List<string>(serviceManager.SupportedUrls.Select(u => $"urlprefix-{u}"))
             };
-            if(serviceManager.ProtocolSchemeTag != null)
+            if (serviceManager.ProtocolSchemeTag != null)
             {
                 s.Tags.Add($"protocolScheme-{serviceManager.ProtocolSchemeTag}");
             }

@@ -4,7 +4,6 @@ using System.Net;
 using System.Threading.Tasks;
 using CondenserDotNet.Server.Extensions;
 using Microsoft.AspNetCore.Http;
-using Newtonsoft.Json;
 
 namespace CondenserDotNet.Server.Routes
 {
@@ -15,7 +14,7 @@ namespace CondenserDotNet.Server.Routes
         public RouteSummary(RoutingData routingData)
         {
             _routingData = routingData;
-            Routes = new[] {CondenserRoutes.Summary};
+            Routes = new[] { CondenserRoutes.Summary };
         }
 
         public override string[] Routes { get; }
@@ -24,7 +23,7 @@ namespace CondenserDotNet.Server.Routes
 
         public override Task CallService(HttpContext context)
         {
-            context.Response.StatusCode = (int) HttpStatusCode.OK;
+            context.Response.StatusCode = (int)HttpStatusCode.OK;
 
             object response = _routingData.ServicesWithHealthChecks
                 .Select(s => new

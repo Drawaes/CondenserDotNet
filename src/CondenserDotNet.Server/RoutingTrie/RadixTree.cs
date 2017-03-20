@@ -9,10 +9,7 @@ namespace CondenserDotNet.Server.RoutingTrie
         private static readonly char[] _routeSplit = new char[] { '/' };
         private readonly bool _killCase = true;
 
-        public RadixTree(Func<ChildContainer<T>> factory)
-        {
-            _topNode = new Node<T>(new string[0], "", factory);
-        }
+        public RadixTree(Func<ChildContainer<T>> factory) => _topNode = new Node<T>(new string[0], "", factory);
 
         public Node<T> TopNode => _topNode;
 
@@ -65,14 +62,7 @@ namespace CondenserDotNet.Server.RoutingTrie
             }
         }
 
-        public Node<T> GetTopNode()
-        {
-            return _topNode;
-        }
-
-        public int MaxDepth()
-        {
-            return _topNode.MaxDepth() + 1;
-        }
+        public Node<T> GetTopNode() => _topNode;
+        public int MaxDepth() => _topNode.MaxDepth() + 1;
     }
 }

@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -62,6 +60,11 @@ namespace CondenserDotNet.Middleware.ProtocolSwitcher
         public override Task WriteAsync(byte[] buffer, int offset, int count, CancellationToken cancellationToken)
         {
             return _innerStream.WriteAsync(buffer, offset, count, cancellationToken);
+        }
+
+        public override void WriteByte(byte value)
+        {
+            _innerStream.WriteByte(value);
         }
 
         protected override void Dispose(bool disposing)

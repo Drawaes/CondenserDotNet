@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace CondenserDotNet.Server.RoutingTrie
 {
@@ -98,10 +96,7 @@ namespace CondenserDotNet.Server.RoutingTrie
             }
         }
 
-        public int MaxDepth()
-        {
-            return _childrenNodes.MaxNodeDepth() + 1;
-        }
+        public int MaxDepth() => _childrenNodes.MaxNodeDepth() + 1;
 
         internal bool RemoveServiceFromRoute(string[] route, T service)
         {
@@ -190,9 +185,6 @@ namespace CondenserDotNet.Server.RoutingTrie
             Compress();
         }
 
-        public override string ToString()
-        {
-            return $"Path {string.Join("/", Prefix)} Services {Services.Count}";
-        }
+        public override string ToString() => $"Path {string.Join("/", Prefix)} Services {Services.Count}";
     }
 }

@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
 using System.Threading.Tasks;
 using CondenserDotNet.Client;
 using CondenserDotNet.Client.Services;
@@ -43,7 +40,7 @@ namespace Condenser.Tests.Integration
         public async Task TestRegisterAndCheckRegistered()
         {
             var serviceName = Guid.NewGuid().ToString();
-            var opts = Options.Create(new ServiceManagerConfig() { ServicePort = 2222, ServiceName = serviceName } );
+            var opts = Options.Create(new ServiceManagerConfig() { ServicePort = 2222, ServiceName = serviceName });
             using (var manager = new ServiceManager(opts))
             using (var registry = new ServiceRegistry())
             {

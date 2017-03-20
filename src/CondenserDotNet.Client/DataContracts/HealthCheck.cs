@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace CondenserDotNet.Client.DataContracts
+﻿namespace CondenserDotNet.Client.DataContracts
 {
     public class HealthCheck
     {
@@ -11,6 +6,6 @@ namespace CondenserDotNet.Client.DataContracts
         public string Interval { get; set; }
         public string TTL { get; set; }
         public string Name { get; set; }
-        public string DeregisterCriticalServiceAfter { get;set;}
+        public string DeregisterCriticalServiceAfter { get; set; }
     }
 }

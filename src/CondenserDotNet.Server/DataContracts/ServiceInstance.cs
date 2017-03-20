@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace CondenserDotNet.Server.DataContracts
+﻿namespace CondenserDotNet.Server.DataContracts
 {
     public class ServiceInstance
     {
@@ -12,6 +7,6 @@ namespace CondenserDotNet.Server.DataContracts
         public string[] ServiceTags { get; set; }
         public string ServiceAddress { get; set; }
         public int ServicePort { get; set; }
-        public string Node { get;set;}
+        public string Node { get; set; }
     }
 }

@@ -111,9 +111,6 @@ namespace CondenserDotNet.Server.RoutingTrie
             return container;
         }
 
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }

@@ -110,10 +110,7 @@ namespace CondenserDotNet.Server
             }
         }
 
-        public override int GetHashCode()
-        {
-            return ServiceId.GetHashCode();
-        }
+        public override int GetHashCode() => ServiceId.GetHashCode();
 
         public override bool Equals(object obj)
         {
@@ -132,10 +129,7 @@ namespace CondenserDotNet.Server
             return false;
         }
 
-        public void UpdateRoutes(string[] routes)
-        {
-            Routes = routes;
-        }
+        public void UpdateRoutes(string[] routes) => Routes = routes;
 
         public async Task Initialise(string serviceId, string nodeId, string[] tags, string address, int port)
         {
@@ -152,7 +146,7 @@ namespace CondenserDotNet.Server
             }
             catch
             {
-                _logger?.LogWarning("Unable to resolve the host address for {address} when adding the service",address);
+                _logger?.LogWarning("Unable to resolve the host address for {address} when adding the service", address);
             }
             _supportedVersions = tags.Where(t => t.StartsWith("version=")).Select(t => new Version(t.Substring(8))).ToArray();
             _protocolScheme = tags.Where(t => t.StartsWith("protocolScheme-"))
@@ -162,10 +156,7 @@ namespace CondenserDotNet.Server
             _httpClient = _clientFactory?.Invoke(ServiceId) ?? new HttpClient();
         }
 
-        public override string ToString()
-        {
-            return _serviceId;
-        }
+        public override string ToString() => _serviceId;
 
         public void Dispose()
         {

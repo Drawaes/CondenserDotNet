@@ -23,7 +23,7 @@ namespace CondenserDotNet.Core
         public static readonly string ServiceHealthUrl = ApiUrl + "health/service/";
         public static readonly string SessionCreateUrl = ApiUrl + "session/create";
         public static readonly string HealthAnyUrl = ApiUrl + "/health/state/any";
-        
+
         public static StringContent GetStringContent<T>(T objectForContent)
         {
             var returnValue = new StringContent(JsonConvert.SerializeObject(objectForContent, JsonSettings), Encoding.UTF8, "application/json");

@@ -1,8 +1,6 @@
-﻿using CondenserDotNet.Core;
-using CondenserDotNet.Core.Routing;
+﻿using CondenserDotNet.Core.Routing;
 using CondenserDotNet.Server;
 using CondenserDotNet.Server.RoutingTrie;
-using CondenserTests.Fakes;
 using Xunit;
 
 namespace CondenserTests
@@ -13,7 +11,7 @@ namespace CondenserTests
         public void TestSplitting()
         {
             var tree = CreateDefault();
-            
+
             var service = new Service(null, null, null);
             service.Initialise("Service1Test", "node1", new string[0], "Adress1Test", 10000).Wait();
             var service2 = new Service(null, null, null);

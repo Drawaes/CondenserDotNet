@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Hosting;
 using Microsoft.DotNet.PlatformAbstractions;
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 using CondenserDotNet.Middleware.ProtocolSwitcher;

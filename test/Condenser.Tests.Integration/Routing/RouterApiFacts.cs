@@ -1,15 +1,12 @@
 ﻿using CondenserDotNet.Server.Routes;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
 using Xunit;
 
 namespace Condenser.Tests.Integration.Routing
 {
-    public class RouterApiFacts 
+    public class RouterApiFacts
     {
         [Fact]
         public async Task CanCallRouterHealthCheck()
@@ -38,5 +35,5 @@ namespace Condenser.Tests.Integration.Routing
                 Assert.Equal(1, health.Stats.Http200Responses);
             }
         }
-    }    
+    }
 }

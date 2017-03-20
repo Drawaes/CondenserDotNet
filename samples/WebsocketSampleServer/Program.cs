@@ -1,7 +1,4 @@
-﻿using System;
-using CondenserDotNet.Client;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.AspNetCore.Hosting;
 
 namespace WebsocketSampleServer
 {

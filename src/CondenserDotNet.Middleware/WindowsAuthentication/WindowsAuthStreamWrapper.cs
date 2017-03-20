@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace CondenserDotNet.Middleware.WindowsAuthentication
 {
-    public class WindowsAuthStreamWrapper :Stream
+    public class WindowsAuthStreamWrapper : Stream
     {
         private readonly Stream _innerStream;
         private WindowsAuthFeature _authFeature;
@@ -19,7 +17,7 @@ namespace CondenserDotNet.Middleware.WindowsAuthentication
         }
 
         public override bool CanRead => _innerStream.CanRead;
-        public override bool CanSeek=> _innerStream.CanSeek;
+        public override bool CanSeek => _innerStream.CanSeek;
         public override bool CanWrite => _innerStream.CanWrite;
         public override long Length => _innerStream.Length;
         public override long Position { get { return _innerStream.Position; } set { _innerStream.Position = value; } }

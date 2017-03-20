@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
-using CondenserDotNet.Core;
 using CondenserDotNet.Core.Routing;
 using CondenserDotNet.Server.RoutingTrie;
 using Microsoft.AspNetCore.Http;

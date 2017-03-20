@@ -1,7 +1,4 @@
-﻿using System;
-using CondenserDotNet.Client;
-using CondenserDotNet.Configuration;
-using CondenserDotNet.Server;
+﻿using CondenserDotNet.Configuration;
 using CondenserTests.Fakes;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -12,7 +11,7 @@ namespace CondenserDotNet.Middleware.TrailingHeaders
     {
         private Stream _innerStream;
         private static readonly byte[] _endChunkBytes = Encoding.ASCII.GetBytes("\r\n");
-        
+
         public override bool CanRead => throw new NotImplementedException();
         public override bool CanSeek => throw new NotImplementedException();
         public override bool CanWrite => true;

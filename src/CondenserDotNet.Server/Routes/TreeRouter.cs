@@ -7,7 +7,6 @@ using CondenserDotNet.Server.DataContracts;
 using CondenserDotNet.Server.Extensions;
 using CondenserDotNet.Server.RoutingTrie;
 using Microsoft.AspNetCore.Http;
-using CondenserDotNet.Core;
 
 namespace CondenserDotNet.Server.Routes
 {
@@ -19,7 +18,7 @@ namespace CondenserDotNet.Server.Routes
         {
             _routingData = routingData;
 
-            Routes = new[] { CondenserRoutes.Tree};
+            Routes = new[] { CondenserRoutes.Tree };
         }
 
         public override string[] Routes { get; }
@@ -28,7 +27,7 @@ namespace CondenserDotNet.Server.Routes
 
         public override Task CallService(HttpContext context)
         {
-            context.Response.StatusCode = (int) HttpStatusCode.OK;
+            context.Response.StatusCode = (int)HttpStatusCode.OK;
 
             var nodeDto = new Node();
             MapTo(_routingData.Tree.TopNode, nodeDto);

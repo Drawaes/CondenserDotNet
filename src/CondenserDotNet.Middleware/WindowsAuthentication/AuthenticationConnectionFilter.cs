@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http.Features.Authentication;
 using Microsoft.AspNetCore.Server.Kestrel.Filter;
 
 namespace CondenserDotNet.Middleware.WindowsAuthentication
@@ -15,11 +12,11 @@ namespace CondenserDotNet.Middleware.WindowsAuthentication
         {
             _previous = previous ?? throw new ArgumentNullException();
         }
-        
+
         public async Task OnConnectionAsync(ConnectionFilterContext context)
         {
             await _previous.OnConnectionAsync(context);
-            
+
             var previousRequest = context.PrepareRequest;
             var feature = new WindowsAuthFeature();
             var wrapper = new WindowsAuthStreamWrapper(context.Connection, feature);
@@ -29,7 +26,7 @@ namespace CondenserDotNet.Middleware.WindowsAuthentication
                 previousRequest?.Invoke(features);
                 features.Set(((WindowsAuthStreamWrapper)context.Connection).AuthFeature);
             };
-            
+
         }
     }
 }

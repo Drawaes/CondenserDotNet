@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.IO.Pipelines;
 using System.Linq;
 using System.Net;
@@ -121,7 +120,7 @@ namespace CondenserDotNet.Middleware.Pipelines
             }
             catch
             {
-                _logger.LogError("Unable to get an ip address for {serverAddress}",address);
+                _logger.LogError("Unable to get an ip address for {serverAddress}", address);
             }
             _supportedVersions = tags.Where(t => t.StartsWith("version=")).Select(t => new Version(t.Substring(8))).ToArray();
         }

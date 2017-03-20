@@ -5,10 +5,7 @@ using System.Threading.Tasks;
 using CondenserDotNet.Core.Routing;
 using CondenserDotNet.Server.Builder;
 using CondenserDotNet.Server.DataContracts;
-using CondenserDotNet.Server.Extensions;
 using CondenserDotNet.Server.Routes;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CondenserDotNet.Server
@@ -60,11 +57,8 @@ namespace CondenserDotNet.Server
             return this;
         }
 
-        public IServiceCollection Build()
-        {
-            return _collection.AddCondenser(_agentAddress,_agentPort, this,this,this);
-        }
-        
+        public IServiceCollection Build() => _collection.AddCondenser(_agentAddress, _agentPort, this, this, this);
+
         public IConfigurationBuilder WithRoutingStrategy(RouteStrategy name)
         {
             DefaultRouteStrategy = name.ToString();
@@ -76,10 +70,7 @@ namespace CondenserDotNet.Server
             _clientFactory = clientFactory;
             return this;
         }
-        
-        public HttpClient Create(string serviceId)
-        {
-            return _clientFactory?.Invoke(serviceId);
-        }
+
+        public HttpClient Create(string serviceId) => _clientFactory?.Invoke(serviceId);
     }
 }

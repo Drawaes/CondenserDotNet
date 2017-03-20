@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
 using CondenserDotNet.Core.Routing;
 using CondenserDotNet.Server.Builder;
 using CondenserDotNet.Server.Routes;
@@ -12,10 +10,7 @@ namespace CondenserDotNet.Server
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddCondenser(this IServiceCollection self)
-        {
-            return AddCondenser(self, "localhost", 8500);
-        }
+        public static IServiceCollection AddCondenser(this IServiceCollection self) => AddCondenser(self, "localhost", 8500);
 
         private static IServiceCollection AddCondenser(this IServiceCollection self, string agentAddress, int agentPort)
         {
@@ -62,9 +57,6 @@ namespace CondenserDotNet.Server
             return self;
         }
 
-        public static IConfigurationBuilder AddCondenserWithBuilder(this IServiceCollection self)
-        {
-            return new ConfigurationBuilder(self);
-        }
+        public static IConfigurationBuilder AddCondenserWithBuilder(this IServiceCollection self) => new ConfigurationBuilder(self);
     }
 }

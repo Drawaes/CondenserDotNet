@@ -1,21 +1,11 @@
 ﻿using System;
-using System.Net.Http;
 using System.Threading.Tasks;
-using CondenserDotNet.Client;
 using CondenserDotNet.Core.DataContracts;
 using CondenserDotNet.Core.Routing;
 using CondenserDotNet.Server;
 using CondenserDotNet.Server.RoutingTrie;
 using Microsoft.AspNetCore.Http;
 using Xunit;
-using Microsoft.Extensions.Options;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Builder;
-using System.Net;
-using CondenserDotNet.Core;
-using System.Collections.Generic;
-using System.Threading;
-using System.Linq;
 
 namespace Condenser.Tests.Integration.Routing
 {
@@ -80,7 +70,7 @@ namespace Condenser.Tests.Integration.Routing
             };
             var data = new RoutingData(new RadixTree<IService>(createNode));
             return new CustomRouter(null, data);
-        }    
+        }
 
-    }   
+    }
 }

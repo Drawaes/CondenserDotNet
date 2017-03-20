@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
-using CondenserDotNet.Core;
 using CondenserDotNet.Server.Builder;
 using CondenserDotNet.Server.DataContracts;
 using CondenserDotNet.Server.Extensions;
@@ -13,13 +12,12 @@ namespace CondenserDotNet.Server.Routes
     {
         private readonly IHealthConfig _config;
         private readonly CurrentState _state;
-        
+
         public HealthRouter(IHealthConfig config, CurrentState stats)
         {
             _config = config;
             _state = stats;
-
-            Routes = new[] {_config.Route};
+            Routes = new[] { _config.Route };
         }
 
         public override string[] Routes { get; }
@@ -28,7 +26,7 @@ namespace CondenserDotNet.Server.Routes
 
         public override async Task CallService(HttpContext context)
         {
-            var response = new HealthResponse {Stats = _state?.GetSummary() ?? default(CurrentState.Summary)};
+            var response = new HealthResponse { Stats = _state?.GetSummary() ?? default(CurrentState.Summary) };
 
             if (_config.Checks?.Count > 0)
             {
@@ -45,11 +43,11 @@ namespace CondenserDotNet.Server.Routes
                         code = HttpStatusCode.InternalServerError;
                 }
                 response.HealthChecks = results;
-                context.Response.StatusCode = (int) code;
+                context.Response.StatusCode = (int)code;
             }
             else
             {
-                context.Response.StatusCode = (int) HttpStatusCode.OK;
+                context.Response.StatusCode = (int)HttpStatusCode.OK;
             }
             await context.Response.WriteJsonAsync(response);
         }

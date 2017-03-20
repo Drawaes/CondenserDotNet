@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using CondenserDotNet.Configuration;
 using CondenserDotNet.Configuration.Consul;
 using CondenserTests.Fakes;
 using Newtonsoft.Json;

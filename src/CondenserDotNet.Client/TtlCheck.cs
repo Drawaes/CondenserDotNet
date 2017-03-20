@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using CondenserDotNet.Client.DataContracts;
 
 namespace CondenserDotNet.Client
@@ -26,13 +23,13 @@ namespace CondenserDotNet.Client
 
         public async Task<bool> ReportPassingAsync()
         {
-            if(!_parentManager.IsRegistered)
+            if (!_parentManager.IsRegistered)
             {
                 return false;
             }
             //We are connected so lets report to the server
             var response = await _parentManager.Client.GetAsync($"/v1/agent/check/pass/service:{_parentManager.ServiceId}");
-            if(response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode)
             {
                 return true;
             }

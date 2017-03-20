@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using CondenserDotNet.Client;
 using CondenserDotNet.Configuration;
 
 namespace CondenserTests.Fakes
@@ -42,7 +41,7 @@ namespace CondenserTests.Fakes
 
         public bool TryGetValue(string key, out string value) => _data.TryGetValue(key, out value);
         public IEnumerable<string> AllKeys => _data.Keys;
-                
+
         public void AddWatchOnSingleKey(string keyToWatch, Action callback)
         {
             throw new NotImplementedException();
@@ -57,7 +56,7 @@ namespace CondenserTests.Fakes
 
         public void Dispose()
         {
-            
+
         }
     }
 }

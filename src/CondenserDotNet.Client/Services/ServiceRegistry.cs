@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Threading;
 using System.Threading.Tasks;
 using CondenserDotNet.Core;
 using CondenserDotNet.Core.DataContracts;
 using CondenserDotNet.Core.Routing;
-using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
-using System.Runtime.CompilerServices;
 
 namespace CondenserDotNet.Client.Services
 {

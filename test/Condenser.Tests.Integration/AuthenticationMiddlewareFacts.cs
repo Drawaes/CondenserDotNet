@@ -1,9 +1,6 @@
 ﻿using CondenserDotNet.Middleware.WindowsAuthentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using Microsoft.AspNetCore.Http;
 using System.Net.Http;
 using System.Threading.Tasks;

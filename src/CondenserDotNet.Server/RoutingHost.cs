@@ -60,11 +60,11 @@ namespace CondenserDotNet.Server
                     }
                     _lastConsulIndex = result.GetConsulIndex();
                     _logger?.LogInformation("Got new set of health information new index is {index}", _lastConsulIndex);
-                                        
+
                     var healthChecks = await result.Content.GetObject<HealthCheck[]>();
                     await ProcessHealthChecks(healthChecks);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     _logger?.LogError(1000, ex, "There was an error getting available services from consul");
                     await Task.Delay(TimeSpan.FromSeconds(1));
@@ -97,7 +97,7 @@ namespace CondenserDotNet.Server
             OnRouteBuilt?.Invoke(_routingData.ServicesWithHealthChecks);
         }
 
-        private async Task CreateNewServiceInstance(KeyValuePair<string,List<IService>> service, ServiceInstance info)
+        private async Task CreateNewServiceInstance(KeyValuePair<string, List<IService>> service, ServiceInstance info)
         {
             var instance = _serviceFactory();
             await instance.Initialise(info.ServiceID, info.Node, info.ServiceTags, info.ServiceAddress, info.ServicePort);

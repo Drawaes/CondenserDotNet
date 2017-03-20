@@ -34,10 +34,7 @@ namespace CondenserDotNet.Server
             }
         }
 
-        public void RemoveService(IService serviceToRemove)
-        {
-            _routingData.Tree.RemoveService(serviceToRemove);
-        }
+        public void RemoveService(IService serviceToRemove) => _routingData.Tree.RemoveService(serviceToRemove);
 
         public void RemoveServiceFromRoute(string route, IService serviceToRemove)
         {

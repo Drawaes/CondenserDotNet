@@ -1,7 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
 using CondenserDotNet.Client.Leadership;
 using CondenserDotNet.Client.Services;
 using Microsoft.Extensions.DependencyInjection;

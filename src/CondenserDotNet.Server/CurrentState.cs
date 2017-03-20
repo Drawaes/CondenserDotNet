@@ -7,7 +7,7 @@ namespace CondenserDotNet.Server
 {
     public class CurrentState
     {
-        private readonly System.Threading.ThreadLocal<ThreadStats> _stats 
+        private readonly System.Threading.ThreadLocal<ThreadStats> _stats
             = new System.Threading.ThreadLocal<ThreadStats>(() => new ThreadStats(), true);
         private readonly ILogger<CurrentState> _logger;
         private readonly DateTime _startedTime;
@@ -65,7 +65,9 @@ namespace CondenserDotNet.Server
 
         public void RecordResponse(int responseCode)
         {
-            switch(responseCode)
+            responseCode = responseCode / 100;
+            responseCode = responseCode * 100;
+            switch (responseCode)
             {
                 case 500:
                     Stats.Http500Responses++;
@@ -86,7 +88,7 @@ namespace CondenserDotNet.Server
                     Stats.HttpUnknownResponse++;
                     break;
             }
-            
+
         }
     }
 }

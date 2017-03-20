@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using CondenserDotNet.Core;
 using CondenserDotNet.Core.Routing;
 using CondenserDotNet.Server.RoutingTrie;
 
@@ -8,10 +7,7 @@ namespace CondenserDotNet.Server
 {
     public class RoutingData
     {
-        public RoutingData(RadixTree<IService> tree)
-        {
-            Tree = tree;
-        }
+        public RoutingData(RadixTree<IService> tree) => Tree = tree;
 
         public Dictionary<string, List<IService>> ServicesWithHealthChecks { get; } = new Dictionary<string, List<IService>>();
         public RadixTree<IService> Tree { get; }

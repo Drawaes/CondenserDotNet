@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Text;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.WebSockets;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
 using System.Threading;
-using CondenserDotNet.Client.Services;
-using System.Net.Http;
 using CondenserDotNet.Client;
 
 namespace WebsocketSampleServer
@@ -32,7 +28,7 @@ namespace WebsocketSampleServer
             serviceManager.AddHttpHealthCheck("/Health", 10)
                 .AddApiUrl("/testsample/test3/test2")
                 .RegisterServiceAsync().Wait();
-            
+
             app.UseWebSockets();
             app.Use(async (context, next) =>
             {

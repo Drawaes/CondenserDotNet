@@ -6,7 +6,7 @@ namespace CondenserDotNet.Configuration
 {
     public static class ServiceCollectionExtensions
     {
-        
+
         public static IServiceCollection ConfigureReloadable<TConfig>(this IServiceCollection self,
             IConfiguration configuration, IConfigurationRegistry registry)
             where TConfig : class

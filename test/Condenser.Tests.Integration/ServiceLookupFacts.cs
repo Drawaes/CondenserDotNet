@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using CondenserDotNet.Client;
 using CondenserDotNet.Client.Services;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using Xunit;
 
 namespace Condenser.Tests.Integration
@@ -36,7 +34,7 @@ namespace Condenser.Tests.Integration
         [Fact]
         public async Task TestThatAnErrorIsReturnedWhenConsulIsNotAvailable()
         {
-            using (var serviceRegistry = new ServiceRegistry(() => new HttpClient() { BaseAddress = new Uri( "http://localhost:7000" )}))
+            using (var serviceRegistry = new ServiceRegistry(() => new HttpClient() { BaseAddress = new Uri("http://localhost:7000") }))
             {
                 await Assert.ThrowsAsync<NoConsulConnectionException>(async () => await serviceRegistry.GetServiceInstanceAsync("TestService"));
             }

@@ -59,7 +59,7 @@ namespace Condenser.Tests.Integration.Routing
 
             var serviceManager = new ServiceManager(options);
 
-            serviceManager
+            var ignore = serviceManager
                 .AddHttpHealthCheck(HealthRoute, 10)
                 .AddApiUrl(route)
                 .RegisterServiceAsync();
@@ -85,7 +85,7 @@ namespace Condenser.Tests.Integration.Routing
                         var instance = _hosts[name];
 
                         if (path == HealthRoute)
-                        {                            
+                        {
                             if (instance.IsHealthy)
                             {
                                 status = HttpStatusCode.OK;
@@ -124,7 +124,7 @@ namespace Condenser.Tests.Integration.Routing
         {
             routerPort = ServiceManagerConfig.GetNextAvailablePort();
 
-            _routerHost= new WebHostBuilder()
+            _routerHost = new WebHostBuilder()
                 .UseKestrel()
                 .UseLoggerFactory(new LoggerFactory().AddConsole())
                 .UseUrls($"http://*:{routerPort}")
@@ -136,13 +136,13 @@ namespace Condenser.Tests.Integration.Routing
                 {
                     _host = app.ApplicationServices.GetService<RoutingHost>();
                     _host.OnRouteBuilt = SignalWhenAllRegistered;
-                    
+
 
                     app.UseCondenser();
                 })
                 .Build();
 
-            
+
         }
 
         public Task WaitForRegistrationAsync()
