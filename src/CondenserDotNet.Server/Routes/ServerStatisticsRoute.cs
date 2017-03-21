@@ -48,17 +48,21 @@ namespace CondenserDotNet.Server.Routes
                             ServiceId = service.ServiceId,
                             NodeId = service.NodeId,
                             Calls = usage.Calls,
-                            AverageRequestTime = averageRequestTime
+                            AverageRequestTime = averageRequestTime,
+                            LastRequest = usage.LastRequest,
+                            LastRequestTime = usage.LastRequestTime
                         };
                     }
 
-                    await context.Response.WriteJsonAsync(response);
                     context.Response.StatusCode = (int)HttpStatusCode.OK;
+                    await context.Response.WriteJsonAsync(response);
+                   
                 }
                 else
                 {
-                    await context.Response.WriteAsync("Unknown server " + serviceName);
                     context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+                    await context.Response.WriteAsync("Unknown server " + serviceName);
+                    
                 }
             }
             else

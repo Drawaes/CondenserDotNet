@@ -40,7 +40,7 @@ namespace Condenser.Tests.Integration.Routing
 
         public string GetNewServiceName()
         {
-            return Guid.NewGuid().ToString().Substring(0, 10);
+            return Guid.NewGuid().ToString("N").Substring(0, 10);
         }
 
         public Task<HttpResponseMessage> CallRouterAsync(string route)
