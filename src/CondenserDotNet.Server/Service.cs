@@ -24,6 +24,8 @@ namespace CondenserDotNet.Server
         private string _serviceId;
         private int _calls;
         private int _totalRequestTime;
+        private DateTime _lastRequest;
+        private double _lastRequestTime;
         private string _hostString;
         private readonly ILogger _logger;
         private string _protocolScheme;
@@ -42,6 +44,8 @@ namespace CondenserDotNet.Server
         public string NodeId { get; private set; }
         public int Calls => _calls;
         public double TotalRequestTime => _totalRequestTime;
+        public double LastRequestTime => _lastRequestTime;
+        public DateTime LastRequest => _lastRequest;
         public IPEndPoint IpEndPoint => _ipEndPoint;
         public bool RequiresAuthentication => true;
 
@@ -103,8 +107,13 @@ namespace CondenserDotNet.Server
             {
                 sw.Stop();
 
-                System.Threading.Interlocked.Add(ref _totalRequestTime, (int)sw.Elapsed.TotalMilliseconds);
+                var time = (int)sw.Elapsed.TotalMilliseconds;
+
+
+                System.Threading.Interlocked.Add(ref _totalRequestTime, time);
                 System.Threading.Interlocked.Increment(ref _calls);
+                System.Threading.Interlocked.Exchange(ref _lastRequestTime, time);
+                _lastRequest = DateTime.UtcNow;
 
                 _waitUntilRequestsAreFinished.Signal();
             }
