@@ -17,23 +17,17 @@ namespace CondenserDotNet.Client
 
         public static IServiceManager AddHttpHealthCheck(this IServiceManager serviceManager, string url, int intervalInSeconds)
         {
-            HealthCheck check = new HealthCheck()
-            {
-                HTTP = $"{serviceManager.ServiceAddress}:{serviceManager.ServicePort}{url}",
-                Interval = $"{intervalInSeconds}s",
-                Name = $"{serviceManager.ServiceId}:HttpCheck"
-            };
-            if (!check.HTTP.StartsWith("HTTP", StringComparison.OrdinalIgnoreCase))
-            {
-                check.HTTP = "http://" + check.HTTP;
-            }
-            serviceManager.HttpCheck = check;
+            serviceManager.HealthConfig.Url = url;
+            serviceManager.HealthConfig.IntervalInSeconds = intervalInSeconds;
+
             return serviceManager;
         }
 
-        public static IServiceManager UseHttps(this IServiceManager serviceManager)
+        public static IServiceManager UseHttps(this IServiceManager serviceManager, bool ignoreForHealth = true)
         {
             serviceManager.ProtocolSchemeTag = "https";
+            serviceManager.HealthConfig.IgnoreTls = ignoreForHealth;
+
             return serviceManager;
         }
 
@@ -71,13 +65,16 @@ namespace CondenserDotNet.Client
                 Checks = new List<HealthCheck>(),
                 Tags = new List<string>(serviceManager.SupportedUrls.Select(u => $"urlprefix-{u}"))
             };
+
+            var healthCheck = serviceManager.HealthConfig.Build(serviceManager);
+
             if (serviceManager.ProtocolSchemeTag != null)
             {
                 s.Tags.Add($"protocolScheme-{serviceManager.ProtocolSchemeTag}");
             }
-            if (serviceManager.HttpCheck != null)
+            if (healthCheck != null)
             {
-                s.Checks.Add(serviceManager.HttpCheck);
+                s.Checks.Add(healthCheck);
             }
             if (serviceManager.TtlCheck != null)
             {
