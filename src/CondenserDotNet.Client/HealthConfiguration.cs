@@ -12,16 +12,13 @@ namespace CondenserDotNet.Client
 
         public HealthCheck Build(IServiceManager manager)
         {
-            if (Url == null)
-                return null;
-
-            Uri uri;
-            if (!Uri.TryCreate(Url, UriKind.Absolute, out uri))
+            if (Url == null) return null;
+            if (!Uri.TryCreate(Url, UriKind.Absolute, out Uri uri))
             {
                 string scheme = manager.ProtocolSchemeTag ?? "http";
                 var builder = new UriBuilder(scheme, manager.ServiceAddress, manager.ServicePort, Url);
                 uri = builder.Uri;
-            }            
+            }
 
             var check = new HealthCheck
             {
