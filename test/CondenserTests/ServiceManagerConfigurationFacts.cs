@@ -20,5 +20,16 @@ namespace CondenserTests
                 Assert.Equal("ServiceId", manager.ServiceId);
             }
         }
+
+        [Fact]
+        public void DefaultsCorrectly()
+        {
+            var opts = Options.Create(new ServiceManagerConfig() { ServicePort = 2222 });
+            using (var manager = new ServiceManager(opts))
+            {
+                Assert.NotNull(manager.ServiceName);
+                Assert.NotNull(manager.ServiceId);
+            }
+        }
     }
 }
