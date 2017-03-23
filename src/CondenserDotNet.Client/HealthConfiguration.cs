@@ -1,11 +1,11 @@
-﻿using CondenserDotNet.Client.DataContracts;
+﻿using System;
+using CondenserDotNet.Client.DataContracts;
 
 
 namespace CondenserDotNet.Client
 {
     public class HealthConfiguration
     {
-
         public bool IgnoreTls { get; set; } = true;
         public string Url { get; set; }
         public int IntervalInSeconds { get; set; } = 30;
@@ -15,11 +15,17 @@ namespace CondenserDotNet.Client
             if (Url == null)
                 return null;
 
-            string scheme = manager.ProtocolSchemeTag ?? "http";
+            Uri uri;
+            if (!Uri.TryCreate(Url, UriKind.Absolute, out uri))
+            {
+                string scheme = manager.ProtocolSchemeTag ?? "http";
+                var builder = new UriBuilder(scheme, manager.ServiceAddress, manager.ServicePort, Url);
+                uri = builder.Uri;
+            }            
 
             var check = new HealthCheck
             {
-                HTTP = $"{scheme}://{manager.ServiceAddress}:{manager.ServicePort}{Url}",
+                HTTP = uri.ToString(),
                 Interval = $"{IntervalInSeconds}s",
                 Name = $"{manager.ServiceId}:HttpCheck",
                 tls_skip_verify = IgnoreTls
