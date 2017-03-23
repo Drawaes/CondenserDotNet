@@ -61,7 +61,10 @@ namespace CondenserDotNet.Client
                     }
                 }
             }
-            ServiceId = $"{ServiceName}:{Dns.GetHostName()}";
+            if (string.IsNullOrWhiteSpace(ServiceId))
+            {
+                ServiceId = $"{ServiceName}:{Dns.GetHostName()}";
+            }
             if (ServicePort == 0)
             {
                 var feature = server.Features.Get<IServerAddressesFeature>();
