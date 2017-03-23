@@ -36,7 +36,7 @@ namespace CondenserDotNet.Client
         public List<string> SupportedUrls => _supportedUrls;
         public ILogger Logger { get; }
         public HttpClient Client { get; }
-        public HealthCheck HttpCheck { get; set; }
+        public HealthConfiguration HealthConfig { get; private set; } = new HealthConfiguration();
         public Service RegisteredService { get; set; }
         public string ServiceId { get; }
         public string ServiceName { get; }

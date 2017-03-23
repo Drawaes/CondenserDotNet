@@ -18,7 +18,7 @@ namespace CondenserDotNet.Client
         CancellationToken Cancelled { get; }
         HttpClient Client { get; }
         List<string> SupportedUrls { get; }
-        HealthCheck HttpCheck { get; set; }
+        HealthConfiguration HealthConfig { get; }
         Service RegisteredService { get; set; }
         string ProtocolSchemeTag { get; set; }
     }
