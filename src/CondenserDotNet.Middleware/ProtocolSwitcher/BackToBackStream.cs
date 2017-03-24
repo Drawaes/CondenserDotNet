@@ -1,22 +1,22 @@
 ﻿using System;
 using System.IO;
+using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace CondenserDotNet.Middleware.ProtocolSwitcher
 {
-    public class BackToBackStream : Stream
+    public class BackToBackStream:Stream
     {
-        private readonly byte _firstByte;
         private bool _usedFirstByte;
         private readonly Stream _innerStream;
 
-        public BackToBackStream(byte firstByte, Stream innerStream)
+        public BackToBackStream(Stream innerStream)
         {
             _innerStream = innerStream;
-            _firstByte = firstByte;
         }
 
+        public byte FirstByte { get; set; }
         public override bool CanRead => _innerStream.CanRead;
         public override bool CanSeek => _innerStream.CanSeek;
         public override bool CanWrite => _innerStream.CanWrite;
@@ -30,13 +30,14 @@ namespace CondenserDotNet.Middleware.ProtocolSwitcher
             int returnCount = 0;
             if (!_usedFirstByte)
             {
-                buffer[offset] = _firstByte;
+                buffer[offset] = FirstByte;
                 offset++;
                 count--;
                 returnCount++;
                 _usedFirstByte = true;
             }
-            return _innerStream.Read(buffer, offset, count) + returnCount;
+            returnCount += _innerStream.Read(buffer, offset, count);
+            return returnCount;
         }
 
         public override long Seek(long offset, SeekOrigin origin) => throw new NotImplementedException();
@@ -48,7 +49,7 @@ namespace CondenserDotNet.Middleware.ProtocolSwitcher
         {
             if (!_usedFirstByte)
             {
-                buffer[offset] = _firstByte;
+                buffer[offset] = FirstByte;
                 offset++;
                 _usedFirstByte = true;
                 count--;

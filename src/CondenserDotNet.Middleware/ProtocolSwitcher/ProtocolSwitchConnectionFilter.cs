@@ -20,21 +20,19 @@ namespace CondenserDotNet.Middleware.ProtocolSwitcher
 
         public async Task OnConnectionAsync(ConnectionFilterContext context)
         {
-            await _previous.OnConnectionAsync(context);
-
-            var previousRequest = context.PrepareRequest;
+            var connection = context.Connection;
+            var back2Back = new BackToBackStream(connection);
+            context.Connection = back2Back;
             var firstByte = new byte[1];
-
-            await context.Connection.ReadAsync(firstByte, 0, 1);
-
+            var bytesRead = await connection.ReadAsync(firstByte, 0, 1);
+            back2Back.FirstByte = firstByte[0];
             if (firstByte[0] == 0x16)
             {
                 context.Address = ServerAddress.FromUrl($"https://{context.Address.Host}:{context.Address.Port}");
             }
-            var connection = context.Connection;
-            var back2Back = new BackToBackStream(firstByte[0], connection);
-            context.Connection = back2Back;
 
+            await _previous.OnConnectionAsync(context);
+            var previousRequest = context.PrepareRequest;
             context.PrepareRequest = features =>
             {
                 previousRequest?.Invoke(features);
