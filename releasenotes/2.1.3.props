@@ -1,0 +1,8 @@
+﻿<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+      * Fixed ServiceId bug where the override is ignored
+      * Added Https support for the health checks and moved the building of the health check to the registration phase    
+    </PackageReleaseNotes>
+  </PropertyGroup>
+</Project>
