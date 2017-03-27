@@ -40,6 +40,7 @@ namespace CondenserDotNet.Client.Services
         public void SetCallback(Action<List<InformationServiceSet>> callBack)
         {
             _listCallback = callBack;
+            _listCallback?.Invoke(_instances);
         }
 
         internal async Task<InformationService> GetNextServiceInstanceAsync()
