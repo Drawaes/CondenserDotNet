@@ -23,6 +23,7 @@ namespace CondenserDotNet.Client.Services
         private WatcherState _state;
         private static int s_serviceReconnectDelay = 1500;
         private static int s_getServiceDelay = 3000;
+        private Action<List<InformationServiceSet>> _listCallback;
 
         internal ServiceWatcher(string serviceName, HttpClient client,
             IRoutingStrategy<InformationServiceSet> routingStrategy, ILogger logger)
@@ -35,6 +36,12 @@ namespace CondenserDotNet.Client.Services
         }
 
         public WatcherState State => _state;
+
+        public void SetCallback(Action<List<InformationServiceSet>> callBack)
+        {
+            _listCallback = callBack;
+            _listCallback?.Invoke(_instances);
+        }
 
         internal async Task<InformationService> GetNextServiceInstanceAsync()
         {
@@ -79,6 +86,7 @@ namespace CondenserDotNet.Client.Services
                         var content = await result.Content.ReadAsStringAsync();
                         var instance = JsonConvert.DeserializeObject<List<InformationServiceSet>>(content);
                         Volatile.Write(ref _instances, instance);
+                        _listCallback?.Invoke(instance);
                         _state = WatcherState.UsingLiveValues;
                         _completionSource.TrySetResult(true);
                     }

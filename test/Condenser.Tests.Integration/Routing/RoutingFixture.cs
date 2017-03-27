@@ -60,7 +60,7 @@ namespace Condenser.Tests.Integration.Routing
             var serviceManager = new ServiceManager(options);
 
             var ignore = serviceManager
-                .AddHttpHealthCheck(HealthRoute, 10)
+                .AddHttpHealthCheck(HealthRoute, 1)
                 .AddApiUrl(route)
                 .RegisterServiceAsync();
         }

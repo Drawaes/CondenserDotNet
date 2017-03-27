@@ -1,0 +1,8 @@
+﻿<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Added API to directly get the available service instance list via a callback
+* Removed TtlCheck1 property which was a duplicate from refactoring
+    </PackageReleaseNotes>
+  </PropertyGroup>
+</Project>

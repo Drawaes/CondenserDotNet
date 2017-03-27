@@ -42,11 +42,10 @@ namespace CondenserDotNet.Client
         public string ServiceName { get; }
         public TimeSpan DeregisterIfCriticalAfter { get; set; }
         public bool IsRegistered => RegisteredService != null;
-        public ITtlCheck TtlCheck { get => TtlCheck1; set => TtlCheck1 = value; }
+        public ITtlCheck TtlCheck { get => _ttlCheck; set => _ttlCheck = value; }
         public string ServiceAddress { get; }
         public int ServicePort { get; }
         public CancellationToken Cancelled => _cancel.Token;
-        public ITtlCheck TtlCheck1 { get => _ttlCheck; set => _ttlCheck = value; }
         public string ProtocolSchemeTag { get; set; }
 
         public void Dispose()
