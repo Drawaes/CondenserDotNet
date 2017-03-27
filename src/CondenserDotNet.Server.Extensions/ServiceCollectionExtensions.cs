@@ -5,6 +5,7 @@ using CondenserDotNet.Server.Builder;
 using CondenserDotNet.Server.Routes;
 using CondenserDotNet.Server.RoutingTrie;
 using Microsoft.Extensions.DependencyInjection;
+using CondenserDotNet.Server;
 
 namespace CondenserDotNet.Server
 {
@@ -46,7 +47,7 @@ namespace CondenserDotNet.Server
             self.AddSingleton<IDefaultRouting<IService>, DefaultRouting<IService>>();
 
             self.AddTransient<ChildContainer<IService>>();
-            self.AddSingleton<CurrentState>();
+            self.AddTransient<ICurrentState, CurrentState>();
             self.AddSingleton<CustomRouter>();
             self.AddSingleton<RoutingHost>();
             self.AddSingleton<RadixTree<IService>>();

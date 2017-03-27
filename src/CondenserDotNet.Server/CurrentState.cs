@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging;
 
 namespace CondenserDotNet.Server
 {
-    public class CurrentState
+    public class CurrentState : ICurrentState
     {
         private readonly System.Threading.ThreadLocal<ThreadStats> _stats
             = new System.Threading.ThreadLocal<ThreadStats>(() => new ThreadStats(), true);

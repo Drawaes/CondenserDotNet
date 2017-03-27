@@ -19,5 +19,10 @@ namespace CondenserDotNet.Server
         public virtual void UpdateRoutes(string[] routes)
         {
         }
+
+        public CurrentState.Summary GetSummary()
+        {
+            return default(CurrentState.Summary);
+        }
     }
 }

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace CondenserDotNet.Server
 {
-    public interface IService
+    public interface IService : ISummary
     {
         Version[] SupportedVersions { get; }
         string[] Tags { get; }

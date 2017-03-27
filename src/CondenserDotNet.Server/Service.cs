@@ -16,7 +16,7 @@ namespace CondenserDotNet.Server
         private readonly System.Threading.CountdownEvent _waitUntilRequestsAreFinished = new System.Threading.CountdownEvent(1);
         private string _address;
         private int _port;
-        private readonly CurrentState _stats;
+        private readonly ICurrentState _stats;
         private readonly Func<string, HttpClient> _clientFactory;
         private IPEndPoint _ipEndPoint;
         private Version[] _supportedVersions;
@@ -30,7 +30,7 @@ namespace CondenserDotNet.Server
         private readonly ILogger _logger;
         private string _protocolScheme;
 
-        public Service(CurrentState stats, Func<string, HttpClient> clientFactory, ILoggerFactory logger)
+        public Service(ICurrentState stats, Func<string, HttpClient> clientFactory, ILoggerFactory logger)
         {
             _logger = logger?.CreateLogger<Service>();
             _stats = stats;
@@ -173,6 +173,11 @@ namespace CondenserDotNet.Server
             _waitUntilRequestsAreFinished.Wait(5000);
             _httpClient.Dispose();
             _waitUntilRequestsAreFinished.Dispose();
+        }
+
+        public CurrentState.Summary GetSummary()
+        {
+            return _stats.GetSummary();
         }
     }
 }

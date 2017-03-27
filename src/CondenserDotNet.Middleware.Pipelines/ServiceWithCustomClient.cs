@@ -131,5 +131,10 @@ namespace CondenserDotNet.Middleware.Pipelines
             _waitUntilRequestsAreFinished.Wait(5000);
             _waitUntilRequestsAreFinished.Dispose();
         }
+
+        public CurrentState.Summary GetSummary()
+        {
+           return _stats.GetSummary();
+        }
     }
 }

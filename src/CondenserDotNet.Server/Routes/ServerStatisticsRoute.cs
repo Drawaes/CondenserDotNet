@@ -50,7 +50,8 @@ namespace CondenserDotNet.Server.Routes
                             Calls = usage.Calls,
                             AverageRequestTime = averageRequestTime,
                             LastRequest = usage.LastRequest,
-                            LastRequestTime = usage.LastRequestTime
+                            LastRequestTime = usage.LastRequestTime, 
+                            Summary = service.GetSummary()
                         };
                     }
 
