@@ -12,6 +12,8 @@ namespace CondenserDotNet.Server
         public Dictionary<string, List<IService>> ServicesWithHealthChecks { get; } = new Dictionary<string, List<IService>>();
         public RadixTree<IService> Tree { get; }
 
+        public Dictionary<string, ICurrentState> Stats { get; } = new Dictionary<string, ICurrentState>();
+
         public static RoutingData BuildDefault()
         {
             Func<ChildContainer<IService>> factory = () =>

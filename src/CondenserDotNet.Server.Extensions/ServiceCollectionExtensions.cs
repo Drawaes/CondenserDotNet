@@ -47,14 +47,16 @@ namespace CondenserDotNet.Server
             self.AddSingleton<IDefaultRouting<IService>, DefaultRouting<IService>>();
 
             self.AddTransient<ChildContainer<IService>>();
-            self.AddTransient<ICurrentState, CurrentState>();
+            self.AddTransient<CurrentState>();
             self.AddSingleton<CustomRouter>();
             self.AddSingleton<RoutingHost>();
             self.AddSingleton<RadixTree<IService>>();
 
             self.AddTransient<Service>();
             self.AddSingleton<Func<IConsulService>>(x => x.GetService<Service>);
+            self.AddSingleton<Func<ICurrentState>>(x => x.GetService<CurrentState>);
             self.AddSingleton<Func<ChildContainer<IService>>>(x => x.GetService<ChildContainer<IService>>);
+
             return self;
         }
 

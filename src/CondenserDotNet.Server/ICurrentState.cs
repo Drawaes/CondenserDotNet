@@ -1,13 +1,11 @@
-﻿namespace CondenserDotNet.Server
+﻿using CondenserDotNet.Server.DataContracts;
+using System;
+
+namespace CondenserDotNet.Server
 {
-    public interface ICurrentState : ISummary
+    public interface ICurrentState
     {
         void RecordResponse(int responseCode);
-        
-    }
-
-    public interface ISummary
-    {
-        CurrentState.Summary GetSummary();
-    }
+        StatsSummary GetSummary();        
+    }   
 }

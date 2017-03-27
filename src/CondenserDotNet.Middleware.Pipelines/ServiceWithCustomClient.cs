@@ -10,6 +10,7 @@ using CondenserDotNet.Server;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
+using CondenserDotNet.Server.DataContracts;
 
 namespace CondenserDotNet.Middleware.Pipelines
 {
@@ -19,7 +20,7 @@ namespace CondenserDotNet.Middleware.Pipelines
         private string _address;
         private int _port;
         private byte[] _hostHeader;
-        private readonly CurrentState _stats;
+        private ICurrentState _stats;
         private IPEndPoint _ipEndPoint;
         private Version[] _supportedVersions;
         private string[] _tags;
@@ -104,8 +105,9 @@ namespace CondenserDotNet.Middleware.Pipelines
             Routes = routes;
         }
 
-        public async Task Initialise(string serviceId, string nodeId, string[] tags, string address, int port)
+        public async Task Initialise(string serviceId, string nodeId, string[] tags, string address, int port, ICurrentState stats)
         {
+            _stats = stats;
             _address = address;
             _port = port;
             _tags = tags;
@@ -132,9 +134,10 @@ namespace CondenserDotNet.Middleware.Pipelines
             _waitUntilRequestsAreFinished.Dispose();
         }
 
-        public CurrentState.Summary GetSummary()
+        public StatsSummary GetSummary()
         {
            return _stats.GetSummary();
         }
+        
     }
 }

@@ -54,13 +54,13 @@ namespace CondenserDotNet.Server.Routes
             await context.Response.WriteJsonAsync(response);
         }
 
-        private CurrentState.Summary GetAggregatedSummary()
+        private StatsSummary GetAggregatedSummary()
         {
-            var services = _data.ServicesWithHealthChecks
-                .SelectMany(s => s.Value)
+            var services = _data.Stats
+                .Select(s => s.Value)
                 .ToArray();
 
-            var summary = new CurrentState.Summary();
+            var summary = new StatsSummary();
 
             foreach(var service in services)
             {

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using CondenserDotNet.Core;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using CondenserDotNet.Server.DataContracts;
 
 namespace CondenserDotNet.Server
 {
@@ -16,7 +17,7 @@ namespace CondenserDotNet.Server
         private readonly System.Threading.CountdownEvent _waitUntilRequestsAreFinished = new System.Threading.CountdownEvent(1);
         private string _address;
         private int _port;
-        private readonly ICurrentState _stats;
+        private ICurrentState _stats;
         private readonly Func<string, HttpClient> _clientFactory;
         private IPEndPoint _ipEndPoint;
         private Version[] _supportedVersions;
@@ -30,10 +31,9 @@ namespace CondenserDotNet.Server
         private readonly ILogger _logger;
         private string _protocolScheme;
 
-        public Service(ICurrentState stats, Func<string, HttpClient> clientFactory, ILoggerFactory logger)
+        public Service(Func<string, HttpClient> clientFactory, ILoggerFactory logger)
         {
             _logger = logger?.CreateLogger<Service>();
-            _stats = stats;
             _clientFactory = clientFactory;
         }
 
@@ -140,8 +140,10 @@ namespace CondenserDotNet.Server
 
         public void UpdateRoutes(string[] routes) => Routes = routes;
 
-        public async Task Initialise(string serviceId, string nodeId, string[] tags, string address, int port)
+        public async Task Initialise(string serviceId, string nodeId, string[] tags, string address, int port,
+            ICurrentState stats)
         {
+            _stats = stats;
             _address = address;
             _port = port;
             _tags = tags;
@@ -175,7 +177,7 @@ namespace CondenserDotNet.Server
             _waitUntilRequestsAreFinished.Dispose();
         }
 
-        public CurrentState.Summary GetSummary()
+        public StatsSummary GetSummary()
         {
             return _stats.GetSummary();
         }

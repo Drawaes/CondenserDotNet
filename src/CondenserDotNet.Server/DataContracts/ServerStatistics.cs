@@ -11,6 +11,6 @@ namespace CondenserDotNet.Server.DataContracts
 
         public double LastRequestTime { get; set; }
         public DateTime LastRequest { get; set; }
-        public CurrentState.Summary Summary { get; internal set; }
+        public StatsSummary Summary { get; internal set; }
     }
 }

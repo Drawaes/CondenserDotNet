@@ -21,13 +21,16 @@ namespace CondenserDotNet.Server
         private readonly ILogger<RoutingHost> _logger;
         private readonly RoutingData _routingData;
         private readonly Func<IConsulService> _serviceFactory;
+        private readonly Func<ICurrentState> _statsFactory;
         private string _lastConsulIndex = string.Empty;
 
         public RoutingHost(CustomRouter router, CondenserConfiguration config, ILoggerFactory logger,
-            RoutingData routingData, IEnumerable<IService> customRoutes, Func<IConsulService> serviceFactory)
+            RoutingData routingData, IEnumerable<IService> customRoutes, Func<IConsulService> serviceFactory, 
+            Func<ICurrentState> statsFactory)
         {
             _routingData = routingData;
             _serviceFactory = serviceFactory;
+            _statsFactory = statsFactory;
             _logger = logger?.CreateLogger<RoutingHost>();
             _client.Timeout = TimeSpan.FromMinutes(6);
             _router = router;
@@ -100,7 +103,14 @@ namespace CondenserDotNet.Server
         private async Task CreateNewServiceInstance(KeyValuePair<string, List<IService>> service, ServiceInstance info)
         {
             var instance = _serviceFactory();
-            await instance.Initialise(info.ServiceID, info.Node, info.ServiceTags, info.ServiceAddress, info.ServicePort);
+
+            if (!_routingData.Stats.TryGetValue(info.ServiceID, out ICurrentState stats))
+            {
+                stats = _statsFactory();
+                _routingData.Stats.Add(info.ServiceID, stats);
+            }
+
+            await instance.Initialise(info.ServiceID, info.Node, info.ServiceTags, info.ServiceAddress, info.ServicePort, stats);
             _logger?.LogInformation("Adding a new service instance {serviceId} that is running the service {service} mapped to {routes}", instance.ServiceId, service.Key, instance.Routes);
             _router.AddNewService(instance);
             service.Value.Add(instance);
