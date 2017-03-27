@@ -55,6 +55,20 @@ namespace CondenserDotNet.Client.Services
             }
         }
 
+        public void SetServiceListCallback(string serviceName, Action<List<InformationServiceSet>> callback)
+        {
+            lock (_watchedServices)
+            {
+                if (!_watchedServices.TryGetValue(serviceName, out ServiceWatcher watcher))
+                {
+                    watcher = new ServiceWatcher(serviceName, _client
+                        , new RandomRoutingStrategy<InformationServiceSet>(), _logger);
+                    _watchedServices.Add(serviceName, watcher);
+                }
+                watcher.SetCallback(callback);
+            }
+        }
+
         public WatcherState GetServiceCurrentState(string serviceName)
         {
             lock (_watchedServices)
