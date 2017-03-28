@@ -109,6 +109,10 @@ namespace CondenserDotNet.Server
                 stats = _statsFactory();
                 _routingData.Stats.Add(info.ServiceID, stats);
             }
+            else
+            {
+                stats.ResetUptime();
+            }
 
             await instance.Initialise(info.ServiceID, info.Node, info.ServiceTags, info.ServiceAddress, info.ServicePort, stats);
             _logger?.LogInformation("Adding a new service instance {serviceId} that is running the service {service} mapped to {routes}", instance.ServiceId, service.Key, instance.Routes);

@@ -6,6 +6,7 @@ namespace CondenserDotNet.Server
     public interface ICurrentState
     {
         void RecordResponse(int responseCode);
-        StatsSummary GetSummary();        
+        StatsSummary GetSummary();
+        void ResetUptime();
     }   
 }

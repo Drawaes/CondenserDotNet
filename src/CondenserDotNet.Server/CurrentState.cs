@@ -9,7 +9,7 @@ namespace CondenserDotNet.Server
     public class CurrentState : ICurrentState
     {
         private readonly ILogger<CurrentState> _logger;
-        private readonly DateTime _startedTime;
+        private DateTime _startedTime;
 
         public CurrentState(ILoggerFactory logger)
         {
@@ -76,6 +76,11 @@ namespace CondenserDotNet.Server
                 }
             }
 
+        }
+
+        public void ResetUptime()
+        {
+            _startedTime = DateTime.UtcNow;
         }
     }
 }

@@ -25,10 +25,5 @@ namespace CondenserDotNet.Server
         {
             return default(StatsSummary);
         }
-
-        public CurrentState.Summary GetSummary()
-        {
-            return default(CurrentState.Summary);
-        }
     }
 }
