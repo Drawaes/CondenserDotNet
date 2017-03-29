@@ -38,6 +38,8 @@ namespace CondenserDotNet.Server
 
             self.AddSingleton<RoutingData>();
             self.AddSingleton<IService, HealthRouter>();
+            self.AddSingleton<IRouteStore, RouteStore>();
+            self.AddSingleton<IRouteSource, ConsulRouteSource>();
             self.AddSingleton<IService, RouteSummary>();
             self.AddSingleton<IService, TreeRouter>();
             self.AddSingleton<IService, ChangeRoutingStrategy>();

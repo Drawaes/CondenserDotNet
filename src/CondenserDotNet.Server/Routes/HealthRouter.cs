@@ -12,13 +12,13 @@ namespace CondenserDotNet.Server.Routes
     public sealed class HealthRouter : ServiceBase
     {
         private readonly IHealthConfig _config;
-        private readonly RoutingData _data;
+        private readonly IRouteStore _store;
 
-        public HealthRouter(IHealthConfig config, RoutingData data)
+        public HealthRouter(IHealthConfig config, IRouteStore store)
         {
             _config = config;
             Routes = new[] { _config.Route };
-            _data = data;
+            _store = store;
         }
 
         public override string[] Routes { get; }
@@ -56,13 +56,11 @@ namespace CondenserDotNet.Server.Routes
 
         private StatsSummary GetAggregatedSummary()
         {
-            var services = _data.Stats
-                .Select(s => s.Value)
-                .ToArray();
+            var statistics = _store.GetStats();
 
             var summary = new StatsSummary();
 
-            foreach(var service in services)
+            foreach(var service in statistics)
             {
                 var stats = service.GetSummary();
 

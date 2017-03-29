@@ -13,35 +13,19 @@ namespace CondenserDotNet.Server
 {
     public class RoutingHost
     {
-        private readonly string _healthCheckUri;
-        private readonly string _serviceLookupUri;
-        private readonly CancellationTokenSource _cancel = new CancellationTokenSource();
         private readonly CustomRouter _router;
-        private readonly HttpClient _client = new HttpClient();
         private readonly ILogger<RoutingHost> _logger;
-        private readonly RoutingData _routingData;
-        private readonly Func<IConsulService> _serviceFactory;
-        private readonly Func<ICurrentState> _statsFactory;
-        private string _lastConsulIndex = string.Empty;
+        private readonly IRouteStore _store;
+        private readonly IRouteSource _source;
 
-        public RoutingHost(CustomRouter router, CondenserConfiguration config, ILoggerFactory logger,
-            RoutingData routingData, IEnumerable<IService> customRoutes, Func<IConsulService> serviceFactory, 
-            Func<ICurrentState> statsFactory)
+        public RoutingHost(ILoggerFactory logger,
+            CustomRouter router, IRouteStore store, IRouteSource source)
         {
-            _routingData = routingData;
-            _serviceFactory = serviceFactory;
-            _statsFactory = statsFactory;
-            _logger = logger?.CreateLogger<RoutingHost>();
-            _client.Timeout = TimeSpan.FromMinutes(6);
             _router = router;
-            _healthCheckUri = $"http://{config.AgentAddress}:{config.AgentPort}{HttpUtils.HealthAnyUrl}?index=";
-            _serviceLookupUri = $"http://{config.AgentAddress}:{config.AgentPort}{HttpUtils.SingleServiceCatalogUrl}";
+            _logger = logger?.CreateLogger<RoutingHost>();
+            _store = store;
+            _source = source;
             var ignore = WatchLoop();
-
-            foreach (var customRoute in customRoutes)
-            {
-                _router.AddNewService(customRoute);
-            }
         }
 
         public CustomRouter Router => _router;
@@ -49,23 +33,18 @@ namespace CondenserDotNet.Server
 
         private async Task WatchLoop()
         {
-            while (!_cancel.IsCancellationRequested)
+            while (_source.CanRequestRoute())
             {
                 try
                 {
-                    _logger?.LogInformation("Looking for health changes with index {index}", _lastConsulIndex);
-                    var result = await _client.GetAsync(_healthCheckUri + _lastConsulIndex.ToString(), _cancel.Token);
-                    if (!result.IsSuccessStatusCode)
+                    var result = await _source.TryGetHealthChecks();
+                    if (!result.success)
                     {
-                        _logger?.LogWarning("Retrieved a response that was not success when getting the health status code was {code}", result.StatusCode);
                         await Task.Delay(TimeSpan.FromSeconds(1));
                         continue;
                     }
-                    _lastConsulIndex = result.GetConsulIndex();
-                    _logger?.LogInformation("Got new set of health information new index is {index}", _lastConsulIndex);
 
-                    var healthChecks = await result.Content.GetObject<HealthCheck[]>();
-                    await ProcessHealthChecks(healthChecks);
+                    await ProcessHealthChecks(result.checks);
                 }
                 catch (Exception ex)
                 {
@@ -80,9 +59,9 @@ namespace CondenserDotNet.Server
             _logger?.LogInformation("Total number of health checks returned was {healthCheckCount}", healthChecks.Length);
             List<InformationService> infoList = BuildListOfHealthyServiceInstances(healthChecks);
             RemoveDeadInstances(infoList);
-            foreach (var service in _routingData.ServicesWithHealthChecks)
+            foreach (var service in _store.GetServices())
             {
-                var infoService = await _client.GetAsync<ServiceInstance[]>(_serviceLookupUri + service.Key);
+                var infoService = await _source.GetServiceInstances(service.Key);
                 foreach (var info in infoService)
                 {
                     var instance = GetInstance(info, service.Value);
@@ -97,27 +76,15 @@ namespace CondenserDotNet.Server
                 }
             }
             _router.CleanUpRoutes();
-            OnRouteBuilt?.Invoke(_routingData.ServicesWithHealthChecks);
+            OnRouteBuilt?.Invoke(_store.GetServices());
         }
 
         private async Task CreateNewServiceInstance(KeyValuePair<string, List<IService>> service, ServiceInstance info)
         {
-            var instance = _serviceFactory();
-
-            if (!_routingData.Stats.TryGetValue(info.ServiceID, out ICurrentState stats))
-            {
-                stats = _statsFactory();
-                _routingData.Stats.Add(info.ServiceID, stats);
-            }
-            else
-            {
-                stats.ResetUptime();
-            }
-
-            await instance.Initialise(info.ServiceID, info.Node, info.ServiceTags, info.ServiceAddress, info.ServicePort, stats);
+            var instance = await _store.CreateServiceInstance(info);
+            service.Value.Add(instance);
             _logger?.LogInformation("Adding a new service instance {serviceId} that is running the service {service} mapped to {routes}", instance.ServiceId, service.Key, instance.Routes);
             _router.AddNewService(instance);
-            service.Value.Add(instance);
         }
 
         private void UpdateExistingRoutes(IService instance, ServiceInstance info)
@@ -153,7 +120,7 @@ namespace CondenserDotNet.Server
         private void RemoveDeadInstances(List<InformationService> infoList)
         {
             //All services that are removed
-            foreach (var service in _routingData.ServicesWithHealthChecks.ToArray())
+            foreach (var service in _store.GetServices().ToArray())
             {
                 foreach (var instance in service.Value.ToArray())
                 {
@@ -167,15 +134,15 @@ namespace CondenserDotNet.Server
                 }
                 if (service.Value.Count == 0)
                 {
-                    _routingData.ServicesWithHealthChecks.Remove(service.Key);
+                    _store.RemoveService(service.Key);
                 }
             }
             foreach (var i in infoList)
             {
-                if (!_routingData.ServicesWithHealthChecks.ContainsKey(i.Service))
+                if (!_store.HasService(i.Service))
                 {
                     _logger?.LogInformation("New service {serviceName} added because we have found instances of it", i.Service);
-                    _routingData.ServicesWithHealthChecks[i.Service] = new List<IService>();
+                    _store.AddService(i.Service);
                 }
             }
         }

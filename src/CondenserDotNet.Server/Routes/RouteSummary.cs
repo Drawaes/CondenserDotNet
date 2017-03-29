@@ -9,11 +9,11 @@ namespace CondenserDotNet.Server.Routes
 {
     public sealed class RouteSummary : ServiceBase
     {
-        private readonly RoutingData _routingData;
+        private readonly IRouteStore _routeStore;
 
-        public RouteSummary(RoutingData routingData)
+        public RouteSummary(IRouteStore routeStore)
         {
-            _routingData = routingData;
+            _routeStore = routeStore;
             Routes = new[] { CondenserRoutes.Summary };
         }
 
@@ -25,7 +25,7 @@ namespace CondenserDotNet.Server.Routes
         {
             context.Response.StatusCode = (int)HttpStatusCode.OK;
 
-            object response = _routingData.ServicesWithHealthChecks
+            object response = _routeStore.GetServices()
                 .Select(s => new
                 {
                     Service = s.Key,

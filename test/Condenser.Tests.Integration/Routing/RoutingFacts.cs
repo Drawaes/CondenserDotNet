@@ -69,7 +69,7 @@ namespace Condenser.Tests.Integration.Routing
                     null));
             };
             var data = new RoutingData(new RadixTree<IService>(createNode));
-            return new CustomRouter(null, data);
+            return new CustomRouter(null, data, new IService[0]);
         }
 
     }
