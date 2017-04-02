@@ -30,11 +30,12 @@ namespace CondenserDotNet.Middleware.Pipelines
         private long _totalRequestTime;
         private readonly ConcurrentQueue<IPipeConnection> _pooledConnections = new ConcurrentQueue<IPipeConnection>();
         private readonly PipeFactory _factory;
+        private readonly RoutingData _routingData;
 
-        public ServiceWithCustomClient(CurrentState stats, ILoggerFactory loggingFactory, PipeFactory factory)
+        public ServiceWithCustomClient(ILoggerFactory loggingFactory, PipeFactory factory, RoutingData routingData)
         {
+            _routingData = routingData;
             _logger = loggingFactory?.CreateLogger<ServiceWithCustomClient>();
-            _stats = stats;
             _pooledConnections = new ConcurrentQueue<IPipeConnection>();
             _factory = factory;
         }
@@ -105,9 +106,10 @@ namespace CondenserDotNet.Middleware.Pipelines
             Routes = routes;
         }
 
-        public async Task Initialise(string serviceId, string nodeId, string[] tags, string address, int port, ICurrentState stats)
+        public async Task Initialise(string serviceId, string nodeId, string[] tags, string address, int port)
         {
-            _stats = stats;
+            _stats = _routingData.GetStats(serviceId);
+            _stats.ResetUptime();
             _address = address;
             _port = port;
             _tags = tags;

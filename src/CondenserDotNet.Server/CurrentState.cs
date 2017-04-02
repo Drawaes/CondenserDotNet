@@ -8,12 +8,10 @@ namespace CondenserDotNet.Server
 {
     public class CurrentState : ICurrentState
     {
-        private readonly ILogger<CurrentState> _logger;
         private DateTime _startedTime;
 
-        public CurrentState(ILoggerFactory logger)
+        public CurrentState()
         {
-            _logger = logger?.CreateLogger<CurrentState>();
             _startedTime = DateTime.UtcNow;
         }
 
@@ -33,7 +31,6 @@ namespace CondenserDotNet.Server
                 stats.HttpUnknownResponse = HttpUnknownResponse;
                 stats.UpTime = UpTime;
             }
-
             return stats;
         }
 
@@ -52,22 +49,21 @@ namespace CondenserDotNet.Server
             lock (_lock)
             {
                 responseCode = responseCode / 100;
-                responseCode = responseCode * 100;
                 switch (responseCode)
                 {
-                    case 500:
+                    case 5:
                         Http500Responses++;
                         break;
-                    case 400:
+                    case 4:
                         Http400Responses++;
                         break;
-                    case 300:
+                    case 3:
                         Http300Responses++;
                         break;
-                    case 200:
+                    case 2:
                         Http200Responses++;
                         break;
-                    case 100:
+                    case 1:
                         Http100Responses++;
                         break;
                     default:
