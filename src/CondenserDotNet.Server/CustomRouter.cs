@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 
 namespace CondenserDotNet.Server
 {
@@ -8,10 +9,15 @@ namespace CondenserDotNet.Server
         private readonly RoutingData _routingData;
         private readonly ILogger<CustomRouter> _log;
 
-        public CustomRouter(ILoggerFactory factory, RoutingData routingData)
+        public CustomRouter(ILoggerFactory factory, RoutingData routingData, IEnumerable<IService> customRoutes)
         {
             _routingData = routingData;
             _log = factory?.CreateLogger<CustomRouter>();
+            
+            foreach (var customRoute in customRoutes)
+            {
+                AddNewService(customRoute);
+            }
         }
 
         public IService GetServiceFromRoute(PathString path, out string matchedPath)

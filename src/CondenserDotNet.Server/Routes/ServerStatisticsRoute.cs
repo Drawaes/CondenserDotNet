@@ -5,16 +5,17 @@ using System.Threading.Tasks;
 using CondenserDotNet.Server.DataContracts;
 using CondenserDotNet.Server.Extensions;
 using Microsoft.AspNetCore.Http;
+using System.Linq;
 
 namespace CondenserDotNet.Server.Routes
 {
     public class ServerStatsRoute : ServiceBase
     {
-        private readonly RoutingData _routingData;
+        private readonly IRouteStore _store;
 
-        public ServerStatsRoute(RoutingData routingData)
+        public ServerStatsRoute(IRouteStore store)
         {
-            _routingData = routingData;
+            _store = store;
         }
 
         public override string[] Routes { get; } = { CondenserRoutes.Statistics };
@@ -27,7 +28,8 @@ namespace CondenserDotNet.Server.Routes
             if (index > 0)
             {
                 var serviceName = context.Request.Path.Value.Substring(index + 1);
-                if (_routingData.ServicesWithHealthChecks.TryGetValue(serviceName, out List<IService> services))
+                var services = _store.GetServiceInstances(serviceName);
+                if (services.Any())
                 {
                     var response = new ServerStats[services.Count];
 
@@ -50,7 +52,8 @@ namespace CondenserDotNet.Server.Routes
                             Calls = usage.Calls,
                             AverageRequestTime = averageRequestTime,
                             LastRequest = usage.LastRequest,
-                            LastRequestTime = usage.LastRequestTime
+                            LastRequestTime = usage.LastRequestTime, 
+                            Summary = service.GetSummary()
                         };
                     }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
+using CondenserDotNet.Server.DataContracts;
 using Microsoft.AspNetCore.Http;
 
 namespace CondenserDotNet.Server
@@ -18,6 +19,11 @@ namespace CondenserDotNet.Server
 
         public virtual void UpdateRoutes(string[] routes)
         {
+        }       
+
+        public StatsSummary GetSummary()
+        {
+            return default(StatsSummary);
         }
     }
 }

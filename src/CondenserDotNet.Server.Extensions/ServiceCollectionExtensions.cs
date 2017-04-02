@@ -5,6 +5,7 @@ using CondenserDotNet.Server.Builder;
 using CondenserDotNet.Server.Routes;
 using CondenserDotNet.Server.RoutingTrie;
 using Microsoft.Extensions.DependencyInjection;
+using CondenserDotNet.Server;
 
 namespace CondenserDotNet.Server
 {
@@ -36,7 +37,10 @@ namespace CondenserDotNet.Server
             self.AddSingleton<Func<string, HttpClient>>(httpClientConfig.Create);
 
             self.AddSingleton<RoutingData>();
+            self.AddSingleton<IService, HealthStatsRouter>();
             self.AddSingleton<IService, HealthRouter>();
+            self.AddSingleton<IRouteStore, RouteStore>();
+            self.AddSingleton<IRouteSource, ConsulRouteSource>();
             self.AddSingleton<IService, RouteSummary>();
             self.AddSingleton<IService, TreeRouter>();
             self.AddSingleton<IService, ChangeRoutingStrategy>();
@@ -46,14 +50,16 @@ namespace CondenserDotNet.Server
             self.AddSingleton<IDefaultRouting<IService>, DefaultRouting<IService>>();
 
             self.AddTransient<ChildContainer<IService>>();
-            self.AddSingleton<CurrentState>();
+            self.AddTransient<CurrentState>();
             self.AddSingleton<CustomRouter>();
             self.AddSingleton<RoutingHost>();
             self.AddSingleton<RadixTree<IService>>();
 
             self.AddTransient<Service>();
             self.AddSingleton<Func<IConsulService>>(x => x.GetService<Service>);
+            self.AddSingleton<Func<ICurrentState>>(x => x.GetService<CurrentState>);
             self.AddSingleton<Func<ChildContainer<IService>>>(x => x.GetService<ChildContainer<IService>>);
+
             return self;
         }
 

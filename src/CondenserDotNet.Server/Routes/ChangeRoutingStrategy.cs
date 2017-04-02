@@ -15,13 +15,13 @@ namespace CondenserDotNet.Server.Routes
     {
         private readonly IDefaultRouting<IService> _defaultRouting;
         private readonly IServiceProvider _provider;
-        private readonly RoutingData _routingData;
+        private readonly IRouteStore _store;
 
-        public ChangeRoutingStrategy(RoutingData routingData,
+        public ChangeRoutingStrategy(IRouteStore store,
             IServiceProvider provider,
             IDefaultRouting<IService> defaultRouting)
         {
-            _routingData = routingData;
+            _store = store;
             _provider = provider;
             _defaultRouting = defaultRouting;
         }
@@ -50,7 +50,7 @@ namespace CondenserDotNet.Server.Routes
                 if (router != null)
                 {
                     _defaultRouting.SetDefault(router);
-                    ReplaceStrategy(_routingData.Tree.TopNode, router);
+                    ReplaceStrategy(_store.GetTree().TopNode, router);
                     await context.Response.WriteAsync("Routing strategy has been replaced");
                 }
             }

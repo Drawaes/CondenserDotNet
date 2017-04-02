@@ -23,7 +23,8 @@ namespace Condenser.Tests.Integration.Routing
             };
 
             var router = BuildRouter();
-            var service = new Service(null, null, null);
+            var routingData = new RoutingData(null);
+            var service = new Service(null, null, routingData);
             await service.Initialise("service1", "node1", new[] { UrlPrefix + "/search" }, "www.google.com", 80);
             router.AddNewService(service);
 
@@ -47,7 +48,8 @@ namespace Condenser.Tests.Integration.Routing
             };
 
             var router = BuildRouter();
-            var service = new Service(null, null, null);
+            var routerData = new RoutingData(null);
+            var service = new Service(null, null, routerData);
             await service.Initialise("service1", "node1", new[] { UrlPrefix + "/search", "protocolScheme-https" }, "www.google.com", 443);
             router.AddNewService(service);
 
@@ -69,7 +71,7 @@ namespace Condenser.Tests.Integration.Routing
                     null));
             };
             var data = new RoutingData(new RadixTree<IService>(createNode));
-            return new CustomRouter(null, data);
+            return new CustomRouter(null, data, new IService[0]);
         }
 
     }

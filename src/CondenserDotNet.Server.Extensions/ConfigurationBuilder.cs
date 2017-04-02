@@ -24,7 +24,7 @@ namespace CondenserDotNet.Server
         }
 
         public List<Func<Task<HealthCheck>>> Checks { get; } = new List<Func<Task<HealthCheck>>>();
-        public string Route { get; private set; } = CondenserRoutes.Health;
+        public string Route { get; private set; } = CondenserRoutes.HealthStats;
         public string DefaultRouteStrategy { get; private set; } = RouteStrategy.Random.ToString();
 
         public IConfigurationBuilder WithAgentAddress(string agentAdress)

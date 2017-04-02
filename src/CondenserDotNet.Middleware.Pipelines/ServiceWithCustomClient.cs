@@ -10,6 +10,7 @@ using CondenserDotNet.Server;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
+using CondenserDotNet.Server.DataContracts;
 
 namespace CondenserDotNet.Middleware.Pipelines
 {
@@ -19,7 +20,7 @@ namespace CondenserDotNet.Middleware.Pipelines
         private string _address;
         private int _port;
         private byte[] _hostHeader;
-        private readonly CurrentState _stats;
+        private ICurrentState _stats;
         private IPEndPoint _ipEndPoint;
         private Version[] _supportedVersions;
         private string[] _tags;
@@ -29,11 +30,12 @@ namespace CondenserDotNet.Middleware.Pipelines
         private long _totalRequestTime;
         private readonly ConcurrentQueue<IPipeConnection> _pooledConnections = new ConcurrentQueue<IPipeConnection>();
         private readonly PipeFactory _factory;
+        private readonly RoutingData _routingData;
 
-        public ServiceWithCustomClient(CurrentState stats, ILoggerFactory loggingFactory, PipeFactory factory)
+        public ServiceWithCustomClient(ILoggerFactory loggingFactory, PipeFactory factory, RoutingData routingData)
         {
+            _routingData = routingData;
             _logger = loggingFactory?.CreateLogger<ServiceWithCustomClient>();
-            _stats = stats;
             _pooledConnections = new ConcurrentQueue<IPipeConnection>();
             _factory = factory;
         }
@@ -106,6 +108,8 @@ namespace CondenserDotNet.Middleware.Pipelines
 
         public async Task Initialise(string serviceId, string nodeId, string[] tags, string address, int port)
         {
+            _stats = _routingData.GetStats(serviceId);
+            _stats.ResetUptime();
             _address = address;
             _port = port;
             _tags = tags;
@@ -131,5 +135,11 @@ namespace CondenserDotNet.Middleware.Pipelines
             _waitUntilRequestsAreFinished.Wait(5000);
             _waitUntilRequestsAreFinished.Dispose();
         }
+
+        public StatsSummary GetSummary()
+        {
+           return _stats.GetSummary();
+        }
+        
     }
 }

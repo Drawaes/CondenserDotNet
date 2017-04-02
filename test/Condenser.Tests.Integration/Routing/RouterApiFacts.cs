@@ -29,6 +29,10 @@ namespace Condenser.Tests.Integration.Routing
                 var routerResponse = await fixture.CallRouterAsync("/admin/condenser/health");
 
                 Assert.Equal(HttpStatusCode.OK, routerResponse.StatusCode);
+
+                routerResponse = await fixture.CallRouterAsync("/admin/condenser/healthstats");
+
+                Assert.Equal(HttpStatusCode.OK, routerResponse.StatusCode);
                 var content = await routerResponse.Content.ReadAsStringAsync();
 
                 var health = JsonConvert.DeserializeObject<HealthResponse>(content);

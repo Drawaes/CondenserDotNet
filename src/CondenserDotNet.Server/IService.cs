@@ -2,10 +2,11 @@
 using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
+using CondenserDotNet.Server.DataContracts;
 
 namespace CondenserDotNet.Server
 {
-    public interface IService
+    public interface IService 
     {
         Version[] SupportedVersions { get; }
         string[] Tags { get; }
@@ -16,5 +17,7 @@ namespace CondenserDotNet.Server
         IPEndPoint IpEndPoint { get; }
         bool RequiresAuthentication { get; }
         void UpdateRoutes(string[] routes);
+
+        StatsSummary GetSummary();
     }
 }

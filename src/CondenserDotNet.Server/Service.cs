@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using CondenserDotNet.Core;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
+using CondenserDotNet.Server.DataContracts;
 
 namespace CondenserDotNet.Server
 {
@@ -16,7 +17,7 @@ namespace CondenserDotNet.Server
         private readonly System.Threading.CountdownEvent _waitUntilRequestsAreFinished = new System.Threading.CountdownEvent(1);
         private string _address;
         private int _port;
-        private readonly CurrentState _stats;
+        private ICurrentState _stats;
         private readonly Func<string, HttpClient> _clientFactory;
         private IPEndPoint _ipEndPoint;
         private Version[] _supportedVersions;
@@ -29,12 +30,13 @@ namespace CondenserDotNet.Server
         private string _hostString;
         private readonly ILogger _logger;
         private string _protocolScheme;
+        private RoutingData _routingData;
 
-        public Service(CurrentState stats, Func<string, HttpClient> clientFactory, ILoggerFactory logger)
+        public Service(Func<string, HttpClient> clientFactory, ILoggerFactory logger, RoutingData routingData)
         {
             _logger = logger?.CreateLogger<Service>();
-            _stats = stats;
             _clientFactory = clientFactory;
+            _routingData = routingData;
         }
 
         public Version[] SupportedVersions => _supportedVersions;
@@ -142,6 +144,7 @@ namespace CondenserDotNet.Server
 
         public async Task Initialise(string serviceId, string nodeId, string[] tags, string address, int port)
         {
+            _stats = _routingData.GetStats(serviceId);
             _address = address;
             _port = port;
             _tags = tags;
@@ -173,6 +176,11 @@ namespace CondenserDotNet.Server
             _waitUntilRequestsAreFinished.Wait(5000);
             _httpClient.Dispose();
             _waitUntilRequestsAreFinished.Dispose();
+        }
+
+        public StatsSummary GetSummary()
+        {
+            return _stats.GetSummary();
         }
     }
 }
