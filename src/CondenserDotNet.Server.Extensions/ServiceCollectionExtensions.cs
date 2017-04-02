@@ -37,6 +37,7 @@ namespace CondenserDotNet.Server
             self.AddSingleton<Func<string, HttpClient>>(httpClientConfig.Create);
 
             self.AddSingleton<RoutingData>();
+            self.AddSingleton<IService, HealthStatsRouter>();
             self.AddSingleton<IService, HealthRouter>();
             self.AddSingleton<IRouteStore, RouteStore>();
             self.AddSingleton<IRouteSource, ConsulRouteSource>();
