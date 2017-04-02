@@ -1,0 +1,10 @@
+﻿<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Changed Health API to be a simple health end point only return OK.  
+* Added health stats API to get more detailed health checks for router
+* Added health stats API per service 
+* Start building routes when routing service is started not on first request
+    </PackageReleaseNotes>
+  </PropertyGroup>
+</Project>
