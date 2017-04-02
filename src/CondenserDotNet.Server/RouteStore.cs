@@ -52,28 +52,17 @@ namespace CondenserDotNet.Server
             _routingData.ServicesWithHealthChecks[serviceName] = new List<IService>();
         }
 
-        public async Task<IService> CreateServiceInstance(ServiceInstance info)
+        public Task<IService> CreateServiceInstance(ServiceInstance info)
         {
             var instance = _serviceFactory();
-
-            if (!_routingData.Stats.TryGetValue(info.ServiceID, out ICurrentState stats))
-            {
-                stats = _statsFactory();
-                _routingData.Stats.Add(info.ServiceID, stats);
-            }
-            else
-            {
-                stats.ResetUptime();
-            }
-
-            await instance.Initialise(info.ServiceID, info.Node, info.ServiceTags, info.ServiceAddress, info.ServicePort, stats);
-
-            return instance;
+            
+            return instance.Initialise(info.ServiceID, info.Node, info.ServiceTags, info.ServiceAddress, info.ServicePort)
+                .ContinueWith(t => (IService)instance);
         }
 
         public ICurrentState[] GetStats()
         {
-           return _routingData.Stats.Values.ToArray();
+           return _routingData.GetAllStats();
         }
 
         public RadixTree<IService> GetTree()

@@ -23,8 +23,9 @@ namespace Condenser.Tests.Integration.Routing
             };
 
             var router = BuildRouter();
-            var service = new Service(null, null);
-            await service.Initialise("service1", "node1", new[] { UrlPrefix + "/search" }, "www.google.com", 80, null);
+            var routingData = new RoutingData(null);
+            var service = new Service(null, null, routingData);
+            await service.Initialise("service1", "node1", new[] { UrlPrefix + "/search" }, "www.google.com", 80);
             router.AddNewService(service);
 
             var context = new DefaultHttpContext();
@@ -47,8 +48,9 @@ namespace Condenser.Tests.Integration.Routing
             };
 
             var router = BuildRouter();
-            var service = new Service(null, null);
-            await service.Initialise("service1", "node1", new[] { UrlPrefix + "/search", "protocolScheme-https" }, "www.google.com", 443, null);
+            var routerData = new RoutingData(null);
+            var service = new Service(null, null, routerData);
+            await service.Initialise("service1", "node1", new[] { UrlPrefix + "/search", "protocolScheme-https" }, "www.google.com", 443);
             router.AddNewService(service);
 
             var context = new DefaultHttpContext();

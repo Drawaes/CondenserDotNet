@@ -12,10 +12,11 @@ namespace CondenserTests
         {
             var tree = CreateDefault();
 
-            var service = new Service(null, null);
-            service.Initialise("Service1Test", "node1", new string[0], "Adress1Test", 10000, null).Wait();
-            var service2 = new Service(null, null);
-            service2.Initialise("Service1Test", "node1", new string[0], "Address2Test", 10000, null).Wait();
+            var routingData = new RoutingData(null);
+            var service = new Service(null, null, routingData);
+            service.Initialise("Service1Test", "node1", new string[0], "Adress1Test", 10000).Wait();
+            var service2 = new Service(null, null, routingData);
+            service2.Initialise("Service1Test", "node1", new string[0], "Address2Test", 10000).Wait();
             tree.AddServiceToRoute("/test1/test2/test3/test4/test5", service);
             tree.AddServiceToRoute("/test1/test2/test3/test4/test5/test6", service);
 
@@ -44,10 +45,11 @@ namespace CondenserTests
         {
             var tree = CreateDefault();
 
-            var service = new Service(null, null);
-            service.Initialise("Service1Test", "node1", new string[0], "Address1Test", 10000, null).Wait();
-            var service2 = new Service(null, null);
-            service2.Initialise("Service1Test", "node1", new string[0], "Address2Test", 10000, null).Wait();
+            var routingData = new RoutingData(null);
+            var service = new Service(null, null, routingData);
+            service.Initialise("Service1Test", "node1", new string[0], "Address1Test", 10000).Wait();
+            var service2 = new Service(null, null, routingData);
+            service2.Initialise("Service1Test", "node1", new string[0], "Address2Test", 10000).Wait();
 
             tree.AddServiceToRoute("/test1/test2/test3/test4/test5", service);
             tree.AddServiceToRoute("/test1/test2/test3/test4/test5/test6", service2);
@@ -72,10 +74,11 @@ namespace CondenserTests
         {
             var tree = CreateDefault();
 
-            var service = new Service(null, null);
-            service.Initialise("Service1Test", "node1", new string[0], "Address1Test", 10000, null).Wait();
-            var service2 = new Service(null, null);
-            service2.Initialise("Service1Test", "node1", new string[0], "Address2Test", 10000, null).Wait();
+            var routingData = new RoutingData(null);
+            var service = new Service(null, null, routingData);
+            service.Initialise("Service1Test", "node1", new string[0], "Address1Test", 10000).Wait();
+            var service2 = new Service(null, null, routingData);
+            service2.Initialise("Service1Test", "node1", new string[0], "Address2Test", 10000).Wait();
 
             tree.AddServiceToRoute("/test1/test2/test3/test4/test5", service);
             tree.AddServiceToRoute("/test1/test2/test3/test4/test5/test6", service2);

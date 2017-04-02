@@ -30,11 +30,13 @@ namespace CondenserDotNet.Server
         private string _hostString;
         private readonly ILogger _logger;
         private string _protocolScheme;
+        private RoutingData _routingData;
 
-        public Service(Func<string, HttpClient> clientFactory, ILoggerFactory logger)
+        public Service(Func<string, HttpClient> clientFactory, ILoggerFactory logger, RoutingData routingData)
         {
             _logger = logger?.CreateLogger<Service>();
             _clientFactory = clientFactory;
+            _routingData = routingData;
         }
 
         public Version[] SupportedVersions => _supportedVersions;
@@ -140,10 +142,9 @@ namespace CondenserDotNet.Server
 
         public void UpdateRoutes(string[] routes) => Routes = routes;
 
-        public async Task Initialise(string serviceId, string nodeId, string[] tags, string address, int port,
-            ICurrentState stats)
+        public async Task Initialise(string serviceId, string nodeId, string[] tags, string address, int port)
         {
-            _stats = stats;
+            _stats = _routingData.GetStats(serviceId);
             _address = address;
             _port = port;
             _tags = tags;
