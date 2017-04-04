@@ -34,7 +34,7 @@ namespace CondenserDotNet.Server
             return !_cancel.IsCancellationRequested;
         }
 
-        public async Task<(bool success, HealthCheck[] checks)> TryGetHealthChecks()
+        public async Task<(bool success, HealthCheck[] checks)> TryGetHealthChecksAsync()
         {
             _logger?.LogInformation("Looking for health changes with index {index}", _lastConsulIndex);
             var result = await _client.GetAsync(_healthCheckUri + _lastConsulIndex.ToString(), _cancel.Token);
@@ -50,7 +50,7 @@ namespace CondenserDotNet.Server
             return (true, checks);
         }
 
-        public Task<ServiceInstance[]> GetServiceInstances(string serviceName)
+        public Task<ServiceInstance[]> GetServiceInstancesAsync(string serviceName)
         {
             return _client.GetAsync<ServiceInstance[]>(_serviceLookupUri + serviceName);
         }

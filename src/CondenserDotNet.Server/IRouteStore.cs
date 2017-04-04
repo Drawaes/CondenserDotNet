@@ -8,7 +8,7 @@ namespace CondenserDotNet.Server
     public interface IRouteStore
     {
         void AddService(string serviceName);
-        Task<IService> CreateServiceInstance(ServiceInstance info);
+        Task<IService> CreateServiceInstanceAsync(ServiceInstance info);
         Dictionary<string, List<IService>> GetServices();
         bool HasService(string serviceName);
         void RemoveService(string serviceName);

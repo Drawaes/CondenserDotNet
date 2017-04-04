@@ -1,4 +1,5 @@
-﻿using CondenserDotNet.Core.Routing;
+﻿using System;
+using CondenserDotNet.Core.Routing;
 using CondenserDotNet.Server;
 using CondenserDotNet.Server.RoutingTrie;
 using Xunit;
@@ -109,5 +110,7 @@ namespace CondenserTests
     public class FakeRouteConfig : IRoutingConfig
     {
         public string DefaultRouteStrategy { get; } = RouteStrategy.Random.ToString();
+
+        public Action<string[]> OnRoutesBuilt => null;
     }
 }

@@ -52,7 +52,7 @@ namespace CondenserDotNet.Server
             _routingData.ServicesWithHealthChecks[serviceName] = new List<IService>();
         }
 
-        public Task<IService> CreateServiceInstance(ServiceInstance info)
+        public Task<IService> CreateServiceInstanceAsync(ServiceInstance info)
         {
             var instance = _serviceFactory();
             
