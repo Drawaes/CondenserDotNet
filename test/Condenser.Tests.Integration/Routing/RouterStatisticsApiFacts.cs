@@ -11,6 +11,7 @@ using static Condenser.Tests.Integration.Routing.RouterSumaryApiFacts;
 
 namespace Condenser.Tests.Integration.Routing
 {
+    [Collection("RoutingTests")]
     public class RouterStatisticsApiFacts
     {
         [Fact(Skip ="Broken")]

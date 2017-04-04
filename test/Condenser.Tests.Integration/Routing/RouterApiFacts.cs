@@ -6,6 +6,8 @@ using Xunit;
 
 namespace Condenser.Tests.Integration.Routing
 {
+
+    [Collection("RoutingTests")]
     public class RouterApiFacts
     {
         [Fact]
