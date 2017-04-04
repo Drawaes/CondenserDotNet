@@ -76,18 +76,6 @@ namespace Condenser.Tests.Integration.Routing
                 {
                     RegisterService(name, hostPort, route);
 
-                    app.Use(async (context, next) =>
-                    {
-                        try
-                        {
-                            await next();
-                        }
-                        catch(Exception ex)
-                        {
-                           throw;
-                        }
-                    });
-
                     app.Run(async message =>
                     {
                         HttpStatusCode status;
