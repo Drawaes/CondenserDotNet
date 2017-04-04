@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -33,7 +34,7 @@ namespace Condenser.Tests.Integration.Routing
                 Assert.Equal(HttpStatusCode.OK, routerResponse.StatusCode);
                 var content = await routerResponse.Content.ReadAsStringAsync();
 
-                var items = JsonConvert.DeserializeObject<Summary[]>(content);
+                var items = JsonConvert.DeserializeObject<List<Summary>>(content);
 
                 var registration = items.SingleOrDefault(x => x.Service == serviceName1);
 
