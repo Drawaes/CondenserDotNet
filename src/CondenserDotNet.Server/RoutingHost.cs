@@ -8,6 +8,7 @@ using CondenserDotNet.Core;
 using CondenserDotNet.Core.DataContracts;
 using CondenserDotNet.Server.DataContracts;
 using Microsoft.Extensions.Logging;
+using CondenserDotNet.Core.Routing;
 
 namespace CondenserDotNet.Server
 {
@@ -17,19 +18,22 @@ namespace CondenserDotNet.Server
         private readonly ILogger<RoutingHost> _logger;
         private readonly IRouteStore _store;
         private readonly IRouteSource _source;
+        private readonly IRoutingConfig _config;
 
         public RoutingHost(ILoggerFactory logger,
-            CustomRouter router, IRouteStore store, IRouteSource source)
+            CustomRouter router, IRouteStore store, IRouteSource source,
+            IRoutingConfig config)
         {
             _router = router;
             _logger = logger?.CreateLogger<RoutingHost>();
             _store = store;
             _source = source;
+            _config = config;
+
             var ignore = WatchLoop();
         }
 
         public CustomRouter Router => _router;
-        public Action<Dictionary<string, List<IService>>> OnRouteBuilt { get; set; }
 
         private async Task WatchLoop()
         {
@@ -37,14 +41,14 @@ namespace CondenserDotNet.Server
             {
                 try
                 {
-                    var result = await _source.TryGetHealthChecks();
+                    var result = await _source.TryGetHealthChecksAsync();
                     if (!result.success)
                     {
                         await Task.Delay(TimeSpan.FromSeconds(1));
                         continue;
                     }
 
-                    await ProcessHealthChecks(result.checks);
+                    await ProcessHealthChecksAsync(result.checks);
                 }
                 catch (Exception ex)
                 {
@@ -54,20 +58,21 @@ namespace CondenserDotNet.Server
             }
         }
 
-        private async Task ProcessHealthChecks(HealthCheck[] healthChecks)
+        private async Task ProcessHealthChecksAsync(HealthCheck[] healthChecks)
         {
             _logger?.LogInformation("Total number of health checks returned was {healthCheckCount}", healthChecks.Length);
             List<InformationService> infoList = BuildListOfHealthyServiceInstances(healthChecks);
             RemoveDeadInstances(infoList);
-            foreach (var service in _store.GetServices())
+            var services = _store.GetServices();
+            foreach (var service in services)
             {
-                var infoService = await _source.GetServiceInstances(service.Key);
+                var infoService = await _source.GetServiceInstancesAsync(service.Key);
                 foreach (var info in infoService)
                 {
                     var instance = GetInstance(info, service.Value);
                     if (instance == null)
                     {
-                        await CreateNewServiceInstance(service, info);
+                        await CreateNewServiceInstanceAsync(service, info);
                     }
                     else
                     {
@@ -76,12 +81,12 @@ namespace CondenserDotNet.Server
                 }
             }
             _router.CleanUpRoutes();
-            OnRouteBuilt?.Invoke(_store.GetServices());
+            _config.OnRoutesBuilt?.Invoke(services.Keys.ToArray());
         }
 
-        private async Task CreateNewServiceInstance(KeyValuePair<string, List<IService>> service, ServiceInstance info)
+        private async Task CreateNewServiceInstanceAsync(KeyValuePair<string, List<IService>> service, ServiceInstance info)
         {
-            var instance = await _store.CreateServiceInstance(info);
+            var instance = await _store.CreateServiceInstanceAsync(info);
             service.Value.Add(instance);
             _logger?.LogInformation("Adding a new service instance {serviceId} that is running the service {service} mapped to {routes}", instance.ServiceId, service.Key, instance.Routes);
             _router.AddNewService(instance);

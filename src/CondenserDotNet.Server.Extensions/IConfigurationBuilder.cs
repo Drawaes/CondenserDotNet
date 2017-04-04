@@ -16,6 +16,8 @@ namespace CondenserDotNet.Server
         IConfigurationBuilder WithHealthCheck(Func<HealthCheck> check);
         IConfigurationBuilder WithRoutingStrategy(RouteStrategy name);
         IConfigurationBuilder WithHttpClient(Func<string, HttpClient> clientFactory);
+
+        IConfigurationBuilder WithRoutesBuiltCallback(Action<string[]> onRoutesBuilt);
         IServiceCollection Build();
     }
 }

@@ -6,7 +6,7 @@ namespace CondenserDotNet.Server
     public interface IRouteSource
     {
         bool CanRequestRoute();
-        Task<ServiceInstance[]> GetServiceInstances(string serviceName);
-        Task<(bool success, HealthCheck[] checks)> TryGetHealthChecks();
+        Task<ServiceInstance[]> GetServiceInstancesAsync(string serviceName);
+        Task<(bool success, HealthCheck[] checks)> TryGetHealthChecksAsync();
     }
 }

@@ -21,7 +21,7 @@ namespace Condenser.Tests.Integration.Routing
     {
         private Dictionary<string, ServiceInstance> _hosts = new Dictionary<string, ServiceInstance>();
         private const string HealthRoute = "/health";
-        private volatile Dictionary<string, List<IService>> _currentRegistrations;
+        private volatile string[] _currentRegistrations;
         private int routerPort;
         private AsyncManualResetEvent<bool> _wait = new AsyncManualResetEvent<bool>();
         private RoutingHost _host;
@@ -142,12 +142,14 @@ namespace Condenser.Tests.Integration.Routing
                 .UseUrls($"http://*:{routerPort}")
                 .ConfigureServices(x =>
                 {
-                    x.AddCondenser();
+                    x.AddCondenserWithBuilder()
+                    .WithRoutesBuiltCallback(SignalWhenAllRegistered)                    
+                    .Build();
+                    
                 })
                 .Configure(app =>
                 {
                     _host = app.ApplicationServices.GetService<RoutingHost>();
-                    _host.OnRouteBuilt = SignalWhenAllRegistered;
 
 
                     app.UseCondenser();
@@ -162,9 +164,9 @@ namespace Condenser.Tests.Integration.Routing
             return Task.WhenAny(new[] { _wait.WaitAsync(), Task.Delay(30 * 1000) });
         }
 
-        private bool AllRegistered(Dictionary<string, List<IService>> data)
+        private bool AllRegistered(string[] data)
         {
-            return _hosts.All(h => data.Keys.Contains(h.Key, StringComparer.OrdinalIgnoreCase));
+            return _hosts.All(h => data.Contains(h.Key, StringComparer.OrdinalIgnoreCase));
         }
 
         public bool AreAllRegistered()
@@ -175,14 +177,14 @@ namespace Condenser.Tests.Integration.Routing
             return AllRegistered(_currentRegistrations);
         }
 
-        private void SignalWhenAllRegistered(Dictionary<string, List<IService>> data)
+        private void SignalWhenAllRegistered(string[] data)
         {
+            Interlocked.Exchange(ref _currentRegistrations, data);
+
             if (AllRegistered(data))
             {
                 _wait.Set(true);
-            }
-
-            Interlocked.Exchange(ref _currentRegistrations, data);
+            }           
         }
 
         public void StartAll()

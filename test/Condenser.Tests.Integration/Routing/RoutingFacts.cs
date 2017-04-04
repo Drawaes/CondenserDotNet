@@ -9,6 +9,7 @@ using Xunit;
 
 namespace Condenser.Tests.Integration.Routing
 {
+    [Collection("RoutingTests")]
     public class RoutingFacts
     {
         private const string UrlPrefix = "urlprefix-";

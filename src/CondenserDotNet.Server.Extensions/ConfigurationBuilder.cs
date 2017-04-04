@@ -27,9 +27,17 @@ namespace CondenserDotNet.Server
         public string Route { get; private set; } = CondenserRoutes.HealthStats;
         public string DefaultRouteStrategy { get; private set; } = RouteStrategy.Random.ToString();
 
+        public Action<string[]> OnRoutesBuilt { get; private set; }
+
         public IConfigurationBuilder WithAgentAddress(string agentAdress)
         {
             _agentAddress = agentAdress;
+            return this;
+        }
+
+        public IConfigurationBuilder WithRoutesBuiltCallback(Action<string[]> onRoutesBuilt)
+        {
+            OnRoutesBuilt = onRoutesBuilt;
             return this;
         }
 
