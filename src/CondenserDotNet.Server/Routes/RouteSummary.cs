@@ -25,7 +25,7 @@ namespace CondenserDotNet.Server.Routes
         {
             context.Response.StatusCode = (int)HttpStatusCode.OK;
 
-            object response = _routeStore.GetServices()
+            var response = _routeStore.GetServices()
                 .Select(s => new
                 {
                     Service = s.Key,
@@ -38,7 +38,8 @@ namespace CondenserDotNet.Server.Routes
                             n.Routes,
                             n.Tags
                         })
-                });
+                }).ToList();
+
             return context.Response.WriteJsonAsync(response);
         }
     }
