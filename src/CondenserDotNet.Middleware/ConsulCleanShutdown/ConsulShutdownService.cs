@@ -11,14 +11,8 @@ namespace CondenserDotNet.Middleware.ConsulCleanShutdown
 
         public ConsulShutdownService(IServiceManager serviceManager) => _serviceManager = serviceManager;
 
-        public void Stopping()
-        {
-            _serviceManager.EnableMaintenanceModeAsync(string.Empty).Wait();
-        }
+        public void Stopping() => _serviceManager.EnableMaintenanceModeAsync(string.Empty).Wait();
 
-        public void Started()
-        {
-            _serviceManager.DisableMaintenanceModeAsync().Wait();
-        }
+        public void Started() => _serviceManager.DisableMaintenanceModeAsync().Wait();
     }
 }

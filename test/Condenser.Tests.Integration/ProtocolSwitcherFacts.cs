@@ -40,7 +40,7 @@ namespace Condenser.Tests.Integration
                         return true;
                     }
                 });
-                
+
                 var result = await client.GetAsync($"https://localhost:{port}");
                 var isHttp = await result.Content.ReadAsStringAsync();
                 Assert.True(bool.Parse(isHttp));
@@ -88,14 +88,12 @@ namespace Condenser.Tests.Integration
 
         public class Startup
         {
-            public void Configure(IApplicationBuilder app)
-            {
+            public void Configure(IApplicationBuilder app) =>
                 app.Use(async (context, next) =>
                 {
                     await context.Response.WriteAsync(context.Request.IsHttps.ToString());
                     return;
                 });
-            }
         }
     }
 }

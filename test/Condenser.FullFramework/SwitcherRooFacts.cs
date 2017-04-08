@@ -14,7 +14,7 @@ namespace Condenser.FullFramework
     public class SwitcherRooFacts
     {
         public static X509Certificate2 Certificate = new X509Certificate2(@"TestCert.pfx", "Test123t");
-        
+
         [Fact(Skip = "Full framework is broken on the switcher")]
         public async Task SwitcherooSeesHttpsFact()
         {
@@ -39,7 +39,7 @@ namespace Condenser.FullFramework
                         return false;
                     }
                 });
-                
+
                 var result = await client.GetAsync($"https://localhost:{port}");
                 var isHttp = await result.Content.ReadAsStringAsync();
                 Assert.True(bool.Parse(isHttp));
@@ -52,14 +52,12 @@ namespace Condenser.FullFramework
 
         public class Startup
         {
-            public void Configure(IApplicationBuilder app)
-            {
+            public void Configure(IApplicationBuilder app) =>
                 app.Use(async (context, next) =>
                 {
-                await context.Response.WriteAsync(string.Join(",",Enumerable.Repeat("testingtesting", 100)));
+                    await context.Response.WriteAsync(string.Join(",", Enumerable.Repeat("testingtesting", 100)));
                     return;
                 });
-            }
         }
     }
 }
