@@ -19,4 +19,7 @@
     <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="$(AspNetVersion)" />
     <PackageReference Include="System.Threading.Tasks" Version="4.3.0" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\CondenserDotNet.Client\CondenserDotNet.Client.csproj" />
+  </ItemGroup>
 </Project>

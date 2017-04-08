@@ -1,4 +1,4 @@
-# ASP.NET Core EditorConfig file
+﻿# ASP.NET Core EditorConfig file
 
 # NOTE: This file focuses on settings Visual Studio 2017 supports natively. For example, VS does not support insert_final_newline.
 # We do use it, but it's harder to enforce without a separate VS extension or an editor that supports it.
@@ -26,7 +26,7 @@ indent_size = 2
 # .NET Code Style Settings
 # See https://docs.microsoft.com/en-us/visualstudio/ide/editorconfig-code-style-settings-reference
 # REVIEW: Should these be errors? warnings? suggestions?
-[*.cs,*.vb]
+[{*.cs,*.vb}]
 dotnet_sort_system_directives_first = true
 
 # Don't use 'this.'/'Me.' prefix for anything

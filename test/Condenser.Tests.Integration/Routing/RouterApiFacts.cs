@@ -16,7 +16,7 @@ namespace Condenser.Tests.Integration.Routing
             using (RoutingFixture fixture = new RoutingFixture())
             {
                 var serviceName1 = fixture.GetNewServiceName();
-                var route1 = "/myservice3";
+                var route1 = "/myservice 3";
 
                 fixture.AddService(serviceName1, route1);
                 fixture.AddRouter();

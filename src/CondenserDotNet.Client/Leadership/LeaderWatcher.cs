@@ -63,7 +63,7 @@ namespace CondenserDotNet.Client.Leadership
                 {
                     _electedLeaderEvent.Set(true);
                 }
-                for (int i = 0; i < 2; i++)
+                for (var i = 0; i < 2; i++)
                 {
                     leaderResult = await _serviceManager.Client.GetAsync($"{KeyPath}{_keyToWatch}?index={consulIndex}");
                     if (!leaderResult.IsSuccessStatusCode)
@@ -93,9 +93,8 @@ namespace CondenserDotNet.Client.Leadership
             }
         }
 
-        private StringContent GetServiceInformation()
-        {
-            return HttpUtils.GetStringContent(new InformationService()
+        private StringContent GetServiceInformation() =>
+            HttpUtils.GetStringContent(new InformationService()
             {
                 Address = _serviceManager.ServiceAddress,
                 ID = _serviceManager.ServiceId,
@@ -103,12 +102,11 @@ namespace CondenserDotNet.Client.Leadership
                 Service = _serviceManager.ServiceName,
                 Tags = _serviceManager.RegisteredService.Tags.ToArray()
             });
-        }
 
         private StringContent GetCreateSession()
         {
-            string[] checks = new string[_serviceManager.RegisteredService.Checks.Count + 1];
-            for (int i = 0; i < _serviceManager.RegisteredService.Checks.Count; i++)
+            var checks = new string[_serviceManager.RegisteredService.Checks.Count + 1];
+            for (var i = 0; i < _serviceManager.RegisteredService.Checks.Count; i++)
             {
                 checks[i] = _serviceManager.RegisteredService.Checks[i].Name;
             }

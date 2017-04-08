@@ -22,7 +22,7 @@ namespace CondenserDotNet.Client
         public static int GetNextAvailablePort()
         {
             var l = new TcpListener(IPAddress.Loopback, 0);
-            int port = 0;
+            var port = 0;
             try
             {
                 l.Start();
