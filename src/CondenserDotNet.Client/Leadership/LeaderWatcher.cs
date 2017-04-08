@@ -16,6 +16,7 @@ namespace CondenserDotNet.Client.Leadership
         private readonly IServiceManager _serviceManager;
         private readonly string _keyToWatch;
         private Guid _sessionId;
+        private Action<InformationService> _callback;
         private const string KeyPath = "/v1/kv/";
 
         internal LeaderWatcher(IServiceManager serviceManager, string keyToWatch)
@@ -77,7 +78,9 @@ namespace CondenserDotNet.Client.Leadership
                         _electedLeaderEvent.Reset();
                         break;
                     }
-                    _currentLeaderEvent.Set(JsonConvert.DeserializeObject<InformationService>(kv[0].ValueFromBase64()));
+                    var infoService = JsonConvert.DeserializeObject<InformationService>(kv[0].ValueFromBase64());
+                    _callback?.Invoke(infoService);
+                    _currentLeaderEvent.Set(infoService);
                     if (Guid.Parse(kv[0].Session) == _sessionId)
                     {
                         _electedLeaderEvent.Set(true);
@@ -122,5 +125,6 @@ namespace CondenserDotNet.Client.Leadership
 
         public Task<InformationService> GetCurrentLeaderAsync() => _currentLeaderEvent.WaitAsync();
         public Task GetLeadershipAsync() => _electedLeaderEvent.WaitAsync();
+        public void SetLeaderCallback(Action<InformationService> callback) => _callback = callback;
     }
 }

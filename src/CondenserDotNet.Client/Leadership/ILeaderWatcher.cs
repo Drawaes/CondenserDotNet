@@ -1,5 +1,6 @@
 ﻿using System.Threading.Tasks;
 using CondenserDotNet.Core.DataContracts;
+using System;
 
 namespace CondenserDotNet.Client.Leadership
 {
@@ -7,5 +8,6 @@ namespace CondenserDotNet.Client.Leadership
     {
         Task<InformationService> GetCurrentLeaderAsync();
         Task GetLeadershipAsync();
+        void SetLeaderCallback(Action<InformationService> callback);
     }
 }
