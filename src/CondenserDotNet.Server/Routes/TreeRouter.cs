@@ -17,7 +17,6 @@ namespace CondenserDotNet.Server.Routes
         public TreeRouter(RoutingData routingData)
         {
             _routingData = routingData;
-
             Routes = new[] { CondenserRoutes.Tree };
         }
 
@@ -46,7 +45,7 @@ namespace CondenserDotNet.Server.Routes
             for (var i = 0; i < node.ChildrenNodes.Count; i++)
             {
                 var nodeDto = new Node();
-                string key = string.Join(",", node.ChildrenNodes.ElementAt(i).Item1);
+                var key = string.Join(",", node.ChildrenNodes.ElementAt(i).Item1);
                 children.Add(key, nodeDto);
                 MapTo(node.ChildrenNodes.ElementAt(i).Item2, nodeDto);
             }

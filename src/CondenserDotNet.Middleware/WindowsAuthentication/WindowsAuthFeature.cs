@@ -19,10 +19,7 @@ namespace CondenserDotNet.Middleware.WindowsAuthentication
             }
         }
 
-        public WindowsAuthFeature()
-        {
-            _handshake = new WindowsHandshake(_credentialsHandle);
-        }
+        public WindowsAuthFeature() => _handshake = new WindowsHandshake(_credentialsHandle);
 
         public WindowsIdentity Identity { get; set; }
 
@@ -33,10 +30,7 @@ namespace CondenserDotNet.Middleware.WindowsAuthentication
             Identity = null;
         }
 
-        public string ProcessHandshake(string tokenName, byte[] token)
-        {
-            return _handshake.AcceptSecurityToken(tokenName, token);
-        }
+        public string ProcessHandshake(string tokenName, byte[] token) => _handshake.AcceptSecurityToken(tokenName, token);
 
         public WindowsIdentity GetUser()
         {

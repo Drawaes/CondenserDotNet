@@ -11,10 +11,7 @@ namespace CondenserDotNet.Server.Routes
 
     public sealed class HealthRouter : ServiceBase
     {
-        public HealthRouter()
-        {
-            Routes = new[] { CondenserRoutes.Health };
-        }
+        public HealthRouter() => Routes = new[] { CondenserRoutes.Health };
 
         public override string[] Routes { get; }
         public override IPEndPoint IpEndPoint => throw new NotImplementedException();

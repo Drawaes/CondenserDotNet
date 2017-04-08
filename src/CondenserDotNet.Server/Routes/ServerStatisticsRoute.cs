@@ -13,10 +13,7 @@ namespace CondenserDotNet.Server.Routes
     {
         private readonly IRouteStore _store;
 
-        public ServerStatsRoute(IRouteStore store)
-        {
-            _store = store;
-        }
+        public ServerStatsRoute(IRouteStore store) => _store = store;
 
         public override string[] Routes { get; } = { CondenserRoutes.Statistics };
         public override bool RequiresAuthentication => true;
@@ -52,20 +49,20 @@ namespace CondenserDotNet.Server.Routes
                             Calls = usage.Calls,
                             AverageRequestTime = averageRequestTime,
                             LastRequest = usage.LastRequest,
-                            LastRequestTime = usage.LastRequestTime, 
+                            LastRequestTime = usage.LastRequestTime,
                             Summary = service.GetSummary()
                         };
                     }
 
                     context.Response.StatusCode = (int)HttpStatusCode.OK;
                     await context.Response.WriteJsonAsync(response);
-                   
+
                 }
                 else
                 {
                     context.Response.StatusCode = (int)HttpStatusCode.NotFound;
                     await context.Response.WriteAsync("Unknown server " + serviceName);
-                    
+
                 }
             }
             else

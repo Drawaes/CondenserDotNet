@@ -20,25 +20,10 @@ namespace CondenserDotNet.Middleware.TrailingHeaders
         public Stream InnerStream { get => _innerStream; set => _innerStream = value; }
         public override void Flush() => _innerStream.Flush();
 
-        public override Task FlushAsync(CancellationToken cancellationToken)
-        {
-            return _innerStream.FlushAsync(cancellationToken);
-        }
-
-        public override int Read(byte[] buffer, int offset, int count)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override long Seek(long offset, SeekOrigin origin)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override void SetLength(long value)
-        {
-            throw new NotImplementedException();
-        }
+        public override Task FlushAsync(CancellationToken cancellationToken) => _innerStream.FlushAsync(cancellationToken);
+        public override int Read(byte[] buffer, int offset, int count) => throw new NotSupportedException();
+        public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException();
+        public override void SetLength(long value) => throw new NotSupportedException();
 
         public override void Write(byte[] buffer, int offset, int count)
         {

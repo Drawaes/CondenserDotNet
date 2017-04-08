@@ -48,7 +48,7 @@ namespace CondenserDotNet.Middleware.Pipelines
 
         private static async Task WriteBody(this IPipeConnection connection, HttpContext context)
         {
-            long bytesToWrite = context.Request.ContentLength.Value;
+            var bytesToWrite = context.Request.ContentLength.Value;
             while (bytesToWrite > 0)
             {
                 var buffer = connection.Output.Alloc(1024);

@@ -29,10 +29,7 @@ namespace CondenserDotNet.Server
             _logger = logger?.CreateLogger<ConsulRouteSource>();
         }
 
-        public bool CanRequestRoute()
-        {
-            return !_cancel.IsCancellationRequested;
-        }
+        public bool CanRequestRoute() => !_cancel.IsCancellationRequested;
 
         public async Task<(bool success, HealthCheck[] checks)> TryGetHealthChecksAsync()
         {
@@ -50,9 +47,6 @@ namespace CondenserDotNet.Server
             return (true, checks);
         }
 
-        public Task<ServiceInstance[]> GetServiceInstancesAsync(string serviceName)
-        {
-            return _client.GetAsync<ServiceInstance[]>(_serviceLookupUri + serviceName);
-        }
+        public Task<ServiceInstance[]> GetServiceInstancesAsync(string serviceName) => _client.GetAsync<ServiceInstance[]>(_serviceLookupUri + serviceName);
     }
 }

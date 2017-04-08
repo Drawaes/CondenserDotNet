@@ -50,7 +50,7 @@ namespace CondenserDotNet.Server.RoutingTrie
             }
             var children = System.Threading.Volatile.Read(ref _childrenNodes);
 
-            for (int i = Math.Min(children.KeyLength, route.Length); i > 0; i--)
+            for (var i = Math.Min(children.KeyLength, route.Length); i > 0; i--)
             {
                 //We need to first see if the first part of the route matches any of the current nodes
                 var matche = children.FindFirstNodeThatMatches(route, i);
@@ -75,7 +75,7 @@ namespace CondenserDotNet.Server.RoutingTrie
             if (route.Length >= children.KeyLength)
             {
                 //Create a new node and add it
-                Node<T> n = new Node<T>(route.Take(children.KeyLength).ToArray(), Path, _factory);
+                var n = new Node<T>(route.Take(children.KeyLength).ToArray(), Path, _factory);
                 n.AddRoute(route.Skip(children.KeyLength).ToArray(), service);
 
                 var newChildren = children.Clone();
@@ -87,7 +87,7 @@ namespace CondenserDotNet.Server.RoutingTrie
             {
                 //The key is smaller than the current key length so we are going to have to split before we add
                 var newChildren = ChildrenNodes.SplitContainer(route.Length, Path);
-                Node<T> n = new Node<T>(route, Path, _factory);
+                var n = new Node<T>(route, Path, _factory);
                 n.AddRoute(new string[0], service);
                 newChildren.Add(n.Prefix, n);
 
@@ -100,7 +100,7 @@ namespace CondenserDotNet.Server.RoutingTrie
 
         internal bool RemoveServiceFromRoute(string[] route, T service)
         {
-            NodeContainer<T> container = System.Threading.Volatile.Read(ref _childrenNodes);
+            var container = System.Threading.Volatile.Read(ref _childrenNodes);
             if (route.Length == 0)
             {
                 return Services.RemoveService(service);
@@ -158,7 +158,7 @@ namespace CondenserDotNet.Server.RoutingTrie
         {
             var children = System.Threading.Volatile.Read(ref _childrenNodes);
             if (children.Count == 0) return;
-            bool canCompress = CanCompress(children);
+            var canCompress = CanCompress(children);
             if (!canCompress)
             {
                 foreach (var kv in children)
