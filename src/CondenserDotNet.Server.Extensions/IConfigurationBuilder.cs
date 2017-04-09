@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using CondenserDotNet.Core.Routing;
 using CondenserDotNet.Server.DataContracts;
 using Microsoft.Extensions.DependencyInjection;
+using System.Collections.Generic;
 
 namespace CondenserDotNet.Server
 {
@@ -18,6 +19,9 @@ namespace CondenserDotNet.Server
         IConfigurationBuilder WithHttpClient(Func<string, HttpClient> clientFactory);
 
         IConfigurationBuilder WithRoutesBuiltCallback(Action<string[]> onRoutesBuilt);
+
+        IConfigurationBuilder WithRoutingStrategies(IEnumerable<IRoutingStrategy<IService>> strategies);
+
         IServiceCollection Build();
     }
 }

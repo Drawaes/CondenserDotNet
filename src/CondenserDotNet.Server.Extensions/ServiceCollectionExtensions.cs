@@ -6,6 +6,7 @@ using CondenserDotNet.Server.Routes;
 using CondenserDotNet.Server.RoutingTrie;
 using Microsoft.Extensions.DependencyInjection;
 using CondenserDotNet.Server;
+using System.Collections.Generic;
 
 namespace CondenserDotNet.Server
 {
@@ -21,7 +22,8 @@ namespace CondenserDotNet.Server
                 .Build();
 
         public static IServiceCollection AddCondenser(this IServiceCollection self, string agentAddress, int agentPort,
-            IHealthConfig health, IRoutingConfig routingConfig, IHttpClientConfig httpClientConfig)
+            IHealthConfig health, IRoutingConfig routingConfig, IHttpClientConfig httpClientConfig,
+            IEnumerable<IRoutingStrategy<IService>> strategies)
         {
             var config = new CondenserConfiguration
             {
@@ -46,6 +48,11 @@ namespace CondenserDotNet.Server
             self.AddTransient<IRoutingStrategy<IService>, RandomRoutingStrategy<IService>>();
             self.AddTransient<IRoutingStrategy<IService>, RoundRobinRoutingStrategy<IService>>();
             self.AddSingleton<IDefaultRouting<IService>, DefaultRouting<IService>>();
+
+            foreach(var service in strategies)
+            {
+                self.AddSingleton(service);
+            }
 
             self.AddTransient<ChildContainer<IService>>();
             self.AddTransient<CurrentState>();

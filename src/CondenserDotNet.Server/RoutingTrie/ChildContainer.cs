@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using CondenserDotNet.Core.Routing;
+using System;
 
 namespace CondenserDotNet.Server.RoutingTrie
 {
@@ -13,7 +14,16 @@ namespace CondenserDotNet.Server.RoutingTrie
 
         public int Count => Volatile.Read(ref _services).Count;
 
-        public void SetRoutingStrategy(IRoutingStrategy<T> routingStrategy) => _routingStrategy = routingStrategy;
+        public void SetRoutingStrategy(IRoutingStrategy<T> routingStrategy, Func<List<T>, bool> applies)
+        {
+            var services = Volatile.Read(ref _services);
+
+            if (applies(services))
+            {
+                Interlocked.Exchange(ref _routingStrategy, routingStrategy);
+            }
+
+        }
         public override string ToString() => $"Total Services Registered {_services.Count}";
 
         public void AddService(T service)

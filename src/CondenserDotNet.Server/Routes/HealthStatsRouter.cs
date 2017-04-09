@@ -23,8 +23,7 @@ namespace CondenserDotNet.Server.Routes
 
         public override string[] Routes { get; }
         public override IPEndPoint IpEndPoint => throw new NotImplementedException();
-        public override bool RequiresAuthentication => false;
-
+       
         public override async Task CallService(HttpContext context)
         {
            var summary = GetAggregatedSummary();

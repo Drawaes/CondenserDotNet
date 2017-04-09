@@ -16,7 +16,7 @@ namespace CondenserDotNet.Server.Routes
         public ServerStatsRoute(IRouteStore store) => _store = store;
 
         public override string[] Routes { get; } = { CondenserRoutes.Statistics };
-        public override bool RequiresAuthentication => true;
+
         public override IPEndPoint IpEndPoint => throw new NotImplementedException();
 
         public override async Task CallService(HttpContext context)

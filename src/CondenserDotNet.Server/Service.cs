@@ -49,8 +49,7 @@ namespace CondenserDotNet.Server
         public double LastRequestTime => _lastRequestTime;
         public DateTime LastRequest => _lastRequest;
         public IPEndPoint IpEndPoint => _ipEndPoint;
-        public bool RequiresAuthentication => true;
-
+       
         public async Task CallService(HttpContext context)
         {
             var sw = new Stopwatch();
