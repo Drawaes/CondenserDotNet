@@ -34,7 +34,6 @@ namespace Condenser.Tests.Integration.Routing
                 fixture.StartAll();
 
                 await fixture.WaitForRegistrationAsync();
-                await Task.Delay(1500);
                 
                 var routerResponse = await fixture.CallRouterAsync("/admin/condenser/router/replace?strategy=One");
                 Assert.Equal(HttpStatusCode.OK, routerResponse.StatusCode);

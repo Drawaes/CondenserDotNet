@@ -156,6 +156,8 @@ namespace CondenserDotNet.Server.RoutingTrie
 
         public void Compress()
         {
+
+           /*
             var children = System.Threading.Volatile.Read(ref _childrenNodes);
             if (children.Count == 0) return;
             var canCompress = CanCompress(children);
@@ -183,6 +185,7 @@ namespace CondenserDotNet.Server.RoutingTrie
             }
             System.Threading.Volatile.Write(ref _childrenNodes, newMerged);
             Compress();
+            */
         }
 
         public override string ToString() => $"Path {string.Join("/", Prefix)} Services {Services.Count}";
