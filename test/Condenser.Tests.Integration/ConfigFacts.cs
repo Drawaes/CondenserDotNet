@@ -56,7 +56,7 @@ namespace Condenser.Tests.Integration
         [Fact]
         public async Task PickUpChangesFact()
         {
-            string keyid = Guid.NewGuid().ToString();
+            var keyid = Guid.NewGuid().ToString();
             using (var configRegistry = new ConsulRegistry(null))
             {
                 await configRegistry.SetKeyAsync($"org/{keyid}/test2", _value1);
@@ -76,7 +76,7 @@ namespace Condenser.Tests.Integration
         public async Task GetCallbackForSpecificKey()
         {
             Console.WriteLine(nameof(GetCallbackForSpecificKey));
-            string keyid = Guid.NewGuid().ToString();
+            var keyid = Guid.NewGuid().ToString();
             using (var configRegistry = new ConsulRegistry(null))
             {
                 var e = new ManualResetEvent(false);
@@ -97,7 +97,7 @@ namespace Condenser.Tests.Integration
         [Fact]
         public async Task GetCallbackForKeyThatIsAdded()
         {
-            string keyid = Guid.NewGuid().ToString();
+            var keyid = Guid.NewGuid().ToString();
             using (var configRegistry = new ConsulRegistry(null))
             {
                 var e = new ManualResetEvent(false);
@@ -119,7 +119,7 @@ namespace Condenser.Tests.Integration
         public async Task GetCallbackForAnyKey()
         {
             Console.WriteLine(nameof(GetCallbackForAnyKey));
-            string keyid = Guid.NewGuid().ToString();
+            var keyid = Guid.NewGuid().ToString();
             using (var configRegistry = new ConsulRegistry(null))
             {
                 await configRegistry.SetKeyAsync($"org/{keyid}/test1", _value1);

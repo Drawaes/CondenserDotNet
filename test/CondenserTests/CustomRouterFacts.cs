@@ -47,9 +47,6 @@ namespace CondenserTests
             Assert.Null(routeContext.Handler);
         }
 
-        private CustomRouter BuildRouter()
-        {
-            return new CustomRouter(null, RoutingData.BuildDefault(), new IService[0]);
-        }
+        private CustomRouter BuildRouter() => new CustomRouter(null, RoutingData.BuildDefault(), new IService[0]);
     }
 }

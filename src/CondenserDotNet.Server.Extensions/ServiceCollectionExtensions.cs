@@ -13,14 +13,12 @@ namespace CondenserDotNet.Server
     {
         public static IServiceCollection AddCondenser(this IServiceCollection self) => AddCondenser(self, "localhost", 8500);
 
-        private static IServiceCollection AddCondenser(this IServiceCollection self, string agentAddress, int agentPort)
-        {
-            return self.AddCondenserWithBuilder()
+        private static IServiceCollection AddCondenser(this IServiceCollection self, string agentAddress, int agentPort) =>
+            self.AddCondenserWithBuilder()
                 .WithAgentAddress(agentAddress)
                 .WithAgentPort(agentPort)
                 .WithHttpClient(s => new HttpClient())
                 .Build();
-        }
 
         public static IServiceCollection AddCondenser(this IServiceCollection self, string agentAddress, int agentPort,
             IHealthConfig health, IRoutingConfig routingConfig, IHttpClientConfig httpClientConfig)

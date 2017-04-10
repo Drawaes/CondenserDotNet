@@ -16,7 +16,7 @@ namespace CondenserTests
         public void ShouldBuildHttpsExpectedUrl(string url, bool ignoreForCheck, string expectedUrl)
         {
             var id = "myservice";
-            int interval = 50;
+            var interval = 50;
 
             var manager = new FakeServiceManager
             {
@@ -41,7 +41,7 @@ namespace CondenserTests
         public void ShouldBuildExpectedUrl(string url, string expectedUrl)
         {
             var id = "myservice";
-            int interval = 50;
+            var interval = 50;
 
             var manager = new FakeServiceManager
             {

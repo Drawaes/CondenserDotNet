@@ -61,7 +61,7 @@ namespace CondenserDotNet.Server
         private async Task ProcessHealthChecksAsync(HealthCheck[] healthChecks)
         {
             _logger?.LogInformation("Total number of health checks returned was {healthCheckCount}", healthChecks.Length);
-            List<InformationService> infoList = BuildListOfHealthyServiceInstances(healthChecks);
+            var infoList = BuildListOfHealthyServiceInstances(healthChecks);
             RemoveDeadInstances(infoList);
             var services = _store.GetServices();
             foreach (var service in services)
@@ -112,7 +112,7 @@ namespace CondenserDotNet.Server
 
         private IService GetInstance(ServiceInstance service, List<IService> instanceList)
         {
-            for (int i = 0; i < instanceList.Count; i++)
+            for (var i = 0; i < instanceList.Count; i++)
             {
                 if (instanceList[i].ServiceId == service.ServiceID)
                 {
@@ -154,7 +154,7 @@ namespace CondenserDotNet.Server
 
         private List<InformationService> BuildListOfHealthyServiceInstances(HealthCheck[] healthChecks)
         {
-            HashSet<string> downNodes = new HashSet<string>();
+            var downNodes = new HashSet<string>();
             //Now we get all service instances that are working
             var infoList = new List<InformationService>();
             foreach (var check in healthChecks)
@@ -182,7 +182,7 @@ namespace CondenserDotNet.Server
 
         private bool HasInstance(string serviceID, List<InformationService> infoList)
         {
-            for (int i = 0; i < infoList.Count; i++)
+            for (var i = 0; i < infoList.Count; i++)
             {
                 if (infoList[i].ID == serviceID)
                 {

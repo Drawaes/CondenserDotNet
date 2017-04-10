@@ -21,9 +21,6 @@ namespace CondenserDotNet.Server
         {
         }       
 
-        public StatsSummary GetSummary()
-        {
-            return default(StatsSummary);
-        }
+        public StatsSummary GetSummary() => default(StatsSummary);
     }
 }

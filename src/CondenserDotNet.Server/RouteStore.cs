@@ -22,52 +22,28 @@ namespace CondenserDotNet.Server
             _statsFactory = statsFactory;
         }
 
-        public Dictionary<string, List<IService>> GetServices()
-        {
-            return _routingData.ServicesWithHealthChecks;
-        }
+        public void RemoveService(string serviceName) => _routingData.ServicesWithHealthChecks.Remove(serviceName);
+        public bool HasService(string serviceName) => _routingData.ServicesWithHealthChecks.ContainsKey(serviceName);
+        public void AddService(string serviceName) => _routingData.ServicesWithHealthChecks[serviceName] = new List<IService>();
+        public Dictionary<string, List<IService>> GetServices() => _routingData.ServicesWithHealthChecks;
+        public ICurrentState[] GetStats() => _routingData.GetAllStats();
+        public RadixTree<IService> GetTree() => _routingData.Tree;
 
         public List<IService> GetServiceInstances(string serviceName)
         {
-            if(!_routingData.ServicesWithHealthChecks.TryGetValue(serviceName, out List<IService> services))
+            if (!_routingData.ServicesWithHealthChecks.TryGetValue(serviceName, out List<IService> services))
             {
                 services = Empty;
             }
 
             return services;
         }
-
-        public void RemoveService(string serviceName)
-        {
-            _routingData.ServicesWithHealthChecks.Remove(serviceName);
-        }
-
-        public bool HasService(string serviceName)
-        {
-            return _routingData.ServicesWithHealthChecks.ContainsKey(serviceName);
-        }
-
-        public void AddService(string serviceName)
-        {
-            _routingData.ServicesWithHealthChecks[serviceName] = new List<IService>();
-        }
-
+                
         public Task<IService> CreateServiceInstanceAsync(ServiceInstance info)
         {
             var instance = _serviceFactory();
-            
             return instance.Initialise(info.ServiceID, info.Node, info.ServiceTags, info.ServiceAddress, info.ServicePort)
                 .ContinueWith(t => (IService)instance);
-        }
-
-        public ICurrentState[] GetStats()
-        {
-           return _routingData.GetAllStats();
-        }
-
-        public RadixTree<IService> GetTree()
-        {
-            return _routingData.Tree;
         }
     }
 }
