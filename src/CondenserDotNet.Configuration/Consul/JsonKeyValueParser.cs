@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -52,10 +52,7 @@ namespace CondenserDotNet.Configuration.Consul
             }
         }
 
-        private void VisitProperty(JProperty property)
-        {
-            VisitToken(property.Value);
-        }
+        private void VisitProperty(JProperty property) => VisitToken(property.Value);
 
         private void VisitToken(JToken token)
         {

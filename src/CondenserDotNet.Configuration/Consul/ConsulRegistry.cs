@@ -43,10 +43,7 @@ namespace CondenserDotNet.Configuration.Consul
         /// This returns a flattened list of all the loaded keys
         /// </summary>
         public IEnumerable<string> AllKeys => _configKeys.SelectMany(x => x.Keys);
-        public void UpdateKeyParser(IKeyParser parser)
-        {
-            _parser = parser;
-        }
+        public void UpdateKeyParser(IKeyParser parser) => _parser = parser;
 
         /// <summary>
         /// This loads the keys from a path. They are not updated.
@@ -95,7 +92,7 @@ namespace CondenserDotNet.Configuration.Consul
             try
             {
                 var consulIndex = "0";
-                string url = $"{ConsulKeyPath}{keyPath}?recurse&wait=300s&index=";
+                var url = $"{ConsulKeyPath}{keyPath}?recurse&wait=300s&index=";
                 while (true)
                 {
                     var response = await _httpClient.GetAsync(url + consulIndex, _disposed.Token);
@@ -184,7 +181,7 @@ namespace CondenserDotNet.Configuration.Consul
         {
             lock (_configKeys)
             {
-                for (int i = _configKeys.Count - 1; i >= 0; i--)
+                for (var i = _configKeys.Count - 1; i >= 0; i--)
                 {
                     if (_configKeys[i].TryGetValue(key, out value))
                     {
@@ -244,7 +241,7 @@ namespace CondenserDotNet.Configuration.Consul
 
         public static string StripFrontAndBackSlashes(string inputString)
         {
-            int startIndex = inputString.StartsWith("/") ? 1 : 0;
+            var startIndex = inputString.StartsWith("/") ? 1 : 0;
             return inputString.Substring(startIndex, (inputString.Length - startIndex) - (inputString.EndsWith("/") ? 1 : 0));
         }
 

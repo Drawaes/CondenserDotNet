@@ -9,20 +9,9 @@ namespace CondenserDotNet.Middleware.CleanShutdown
         private int _shutdownTimeout = 2000;
         private ILogger _logger;
 
-        public CleanShutdownService(ILoggerFactory loggerFactory)
-        {
-            _logger = loggerFactory.CreateLogger<CleanShutdownService>();
-        }
-
-        public void StartRequest()
-        {
-            _requestsOutstanding.AddCount();
-        }
-
-        public void FinishRequest()
-        {
-            _requestsOutstanding.Signal();
-        }
+        public CleanShutdownService(ILoggerFactory loggerFactory) => _logger = loggerFactory.CreateLogger<CleanShutdownService>();
+        public void StartRequest() => _requestsOutstanding.AddCount();
+        public void FinishRequest() => _requestsOutstanding.Signal();
 
         public void Shutdown()
         {
