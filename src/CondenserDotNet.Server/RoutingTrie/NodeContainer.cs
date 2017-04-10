@@ -94,7 +94,7 @@ namespace CondenserDotNet.Server.RoutingTrie
 
         public int MaxNodeDepth()
         {
-            int nodeDepth = 0;
+            var nodeDepth = 0;
             foreach (var n in _children)
             {
                 nodeDepth = Math.Max(n.Item2.MaxDepth(), nodeDepth);

@@ -1,0 +1,12 @@
+﻿<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Added a callback on the leadership to give current leader
+* Added maint mode enable/disable on the service manager
+* Added middleware
+    * Puts it in maint mode
+    * Performs the cleanshutdown
+    * Takes it out of maint mode after startup
+    </PackageReleaseNotes>
+  </PropertyGroup>
+</Project>

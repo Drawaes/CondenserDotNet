@@ -49,7 +49,7 @@ namespace Condenser.Tests.Integration
 
                 var watcher1 = (new LeaderRegistry(manager)).GetLeaderWatcher(leadershipKey);
                 await watcher1.GetLeadershipAsync();
-                bool shouldNotBeLeader = true;
+                var shouldNotBeLeader = true;
                 var resetEvent = new ManualResetEvent(false);
 
                 //Now that 1 is the leader lets try to join 2 into the party

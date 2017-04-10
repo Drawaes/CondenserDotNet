@@ -28,25 +28,12 @@ namespace Condenser.Tests.Integration.Routing
         private IWebHost _routerHost;
         private HttpClient _client = new HttpClient();
 
-        public RoutingFixture()
-        {
-            Console.WriteLine("Created Routing Fixture");
-        }
-
-        public void SetServiceHealth(string name, bool isHealthy)
-        {
-            _hosts[name].IsHealthy = isHealthy;
-        }
-
-        public string GetNewServiceName()
-        {
-            return Guid.NewGuid().ToString("N").Substring(0, 10);
-        }
-
-        public Task<HttpResponseMessage> CallRouterAsync(string route)
-        {
-            return _client.GetAsync($"http://localhost:{routerPort}" + route);
-        }
+        public RoutingFixture() => Console.WriteLine("Created Routing Fixture");
+        public void SetServiceHealth(string name, bool isHealthy) => _hosts[name].IsHealthy = isHealthy;
+        public string GetNewServiceName() => Guid.NewGuid().ToString("N").Substring(0, 10);
+        public Task<HttpResponseMessage> CallRouterAsync(string route) => _client.GetAsync($"http://localhost:{routerPort}" + route);
+        public Task WaitForRegistrationAsync() => Task.WhenAny(new[] { _wait.WaitAsync(), Task.Delay(30 * 1000) });
+        private bool AllRegistered(string[] data) => _hosts.All(h => data.Contains(h.Key, StringComparer.OrdinalIgnoreCase));
 
         private void RegisterService(string name, int port, string route)
         {
@@ -131,9 +118,9 @@ namespace Condenser.Tests.Integration.Routing
                 .ConfigureServices(x =>
                 {
                     x.AddCondenserWithBuilder()
-                    .WithRoutesBuiltCallback(SignalWhenAllRegistered)                    
+                    .WithRoutesBuiltCallback(SignalWhenAllRegistered)
                     .Build();
-                    
+
                 })
                 .Configure(app =>
                 {
@@ -143,24 +130,11 @@ namespace Condenser.Tests.Integration.Routing
                     app.UseCondenser();
                 })
                 .Build();
-
-
         }
-
-        public Task WaitForRegistrationAsync()
-        {
-            return Task.WhenAny(new[] { _wait.WaitAsync(), Task.Delay(30 * 1000) });
-        }
-
-        private bool AllRegistered(string[] data)
-        {
-            return _hosts.All(h => data.Contains(h.Key, StringComparer.OrdinalIgnoreCase));
-        }
-
+                
         public bool AreAllRegistered()
         {
-            if (_currentRegistrations == null)
-                return false;
+            if (_currentRegistrations == null) return false;
 
             return AllRegistered(_currentRegistrations);
         }
@@ -172,7 +146,7 @@ namespace Condenser.Tests.Integration.Routing
             if (AllRegistered(data))
             {
                 _wait.Set(true);
-            }           
+            }
         }
 
         public void StartAll()

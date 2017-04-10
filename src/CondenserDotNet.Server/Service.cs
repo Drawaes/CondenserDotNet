@@ -53,7 +53,7 @@ namespace CondenserDotNet.Server
 
         public async Task CallService(HttpContext context)
         {
-            Stopwatch sw = new Stopwatch();
+            var sw = new Stopwatch();
             _waitUntilRequestsAreFinished.AddCount();
             try
             {
@@ -178,9 +178,6 @@ namespace CondenserDotNet.Server
             _waitUntilRequestsAreFinished.Dispose();
         }
 
-        public StatsSummary GetSummary()
-        {
-            return _stats.GetSummary();
-        }
+        public StatsSummary GetSummary() => _stats.GetSummary();
     }
 }

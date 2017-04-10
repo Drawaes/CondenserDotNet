@@ -8,15 +8,12 @@ namespace CondenserDotNet.Middleware.WindowsAuthentication
     {
         private IConnectionFilter _previous;
 
-        public AuthenticationConnectionFilter(IConnectionFilter previous)
-        {
+        public AuthenticationConnectionFilter(IConnectionFilter previous) =>
             _previous = previous ?? throw new ArgumentNullException();
-        }
 
         public async Task OnConnectionAsync(ConnectionFilterContext context)
         {
             await _previous.OnConnectionAsync(context);
-
             var previousRequest = context.PrepareRequest;
             var feature = new WindowsAuthFeature();
             var wrapper = new WindowsAuthStreamWrapper(context.Connection, feature);

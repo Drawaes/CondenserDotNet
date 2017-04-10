@@ -18,10 +18,7 @@ namespace CondenserDotNet.Server
         private int _agentPort = 8500;
         private Func<string, HttpClient> _clientFactory;
 
-        public ConfigurationBuilder(IServiceCollection collection)
-        {
-            _collection = collection;
-        }
+        public ConfigurationBuilder(IServiceCollection collection) => _collection = collection;
 
         public List<Func<Task<HealthCheck>>> Checks { get; } = new List<Func<Task<HealthCheck>>>();
         public string Route { get; private set; } = CondenserRoutes.HealthStats;

@@ -10,10 +10,7 @@ namespace CondenserDotNet.Server
     {
         private DateTime _startedTime;
 
-        public CurrentState()
-        {
-            _startedTime = DateTime.UtcNow;
-        }
+        public CurrentState() => _startedTime = DateTime.UtcNow;
 
         public StatsSummary GetSummary()
         {
@@ -74,9 +71,6 @@ namespace CondenserDotNet.Server
 
         }
 
-        public void ResetUptime()
-        {
-            _startedTime = DateTime.UtcNow;
-        }
+        public void ResetUptime() => _startedTime = DateTime.UtcNow;
     }
 }

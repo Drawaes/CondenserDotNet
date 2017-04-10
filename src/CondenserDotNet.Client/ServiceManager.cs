@@ -67,7 +67,7 @@ namespace CondenserDotNet.Client
                 _disposed = true;
             }
         }
-
+        
         ~ServiceManager() => Dispose(false);
     }
 }

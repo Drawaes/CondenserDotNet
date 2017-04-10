@@ -6,8 +6,8 @@
 
         public static string[] RoutesFromTags(string[] tags)
         {
-            int returnCount = 0;
-            for (int i = 0; i < tags.Length; i++)
+            var returnCount = 0;
+            for (var i = 0; i < tags.Length; i++)
             {
                 if (!tags[i].StartsWith(UrlPrefix))
                 {
@@ -17,7 +17,7 @@
             }
             var returnValues = new string[returnCount];
             returnCount = 0;
-            for (int i = 0; i < tags.Length; i++)
+            for (var i = 0; i < tags.Length; i++)
             {
                 if (!tags[i].StartsWith(UrlPrefix))
                 {

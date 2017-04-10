@@ -14,10 +14,7 @@ namespace CondenserDotNet.Middleware.WindowsAuthentication
         private static readonly ASC_REQ _requestType = ASC_REQ.ASC_REQ_CONFIDENTIALITY | ASC_REQ.ASC_REQ_REPLAY_DETECT
             | ASC_REQ.ASC_REQ_SEQUENCE_DETECT | ASC_REQ.ASC_REQ_CONNECTION;
 
-        internal WindowsHandshake(SecurityHandle ntlmHandle)
-        {
-            _ntlmHandle = ntlmHandle;
-        }
+        internal WindowsHandshake(SecurityHandle ntlmHandle) => _ntlmHandle = ntlmHandle;
 
         public WindowsIdentity User => _identity;
         public DateTime DateStarted => _dateStarted;

@@ -7,16 +7,11 @@ namespace CondenserDotNet.Configuration
     public static class ServiceCollectionExtensions
     {
 
-        public static IServiceCollection ConfigureReloadable<TConfig>(this IServiceCollection self,
-            IConfiguration configuration, IConfigurationRegistry registry)
-            where TConfig : class
-        {
-            return self.ConfigureReloadable<TConfig>(configuration, registry, typeof(TConfig).Name);
-        }
+        public static IServiceCollection ConfigureReloadable<TConfig>(this IServiceCollection self, IConfiguration configuration, IConfigurationRegistry registry)
+            where TConfig : class =>
+                self.ConfigureReloadable<TConfig>(configuration, registry, typeof(TConfig).Name);
 
-        public static IServiceCollection ConfigureReloadable<TConfig>(this IServiceCollection self,
-            IConfiguration configuration, IConfigurationRegistry registry,
-            string sectionName)
+        public static IServiceCollection ConfigureReloadable<TConfig>(this IServiceCollection self, IConfiguration configuration, IConfigurationRegistry registry, string sectionName)
             where TConfig : class
         {
             var initialised = false;
@@ -28,13 +23,11 @@ namespace CondenserDotNet.Configuration
                     var section = configuration.GetSection(sectionName);
                     section.Bind(config);
                 };
-
                 if (!initialised)
                 {
                     registry.AddWatchOnEntireConfig(bind);
                     initialised = true;
                 }
-
                 bind();
             });
 

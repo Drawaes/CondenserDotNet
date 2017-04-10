@@ -12,22 +12,10 @@ namespace CondenserDotNet.Core.DataContracts
 
         public bool Equals(InformationService other)
         {
-            if (Address != other.Address)
-            {
-                return false;
-            }
-            if (Port != other.Port)
-            {
-                return false;
-            }
-            if (Service != other.Service)
-            {
-                return false;
-            }
-            if (ID != other.ID)
-            {
-                return false;
-            }
+            if (Address != other.Address) return false;
+            if (Port != other.Port) return false;
+            if (Service != other.Service) return false;
+            if (ID != other.ID) return false;
             return true;
         }
     }

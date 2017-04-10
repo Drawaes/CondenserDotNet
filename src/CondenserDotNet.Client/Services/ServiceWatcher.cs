@@ -25,8 +25,7 @@ namespace CondenserDotNet.Client.Services
         private static int s_getServiceDelay = 3000;
         private Action<List<InformationServiceSet>> _listCallback;
 
-        internal ServiceWatcher(string serviceName, HttpClient client,
-            IRoutingStrategy<InformationServiceSet> routingStrategy, ILogger logger)
+        internal ServiceWatcher(string serviceName, HttpClient client, IRoutingStrategy<InformationServiceSet> routingStrategy, ILogger logger)
         {
             _serviceName = serviceName;
             _logger = logger;
@@ -69,7 +68,7 @@ namespace CondenserDotNet.Client.Services
             {
                 try
                 {
-                    string consulIndex = "0";
+                    var consulIndex = "0";
                     while (!_cancelationToken.Token.IsCancellationRequested)
                     {
                         var result = await client.GetAsync(_url + consulIndex, _cancelationToken.Token);

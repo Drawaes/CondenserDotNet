@@ -15,7 +15,7 @@ namespace CondenserDotNet.Client
             if (Url == null) return null;
             if (!Uri.TryCreate(Url, UriKind.Absolute, out Uri uri))
             {
-                string scheme = manager.ProtocolSchemeTag ?? "http";
+                var scheme = manager.ProtocolSchemeTag ?? "http";
                 var builder = new UriBuilder(scheme, manager.ServiceAddress, manager.ServicePort, Url);
                 uri = builder.Uri;
             }

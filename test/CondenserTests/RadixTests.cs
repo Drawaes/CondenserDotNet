@@ -96,15 +96,13 @@ namespace CondenserTests
 
         }
 
-        public static RadixTree<IService> CreateDefault()
-        {
-            return new RadixTree<IService>(() =>
+        public static RadixTree<IService> CreateDefault() =>
+            new RadixTree<IService>(() =>
             {
                 var randomRoutingStrategy = new RandomRoutingStrategy<IService>();
                 return new ChildContainer<IService>(new DefaultRouting<IService>
                     (new[] { randomRoutingStrategy }, new FakeRouteConfig()));
             });
-        }
     }
 
     public class FakeRouteConfig : IRoutingConfig

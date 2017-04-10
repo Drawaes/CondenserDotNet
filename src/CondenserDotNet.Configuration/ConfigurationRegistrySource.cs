@@ -6,14 +6,8 @@ namespace CondenserDotNet.Configuration
     {
         private readonly IConfigurationRegistry _configurationRegistry;
 
-        public ConfigurationRegistrySource(IConfigurationRegistry configurationRegistry)
-        {
-            _configurationRegistry = configurationRegistry;
-        }
+        public ConfigurationRegistrySource(IConfigurationRegistry configurationRegistry) => _configurationRegistry = configurationRegistry;
 
-        public IConfigurationProvider Build(IConfigurationBuilder builder)
-        {
-            return new ConfigurationRegistryProvider(_configurationRegistry);
-        }
+        public IConfigurationProvider Build(IConfigurationBuilder builder) => new ConfigurationRegistryProvider(_configurationRegistry);
     }
 }

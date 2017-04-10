@@ -27,11 +27,8 @@ namespace CondenserDotNet.Server
             return service;
         }
 
-        public void AddServiceToRoute(string route, IService serviceToAdd)
-        {
-            _routingData.Tree.AddServiceToRoute(route, serviceToAdd);
-        }
-
+        public void AddServiceToRoute(string route, IService serviceToAdd) => _routingData.Tree.AddServiceToRoute(route, serviceToAdd);
+        
         public void AddNewService(IService serviceToAdd)
         {
             foreach (var r in serviceToAdd.Routes)

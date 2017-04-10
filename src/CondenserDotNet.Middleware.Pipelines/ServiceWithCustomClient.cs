@@ -79,11 +79,8 @@ namespace CondenserDotNet.Middleware.Pipelines
             System.Threading.Interlocked.Add(ref _totalRequestTime, sw.ElapsedMilliseconds);
         }
 
-        public override int GetHashCode()
-        {
-            return ServiceId.GetHashCode();
-        }
-
+        public override int GetHashCode() => ServiceId.GetHashCode();
+        
         public override bool Equals(object obj)
         {
             if (obj is ServiceWithCustomClient otherService)
@@ -101,10 +98,7 @@ namespace CondenserDotNet.Middleware.Pipelines
             return false;
         }
 
-        public void UpdateRoutes(string[] routes)
-        {
-            Routes = routes;
-        }
+        public void UpdateRoutes(string[] routes) =>       Routes = routes;
 
         public async Task Initialise(string serviceId, string nodeId, string[] tags, string address, int port)
         {
@@ -136,10 +130,6 @@ namespace CondenserDotNet.Middleware.Pipelines
             _waitUntilRequestsAreFinished.Dispose();
         }
 
-        public StatsSummary GetSummary()
-        {
-           return _stats.GetSummary();
-        }
-        
+        public StatsSummary GetSummary() => _stats.GetSummary();        
     }
 }

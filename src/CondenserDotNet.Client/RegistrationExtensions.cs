@@ -19,7 +19,6 @@ namespace CondenserDotNet.Client
         {
             serviceManager.HealthConfig.Url = url;
             serviceManager.HealthConfig.IntervalInSeconds = intervalInSeconds;
-
             return serviceManager;
         }
 
@@ -82,7 +81,7 @@ namespace CondenserDotNet.Client
             }
             if (s.Checks.Count > 1)
             {
-                for (int i = 0; i < s.Checks.Count; i++)
+                for (var i = 0; i < s.Checks.Count; i++)
                 {
                     s.Checks[i].Name = $"service:{s.ID}:{i + 1}";
                     if (serviceManager.DeregisterIfCriticalAfter != default(TimeSpan))

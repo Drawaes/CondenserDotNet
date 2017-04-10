@@ -7,10 +7,7 @@ namespace CondenserDotNet.Server.RoutingTrie
     {
         private readonly int _compareLength;
 
-        public NodeComparer(int compareLength)
-        {
-            _compareLength = compareLength;
-        }
+        public NodeComparer(int compareLength) => _compareLength = compareLength;
 
         public int CompareLength => _compareLength;
 
@@ -21,7 +18,7 @@ namespace CondenserDotNet.Server.RoutingTrie
                 return false;
             }
 
-            for (int i = 0; i < _compareLength; i++)
+            for (var i = 0; i < _compareLength; i++)
             {
                 if (x[i] != y[i]) return false;
             }
@@ -33,7 +30,7 @@ namespace CondenserDotNet.Server.RoutingTrie
             unchecked // Overflow is fine, just wrap
             {
                 var hash = 17;
-                for (int i = 0; i < Math.Min(_compareLength, obj.Length); i++)
+                for (var i = 0; i < Math.Min(_compareLength, obj.Length); i++)
                 {
                     hash = hash * 23 + obj[i].GetHashCode();
                 }
