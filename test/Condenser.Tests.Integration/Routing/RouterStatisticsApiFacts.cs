@@ -14,7 +14,7 @@ namespace Condenser.Tests.Integration.Routing
     [Collection("RoutingTests")]
     public class RouterStatisticsApiFacts
     {
-        [Fact(Skip ="Broken")]
+        [Fact]
         public async Task CanCallRouterStatisticsForRegisteredService()
         {
             using (var fixture = new RoutingFixture())
@@ -28,7 +28,6 @@ namespace Condenser.Tests.Integration.Routing
                 fixture.StartAll();
 
                 await fixture.WaitForRegistrationAsync();
-                await Task.Delay(1500);
                 var responseService = await fixture.CallRouterAsync(route1);
                 Assert.Equal(HttpStatusCode.OK, responseService.StatusCode);
 
@@ -41,7 +40,7 @@ namespace Condenser.Tests.Integration.Routing
                 var server = content[0];
                 Assert.Equal(1, server.Calls);
                 Assert.Equal(1, server.Summary.Http200Responses);
-                Assert.Equal(DateTime.Now.Date, server.LastRequest.Date);
+                Assert.Equal(DateTime.UtcNow.Date, server.LastRequest.Date);
                 Assert.True(server.LastRequestTime > 0, "last request time not recorded");
                 Assert.True(server.AverageRequestTime > 0, "average request time not recorded");
             }

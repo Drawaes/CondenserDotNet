@@ -14,7 +14,6 @@ namespace CondenserTests.Fakes
         }
 
         public override string[] Routes { get; }
-        public override bool RequiresAuthentication => true;
         public override IPEndPoint IpEndPoint => throw new NotImplementedException();
 
         public override Task CallService(HttpContext context)

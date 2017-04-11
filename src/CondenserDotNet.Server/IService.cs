@@ -15,7 +15,7 @@ namespace CondenserDotNet.Server
         string NodeId { get; }
         Task CallService(HttpContext context);
         IPEndPoint IpEndPoint { get; }
-        bool RequiresAuthentication { get; }
+      
         void UpdateRoutes(string[] routes);
 
         StatsSummary GetSummary();

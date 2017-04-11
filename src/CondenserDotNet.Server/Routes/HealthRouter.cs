@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Net;
 using System.Threading.Tasks;
-using CondenserDotNet.Server.Builder;
-using CondenserDotNet.Server.DataContracts;
 using CondenserDotNet.Server.Extensions;
 using Microsoft.AspNetCore.Http;
 
@@ -15,7 +13,6 @@ namespace CondenserDotNet.Server.Routes
 
         public override string[] Routes { get; }
         public override IPEndPoint IpEndPoint => throw new NotImplementedException();
-        public override bool RequiresAuthentication => false;
 
         public override async Task CallService(HttpContext context)
         {

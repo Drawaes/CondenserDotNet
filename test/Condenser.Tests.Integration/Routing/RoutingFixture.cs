@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
+using CondenserDotNet.Core.Routing;
 
 namespace Condenser.Tests.Integration.Routing
 {
@@ -47,7 +48,7 @@ namespace Condenser.Tests.Integration.Routing
             var serviceManager = new ServiceManager(options);
 
             var ignore = serviceManager
-                .AddHttpHealthCheck(HealthRoute, 1)
+                .AddHttpHealthCheck(HealthRoute, 3)
                 .AddApiUrl(route)
                 .RegisterServiceAsync();
         }
@@ -107,7 +108,7 @@ namespace Condenser.Tests.Integration.Routing
             return this;
         }
 
-        public void AddRouter()
+        public void AddRouter(params IRoutingStrategy<IService>[] strategies)
         {
             routerPort = ServiceManagerConfig.GetNextAvailablePort();
 
@@ -118,15 +119,13 @@ namespace Condenser.Tests.Integration.Routing
                 .ConfigureServices(x =>
                 {
                     x.AddCondenserWithBuilder()
-                    .WithRoutesBuiltCallback(SignalWhenAllRegistered)
+                    .WithRoutesBuiltCallback(SignalWhenAllRegistered) 
+                    .WithRoutingStrategies(strategies)
                     .Build();
 
                 })
                 .Configure(app =>
                 {
-                    _host = app.ApplicationServices.GetService<RoutingHost>();
-
-
                     app.UseCondenser();
                 })
                 .Build();

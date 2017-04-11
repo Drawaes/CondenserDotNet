@@ -24,6 +24,8 @@ namespace CondenserDotNet.Server
         public string Route { get; private set; } = CondenserRoutes.HealthStats;
         public string DefaultRouteStrategy { get; private set; } = RouteStrategy.Random.ToString();
 
+        private IEnumerable<IRoutingStrategy<IService>> _strategies;
+
         public Action<string[]> OnRoutesBuilt { get; private set; }
 
         public IConfigurationBuilder WithAgentAddress(string agentAdress)
@@ -62,7 +64,7 @@ namespace CondenserDotNet.Server
             return this;
         }
 
-        public IServiceCollection Build() => _collection.AddCondenser(_agentAddress, _agentPort, this, this, this);
+        public IServiceCollection Build() => _collection.AddCondenser(_agentAddress, _agentPort, this, this, this, _strategies);
 
         public IConfigurationBuilder WithRoutingStrategy(RouteStrategy name)
         {
@@ -73,6 +75,12 @@ namespace CondenserDotNet.Server
         public IConfigurationBuilder WithHttpClient(Func<string, HttpClient> clientFactory)
         {
             _clientFactory = clientFactory;
+            return this;
+        }
+
+        public IConfigurationBuilder WithRoutingStrategies(IEnumerable<IRoutingStrategy<IService>> strategies)
+        {
+            _strategies = strategies;
             return this;
         }
 

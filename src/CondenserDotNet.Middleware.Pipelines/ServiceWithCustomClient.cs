@@ -48,7 +48,6 @@ namespace CondenserDotNet.Middleware.Pipelines
         public int Calls => _calls;
         public double TotalRequestTime => _totalRequestTime;
         public IPEndPoint IpEndPoint => _ipEndPoint;
-        public bool RequiresAuthentication => true;
 
         public async Task CallService(HttpContext context)
         {

@@ -16,7 +16,7 @@ namespace CondenserDotNet.Server.Routes
         public ServerStatsRoute(IRouteStore store) => _store = store;
 
         public override string[] Routes { get; } = { CondenserRoutes.Statistics };
-        public override bool RequiresAuthentication => true;
+
         public override IPEndPoint IpEndPoint => throw new NotImplementedException();
 
         public override async Task CallService(HttpContext context)
@@ -25,12 +25,12 @@ namespace CondenserDotNet.Server.Routes
             if (index > 0)
             {
                 var serviceName = context.Request.Path.Value.Substring(index + 1);
-                var services = _store.GetServiceInstances(serviceName);
+                var services = _store.GetServiceInstances(serviceName).ToArray();
                 if (services.Any())
                 {
-                    var response = new ServerStats[services.Count];
+                    var response = new ServerStats[services.Length];
 
-                    for (var i = 0; i < services.Count; i++)
+                    for (var i = 0; i < services.Length; i++)
                     {
                         var service = services[i];
                         var usage = service as IUsageInfo;

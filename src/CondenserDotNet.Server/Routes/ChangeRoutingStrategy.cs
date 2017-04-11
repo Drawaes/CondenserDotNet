@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Primitives;
+using System.Collections.Generic;
 
 namespace CondenserDotNet.Server.Routes
 {
@@ -16,6 +17,7 @@ namespace CondenserDotNet.Server.Routes
         private readonly IDefaultRouting<IService> _defaultRouting;
         private readonly IServiceProvider _provider;
         private readonly IRouteStore _store;
+        static readonly Func<List<IService>, bool> _externalServicesOnly = services => services.Any(s => s is IConsulService);
 
         public ChangeRoutingStrategy(IRouteStore store,
             IServiceProvider provider,
@@ -27,7 +29,6 @@ namespace CondenserDotNet.Server.Routes
         }
 
         public override string[] Routes => new string[]{ CondenserRoutes.Router };
-        public override bool RequiresAuthentication => true;
         public override IPEndPoint IpEndPoint => throw new NotImplementedException();
 
         public override async Task CallService(HttpContext context)
@@ -62,10 +63,10 @@ namespace CondenserDotNet.Server.Routes
         }
 
         private void ReplaceStrategy(Node<IService> node, IRoutingStrategy<IService> strategy)
-        {
+        {            
             foreach (var child in node.ChildrenNodes)
             {
-                child.Item2.Services.SetRoutingStrategy(strategy);
+                child.Item2.Services.SetRoutingStrategy(strategy, _externalServicesOnly);                
                 ReplaceStrategy(child.Item2, strategy);
             }
         }
