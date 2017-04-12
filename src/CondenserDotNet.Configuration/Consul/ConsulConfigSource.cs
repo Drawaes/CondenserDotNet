@@ -69,14 +69,14 @@ namespace CondenserDotNet.Configuration.Consul
                        continue;
                     }
 
-                    var latestIndex = GetConsulIndex(response);
+                    var newConsulIndex  = GetConsulIndex(response);
 
-                    if (latestIndex == consulIndex)
+                    if (newConsulIndex  == consulIndex)
                     {
                         continue;
                     }
 
-                    consulIndex = latestIndex;
+                    consulIndex = newConsulIndex ;
                     var dictionary = await BuildDictionaryAsync(keyPath, response);
                     onUpdate(dictionary);
                 }
