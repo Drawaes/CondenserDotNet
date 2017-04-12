@@ -62,8 +62,9 @@ namespace Condenser.Tests.Integration.Routing
                 .UseUrls($"http://*:{hostPort}")
                 .Configure(app =>
                 {
-                    RegisterService(name, hostPort, route);
-
+                    var appLifetime = app.ApplicationServices.GetService<IApplicationLifetime>();
+                    appLifetime.ApplicationStarted.Register(() => RegisterService(name, hostPort, route));              
+                   
                     app.Run(async message =>
                     {
                         HttpStatusCode status;

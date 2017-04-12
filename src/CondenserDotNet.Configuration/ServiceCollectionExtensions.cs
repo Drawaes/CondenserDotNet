@@ -7,11 +7,11 @@ namespace CondenserDotNet.Configuration
     public static class ServiceCollectionExtensions
     {
 
-        public static IServiceCollection ConfigureReloadable<TConfig>(this IServiceCollection self, IConfiguration configuration, IConfigurationRegistry registry)
+        public static IServiceCollection ConfigureReloadable<TConfig>(this IServiceCollection self, IConfigurationRegistry registry)
             where TConfig : class =>
-                self.ConfigureReloadable<TConfig>(configuration, registry, typeof(TConfig).Name);
+                self.ConfigureReloadable<TConfig>(registry, typeof(TConfig).Name);
 
-        public static IServiceCollection ConfigureReloadable<TConfig>(this IServiceCollection self, IConfiguration configuration, IConfigurationRegistry registry, string sectionName)
+        public static IServiceCollection ConfigureReloadable<TConfig>(this IServiceCollection self, IConfigurationRegistry registry, string sectionName)
             where TConfig : class
         {
             var initialised = false;
@@ -20,7 +20,7 @@ namespace CondenserDotNet.Configuration
             {
                 Action bind = () =>
                 {
-                    var section = configuration.GetSection(sectionName);
+                    var section = registry.Root.GetSection(sectionName);
                     section.Bind(config);
                 };
                 if (!initialised)

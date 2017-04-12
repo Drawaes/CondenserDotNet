@@ -9,5 +9,6 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="$(AspNetVersion)" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="$(AspNetVersion)" />
     <PackageReference Include="Newtonsoft.Json" Version="$(NewtonJson)" />
+    <PackageReference Include="System.ValueTuple" Version="4.3.0" />
   </ItemGroup>
 </Project>

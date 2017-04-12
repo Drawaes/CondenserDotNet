@@ -26,7 +26,7 @@ namespace Configuration
             var configBuilder = new ConfigurationBuilder()
                 .AddConfigurationRegistry(configRegistry).Build();
             
-            services.ConfigureReloadable<IConfigurationRegistry>(configBuilder, configRegistry);
+            services.ConfigureReloadable<IConfigurationRegistry>(configRegistry);
             app.UseMvcWithDefaultRoute();
         }
 

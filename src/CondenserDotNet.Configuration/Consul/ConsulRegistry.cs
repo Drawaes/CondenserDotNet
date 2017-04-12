@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
@@ -15,35 +16,28 @@ namespace CondenserDotNet.Configuration.Consul
     /// </summary>
     public class ConsulRegistry : IConfigurationRegistry
     {
-        private const string ConsulPath = "/";
-        private const char ConsulPathChar = '/';
-        private const char CorePath = ':';
-        private const string ConsulKeyPath = "/v1/kv/";
-        private const string IndexHeader = "X-Consul-Index";
-
         private readonly List<Dictionary<string, string>> _configKeys = new List<Dictionary<string, string>>();
         private readonly List<ConfigurationWatcher> _configWatchers = new List<ConfigurationWatcher>();
-        private IKeyParser _parser;
-        private readonly string _agentAddress;
-        private readonly HttpClient _httpClient;
-        private readonly CancellationTokenSource _disposed = new CancellationTokenSource();
+
+        private readonly ConsulConfigSource _source;
+
+        private IConfigurationRoot _root;
+
+        ConfigurationBuilder _builder = new ConfigurationBuilder();
+        public IConfigurationRoot Root { get { return _root ?? (_root = _builder.Build()); } }
+
 
         public ConsulRegistry(IOptions<ConsulRegistryConfig> agentConfig)
         {
-            var agentInfo = agentConfig?.Value ?? new ConsulRegistryConfig();
-            _agentAddress = $"http://{agentInfo.AgentAddress}:{agentInfo.AgentPort}";
-            _parser = agentInfo.KeyParser;
-            _httpClient = new HttpClient()
-            {
-                BaseAddress = new Uri(_agentAddress)
-            };
+            _source = new ConsulConfigSource(agentConfig);
+            _builder.AddConfigurationRegistry(this);
         }
 
         /// <summary>
         /// This returns a flattened list of all the loaded keys
         /// </summary>
         public IEnumerable<string> AllKeys => _configKeys.SelectMany(x => x.Keys);
-        public void UpdateKeyParser(IKeyParser parser) => _parser = parser;
+        
 
         /// <summary>
         /// This loads the keys from a path. They are not updated.
@@ -52,21 +46,20 @@ namespace CondenserDotNet.Configuration.Consul
         /// <returns></returns>
         public Task<bool> AddStaticKeyPathAsync(string keyPath)
         {
-            if (!keyPath.EndsWith(ConsulPath)) keyPath = keyPath + ConsulPath;
+            keyPath = _source.FormValidKey(keyPath);
             return AddInitialKeyPathAsync(keyPath).ContinueWith(r => r.Result > -1);
         }
 
         private async Task<int> AddInitialKeyPathAsync(string keyPath)
         {
-            var response = await _httpClient.GetAsync($"{ConsulKeyPath}{keyPath}?recurse");
-            if (!response.IsSuccessStatusCode)
+            var response = await _source.GetKeysAsync(keyPath);
+
+            if (!response.success)
             {
                 return -1;
-            }
+            }           
 
-            var dictionary = await BuildDictionaryAsync(keyPath, response);
-
-            return AddNewDictionaryToList(dictionary);
+            return AddNewDictionaryToList(response.dictionary);
         }
 
         /// <summary>
@@ -76,54 +69,26 @@ namespace CondenserDotNet.Configuration.Consul
         /// <returns></returns>
         public async Task AddUpdatingPathAsync(string keyPath)
         {
-            if (!keyPath.EndsWith(ConsulPath)) keyPath = keyPath + ConsulPath;
+            keyPath = _source.FormValidKey(keyPath);
             var initialDictionary = await AddInitialKeyPathAsync(keyPath);
             if (initialDictionary == -1)
             {
                 var newDictionary = new Dictionary<string, string>();
                 initialDictionary = AddNewDictionaryToList(newDictionary);
             }
+            
+            WatchingLoop(initialDictionary, keyPath);
+        }
+
+        private void WatchingLoop(int indexOfDictionary, string keyPath)
+        {
             //We got values so lets start watching but we aren't waiting for this we will let it run
-            var ignore = WatchingLoop(initialDictionary, keyPath);
-        }
-
-        private async Task WatchingLoop(int indexOfDictionary, string keyPath)
-        {
-            try
+            var ignore = _source.WatchKeysAsync(keyPath, dictionary =>
             {
-                var consulIndex = "0";
-                var url = $"{ConsulKeyPath}{keyPath}?recurse&wait=300s&index=";
-                while (true)
-                {
-                    var response = await _httpClient.GetAsync(url + consulIndex, _disposed.Token);
-                    consulIndex = GetConsulIndex(response);
-                    if (!response.IsSuccessStatusCode)
-                    {
-                        //There is some error we need to do something 
-                        continue;
-                    }
-                    var dictionary = await BuildDictionaryAsync(keyPath, response);
-                    UpdateDictionaryInList(indexOfDictionary, dictionary);
-                    FireWatchers();
-                }
-            }
-            catch (TaskCanceledException) { /* nom nom */}
-            catch (ObjectDisposedException) { /* nom nom */ }
-        }
-
-        private async Task<Dictionary<string, string>> BuildDictionaryAsync(string keyPath, HttpResponseMessage response)
-        {
-            var content = await response.Content.ReadAsStringAsync();
-            var keys = JsonConvert.DeserializeObject<KeyValue[]>(content);
-
-            var parsedKeys = keys.SelectMany(k => _parser.Parse(k));
-
-            var dictionary = parsedKeys.ToDictionary(
-                kv => kv.Key.Substring(keyPath.Length).Replace(ConsulPathChar, CorePath),
-                kv => kv.IsDerivedKey ? kv.Value : kv.Value == null ? null : kv.ValueFromBase64(),
-                StringComparer.OrdinalIgnoreCase);
-            return dictionary;
-        }
+                UpdateDictionaryInList(indexOfDictionary, dictionary);
+                FireWatchers();
+            });
+        }        
 
         private void FireWatchers()
         {
@@ -222,38 +187,16 @@ namespace CondenserDotNet.Configuration.Consul
         public async Task<bool> SetKeyAsync(string keyPath, string value)
         {
             keyPath = StripFrontAndBackSlashes(keyPath);
-            var response = await _httpClient.PutAsync($"{ConsulKeyPath}{keyPath}", GetStringContent(value));
-            if (!response.IsSuccessStatusCode)
-            {
-                return false;
-            }
-            return true;
-        }
+            var response = await _source.TrySetKeyAsync(keyPath, value);
 
-        public static string GetConsulIndex(HttpResponseMessage response)
-        {
-            if (!response.Headers.TryGetValues(IndexHeader, out IEnumerable<string> results))
-            {
-                return string.Empty;
-            }
-            return results.FirstOrDefault();
-        }
+            return response;
+        }        
 
         public static string StripFrontAndBackSlashes(string inputString)
         {
             var startIndex = inputString.StartsWith("/") ? 1 : 0;
             return inputString.Substring(startIndex, (inputString.Length - startIndex) - (inputString.EndsWith("/") ? 1 : 0));
-        }
-
-        public static StringContent GetStringContent(string stringForContent)
-        {
-            if (stringForContent == null)
-            {
-                return null;
-            }
-            var returnValue = new StringContent(stringForContent, Encoding.UTF8);
-            return returnValue;
-        }
+        }        
 
         public void Dispose()
         {
