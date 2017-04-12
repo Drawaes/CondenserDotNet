@@ -1,0 +1,7 @@
+﻿<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Reduced the number of times we update due to timeouts
+    </PackageReleaseNotes>
+  </PropertyGroup>
+</Project>

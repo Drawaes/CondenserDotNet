@@ -82,7 +82,12 @@ namespace CondenserDotNet.Client.Services
                             await Task.Delay(1000);
                             continue;
                         }
-                        consulIndex = result.GetConsulIndex();
+                        var newConsulIndex = result.GetConsulIndex();
+                        if(newConsulIndex == consulIndex)
+                        {
+                            continue;
+                        }
+                        consulIndex = newConsulIndex;
                         var content = await result.Content.ReadAsStringAsync();
                         var instance = JsonConvert.DeserializeObject<List<InformationServiceSet>>(content);
                         Volatile.Write(ref _instances, instance);
