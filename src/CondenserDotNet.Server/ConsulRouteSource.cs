@@ -40,7 +40,15 @@ namespace CondenserDotNet.Server
                 _logger?.LogWarning("Retrieved a response that was not success when getting the health status code was {code}", result.StatusCode);
                 return (false, EmptyChecks);
             }
-            _lastConsulIndex = result.GetConsulIndex();
+            var latestIndex = result.GetConsulIndex();
+
+            if (latestIndex == _lastConsulIndex)
+            {
+                return (false, EmptyChecks);
+            }
+
+            _lastConsulIndex = latestIndex;
+
             _logger?.LogInformation("Got new set of health information new index is {index}", _lastConsulIndex);
 
             var checks = await result.Content.GetObject<HealthCheck[]>();

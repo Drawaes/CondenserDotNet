@@ -63,12 +63,20 @@ namespace CondenserDotNet.Configuration.Consul
                 while (true)
                 {
                     var response = await _httpClient.GetAsync(url + consulIndex, _disposed.Token);
-                    consulIndex = GetConsulIndex(response);
+                    
                     if (!response.IsSuccessStatusCode)
                     {
-                        //There is some error we need to do something 
+                       continue;
+                    }
+
+                    var latestIndex = GetConsulIndex(response);
+
+                    if (latestIndex == consulIndex)
+                    {
                         continue;
                     }
+
+                    consulIndex = latestIndex;
                     var dictionary = await BuildDictionaryAsync(keyPath, response);
                     onUpdate(dictionary);
                 }
