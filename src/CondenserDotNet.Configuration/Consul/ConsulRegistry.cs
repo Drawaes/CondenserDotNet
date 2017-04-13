@@ -20,7 +20,9 @@ namespace CondenserDotNet.Configuration.Consul
         private IConfigurationRoot _root;
 
         readonly ConfigurationBuilder _builder = new ConfigurationBuilder();
-        public IConfigurationRoot Root { get { return _root ?? (_root = _builder.Build()); } }
+        public IConfigurationRoot Root => _root ?? (_root = _builder.Build());
+
+        public ConfigurationBuilder Builder => _builder;
 
 
         public ConsulRegistry(IOptions<ConsulRegistryConfig> agentConfig)
