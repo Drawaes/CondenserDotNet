@@ -1,13 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 
 namespace CondenserDotNet.Configuration.Consul
 {
@@ -19,11 +15,11 @@ namespace CondenserDotNet.Configuration.Consul
         private readonly List<Dictionary<string, string>> _configKeys = new List<Dictionary<string, string>>();
         private readonly List<ConfigurationWatcher> _configWatchers = new List<ConfigurationWatcher>();
 
-        private readonly ConsulConfigSource _source;
+        private readonly IConfigSource _source;
 
         private IConfigurationRoot _root;
 
-        ConfigurationBuilder _builder = new ConfigurationBuilder();
+        readonly ConfigurationBuilder _builder = new ConfigurationBuilder();
         public IConfigurationRoot Root { get { return _root ?? (_root = _builder.Build()); } }
 
 
@@ -77,17 +73,30 @@ namespace CondenserDotNet.Configuration.Consul
                 initialDictionary = AddNewDictionaryToList(newDictionary);
             }
             
-            WatchingLoop(initialDictionary, keyPath);
+            var ignore = WatchingLoop(initialDictionary, keyPath);
         }
 
-        private void WatchingLoop(int indexOfDictionary, string keyPath)
+        private async Task WatchingLoop(int indexOfDictionary, string keyPath)
         {
-            //We got values so lets start watching but we aren't waiting for this we will let it run
-            var ignore = _source.WatchKeysAsync(keyPath, dictionary =>
+            var state = _source.CreateWatchState();
+
+            try
             {
-                UpdateDictionaryInList(indexOfDictionary, dictionary);
-                FireWatchers();
-            });
+                while (true)
+                {
+                    var response = await _source.TryWatchKeysAsync(keyPath, state);
+
+                    if (!response.success)
+                    {
+                        continue;
+                    }
+                    
+                    UpdateDictionaryInList(indexOfDictionary, response.update);
+                    FireWatchers();
+                }
+            }
+            catch (TaskCanceledException) { /* nom nom */}
+            catch (ObjectDisposedException) { /* nom nom */ }
         }        
 
         private void FireWatchers()
