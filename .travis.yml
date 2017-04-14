@@ -62,7 +62,7 @@ before_script:
 
 script:
   # Start Consul
-  - ./consul agent -server -bootstrap-expect -log-level err 1 -data-dir /tmp/consul -advertise=127.0.0.1 &
+  - ./consul agent -server -bootstrap-expect 1 -log-level err -data-dir /tmp/consul -advertise=127.0.0.1 &
   # Build sample
   - dotnet test test/CondenserTests/CondenserTests.csproj
   - dotnet test test/Condenser.Tests.Integration/Condenser.Tests.Integration.csproj
