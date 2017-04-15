@@ -10,21 +10,20 @@ namespace CondenserDotNet.Server
 {
     public class ConsulRouteSource : IRouteSource
     {
-        private readonly HttpClient _client = new HttpClient();
+        private readonly HttpClient _client;
         private readonly CancellationTokenSource _cancel = new CancellationTokenSource();
         private readonly string _healthCheckUri;
         private readonly string _serviceLookupUri;
         private string _lastConsulIndex = string.Empty;
         private readonly ILogger _logger;
-        readonly static HealthCheck[] EmptyChecks = new HealthCheck[0];
+        static readonly HealthCheck[] EmptyChecks = new HealthCheck[0];
 
         public ConsulRouteSource(CondenserConfiguration config,
             ILoggerFactory logger)
         {
-            _client.Timeout = TimeSpan.FromMinutes(6);
-
-            _healthCheckUri = $"http://{config.AgentAddress}:{config.AgentPort}{HttpUtils.HealthAnyUrl}?index=";
-            _serviceLookupUri = $"http://{config.AgentAddress}:{config.AgentPort}{HttpUtils.SingleServiceCatalogUrl}";
+            _client = HttpUtils.CreateClient(config.AgentAddress, config.AgentPort);
+            _healthCheckUri = $"{HttpUtils.HealthAnyUrl}?index=";
+            _serviceLookupUri = $"{HttpUtils.SingleServiceCatalogUrl}";
 
             _logger = logger?.CreateLogger<ConsulRouteSource>();
         }

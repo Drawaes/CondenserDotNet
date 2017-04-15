@@ -19,10 +19,7 @@ namespace CondenserDotNet.Client.Services
         public ServiceRegistry(Func<HttpClient> httpClientFactory = null, ILoggerFactory loggerFactory = null)
         {
             _logger = loggerFactory?.CreateLogger<ServiceRegistry>();
-            _client = httpClientFactory?.Invoke() ?? new HttpClient() {
-                BaseAddress = new Uri("http://localhost:8500"),
-                Timeout = new TimeSpan(0,6,0)
-            };
+            _client = httpClientFactory?.Invoke() ?? HttpUtils.CreateClient();
         }
 
         public async Task<IEnumerable<string>> GetAvailableServicesAsync()
