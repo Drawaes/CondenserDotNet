@@ -19,13 +19,11 @@ namespace Configuration
             var environment = "Org1";
             Environment
                 .SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", environment);
-
-            var options = Options.Create(new ConsulRegistryConfig
-            {
-                KeyParser = new JsonKeyValueParser()
-            });
-
-            var registry = new ConsulRegistry(options);
+           
+            var registry = CondenserConfigBuilder
+                .FromConsul()
+                .WithKeysStoredAsJson()
+                .Build();
 
             //***Add some config
             var config = new ConsulConfig
