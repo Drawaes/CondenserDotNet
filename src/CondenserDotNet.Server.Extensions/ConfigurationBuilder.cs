@@ -13,7 +13,6 @@ namespace CondenserDotNet.Server
     public class ConfigurationBuilder : IHealthConfig, IConfigurationBuilder, IRoutingConfig, IHttpClientConfig
     {
         private readonly IServiceCollection _collection;
-        private readonly List<Type> _preRoute = new List<Type>();
         private string _agentAddress = "localhost";
         private int _agentPort = 8500;
         private Func<string, HttpClient> _clientFactory;
@@ -24,7 +23,7 @@ namespace CondenserDotNet.Server
         public string Route { get; private set; } = CondenserRoutes.HealthStats;
         public string DefaultRouteStrategy { get; private set; } = RouteStrategy.Random.ToString();
 
-        private IEnumerable<IRoutingStrategy<IService>> _strategies;
+        private readonly List<IRoutingStrategy<IService>> _strategies = new List<IRoutingStrategy<IService>>();
 
         public Action<string[]> OnRoutesBuilt { get; private set; }
 
@@ -80,7 +79,7 @@ namespace CondenserDotNet.Server
 
         public IConfigurationBuilder WithRoutingStrategies(IEnumerable<IRoutingStrategy<IService>> strategies)
         {
-            _strategies = strategies;
+            _strategies.AddRange(strategies);
             return this;
         }
 

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\..\common.props" />
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.3;net451</TargetFrameworks>
+    <TargetFrameworks>netstandard1.6;net451</TargetFrameworks>
   </PropertyGroup>
 
   <ItemGroup>
@@ -9,5 +9,10 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="$(AspNetVersion)" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="$(AspNetVersion)" />
     <PackageReference Include="Newtonsoft.Json" Version="$(NewtonJson)" />
+    <PackageReference Include="System.ValueTuple" Version="4.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CondenserDotNet.Core\CondenserDotNet.Core.csproj" />
   </ItemGroup>
 </Project>

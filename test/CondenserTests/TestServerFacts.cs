@@ -20,17 +20,13 @@ namespace CondenserTests
             await registry.SetKeyAsync("FakeConfig:Setting1", "abc");
             await registry.SetKeyAsync("FakeConfig:Setting2", "def");
 
-            var root = new ConfigurationBuilder()
-                .AddConfigurationRegistry(registry)
-                .Build();
-
             var builder = new WebHostBuilder()
                 .Configure(x => x.UseMvcWithDefaultRoute())
                 .ConfigureServices(x =>
                 {
                     x.AddMvcCore();
                     x.AddOptions();
-                    x.ConfigureReloadable<FakeConfig>(root, registry);
+                    x.ConfigureReloadable<FakeConfig>(registry);
                 });
 
             using (var server = new TestServer(builder))

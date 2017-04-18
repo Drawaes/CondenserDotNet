@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 using Newtonsoft.Json;
@@ -24,10 +25,28 @@ namespace CondenserDotNet.Core
         public static readonly string SessionCreateUrl = ApiUrl + "session/create";
         public static readonly string HealthAnyUrl = ApiUrl + "/health/state/any";
 
+        public static readonly string DefaultHost = "localhost";
+        public static readonly int DefaultPort = 8500;
+        public static readonly TimeSpan DefaultTimeout = TimeSpan.FromMinutes(6);
+
         public static StringContent GetStringContent<T>(T objectForContent)
         {
             var returnValue = new StringContent(JsonConvert.SerializeObject(objectForContent, JsonSettings), Encoding.UTF8, "application/json");
             return returnValue;
+        }
+
+        public static HttpClient CreateClient(string agentHost = null, int? agentPort = null)
+        {
+            var host = agentHost ?? DefaultHost;
+            var port = agentPort ?? DefaultPort;
+
+            var uri = new UriBuilder("http", host, port);
+
+            return new HttpClient
+            {
+                BaseAddress = uri.Uri,
+                Timeout = DefaultTimeout
+            };
         }
 
         public static async Task<T> GetObject<T>(this HttpContent content)

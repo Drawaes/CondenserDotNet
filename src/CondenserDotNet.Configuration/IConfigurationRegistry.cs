@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Configuration;
 
 namespace CondenserDotNet.Configuration
 {
@@ -15,5 +16,6 @@ namespace CondenserDotNet.Configuration
         Task<bool> SetKeyAsync(string keyPath, string value);
         bool TryGetValue(string key, out string value);
         IEnumerable<string> AllKeys { get; }
+        IConfigurationRoot Root { get; }
     }
 }
