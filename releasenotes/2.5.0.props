@@ -1,0 +1,10 @@
+﻿<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Configuration changes to create a cleaner api
+* Fix bug where router needs strategies to build
+* Dont rebuild config if consul index unchanged
+* Dont rebuild routes if consul index unchanged
+    </PackageReleaseNotes>
+  </PropertyGroup>
+</Project>
