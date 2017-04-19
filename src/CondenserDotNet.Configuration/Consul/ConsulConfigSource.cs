@@ -14,7 +14,6 @@ namespace CondenserDotNet.Configuration.Consul
     public class ConsulConfigSource : IConfigSource
     {
         private const string ConsulPath = "/";
-        private const char ConsulPathChar = '/';
         private const char CorePath = ':';
         private const string ConsulKeyPath = "/v1/kv/";
 
@@ -47,6 +46,8 @@ namespace CondenserDotNet.Configuration.Consul
         public string FormValidKey(string keyPath)
         {
             if (!keyPath.EndsWith(ConsulPath)) keyPath = keyPath + ConsulPath;
+
+            if (keyPath.StartsWith(ConsulPath)) keyPath = keyPath.TrimStart(ConsulPath[0]);
 
             return keyPath;
         }
@@ -90,7 +91,7 @@ namespace CondenserDotNet.Configuration.Consul
             var parsedKeys = keys.SelectMany(k => _parser.Parse(k));
 
             var dictionary = parsedKeys.ToDictionary(
-                kv => kv.Key.Substring(keyPath.Length).Replace(ConsulPathChar, CorePath),
+                kv => kv.Key.Substring(keyPath.Length).Replace(ConsulPath[0], CorePath),
                 kv => kv.IsDerivedKey ? kv.Value : kv.Value == null ? null : kv.ValueFromBase64(),
                 StringComparer.OrdinalIgnoreCase);
             return dictionary;
