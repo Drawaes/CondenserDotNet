@@ -22,13 +22,14 @@ namespace Condenser.Tests.Integration
             await manager.RegisterServiceAsync();
             var registry = new ServiceRegistry();
             var instance = await registry.GetServiceInstanceAsync(config.Value.ServiceName);
-
             Assert.NotNull(instance);
+
             await manager.EnableMaintenanceModeAsync("down");
-            instance = await registry.GetServiceInstanceAsync(config.Value.ServiceName);
             await Task.Delay(200);
 
+            instance = await registry.GetServiceInstanceAsync(config.Value.ServiceName);
             Assert.Null(instance);
+
             await manager.DisableMaintenanceModeAsync();
             await Task.Delay(200);
             instance = await registry.GetServiceInstanceAsync(config.Value.ServiceName);
