@@ -4,7 +4,7 @@
     <OutputType>exe</OutputType>
   </PropertyGroup>
   <PropertyGroup>
-    <TargetFramework>net462</TargetFramework>
+    <TargetFramework>net461</TargetFramework>
     <AssemblyName>Condenser.Tests.Integration</AssemblyName>
     <PackageId>Condenser.Tests.Integration</PackageId>
     <GenerateRuntimeConfigurationFiles>true</GenerateRuntimeConfigurationFiles>

@@ -15,8 +15,45 @@ namespace Condenser.FullFramework
     {
         public static X509Certificate2 Certificate = new X509Certificate2(@"TestCert.pfx", "Test123t");
 
-        [Fact(Skip = "Full framework is broken on the switcher")]
+        [Fact(Skip ="")]
         public async Task SwitcherooSeesHttpsFact()
+        {
+            var port = CondenserDotNet.Client.ServiceManagerConfig.GetNextAvailablePort();
+            var host = new WebHostBuilder()
+                .UseKestrel((ops) =>
+                {
+                    //ops.Switcheroo();
+                    ops.UseHttps(Certificate);
+                })
+                .UseUrls($"https://*:{port}")
+                .UseStartup<Startup>()
+                .Build();
+            host.Start();
+
+            var t = Task.Run(() =>
+            {
+                try
+                {
+                    var client = new HttpClient(new HttpClientHandler()
+                    {
+                    });
+
+                    var result = client.GetAsync($"https://localhost:{port}");
+                    result.Wait();
+                    var isHttps = result.Result.Content.ReadAsStringAsync();
+                    isHttps.Wait();
+                    Assert.True(bool.Parse(isHttps.Result));
+                }
+                finally
+                {
+                    host.Dispose();
+                }
+            });
+            await t.ConfigureAwait(false);
+        }
+
+        [Fact(Skip ="")]
+        public async Task SwitcherooSeesHttpFact()
         {
             var port = CondenserDotNet.Client.ServiceManagerConfig.GetNextAvailablePort();
             var host = new WebHostBuilder()
@@ -32,17 +69,11 @@ namespace Condenser.FullFramework
 
             try
             {
-                var client = new HttpClient(new HttpClientHandler()
-                {
-                    ServerCertificateCustomValidationCallback = (request, cert, chain, policy) =>
-                    {
-                        return false;
-                    }
-                });
+                var client = new HttpClient();
 
-                var result = await client.GetAsync($"https://localhost:{port}");
-                var isHttp = await result.Content.ReadAsStringAsync();
-                Assert.True(bool.Parse(isHttp));
+                var result = await client.GetAsync($"http://localhost:{port}");
+                var isHttps = await result.Content.ReadAsStringAsync();
+                Assert.False(bool.Parse(isHttps));
             }
             finally
             {
@@ -55,7 +86,7 @@ namespace Condenser.FullFramework
             public void Configure(IApplicationBuilder app) =>
                 app.Use(async (context, next) =>
                 {
-                    await context.Response.WriteAsync(string.Join(",", Enumerable.Repeat("testingtesting", 100)));
+                    await context.Response.WriteAsync(context.Request.IsHttps.ToString());
                     return;
                 });
         }

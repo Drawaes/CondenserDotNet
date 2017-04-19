@@ -14,8 +14,7 @@ namespace Condenser.Tests.Integration
     public class ProtocolSwitcherFacts
     {
         public static X509Certificate2 Certificate = new X509Certificate2(Path.Combine(ApplicationEnvironment.ApplicationBasePath, @"TestCert.pfx"), "Test123t");
-
-
+        
         [Fact]
         public async Task SwitcherooSeesHttpsFact()
         {
