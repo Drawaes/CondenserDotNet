@@ -48,6 +48,8 @@ namespace CondenserDotNet.Configuration.Consul
         {
             if (!keyPath.EndsWith(ConsulPath)) keyPath = keyPath + ConsulPath;
 
+            if (keyPath.StartsWith(ConsulPath)) keyPath = keyPath.TrimStart(ConsulPathChar);
+
             return keyPath;
         }
 

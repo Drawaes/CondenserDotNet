@@ -37,6 +37,23 @@ namespace Condenser.Tests.Integration
         }
 
         [Fact]
+        public async Task TestKeyHandlesFrontSlash()
+        {
+            using (var registry = CondenserConfigBuilder.FromConsul().Build())
+            {
+                var keyname = Guid.NewGuid().ToString();
+                await registry.SetKeyAsync($"org/{keyname}/test1", _value1);
+
+                var result = await registry.AddStaticKeyPathAsync($"/org/{keyname}");
+                Assert.Equal(true, result);
+
+                var firstValue = registry["test1"];
+
+                Assert.Equal(_value1, firstValue);
+            }
+        }
+
+        [Fact]
         public async Task DontPickUpChangesFact()
         {
             var keyname = Guid.NewGuid().ToString();
