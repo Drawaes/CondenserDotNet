@@ -29,7 +29,7 @@ after_test:
   - ps: iex ((Get-ChildItem ($env:USERPROFILE + '\.nuget\packages\coveralls.io'))[0].FullName + '\tools\coveralls.net.exe' + ' --opencover coverage.xml')
   - "SET PATH=C:\\Python34;C:\\Python34\\Scripts;%PATH%"
   - pip install codecov
-  - codecov -f "MyProject_coverage.xml"
+  - codecov -f "coverage.xml"
   - dotnet build -c Release
   - dotnet pack -c Release src/CondenserDotNet.Client --version-suffix %suffix%
   - dotnet pack -c Release src/CondenserDotNet.Server --version-suffix %suffix%
