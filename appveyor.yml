@@ -40,7 +40,11 @@ after_test:
       
   
 artifacts:
-  path: '**/*.nupkg'
+  - path: '**/*.nupkg'
+    name: packages
+  - path: 'coverage.xml'
+    name: coverage
+    type: zip
 
 deploy:  
 - provider: NuGet
