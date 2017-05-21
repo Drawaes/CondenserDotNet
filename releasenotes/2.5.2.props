@@ -1,0 +1,8 @@
+<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Fix Configuration bug that removes front character off root object
+* Clean up configuration API
+</PackageReleaseNotes>
+  </PropertyGroup>
+</Project>
