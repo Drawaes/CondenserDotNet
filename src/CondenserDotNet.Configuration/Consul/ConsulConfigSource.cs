@@ -79,25 +79,34 @@ namespace CondenserDotNet.Configuration.Consul
 
         public async Task<(bool success, Dictionary<string, string> update)> TryWatchKeysAsync(string keyPath, object state)
         {
+            _logger?.LogTrace("Starting to watch the keypath {keyPath}", keyPath);
             var consulState = (WatchConsul)state;
             var url = $"{ConsulKeyPath}{keyPath}?recurse&wait=300s&index=";
-            var response = await _httpClient.GetAsync(url + consulState.ConsulIndex, _disposed.Token);
-
-            if (!response.IsSuccessStatusCode)
+            try
             {
-                return (false, null);
+                var response = await _httpClient.GetAsync(url + consulState.ConsulIndex, _disposed.Token);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    return (false, null);
+                }
+
+                var newConsulIndex = response.GetConsulIndex();
+
+                if (newConsulIndex == consulState.ConsulIndex)
+                {
+                    return (false, null);
+                }
+
+                consulState.ConsulIndex = newConsulIndex;
+                var dictionary = await BuildDictionaryAsync(keyPath, response);
+                return (true, dictionary);
             }
-
-            var newConsulIndex = response.GetConsulIndex();
-
-            if (newConsulIndex == consulState.ConsulIndex)
+            catch(Exception ex)
             {
-                return (false, null);
+                _logger.LogError(100, ex, "Error trying to watch a key {keyPath}", keyPath);
+                throw;
             }
-
-            consulState.ConsulIndex = newConsulIndex;
-            var dictionary = await BuildDictionaryAsync(keyPath, response);
-            return (true, dictionary);
         }
 
         private async Task<Dictionary<string, string>> BuildDictionaryAsync(string keyPath,

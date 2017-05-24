@@ -1,0 +1,7 @@
+﻿<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Started adding logging support to the configuration library
+</PackageReleaseNotes>
+  </PropertyGroup>
+</Project>
