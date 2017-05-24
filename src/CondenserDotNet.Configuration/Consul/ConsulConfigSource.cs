@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CondenserDotNet.Core;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 
@@ -19,63 +20,80 @@ namespace CondenserDotNet.Configuration.Consul
 
         private readonly HttpClient _httpClient;
         private readonly CancellationTokenSource _disposed = new CancellationTokenSource();
-
         private readonly IKeyParser _parser;
+        private ILogger _logger;
+
+        public ConsulConfigSource(IOptions<ConsulRegistryConfig> agentConfig, ILogger logger)
+        {
+            _logger = logger;
+            var agentInfo = agentConfig?.Value ?? new ConsulRegistryConfig();
+            _parser = agentInfo.KeyParser;
+
+            _httpClient = HttpUtils.CreateClient(agentInfo.AgentAddress, agentInfo.AgentPort);
+        }
 
         private class WatchConsul
         {
             public string ConsulIndex { get; set; }
         }
 
-        public object CreateWatchState()
+        public object CreateWatchState() => new WatchConsul
         {
-            return new WatchConsul
-            {
-                ConsulIndex = "0"
-            };
-        }
-
-        public ConsulConfigSource(IOptions<ConsulRegistryConfig> agentConfig)
-        {
-            var agentInfo = agentConfig?.Value ?? new ConsulRegistryConfig();
-            _parser = agentInfo.KeyParser;
-            
-            _httpClient = HttpUtils.CreateClient(agentInfo.AgentAddress, agentInfo.AgentPort);
-        }
+            ConsulIndex = "0"
+        };
 
         public string FormValidKey(string keyPath)
         {
-            if (!keyPath.EndsWith(ConsulPath)) keyPath = keyPath + ConsulPath;
-
-            if (keyPath.StartsWith(ConsulPath)) keyPath = keyPath.TrimStart(ConsulPath[0]);
-
+            if (!keyPath.EndsWith(ConsulPath))
+            {
+                keyPath = keyPath + ConsulPath;
+            }
+            if (keyPath.StartsWith(ConsulPath))
+            {
+                keyPath = keyPath.TrimStart(ConsulPath[0]);
+            }
             return keyPath;
         }
 
         public async Task<(bool success, Dictionary<string, string> dictionary)> GetKeysAsync(string keyPath)
         {
-            var response = await _httpClient.GetAsync($"{ConsulKeyPath}{keyPath}?recurse");
-            if (!response.IsSuccessStatusCode)
-                return (false, null);
+            _logger?.LogTrace("Getting kv from path {ConsulKeyPath}{keyPath}", ConsulKeyPath, keyPath);
+            try
+            {
+                var response = await _httpClient.GetAsync($"{ConsulKeyPath}{keyPath}?recurse");
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger.LogWarning("We didn't get a succesful response from consul code was {code}", response.StatusCode);
+                    return (false, null);
+                }
 
-            var dictionary = await BuildDictionaryAsync(keyPath, response);
-            return (true, dictionary);
+                var dictionary = await BuildDictionaryAsync(keyPath, response);
+                return (true, dictionary);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(100, ex, "There was an exception getting the keys");
+                throw;
+            }
         }
 
-        public async Task<(bool success, Dictionary<string, string> update)> TryWatchKeysAsync(string keyPath,
-            object state)
+        public async Task<(bool success, Dictionary<string, string> update)> TryWatchKeysAsync(string keyPath, object state)
         {
-            var consulState = (WatchConsul) state;
+            var consulState = (WatchConsul)state;
             var url = $"{ConsulKeyPath}{keyPath}?recurse&wait=300s&index=";
             var response = await _httpClient.GetAsync(url + consulState.ConsulIndex, _disposed.Token);
 
             if (!response.IsSuccessStatusCode)
+            {
                 return (false, null);
+            }
 
             var newConsulIndex = response.GetConsulIndex();
 
             if (newConsulIndex == consulState.ConsulIndex)
+            {
                 return (false, null);
+            }
 
             consulState.ConsulIndex = newConsulIndex;
             var dictionary = await BuildDictionaryAsync(keyPath, response);
@@ -101,7 +119,9 @@ namespace CondenserDotNet.Configuration.Consul
         {
             var response = await _httpClient.PutAsync($"{ConsulKeyPath}{keyPath}", HttpUtils.GetStringContent(value));
             if (!response.IsSuccessStatusCode)
+            {
                 return false;
+            }
             return true;
         }
     }

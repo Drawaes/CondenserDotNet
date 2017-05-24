@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace CondenserDotNet.Configuration.Consul
@@ -14,19 +15,17 @@ namespace CondenserDotNet.Configuration.Consul
     {
         private readonly List<Dictionary<string, string>> _configKeys = new List<Dictionary<string, string>>();
         private readonly List<ConfigurationWatcher> _configWatchers = new List<ConfigurationWatcher>();
-
         private readonly IConfigSource _source;
-
+        private readonly ILogger _logger;
         private IConfigurationRoot _root;
+        private readonly ConfigurationBuilder _builder = new ConfigurationBuilder();
 
-        readonly ConfigurationBuilder _builder = new ConfigurationBuilder();
         public IConfigurationRoot Root => _root ?? (_root = _builder.Build());
-
         public ConfigurationBuilder Builder => _builder;
 
-
-        public ConsulRegistry(IOptions<ConsulRegistryConfig> agentConfig)
+        public ConsulRegistry(IOptions<ConsulRegistryConfig> agentConfig, ILoggerFactory loggerFactory = null)
         {
+            _logger = loggerFactory?.CreateLogger<ConsulRegistry>();
             _source = new ConsulConfigSource(agentConfig);
             _builder.AddConfigurationRegistry(this);
         }
@@ -35,7 +34,6 @@ namespace CondenserDotNet.Configuration.Consul
         /// This returns a flattened list of all the loaded keys
         /// </summary>
         public IEnumerable<string> AllKeys => _configKeys.SelectMany(x => x.Keys);
-        
 
         /// <summary>
         /// This loads the keys from a path. They are not updated.
@@ -55,7 +53,7 @@ namespace CondenserDotNet.Configuration.Consul
             if (!response.success)
             {
                 return -1;
-            }           
+            }
 
             return AddNewDictionaryToList(response.dictionary);
         }
@@ -74,7 +72,7 @@ namespace CondenserDotNet.Configuration.Consul
                 var newDictionary = new Dictionary<string, string>();
                 initialDictionary = AddNewDictionaryToList(newDictionary);
             }
-            
+
             var ignore = WatchingLoop(initialDictionary, keyPath);
         }
 
@@ -92,14 +90,14 @@ namespace CondenserDotNet.Configuration.Consul
                     {
                         continue;
                     }
-                    
+
                     UpdateDictionaryInList(indexOfDictionary, response.update);
                     FireWatchers();
                 }
             }
             catch (TaskCanceledException) { /* nom nom */}
             catch (ObjectDisposedException) { /* nom nom */ }
-        }        
+        }
 
         private void FireWatchers()
         {
@@ -201,13 +199,13 @@ namespace CondenserDotNet.Configuration.Consul
             var response = await _source.TrySetKeyAsync(keyPath, value);
 
             return response;
-        }        
+        }
 
         public static string StripFrontAndBackSlashes(string inputString)
         {
             var startIndex = inputString.StartsWith("/") ? 1 : 0;
             return inputString.Substring(startIndex, (inputString.Length - startIndex) - (inputString.EndsWith("/") ? 1 : 0));
-        }        
+        }
 
         public void Dispose()
         {

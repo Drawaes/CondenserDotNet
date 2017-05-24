@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\..\common.props" />
   <PropertyGroup>
-    <TargetFramework>netcoreapp1.0</TargetFramework>
+    <TargetFrameworks>netcoreapp1.0;net46</TargetFrameworks>
     <AssemblyName>Configuration</AssemblyName>
     <OutputType>exe</OutputType>
     <PackageId>Configuration</PackageId>
