@@ -1,0 +1,7 @@
+﻿<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Configuration fixed
+</PackageReleaseNotes>
+  </PropertyGroup>
+</Project>

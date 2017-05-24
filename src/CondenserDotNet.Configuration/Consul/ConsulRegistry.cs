@@ -26,7 +26,7 @@ namespace CondenserDotNet.Configuration.Consul
         public ConsulRegistry(IOptions<ConsulRegistryConfig> agentConfig, ILoggerFactory loggerFactory = null)
         {
             _logger = loggerFactory?.CreateLogger<ConsulRegistry>();
-            _source = new ConsulConfigSource(agentConfig);
+            _source = new ConsulConfigSource(agentConfig, _logger);
             _builder.AddConfigurationRegistry(this);
         }
 
