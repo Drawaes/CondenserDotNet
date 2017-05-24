@@ -63,7 +63,7 @@ namespace CondenserDotNet.Configuration.Consul
                 var response = await _httpClient.GetAsync($"{ConsulKeyPath}{keyPath}?recurse");
                 if (!response.IsSuccessStatusCode)
                 {
-                    _logger.LogWarning("We didn't get a succesful response from consul code was {code}", response.StatusCode);
+                    _logger?.LogWarning("We didn't get a succesful response from consul code was {code}", response.StatusCode);
                     return (false, null);
                 }
 
@@ -72,7 +72,7 @@ namespace CondenserDotNet.Configuration.Consul
             }
             catch(Exception ex)
             {
-                _logger.LogError(100, ex, "There was an exception getting the keys");
+                _logger?.LogError(100, ex, "There was an exception getting the keys");
                 throw;
             }
         }
@@ -104,7 +104,7 @@ namespace CondenserDotNet.Configuration.Consul
             }
             catch(Exception ex)
             {
-                _logger.LogError(100, ex, "Error trying to watch a key {keyPath}", keyPath);
+                _logger?.LogError(100, ex, "Error trying to watch a key {keyPath}", keyPath);
                 throw;
             }
         }
