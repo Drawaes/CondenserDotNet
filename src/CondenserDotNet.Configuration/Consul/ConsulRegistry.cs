@@ -30,6 +30,12 @@ namespace CondenserDotNet.Configuration.Consul
             _builder.AddConfigurationRegistry(this);
         }
 
+        public ConsulRegistry(ILoggerFactory loggerFactory = null)
+            :this(null, loggerFactory)
+        {
+            
+        }
+
         /// <summary>
         /// This returns a flattened list of all the loaded keys
         /// </summary>
