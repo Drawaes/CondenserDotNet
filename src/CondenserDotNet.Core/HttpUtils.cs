@@ -29,12 +29,8 @@ namespace CondenserDotNet.Core
         public static readonly int DefaultPort = 8500;
         public static readonly TimeSpan DefaultTimeout = TimeSpan.FromMinutes(6);
 
-        public static StringContent GetStringContent<T>(T objectForContent)
-        {
-            var returnValue = new StringContent(JsonConvert.SerializeObject(objectForContent, JsonSettings), Encoding.UTF8, "application/json");
-            return returnValue;
-        }
-
+        public static StringContent GetStringContent<T>(T objectForContent) => new StringContent(JsonConvert.SerializeObject(objectForContent, JsonSettings), Encoding.UTF8, "application/json");
+            
         public static HttpClient CreateClient(string agentHost = null, int? agentPort = null)
         {
             var host = agentHost ?? DefaultHost;
@@ -49,17 +45,17 @@ namespace CondenserDotNet.Core
             };
         }
 
-        public static async Task<T> GetObject<T>(this HttpContent content)
+        public static Task<T> GetObject<T>(this HttpContent content) => 
+        content.ReadAsStringAsync().ContinueWith(sTask =>
         {
-            var stringConent = await content.ReadAsStringAsync();
-            return JsonConvert.DeserializeObject<T>(stringConent);
-        }
+            return JsonConvert.DeserializeObject<T>(sTask.Result);
+        });
 
-        public static async Task<T> GetAsync<T>(this HttpClient client, string uri)
+        public static Task<T> GetAsync<T>(this HttpClient client, string uri) =>
+        client.GetStringAsync(uri).ContinueWith(resultTask =>
         {
-            var result = await client.GetStringAsync(uri);
-            return JsonConvert.DeserializeObject<T>(result);
-        }
+            return JsonConvert.DeserializeObject<T>(resultTask.Result);
+        });
 
         public static StringContent GetStringContent(string stringForContent)
         {

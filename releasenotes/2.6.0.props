@@ -1,0 +1,8 @@
+﻿<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* ASP.NET version updates
+* Removed some dependencies
+</PackageReleaseNotes>
+  </PropertyGroup>
+</Project>

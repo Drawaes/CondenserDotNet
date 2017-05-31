@@ -1,18 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\..\common.props" />
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.6;net451</TargetFrameworks>
+    <TargetFrameworks>netstandard1.6;net452</TargetFrameworks>
     <AssemblyName>CondenserDotNet.Core</AssemblyName>
     <PackageId>CondenserDotNet.Core</PackageId>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Newtonsoft.Json" Version="$(NewtonJson)" />
-    <PackageReference Include="Microsoft.AspNetCore.Http" Version="$(AspNetVersion)" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="$(AspNetVersion)" />
+    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="1.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="1.1.2" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net451' ">
+  <ItemGroup Condition=" '$(TargetFramework)' == 'net452' ">
     <Reference Include="System.Net.Http" />
   </ItemGroup>
 

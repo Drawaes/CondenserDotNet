@@ -13,10 +13,7 @@ namespace CondenserDotNet.Core.Routing
             SetDefault(strategy.Single(x => x.Name == name));
         }
 
-        public IRoutingStrategy<T> Default { get { return _default; } }
-        public void SetDefault(IRoutingStrategy<T> strategy)
-        {
-            Interlocked.Exchange(ref _default, strategy);
-        }
+        public IRoutingStrategy<T> Default => _default;
+        public void SetDefault(IRoutingStrategy<T> strategy) => Interlocked.Exchange(ref _default, strategy);
     }
 }

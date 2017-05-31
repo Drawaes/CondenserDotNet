@@ -1,8 +1,5 @@
-<Project>
+﻿<Project>
   <PropertyGroup>
     <NetStandardImplicitPackageVersion>1.6.1</NetStandardImplicitPackageVersion>
-    <CoreFxVersion>4.3.0</CoreFxVersion>
-    <NewtonJson>9.0.1</NewtonJson>
-    <AspNetVersion>1.1.0</AspNetVersion>
   </PropertyGroup>
 </Project>

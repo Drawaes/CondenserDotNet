@@ -30,9 +30,7 @@ namespace CondenserDotNet.Core
             while (true)
             {
                 var tcs = m_tcs;
-                if (!tcs.Task.IsCompleted ||
-                    Interlocked.CompareExchange(ref m_tcs, new TaskCompletionSource<T>(), tcs) == tcs)
-                    return;
+                if (!tcs.Task.IsCompleted || Interlocked.CompareExchange(ref m_tcs, new TaskCompletionSource<T>(), tcs) == tcs) return;
             }
         }
     }
