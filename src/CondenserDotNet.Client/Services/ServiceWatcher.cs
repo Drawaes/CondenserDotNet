@@ -38,6 +38,7 @@ namespace CondenserDotNet.Client.Services
 
         public void SetCallback(Action<List<InformationServiceSet>> callBack)
         {
+            _logger.LogTrace("Logging callback for {serviceName}", _serviceName);
             _listCallback = callBack;
             _listCallback?.Invoke(_instances);
         }
@@ -49,10 +50,10 @@ namespace CondenserDotNet.Client.Services
             {
                 var delayTask = Task.Delay(s_getServiceDelay);
                 var taskThatFinished = await Task.WhenAny(delayTask, _completionSource.Task).ConfigureAwait(false);
-                //if (delayTask == taskThatFinished)
-                //{
-                //    throw new NoConsulConnectionException();
-                //}
+                if (delayTask == taskThatFinished)
+                {
+                    throw new NoConsulConnectionException();
+                }
                 instances = Volatile.Read(ref _instances);
             }
             if (_state != WatcherState.UsingLiveValues)
@@ -64,48 +65,60 @@ namespace CondenserDotNet.Client.Services
 
         private async Task WatcherLoop(HttpClient client)
         {
-            while (true)
+            try
             {
-                try
+                while (true)
                 {
-                    var consulIndex = "0";
-                    while (!_cancelationToken.Token.IsCancellationRequested)
+                    try
                     {
-                        var result = await client.GetAsync(_url + consulIndex, _cancelationToken.Token);
-                        if (!result.IsSuccessStatusCode)
+                        var consulIndex = "0";
+                        while (!_cancelationToken.Token.IsCancellationRequested)
                         {
-                            if (_state == WatcherState.UsingLiveValues)
+                            var result = await client.GetAsync(_url + consulIndex, _cancelationToken.Token);
+                            if (!result.IsSuccessStatusCode)
                             {
-                                _state = WatcherState.UsingCachedValues;
+                                if (_state == WatcherState.UsingLiveValues)
+                                {
+                                    _state = WatcherState.UsingCachedValues;
+                                }
+                                await Task.Delay(1000);
+                                continue;
                             }
-                            await Task.Delay(1000);
+                            var newConsulIndex = result.GetConsulIndex();
+                            if (newConsulIndex == consulIndex)
+                            {
+                                continue;
+                            }
+                            consulIndex = newConsulIndex;
+                            var content = await result.Content.ReadAsStringAsync();
+                            var instance = JsonConvert.DeserializeObject<List<InformationServiceSet>>(content);
+                            Volatile.Write(ref _instances, instance);
+                            _listCallback?.Invoke(instance);
+                            _state = WatcherState.UsingLiveValues;
+                            _completionSource.TrySetResult(true);
                             continue;
                         }
-                        var newConsulIndex = result.GetConsulIndex();
-                        if(newConsulIndex == consulIndex)
-                        {
-                            continue;
-                        }
-                        consulIndex = newConsulIndex;
-                        var content = await result.Content.ReadAsStringAsync();
-                        var instance = JsonConvert.DeserializeObject<List<InformationServiceSet>>(content);
-                        Volatile.Write(ref _instances, instance);
-                        _listCallback?.Invoke(instance);
-                        _state = WatcherState.UsingLiveValues;
-                        _completionSource.TrySetResult(true);
                     }
+                    catch (Exception ex)
+                    {
+                        _logger?.LogWarning(0, ex, "Error in blocking watcher watching consul");
+                    }
+                    _state = _state == WatcherState.NotInitialized ? WatcherState.NotInitialized : WatcherState.UsingCachedValues;
+                    if (_cancelationToken.Token.IsCancellationRequested)
+                    {
+                        _logger?.LogInformation("Cancelation requested exiting watcher");
+                        return;
+                    }
+                    await Task.Delay(s_serviceReconnectDelay);
                 }
-                catch (Exception ex)
-                {
-                    _logger?.LogWarning(0, ex, "Error in blocking watcher watching consul");
-                }
-                _state = _state == WatcherState.NotInitialized ? WatcherState.NotInitialized : WatcherState.UsingCachedValues;
-                if (_cancelationToken.Token.IsCancellationRequested)
-                {
-                    _logger?.LogInformation("Cancelation requested exiting watcher");
-                    return;
-                }
-                await Task.Delay(s_serviceReconnectDelay);
+            }
+            catch(Exception ex)
+            {
+                _logger.LogError(0, ex,"Exception in watcher loop for {serviceName}", _serviceName);
+            }
+            finally
+            {
+                _logger.LogWarning("Exiting watcher loop for {serviceName}", _serviceName);
             }
         }
 
