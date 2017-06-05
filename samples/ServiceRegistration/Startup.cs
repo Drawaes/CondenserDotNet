@@ -15,12 +15,12 @@ namespace ServiceRegistration
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
-            services.AddRouting();
+            services.AddConsulServices();
         }
 
-        public void Configure(IApplicationBuilder app)
+        public void Configure(IApplicationBuilder app, IServiceManager manager)
         { 
-            app.UseMiddleware<TrailingHeadersMiddleware>();
+            
             app.UseMvcWithDefaultRoute();
         }
     }

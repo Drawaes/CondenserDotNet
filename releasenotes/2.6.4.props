@@ -1,0 +1,7 @@
+﻿<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Fixed service watcher bug
+</PackageReleaseNotes>
+  </PropertyGroup>
+</Project>
