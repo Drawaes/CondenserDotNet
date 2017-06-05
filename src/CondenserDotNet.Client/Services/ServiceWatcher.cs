@@ -38,7 +38,7 @@ namespace CondenserDotNet.Client.Services
 
         public void SetCallback(Action<List<InformationServiceSet>> callBack)
         {
-            _logger.LogTrace("Logging callback for {serviceName}", _serviceName);
+            _logger?.LogTrace("Logging callback for {serviceName}", _serviceName);
             _listCallback = callBack;
             _listCallback?.Invoke(_instances);
         }
@@ -114,11 +114,11 @@ namespace CondenserDotNet.Client.Services
             }
             catch(Exception ex)
             {
-                _logger.LogError(0, ex,"Exception in watcher loop for {serviceName}", _serviceName);
+                _logger?.LogError(0, ex,"Exception in watcher loop for {serviceName}", _serviceName);
             }
             finally
             {
-                _logger.LogWarning("Exiting watcher loop for {serviceName}", _serviceName);
+                _logger?.LogWarning("Exiting watcher loop for {serviceName}", _serviceName);
             }
         }
 
