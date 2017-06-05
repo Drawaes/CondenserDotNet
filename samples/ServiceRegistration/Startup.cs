@@ -7,6 +7,7 @@ using CondenserDotNet.Middleware.TrailingHeaders;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace ServiceRegistration
 {
@@ -19,8 +20,14 @@ namespace ServiceRegistration
         }
 
         public void Configure(IApplicationBuilder app, IServiceManager manager)
-        { 
-            
+        {
+            manager.AddHttpHealthCheck("health", 10).RegisterServiceAsync();
+            var secondOps = Options.Create(new ServiceManagerConfig()
+            {
+                ServiceName = "TestService",
+                ServicePort = 5000,
+            });
+            var manager2 = new ServiceManager(secondOps).AddHttpHealthCheck("health", 10).RegisterServiceAsync(); 
             app.UseMvcWithDefaultRoute();
         }
     }

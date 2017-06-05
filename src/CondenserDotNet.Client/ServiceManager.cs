@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using CondenserDotNet.Client.DataContracts;
+using CondenserDotNet.Core;
 using Microsoft.AspNetCore.Hosting.Server;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -25,7 +26,7 @@ namespace CondenserDotNet.Client
 
             var config = optionsConfig.Value;
             Logger = logFactory?.CreateLogger<ServiceManager>();
-            Client = httpClientFactory?.Invoke() ?? new HttpClient() { BaseAddress = new Uri("http://127.0.0.1:8500") };
+            Client = httpClientFactory?.Invoke() ?? HttpUtils.CreateClient();
             config.SetDefaults(server);
             ServiceId = config.ServiceId;
             ServiceName = config.ServiceName;

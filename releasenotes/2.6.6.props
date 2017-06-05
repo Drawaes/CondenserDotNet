@@ -1,0 +1,7 @@
+﻿<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Increased max server connections
+</PackageReleaseNotes>
+  </PropertyGroup>
+</Project>

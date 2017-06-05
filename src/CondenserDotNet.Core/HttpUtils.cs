@@ -25,12 +25,12 @@ namespace CondenserDotNet.Core
         public static readonly string SessionCreateUrl = ApiUrl + "session/create";
         public static readonly string HealthAnyUrl = ApiUrl + "health/state/any";
 
-        public static readonly string DefaultHost = "127.0.0.1";
+        public static readonly string DefaultHost = "localhost";
         public static readonly int DefaultPort = 8500;
         public static readonly TimeSpan DefaultTimeout = TimeSpan.FromMinutes(6);
 
         public static StringContent GetStringContent<T>(T objectForContent) => new StringContent(JsonConvert.SerializeObject(objectForContent, JsonSettings), Encoding.UTF8, "application/json");
-            
+
         public static HttpClient CreateClient(string agentHost = null, int? agentPort = null)
         {
             var host = agentHost ?? DefaultHost;
@@ -38,14 +38,14 @@ namespace CondenserDotNet.Core
 
             var uri = new UriBuilder("http", host, port);
 
-            return new HttpClient
+            return new HttpClient(new HttpClientHandler() { MaxConnectionsPerServer = 50 })
             {
                 BaseAddress = uri.Uri,
                 Timeout = DefaultTimeout
             };
         }
 
-        public static Task<T> GetObject<T>(this HttpContent content) => 
+        public static Task<T> GetObject<T>(this HttpContent content) =>
         content.ReadAsStringAsync().ContinueWith(sTask =>
         {
             return JsonConvert.DeserializeObject<T>(sTask.Result);

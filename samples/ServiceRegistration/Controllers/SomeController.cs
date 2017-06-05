@@ -1,20 +1,27 @@
 ﻿using System;
 using System.Linq;
+using CondenserDotNet.Client.Services;
 using CondenserDotNet.Middleware.TrailingHeaders;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ServiceRegistration.Controllers
 {
-    [Route("/testSample/test3/test1")]
+    [Route("test")]
     public class SomeController : Controller
     {
-        private readonly static string[] _content = Enumerable.Repeat("Quick Brown Fox", 100).ToArray();
+        private IServiceRegistry _registry;
+
+        public SomeController(IServiceRegistry registry)
+        {
+            _registry = registry;
+        }
 
         [HttpGet()]
         public IActionResult GetOther()
         {
-            HttpContext.Features.Get<ITrailingHeadersFeature>().RegisterHeader("TimsHeader", () => DateTime.UtcNow.ToString());
-            return Ok(_content);
+            var instance =_registry.GetServiceInstanceAsync("ServiceRegistration");
+            instance.Wait();
+            return Ok(instance.Result.Service);
         }
     }
 }
