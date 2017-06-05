@@ -25,7 +25,7 @@ namespace CondenserDotNet.Client
 
             var config = optionsConfig.Value;
             Logger = logFactory?.CreateLogger<ServiceManager>();
-            Client = httpClientFactory?.Invoke() ?? new HttpClient() { BaseAddress = new Uri("http://localhost:8500") };
+            Client = httpClientFactory?.Invoke() ?? new HttpClient() { BaseAddress = new Uri("http://127.0.0.1:8500") };
             config.SetDefaults(server);
             ServiceId = config.ServiceId;
             ServiceName = config.ServiceName;
