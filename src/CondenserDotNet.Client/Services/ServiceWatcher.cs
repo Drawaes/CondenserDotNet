@@ -49,10 +49,10 @@ namespace CondenserDotNet.Client.Services
             {
                 var delayTask = Task.Delay(s_getServiceDelay);
                 var taskThatFinished = await Task.WhenAny(delayTask, _completionSource.Task).ConfigureAwait(false);
-                if (delayTask == taskThatFinished)
-                {
-                    throw new NoConsulConnectionException();
-                }
+                //if (delayTask == taskThatFinished)
+                //{
+                //    throw new NoConsulConnectionException();
+                //}
                 instances = Volatile.Read(ref _instances);
             }
             if (_state != WatcherState.UsingLiveValues)
