@@ -79,9 +79,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Release Notes", "Release No
 		releasenotes\2.6.0.props = releasenotes\2.6.0.props
 		releasenotes\2.6.1.props = releasenotes\2.6.1.props
 		releasenotes\2.6.2.props = releasenotes\2.6.2.props
+		releasenotes\2.6.3.props = releasenotes\2.6.3.props
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Condenser.FullFramework", "test\Condenser.FullFramework\Condenser.FullFramework.csproj", "{6E7DD120-4D6A-4BB0-B78C-AA5D5D4CFB78}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Condenser.FullFramework", "test\Condenser.FullFramework\Condenser.FullFramework.csproj", "{6E7DD120-4D6A-4BB0-B78C-AA5D5D4CFB78}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
