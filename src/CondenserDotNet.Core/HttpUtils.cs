@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Net.Http;
 using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Net.Http;
 
 namespace CondenserDotNet.Core
 {
@@ -37,12 +37,20 @@ namespace CondenserDotNet.Core
             var port = agentPort ?? DefaultPort;
 
             var uri = new UriBuilder("http", host, port);
-
+#if NET452
+            System.Net.ServicePointManager.DefaultConnectionLimit = 50;
+            return new HttpClient()
+            {
+                BaseAddress = uri.Uri,
+                Timeout = DefaultTimeout
+            };
+#else
             return new HttpClient(new HttpClientHandler() { MaxConnectionsPerServer = 50 })
             {
                 BaseAddress = uri.Uri,
                 Timeout = DefaultTimeout
             };
+#endif
         }
 
         public static Task<T> GetObject<T>(this HttpContent content) =>
