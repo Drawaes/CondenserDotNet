@@ -13,6 +13,11 @@ namespace ServiceRegistration
     {
         public static void Main(string[] args)
         {
+            var config = new CondenserDotNet.Configuration.Consul.ConsulRegistry();
+            var ignore = config.AddUpdatingPathAsync("/allkeys");
+
+            Console.ReadLine();
+
             var port = 5000;// ServiceManagerConfig.GetNextAvailablePort();
                                     
             var host = new WebHostBuilder()

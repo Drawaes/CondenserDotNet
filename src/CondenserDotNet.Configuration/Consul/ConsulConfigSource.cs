@@ -85,20 +85,19 @@ namespace CondenserDotNet.Configuration.Consul
             try
             {
                 var response = await _httpClient.GetAsync(url + consulState.ConsulIndex, _disposed.Token);
+                var newConsulIndex = response.GetConsulIndex();
 
                 if (!response.IsSuccessStatusCode)
                 {
+                    consulState.ConsulIndex = newConsulIndex;
                     return (false, null);
                 }
-
-                var newConsulIndex = response.GetConsulIndex();
-
+                
                 if (newConsulIndex == consulState.ConsulIndex)
                 {
                     return (false, null);
                 }
-
-                consulState.ConsulIndex = newConsulIndex;
+                                
                 var dictionary = await BuildDictionaryAsync(keyPath, response);
                 return (true, dictionary);
             }

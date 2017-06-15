@@ -1,0 +1,7 @@
+﻿<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Fixed bug, if a key doesn't exist a tight loop formed without a consul index to cause blocking
+</PackageReleaseNotes>
+  </PropertyGroup>
+</Project>
