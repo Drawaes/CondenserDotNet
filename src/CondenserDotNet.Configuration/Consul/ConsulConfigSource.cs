@@ -95,9 +95,10 @@ namespace CondenserDotNet.Configuration.Consul
                 
                 if (newConsulIndex == consulState.ConsulIndex)
                 {
+                    consulState.ConsulIndex = newConsulIndex;
                     return (false, null);
                 }
-                                
+                consulState.ConsulIndex = newConsulIndex;
                 var dictionary = await BuildDictionaryAsync(keyPath, response);
                 return (true, dictionary);
             }

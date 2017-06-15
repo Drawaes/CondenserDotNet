@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26403.7
+VisualStudioVersion = 15.0.26430.13
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{CB18CD55-85E2-46FC-A55B-7DE23EABFAE5}"
 EndProject
@@ -83,6 +83,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Release Notes", "Release No
 		releasenotes\2.6.4.props = releasenotes\2.6.4.props
 		releasenotes\2.6.5.props = releasenotes\2.6.5.props
 		releasenotes\2.6.6.props = releasenotes\2.6.6.props
+		releasenotes\2.6.7.props = releasenotes\2.6.7.props
+		releasenotes\2.6.8.props = releasenotes\2.6.8.props
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Condenser.FullFramework", "test\Condenser.FullFramework\Condenser.FullFramework.csproj", "{6E7DD120-4D6A-4BB0-B78C-AA5D5D4CFB78}"

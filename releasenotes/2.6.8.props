@@ -1,0 +1,10 @@
+﻿<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Fixed another tight loop in config watching
+* Fixed tight loop in Leadership
+* Cleaned up leadership tests
+* Added a leadership test to catch spinning
+</PackageReleaseNotes>
+  </PropertyGroup>
+</Project>

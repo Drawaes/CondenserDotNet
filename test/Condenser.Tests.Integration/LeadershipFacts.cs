@@ -10,14 +10,57 @@ namespace Condenser.Tests.Integration
 {
     public class LeadershipFacts
     {
+        private string leadershipKey;
+        private Guid key;
+
+        public LeadershipFacts()
+        {
+            key = Guid.NewGuid();
+            leadershipKey = $"leadershipTests/{key}";
+        }
+
+        private ServiceManager GetConfig(string serviceId) =>
+            new ServiceManager(
+                Options.Create(
+                    new ServiceManagerConfig()
+                    {
+                        ServicePort = 2222,
+                        ServiceName = $"{key}{serviceId}"
+                    }));
+
+        [Fact]
+        public async Task TestLeadershipIsBlocking()
+        {
+            using (var manager = GetConfig("Service1"))
+            using (var manager2 = GetConfig("Service2"))
+            {
+                await manager.AddTtlHealthCheck(1000).RegisterServiceAsync();
+                await manager2.AddTtlHealthCheck(1000).RegisterServiceAsync();
+                await manager.TtlCheck.ReportPassingAsync();
+                await manager2.TtlCheck.ReportPassingAsync();
+                var leader1 = new LeaderRegistry(manager);
+                var leader2 = new LeaderRegistry(manager2);
+
+                var watcher = leader1.GetLeaderWatcher(leadershipKey);
+                var watcher2 = leader2.GetLeaderWatcher(leadershipKey);
+                var counter = 0;
+
+                watcher.SetLeaderCallback(info => Interlocked.Increment(ref counter));
+                watcher2.SetLeaderCallback(info => Interlocked.Increment(ref counter));
+
+                var ignore = watcher.GetLeadershipAsync();
+                var ignore2 = watcher.GetLeadershipAsync();
+
+                await Task.Delay(1000);
+                Assert.InRange(counter, 0, 5);
+            }
+        }
+
         [Fact]
         public async Task TestGetLeadership()
         {
-            var key = Guid.NewGuid().ToString();
-            var leadershipKey = $"leadershipTests/{key}";
-            Console.WriteLine(nameof(TestGetLeadership));
-            var opts = Options.Create(new ServiceManagerConfig() { ServicePort = 2222, ServiceName = key });
-            using (var manager = new ServiceManager(opts))
+
+            using (var manager = GetConfig("Service1"))
             {
                 manager.AddTtlHealthCheck(10);
                 var registerResult = await manager.RegisterServiceAsync();
@@ -33,13 +76,8 @@ namespace Condenser.Tests.Integration
         [Fact]
         public async Task TestLeadershipFailOver()
         {
-            var key = Guid.NewGuid().ToString();
-            var leadershipKey = $"leadershipTests/{key}";
-            Console.WriteLine(nameof(TestLeadershipFailOver));
-            var opts = Options.Create(new ServiceManagerConfig() { ServicePort = 2222, ServiceName = key });
-            var opts2 = Options.Create(new ServiceManagerConfig() { ServicePort = 2222, ServiceName = $"{key}LeaderId1" });
-            using (var manager = new ServiceManager(opts))
-            using (var manager2 = new ServiceManager(opts2))
+            using (var manager = GetConfig("Service1"))
+            using (var manager2 = GetConfig("Service2"))
             {
                 await manager.AddTtlHealthCheck(100).RegisterServiceAsync();
                 var ttlResult = await manager.TtlCheck.ReportPassingAsync();

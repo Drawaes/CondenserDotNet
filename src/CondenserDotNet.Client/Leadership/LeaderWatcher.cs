@@ -18,6 +18,7 @@ namespace CondenserDotNet.Client.Leadership
         private Guid _sessionId;
         private Action<InformationService> _callback;
         private const string KeyPath = "/v1/kv/";
+        private string _consulIndex = "0";
 
         internal LeaderWatcher(IServiceManager serviceManager, string keyToWatch)
         {
@@ -45,7 +46,6 @@ namespace CondenserDotNet.Client.Leadership
 
         private async Task TryForElection()
         {
-            string consulIndex;
             while (true)
             {
                 //If we are here we don't know who is the leader
@@ -55,9 +55,9 @@ namespace CondenserDotNet.Client.Leadership
                 if (!leaderResult.IsSuccessStatusCode)
                 {
                     //error so we need to get a new session
+                    await Task.Delay(500);
                     return;
                 }
-                consulIndex = leaderResult.GetConsulIndex();
                 var areWeLeader = bool.Parse(await leaderResult.Content.ReadAsStringAsync());
                 if (areWeLeader)
                 {
@@ -65,7 +65,7 @@ namespace CondenserDotNet.Client.Leadership
                 }
                 for (var i = 0; i < 2; i++)
                 {
-                    leaderResult = await _serviceManager.Client.GetAsync($"{KeyPath}{_keyToWatch}?index={consulIndex}");
+                    leaderResult = await _serviceManager.Client.GetAsync($"{KeyPath}{_keyToWatch}?index={_consulIndex}");
                     if (!leaderResult.IsSuccessStatusCode)
                     {
                         //error so return to create session
@@ -89,6 +89,7 @@ namespace CondenserDotNet.Client.Leadership
                     {
                         _electedLeaderEvent.Reset();
                     }
+                    _consulIndex = leaderResult.GetConsulIndex();
                 }
             }
         }
