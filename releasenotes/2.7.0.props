@@ -1,0 +1,7 @@
+﻿<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Changed Service Registration to use hostnames instead of IP addresses
+</PackageReleaseNotes>
+  </PropertyGroup>
+</Project>

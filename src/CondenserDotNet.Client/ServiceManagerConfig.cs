@@ -50,16 +50,10 @@ namespace CondenserDotNet.Client
             }
             if (string.IsNullOrWhiteSpace(ServiceAddress))
             {
-                var ipAwait = Dns.GetHostAddressesAsync(Dns.GetHostName());
-                ipAwait.Wait();
-                foreach (var ipAddress in ipAwait.Result)
-                {
-                    if (ipAddress.AddressFamily == AddressFamily.InterNetwork)
-                    {
-                        ServiceAddress = ipAddress.ToString();
-                        break;
-                    }
-                }
+                var hostName = Dns.GetHostEntryAsync(string.Empty);
+                hostName.Wait();
+                var name = hostName.Result.HostName;
+                ServiceAddress = name;
             }
             if (string.IsNullOrWhiteSpace(ServiceId))
             {
