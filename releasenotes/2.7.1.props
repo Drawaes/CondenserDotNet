@@ -1,0 +1,7 @@
+﻿<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Remove duplicates during configuration dictionary building
+</PackageReleaseNotes>
+  </PropertyGroup>
+</Project>

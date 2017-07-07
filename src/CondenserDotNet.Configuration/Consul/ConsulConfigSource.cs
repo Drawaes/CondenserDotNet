@@ -109,13 +109,39 @@ namespace CondenserDotNet.Configuration.Consul
             }
         }
 
+        private class KeyValueComparer : IEqualityComparer<KeyValue>
+        {
+            private string _keyPath;
+            private char _consulPath;
+            private char _corePath;
+
+            public KeyValueComparer(string keyPath, char consulPath, char corePath)
+            {
+                _keyPath = keyPath;
+                _consulPath = consulPath;
+                _corePath = corePath;
+            }
+
+            public bool Equals(KeyValue x, KeyValue y)
+            {
+                var xkey = x.Key.Substring(_keyPath.Length).Replace(_consulPath, _corePath);
+                var yKey = y.Key.Substring(_keyPath.Length).Replace(_consulPath, _corePath);
+                return xkey.Equals(yKey);
+            }
+
+            public int GetHashCode(KeyValue obj)
+            {
+                return obj.Key.Substring(_keyPath.Length).Replace(_consulPath, _corePath).GetHashCode();
+            }
+        }
+
         private async Task<Dictionary<string, string>> BuildDictionaryAsync(string keyPath,
             HttpResponseMessage response)
         {
             var content = await response.Content.ReadAsStringAsync();
             var keys = JsonConvert.DeserializeObject<KeyValue[]>(content);
 
-            var parsedKeys = keys.SelectMany(k => _parser.Parse(k));
+            var parsedKeys = keys.SelectMany(k => _parser.Parse(k)).Distinct(new KeyValueComparer(keyPath, ConsulPath[0],CorePath));
 
             var dictionary = parsedKeys.ToDictionary(
                 kv => kv.Key.Substring(keyPath.Length).Replace(ConsulPath[0], CorePath),
