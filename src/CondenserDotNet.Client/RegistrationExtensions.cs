@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -50,6 +50,17 @@ namespace CondenserDotNet.Client
             }
             serviceManager.DeregisterIfCriticalAfter = timeSpan;
             return serviceManager;
+        }
+
+        public static async Task<bool> DeregisterServiceAsync(this IServiceManager serviceManager)
+        {
+            var result = await serviceManager.Client.PutAsync($"/v1/agent/service/deregister/{serviceManager.ServiceId}", new System.Net.Http.StringContent(string.Empty));
+            if(result.IsSuccessStatusCode)
+            {
+                serviceManager.RegisteredService = null;
+                return true;
+            }
+            return false;
         }
 
         public static async Task<bool> RegisterServiceAsync(this IServiceManager serviceManager)
