@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Added deregister service to the extension methods
+</PackageReleaseNotes>
+  </PropertyGroup>
+</Project>
