@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Changed the dictionary build from a key change to not throw on duplicate key
+</PackageReleaseNotes>
+  </PropertyGroup>
+</Project>
