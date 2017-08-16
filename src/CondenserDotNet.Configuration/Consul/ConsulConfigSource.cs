@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -143,10 +143,13 @@ namespace CondenserDotNet.Configuration.Consul
 
             var parsedKeys = keys.SelectMany(k => _parser.Parse(k)).Distinct(new KeyValueComparer(keyPath, ConsulPath[0],CorePath));
 
-            var dictionary = parsedKeys.ToDictionary(
-                kv => kv.Key.Substring(keyPath.Length).Replace(ConsulPath[0], CorePath),
-                kv => kv.IsDerivedKey ? kv.Value : kv.Value == null ? null : kv.ValueFromBase64(),
-                StringComparer.OrdinalIgnoreCase);
+            var dictionary = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var kv in parsedKeys)
+            {
+                var key = kv.Key.Substring(keyPath.Length).Replace(ConsulPath[0], CorePath);
+                var value = kv.IsDerivedKey ? kv.Value : kv.Value == null ? null : kv.ValueFromBase64();
+                dictionary[key] = value;
+            }
             return dictionary;
         }
 
