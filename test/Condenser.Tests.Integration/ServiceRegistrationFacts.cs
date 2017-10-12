@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using CondenserDotNet.Client;
 using CondenserDotNet.Client.Services;
@@ -19,7 +19,7 @@ namespace Condenser.Tests.Integration
                 manager.AddApiUrl("api/testurl");
                 var registrationResult = await manager.RegisterServiceAsync();
 
-                Assert.Equal(true, registrationResult);
+                Assert.True(registrationResult);
             }
         }
         [Fact]
@@ -33,7 +33,7 @@ namespace Condenser.Tests.Integration
                 var registerResult = await manager.RegisterServiceAsync();
                 var ttlResult = await manager.TtlCheck.ReportPassingAsync();
 
-                Assert.Equal(true, ttlResult);
+                Assert.True(ttlResult);
             }
         }
         [Fact]
@@ -45,7 +45,7 @@ namespace Condenser.Tests.Integration
             using (var registry = new ServiceRegistry())
             {
                 var registrationResult = await manager.RegisterServiceAsync();
-                Assert.Equal(true, registrationResult);
+                Assert.True(registrationResult);
 
                 var services = await registry.GetAvailableServicesAsync();
                 Assert.Contains(serviceName, services);

@@ -3,15 +3,13 @@
   <PropertyGroup>
     <AssemblyName>PocWebsocketSupport</AssemblyName>
     <PackageId>PocWebsocketSupport</PackageId>
-    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
     <OutputType>Exe</OutputType>
-    <RuntimeFrameworkVersion>1.1.0</RuntimeFrameworkVersion>
     <ServerGarbageCollection>true</ServerGarbageCollection>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\CondenserDotNet.Core\CondenserDotNet.Core.csproj" />
-    <ProjectReference Include="..\..\src\CondenserDotNet.Middleware.Pipelines\CondenserDotNet.Middleware.Pipelines.csproj" />
     <ProjectReference Include="..\..\src\CondenserDotNet.Middleware\CondenserDotNet.Middleware.csproj" />
     <ProjectReference Include="..\..\src\CondenserDotNet.Server.Extensions\CondenserDotNet.Server.Extensions.csproj" />
     <ProjectReference Include="..\..\src\CondenserDotNet.Server\CondenserDotNet.Server.csproj" />
@@ -22,6 +20,6 @@
     <PackageReference Include="Microsoft.AspNetCore.Hosting" Version="1.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="1.1.2" />
     <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel.Https" Version="1.1.2" />
-    <PackageReference Include="System.Net.Http" Version="4.3.2" />
+    <PackageReference Include="System.Net.Http" Version="4.3.3" />
   </ItemGroup>
 </Project>

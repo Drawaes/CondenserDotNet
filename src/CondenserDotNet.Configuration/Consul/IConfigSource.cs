@@ -7,8 +7,8 @@ namespace CondenserDotNet.Configuration.Consul
     {
         object CreateWatchState();
         string FormValidKey(string keyPath);
-        Task<(bool success, Dictionary<string, string> dictionary)> GetKeysAsync(string keyPath);
-        Task<(bool success, Dictionary<string, string> update)> TryWatchKeysAsync(string keyPath, object state);
+        Task<KeyOperationResult> GetKeysAsync(string keyPath);
+        Task<KeyOperationResult> TryWatchKeysAsync(string keyPath, object state);
 
         Task<bool> TrySetKeyAsync(string keyPath, string value);
     }

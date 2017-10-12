@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using CondenserDotNet.Configuration;
@@ -26,7 +26,7 @@ namespace Condenser.Tests.Integration
                 await configRegistry.SetKeyAsync($"org/{keyname}/test2", _value2);
 
                 var result = await configRegistry.AddStaticKeyPathAsync($"org/{keyname}");
-                Assert.Equal(true, result);
+                Assert.True(result);
 
                 var firstValue = configRegistry["test1"];
                 var secondValue = configRegistry["test2"];
@@ -45,7 +45,7 @@ namespace Condenser.Tests.Integration
                 await registry.SetKeyAsync($"org/{keyname}/test1", _value1);
 
                 var result = await registry.AddStaticKeyPathAsync($"/org/{keyname}");
-                Assert.Equal(true, result);
+                Assert.True(result);
 
                 var firstValue = registry["test1"];
 

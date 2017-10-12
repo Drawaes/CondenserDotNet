@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net.Http;
 using System.Threading.Tasks;
 using CondenserDotNet.Client;
@@ -21,10 +21,10 @@ namespace Condenser.Tests.Integration
             using (var serviceRegistry = new ServiceRegistry())
             {
                 var registrationResult = await manager.RegisterServiceAsync();
-                Assert.Equal(true, registrationResult);
+                Assert.True(registrationResult);
 
                 var registrationResult2 = await manager2.RegisterServiceAsync();
-                Assert.Equal(true, registrationResult2);
+                Assert.True(registrationResult2);
 
                 var service = await serviceRegistry.GetServiceInstanceAsync(key);
                 Assert.Equal(key, service.Service);

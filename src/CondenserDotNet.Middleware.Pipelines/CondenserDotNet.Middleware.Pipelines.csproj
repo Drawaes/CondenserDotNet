@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\..\common.props" />
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.6;net452</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <AssemblyName>CondenserDotNet.Middleware.Pipelines</AssemblyName>
     <PackageId>CondenserDotNet.Middleware.Pipelines</PackageId>
@@ -12,18 +12,14 @@
     <PackageReference Include="System.IO.Pipelines" Version="0.1.0-e170318-5" />
     <PackageReference Include="System.IO.Pipelines.Networking.Sockets" Version="0.1.0-e170318-5" />
     <PackageReference Include="System.IO.Pipelines.Text.Primitives" Version="0.1.0-e170318-5" />
+    <PackageReference Include="System.ValueTuple" Version="4.4.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CondenserDotNet.Core\CondenserDotNet.Core.csproj" />
     <ProjectReference Include="..\CondenserDotNet.Server\CondenserDotNet.Server.csproj" />
   </ItemGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
+  <ItemGroup>
     <PackageReference Include="System.Net.NameResolution" Version="4.3.0" />
   </ItemGroup>
-
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net452'">
-    <Reference Include="System.Net.Http" />
-  </ItemGroup>
-
 </Project>

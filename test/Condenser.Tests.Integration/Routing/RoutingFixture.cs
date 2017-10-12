@@ -1,4 +1,4 @@
-﻿using CondenserDotNet.Client;
+using CondenserDotNet.Client;
 using CondenserDotNet.Core;
 using CondenserDotNet.Server;
 using Microsoft.AspNetCore.Builder;
@@ -25,7 +25,7 @@ namespace Condenser.Tests.Integration.Routing
         private volatile string[] _currentRegistrations;
         private int routerPort;
         private AsyncManualResetEvent<bool> _wait = new AsyncManualResetEvent<bool>();
-        private RoutingHost _host;
+        //private RoutingHost _host;
         private IWebHost _routerHost;
         private HttpClient _client = new HttpClient();
 

@@ -1,7 +1,5 @@
 <Project>
   <Import Project="version.props" />
-  <Import Project="depend.props" />
-
   <PropertyGroup>
     <Product>Condenser API Router</Product>
     <VersionSuffix Condition="'$(VersionSuffix)'!='' AND '$(BuildNumber)' != ''">$(VersionSuffix)-$(BuildNumber)</VersionSuffix>
@@ -15,7 +13,4 @@
     <DebugType>full</DebugType>
     <PackageIconUrl>https://drawaes.github.io/CondenserDocs/assets/img/logo.png</PackageIconUrl>
   </PropertyGroup>
-  <ItemGroup Condition="'$(TargetFrameworkIdentifier)'=='.NETFramework' AND '$(OutputType)'=='library'">
-    <PackageReference Include="NETStandard.Library" Version="$(NetStandardImplicitPackageVersion)" />
-  </ItemGroup>
 </Project>

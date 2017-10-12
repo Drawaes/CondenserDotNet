@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using CondenserDotNet.Server.DataContracts;
 
 namespace CondenserDotNet.Server
@@ -7,6 +7,6 @@ namespace CondenserDotNet.Server
     {
         bool CanRequestRoute();
         Task<ServiceInstance[]> GetServiceInstancesAsync(string serviceName);
-        Task<(bool success, HealthCheck[] checks)> TryGetHealthChecksAsync();
+        Task<GetHealthCheckResult> TryGetHealthChecksAsync();
     }
 }

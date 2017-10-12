@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -42,13 +42,13 @@ namespace CondenserDotNet.Server
                 try
                 {
                     var result = await _source.TryGetHealthChecksAsync();
-                    if (!result.success)
+                    if (!result.Success)
                     {
                         await Task.Delay(TimeSpan.FromSeconds(1));
                         continue;
                     }
 
-                    await ProcessHealthChecksAsync(result.checks);
+                    await ProcessHealthChecksAsync(result.Checks);
                 }
                 catch (Exception ex)
                 {

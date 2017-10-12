@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -30,20 +30,20 @@ namespace CondenserDotNet.Server
 
         public bool CanRequestRoute() => !_cancel.IsCancellationRequested;
 
-        public async Task<(bool success, HealthCheck[] checks)> TryGetHealthChecksAsync()
+        public async Task<GetHealthCheckResult> TryGetHealthChecksAsync()
         {
             _logger?.LogInformation("Looking for health changes with index {index}", _lastConsulIndex);
             var result = await _client.GetAsync(_healthCheckUri + _lastConsulIndex.ToString(), _cancel.Token);
             if (!result.IsSuccessStatusCode)
             {
                 _logger?.LogWarning("Retrieved a response that was not success when getting the health status code was {code}", result.StatusCode);
-                return (false, EmptyChecks);
+                return new GetHealthCheckResult() { Checks = EmptyChecks, Success = false };
             }
             var newConsulIndex = result.GetConsulIndex();
 
             if (newConsulIndex  == _lastConsulIndex)
             {
-                return (false, EmptyChecks);
+                return new GetHealthCheckResult() { Success = false, Checks = EmptyChecks };
             }
 
             _lastConsulIndex = newConsulIndex ;
@@ -51,7 +51,7 @@ namespace CondenserDotNet.Server
             _logger?.LogInformation("Got new set of health information new index is {index}", _lastConsulIndex);
 
             var checks = await result.Content.GetObject<HealthCheck[]>();
-            return (true, checks);
+            return new GetHealthCheckResult() { Success = true, Checks = checks };
         }
 
         public Task<ServiceInstance[]> GetServiceInstancesAsync(string serviceName) => _client.GetAsync<ServiceInstance[]>(_serviceLookupUri + serviceName);

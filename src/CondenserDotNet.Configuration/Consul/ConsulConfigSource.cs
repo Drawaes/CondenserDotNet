@@ -55,7 +55,7 @@ namespace CondenserDotNet.Configuration.Consul
             return keyPath;
         }
 
-        public async Task<(bool success, Dictionary<string, string> dictionary)> GetKeysAsync(string keyPath)
+        public async Task<KeyOperationResult> GetKeysAsync(string keyPath)
         {
             _logger?.LogTrace("Getting kv from path {ConsulKeyPath}{keyPath}", ConsulKeyPath, keyPath);
             try
@@ -64,20 +64,20 @@ namespace CondenserDotNet.Configuration.Consul
                 if (!response.IsSuccessStatusCode)
                 {
                     _logger?.LogWarning("We didn't get a succesful response from consul code was {code}", response.StatusCode);
-                    return (false, null);
+                    return new KeyOperationResult() { Success = false, Dictionary = null };
                 }
 
                 var dictionary = await BuildDictionaryAsync(keyPath, response);
-                return (true, dictionary);
+                return new KeyOperationResult() { Success = true, Dictionary = dictionary };
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger?.LogError(100, ex, "There was an exception getting the keys");
                 throw;
             }
         }
 
-        public async Task<(bool success, Dictionary<string, string> update)> TryWatchKeysAsync(string keyPath, object state)
+        public async Task<KeyOperationResult> TryWatchKeysAsync(string keyPath, object state)
         {
             _logger?.LogTrace("Starting to watch the keypath {keyPath}", keyPath);
             var consulState = (WatchConsul)state;
@@ -90,19 +90,19 @@ namespace CondenserDotNet.Configuration.Consul
                 if (!response.IsSuccessStatusCode)
                 {
                     consulState.ConsulIndex = newConsulIndex;
-                    return (false, null);
+                    return default;
                 }
-                
+
                 if (newConsulIndex == consulState.ConsulIndex)
                 {
                     consulState.ConsulIndex = newConsulIndex;
-                    return (false, null);
+                    return default;
                 }
                 consulState.ConsulIndex = newConsulIndex;
                 var dictionary = await BuildDictionaryAsync(keyPath, response);
-                return (true, dictionary);
+                return new KeyOperationResult() { Success = true, Dictionary = dictionary };
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 _logger?.LogError(100, ex, "Error trying to watch a key {keyPath}", keyPath);
                 throw;
@@ -129,10 +129,7 @@ namespace CondenserDotNet.Configuration.Consul
                 return xkey.Equals(yKey);
             }
 
-            public int GetHashCode(KeyValue obj)
-            {
-                return obj.Key.Substring(_keyPath.Length).Replace(_consulPath, _corePath).GetHashCode();
-            }
+            public int GetHashCode(KeyValue obj) => obj.Key.Substring(_keyPath.Length).Replace(_consulPath, _corePath).GetHashCode();
         }
 
         private async Task<Dictionary<string, string>> BuildDictionaryAsync(string keyPath,
@@ -141,7 +138,7 @@ namespace CondenserDotNet.Configuration.Consul
             var content = await response.Content.ReadAsStringAsync();
             var keys = JsonConvert.DeserializeObject<KeyValue[]>(content);
 
-            var parsedKeys = keys.SelectMany(k => _parser.Parse(k)).Distinct(new KeyValueComparer(keyPath, ConsulPath[0],CorePath));
+            var parsedKeys = keys.SelectMany(k => _parser.Parse(k)).Distinct(new KeyValueComparer(keyPath, ConsulPath[0], CorePath));
 
             var dictionary = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
             foreach (var kv in parsedKeys)

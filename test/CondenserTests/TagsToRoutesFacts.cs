@@ -1,4 +1,4 @@
-﻿using Xunit;
+using Xunit;
 
 namespace CondenserTests
 {
@@ -10,7 +10,7 @@ namespace CondenserTests
         public void TagsWithoutRoute()
         {
             var routes = CondenserDotNet.Core.ServiceUtils.RoutesFromTags(new string[] { $"{UrlPrefix}/this/url/is/cool", "thisTagIsnt" });
-            Assert.Equal(1, routes.Length);
+            Assert.Single(routes);
             Assert.Equal("/this/url/is/cool", routes[0]);
         }
 

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
@@ -149,6 +149,7 @@ namespace CondenserDotNet.Server
             _tags = tags;
             Routes = ServiceUtils.RoutesFromTags(tags);
             _serviceId = serviceId;
+            
             NodeId = nodeId;
             try
             {

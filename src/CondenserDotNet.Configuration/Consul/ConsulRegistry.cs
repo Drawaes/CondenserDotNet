@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -56,12 +56,12 @@ namespace CondenserDotNet.Configuration.Consul
         {
             var response = await _source.GetKeysAsync(keyPath);
 
-            if (!response.success)
+            if (!response.Success)
             {
                 return -1;
             }
 
-            return AddNewDictionaryToList(response.dictionary);
+            return AddNewDictionaryToList(response.Dictionary);
         }
 
         /// <summary>
@@ -92,12 +92,12 @@ namespace CondenserDotNet.Configuration.Consul
                 {
                     var response = await _source.TryWatchKeysAsync(keyPath, state);
 
-                    if (!response.success)
+                    if (!response.Success)
                     {
                         continue;
                     }
 
-                    UpdateDictionaryInList(indexOfDictionary, response.update);
+                    UpdateDictionaryInList(indexOfDictionary, response.Dictionary);
                     FireWatchers();
                 }
             }

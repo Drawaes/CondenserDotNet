@@ -20,13 +20,13 @@ namespace Condenser.Tests.Integration
             using (var registry = new ServiceRegistry())
             {
                 var registrationResult = await manager.RegisterServiceAsync();
-                Assert.Equal(true, registrationResult);
+                Assert.True(registrationResult);
 
                 var services = await registry.GetAvailableServicesAsync();
                 Assert.Contains(serviceName, services);
 
                 registrationResult = await manager.DeregisterServiceAsync();
-                Assert.Equal(true, registrationResult);
+                Assert.True(registrationResult);
 
                 services = await registry.GetAvailableServicesAsync();
                 Assert.DoesNotContain(serviceName, services);
