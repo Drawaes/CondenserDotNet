@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading;
 
 namespace CondenserDotNet.Core.Routing
@@ -14,7 +14,7 @@ namespace CondenserDotNet.Core.Routing
                 var index = Interlocked.Increment(ref _index);
                 return instances[index % instances.Count];
             }
-            return default(T);
+            return default;
         }
 
         public string Name { get; } = RouteStrategy.RoundRobin.ToString();

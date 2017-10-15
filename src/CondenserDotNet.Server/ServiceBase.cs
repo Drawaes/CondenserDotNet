@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 using System.Threading.Tasks;
 using CondenserDotNet.Server.DataContracts;
@@ -20,6 +20,6 @@ namespace CondenserDotNet.Server
         {
         }       
 
-        public StatsSummary GetSummary() => default(StatsSummary);
+        public StatsSummary GetSummary() => default;
     }
 }

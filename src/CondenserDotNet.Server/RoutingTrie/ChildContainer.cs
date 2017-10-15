@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading;
 using CondenserDotNet.Core.Routing;
 using System;
@@ -51,7 +51,7 @@ namespace CondenserDotNet.Server.RoutingTrie
                 //Simple random selector
                 return _routingStrategy.RouteTo(services);
             }
-            return default(T);
+            return default;
         }
     }
 }

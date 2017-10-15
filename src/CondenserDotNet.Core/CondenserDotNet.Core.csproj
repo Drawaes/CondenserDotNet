@@ -5,6 +5,9 @@
     <AssemblyName>CondenserDotNet.Core</AssemblyName>
     <PackageId>CondenserDotNet.Core</PackageId>
   </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Newtonsoft.Json" Version="10.0.3" />
