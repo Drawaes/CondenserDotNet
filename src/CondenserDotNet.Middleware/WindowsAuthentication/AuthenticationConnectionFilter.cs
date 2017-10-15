@@ -28,7 +28,7 @@ namespace CondenserDotNet.Middleware.WindowsAuthentication
                 _windowsAuth = authFeature;
             }
 
-            public Stream ConnectionStream => throw new NotImplementedException();
+            public Stream ConnectionStream => _connectionStream;
 
             public void Dispose() => _windowsAuth.Dispose();
         }

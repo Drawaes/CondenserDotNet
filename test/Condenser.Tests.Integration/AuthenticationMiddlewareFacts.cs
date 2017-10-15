@@ -1,4 +1,4 @@
-﻿using CondenserDotNet.Middleware.WindowsAuthentication;
+using CondenserDotNet.Middleware.WindowsAuthentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -17,7 +17,10 @@ namespace Condenser.Tests.Integration
             var host = new WebHostBuilder()
                 .UseKestrel((ops) =>
                 {
-                    ops.UseWindowsAuthentication();
+                    ops.Listen(System.Net.IPAddress.Any, 55555, lo =>
+                    {
+                        lo.UseWindowsAuthentication();
+                    });
                 })
                 .UseUrls($"http://*:{55555}")
                 .UseStartup<Startup>()

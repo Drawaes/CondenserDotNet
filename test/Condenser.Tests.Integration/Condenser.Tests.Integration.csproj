@@ -12,7 +12,6 @@
   </PropertyGroup>
   
   <ItemGroup>
-    <Compile Remove="AuthenticationMiddlewareFacts.cs" />
     <Compile Remove="ProtocolSwitcherFacts.cs" />
     <Compile Remove="TrailingHeaderMiddlewareFacts.cs" />
   </ItemGroup>
@@ -20,6 +19,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\CondenserDotNet.Client\CondenserDotNet.Client.csproj" />
     <ProjectReference Include="..\..\src\CondenserDotNet.Configuration\CondenserDotNet.Configuration.csproj" />
+    <ProjectReference Include="..\..\src\CondenserDotNet.Middleware\CondenserDotNet.Middleware.csproj" />
     <ProjectReference Include="..\..\src\CondenserDotNet.Server.Extensions\CondenserDotNet.Server.Extensions.csproj" />
     <ProjectReference Include="..\..\src\CondenserDotNet.Server\CondenserDotNet.Server.csproj" />
   </ItemGroup>

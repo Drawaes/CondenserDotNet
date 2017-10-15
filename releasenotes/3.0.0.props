@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Moved to ASP.NET 2.0
+</PackageReleaseNotes>
+  </PropertyGroup>
+</Project>
