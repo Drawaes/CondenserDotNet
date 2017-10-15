@@ -9,25 +9,29 @@
     <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
     <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Remove="AuthenticationMiddlewareFacts.cs" />
+    <Compile Remove="ProtocolSwitcherFacts.cs" />
+    <Compile Remove="TrailingHeaderMiddlewareFacts.cs" />
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\CondenserDotNet.Client\CondenserDotNet.Client.csproj" />
     <ProjectReference Include="..\..\src\CondenserDotNet.Configuration\CondenserDotNet.Configuration.csproj" />
-    <ProjectReference Include="..\..\src\CondenserDotNet.Middleware\CondenserDotNet.Middleware.csproj" />
     <ProjectReference Include="..\..\src\CondenserDotNet.Server.Extensions\CondenserDotNet.Server.Extensions.csproj" />
     <ProjectReference Include="..\..\src\CondenserDotNet.Server\CondenserDotNet.Server.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel.Https" Version="1.1.2" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="1.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel.Https" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Console" Version="2.0.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.3.0" />
     <PackageReference Include="System.Net.Http" Version="4.3.3" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.3.0" />
     <PackageReference Include="coveralls.io" Version="1.4.2" />
     <PackageReference Include="OpenCover" Version="4.6.519" />
     <PackageReference Include="xunit" Version="2.3.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Http" Version="1.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.0.0" />
   </ItemGroup>
 
   <ItemGroup>

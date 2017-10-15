@@ -1,4 +1,4 @@
-﻿using CondenserDotNet.Client;
+using CondenserDotNet.Client;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -35,9 +35,6 @@ namespace CondenserTests.Fakes
         public Service RegisteredService { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public string ProtocolSchemeTag { get; set; }
 
-        public void Dispose()
-        {
-            throw new NotImplementedException();
-        }
+        public void Dispose() => throw new NotImplementedException();
     }
 }

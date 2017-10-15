@@ -63,8 +63,8 @@ namespace Condenser.Tests.Integration.Routing
                 .Configure(app =>
                 {
                     var appLifetime = app.ApplicationServices.GetService<IApplicationLifetime>();
-                    appLifetime.ApplicationStarted.Register(() => RegisterService(name, hostPort, route));              
-                   
+                    appLifetime.ApplicationStarted.Register(() => RegisterService(name, hostPort, route));
+
                     app.Run(async message =>
                     {
                         HttpStatusCode status;
@@ -115,12 +115,11 @@ namespace Condenser.Tests.Integration.Routing
 
             _routerHost = new WebHostBuilder()
                 .UseKestrel()
-                .UseLoggerFactory(new LoggerFactory().AddConsole())
                 .UseUrls($"http://*:{routerPort}")
                 .ConfigureServices(x =>
                 {
                     x.AddCondenserWithBuilder()
-                    .WithRoutesBuiltCallback(SignalWhenAllRegistered) 
+                    .WithRoutesBuiltCallback(SignalWhenAllRegistered)
                     .WithRoutingStrategies(strategies)
                     .Build();
 
@@ -131,7 +130,7 @@ namespace Condenser.Tests.Integration.Routing
                 })
                 .Build();
         }
-                
+
         public bool AreAllRegistered()
         {
             if (_currentRegistrations == null) return false;

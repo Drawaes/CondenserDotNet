@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 
 namespace CondenserDotNet.Server.RoutingTrie
@@ -105,7 +105,7 @@ namespace CondenserDotNet.Server.RoutingTrie
             {
                 return Services.RemoveService(service);
             }
-            if (container.TryGetValue(route, out Node<T> child))
+            if (container.TryGetValue(route, out var child))
             {
                 return child.RemoveServiceFromRoute(route.Skip(container.KeyLength).ToArray(), service);
             }
@@ -130,7 +130,7 @@ namespace CondenserDotNet.Server.RoutingTrie
                 matchedPath = Path;
                 return Services.GetService();
             }
-            if (container.TryGetValue(route, out Node<T> child))
+            if (container.TryGetValue(route, out var child))
             {
                 var returnService = child.GetService(route.Skip(container.KeyLength).ToArray(), out matchedPath);
                 if (returnService != null)

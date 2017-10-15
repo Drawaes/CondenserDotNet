@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using CondenserDotNet.Configuration;
@@ -12,34 +12,19 @@ namespace CondenserTests.Fakes
         private readonly List<Action> _reloadActions = new List<Action>();
 
 
-        public FakeConfigurationRegistry()
-        {
-            Root = new ConfigurationBuilder()
+        public FakeConfigurationRegistry() => Root = new ConfigurationBuilder()
                 .AddConfigurationRegistry(this)
                 .Build();
-        }
 
         public string this[string key] => _data[key];
 
-        public Task<bool> AddStaticKeyPathAsync(string keyPath)
-        {
-            throw new NotImplementedException();
-        }
+        public Task<bool> AddStaticKeyPathAsync(string keyPath) => throw new NotImplementedException();
 
-        public Task AddUpdatingPathAsync(string keyPath)
-        {
-            throw new NotImplementedException();
-        }
+        public Task AddUpdatingPathAsync(string keyPath) => throw new NotImplementedException();
 
-        public void AddWatchOnEntireConfig(Action callback)
-        {
-            _reloadActions.Add(callback);
-        }
+        public void AddWatchOnEntireConfig(Action callback) => _reloadActions.Add(callback);
 
-        public void AddWatchOnSingleKey(string keyToWatch, Action<string> callback)
-        {
-            throw new NotImplementedException();
-        }
+        public void AddWatchOnSingleKey(string keyToWatch, Action<string> callback) => throw new NotImplementedException();
 
         public Task<bool> SetKeyAsync(string keyPath, string value)
         {
@@ -52,10 +37,7 @@ namespace CondenserTests.Fakes
 
         public IConfigurationRoot Root { get; }
 
-        public void AddWatchOnSingleKey(string keyToWatch, Action callback)
-        {
-            throw new NotImplementedException();
-        }
+        public void AddWatchOnSingleKey(string keyToWatch, Action callback) => throw new NotImplementedException();
 
 
         public void FakeReload()

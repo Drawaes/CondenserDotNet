@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using CondenserDotNet.Configuration;
 using CondenserTests.Fakes;
 using Microsoft.Extensions.Configuration;
@@ -60,7 +60,7 @@ namespace CondenserTests
 
             registry.SetKeyAsync(key, keyValue);
 
-            sut.TryGet(key, out string value);
+            sut.TryGet(key, out var value);
             Assert.Equal(keyValue, value);
         }
 
@@ -92,7 +92,7 @@ namespace CondenserTests
 
             sut.Set(key, keyValue);
 
-            sut.TryGet(key, out string value);
+            sut.TryGet(key, out var value);
             Assert.Equal(keyValue, value);
         }
     }

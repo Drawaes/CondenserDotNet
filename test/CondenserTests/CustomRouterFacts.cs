@@ -1,4 +1,4 @@
-﻿using CondenserDotNet.Server;
+using CondenserDotNet.Server;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Xunit;
@@ -22,7 +22,7 @@ namespace CondenserTests
             context.Request.Method = "GET";
             context.Request.Path = "/test1/test2/test3/test4/test5/test6";
 
-            var routedService = router.GetServiceFromRoute(context.Request.Path, out string matchedPath);
+            var routedService = router.GetServiceFromRoute(context.Request.Path, out var matchedPath);
 
             Assert.Equal(service, routedService);
         }

@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 
 namespace CondenserTests.Fakes
@@ -8,20 +8,11 @@ namespace CondenserTests.Fakes
     {
         private readonly IOptions<FakeConfig> _config;
 
-        public FakeController(IOptions<FakeConfig> config)
-        {
-            _config = config;
-        }
+        public FakeController(IOptions<FakeConfig> config) => _config = config;
 
-        public IActionResult Get()
-        {
-            return Ok("Config: " + _config.Value.Setting1);
-        }
+        public IActionResult Get() => Ok("Config: " + _config.Value.Setting1);
 
         [Route("fake/route")]
-        public IActionResult GetFakeRoute()
-        {
-            return Ok("Was routed");
-        }
+        public IActionResult GetFakeRoute() => Ok("Was routed");
     }
 }

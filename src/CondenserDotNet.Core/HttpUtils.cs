@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Newtonsoft.Json;
@@ -77,7 +77,7 @@ namespace CondenserDotNet.Core
 
         public static string GetConsulIndex(this HttpResponseMessage response)
         {
-            if (!response.Headers.TryGetValues(_indexHeader, out IEnumerable<string> results))
+            if (!response.Headers.TryGetValues(_indexHeader, out var results))
             {
                 return "0";
             }
