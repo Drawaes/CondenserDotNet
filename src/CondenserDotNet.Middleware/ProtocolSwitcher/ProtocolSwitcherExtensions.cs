@@ -1,15 +1,14 @@
-﻿using Microsoft.AspNetCore.Server.Kestrel;
-using Microsoft.AspNetCore.Server.Kestrel.Filter;
+using Microsoft.AspNetCore.Server.Kestrel;
 
 namespace CondenserDotNet.Middleware.ProtocolSwitcher
 {
     public static class ProtocolSwitcherExtensions
     {
-        public static KestrelServerOptions Switcheroo(this KestrelServerOptions options)
+        /*public static KestrelServerOptions Switcheroo(this KestrelServerOptions options)
         {
             var prevFilter = options.ConnectionFilter ?? new NoOpConnectionFilter();
             options.ConnectionFilter = new ProtocolSwitchConnectionFilter(prevFilter);
             return options;
-        }
+        }*/
     }
 }
