@@ -117,7 +117,7 @@ namespace CondenserDotNet.Configuration.Consul
                     }
                     else
                     {
-                        TryGetValue(watch.KeyToWatch, out string newValue);
+                        TryGetValue(watch.KeyToWatch, out var newValue);
                         if (StringComparer.OrdinalIgnoreCase.Compare(watch.CurrentValue, newValue) != 0)
                         {
                             watch.CurrentValue = newValue;
@@ -149,7 +149,7 @@ namespace CondenserDotNet.Configuration.Consul
         {
             get
             {
-                if (TryGetValue(key, out string returnValue))
+                if (TryGetValue(key, out var returnValue))
                 {
                     return returnValue;
                 }
@@ -187,7 +187,7 @@ namespace CondenserDotNet.Configuration.Consul
             {
                 lock (_configKeys)
                 {
-                    TryGetValue(keyToWatch, out string currentValue);
+                    TryGetValue(keyToWatch, out var currentValue);
                     _configWatchers.Add(new ConfigurationWatcher() { CallBack = callback, KeyToWatch = keyToWatch, CurrentValue = currentValue });
                 }
             }

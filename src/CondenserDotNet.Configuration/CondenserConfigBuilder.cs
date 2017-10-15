@@ -1,4 +1,4 @@
-﻿using CondenserDotNet.Configuration.Consul;
+using CondenserDotNet.Configuration.Consul;
 using Microsoft.Extensions.Options;
 
 namespace CondenserDotNet.Configuration
@@ -11,10 +11,7 @@ namespace CondenserDotNet.Configuration
         {
         }
 
-        public static CondenserConfigBuilder FromConsul()
-        {
-            return new CondenserConfigBuilder();
-        }
+        public static CondenserConfigBuilder FromConsul() => new CondenserConfigBuilder();
 
         public CondenserConfigBuilder WithKeysStoredAsJson()
         {

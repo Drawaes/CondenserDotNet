@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using CondenserDotNet.Client.DataContracts;
 
 
@@ -13,7 +13,7 @@ namespace CondenserDotNet.Client
         public HealthCheck Build(IServiceManager manager)
         {
             if (Url == null) return null;
-            if (!Uri.TryCreate(Url, UriKind.Absolute, out Uri uri))
+            if (!Uri.TryCreate(Url, UriKind.Absolute, out var uri))
             {
                 var scheme = manager.ProtocolSchemeTag ?? "http";
                 var builder = new UriBuilder(scheme, manager.ServiceAddress, manager.ServicePort, Url);

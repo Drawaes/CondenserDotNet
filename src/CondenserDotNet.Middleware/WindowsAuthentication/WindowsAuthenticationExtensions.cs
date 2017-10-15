@@ -1,15 +1,15 @@
-﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Server.Kestrel;
-using Microsoft.AspNetCore.Server.Kestrel.Filter;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 
 namespace CondenserDotNet.Middleware.WindowsAuthentication
 {
     public static class WindowsAuthenticationExtensions
     {
-        public static KestrelServerOptions UseWindowsAuthentication(this KestrelServerOptions options)
+        public static ListenOptions UseWindowsAuthentication(this ListenOptions options)
         {
-            var prevFilter = options.ConnectionFilter ?? new NoOpConnectionFilter();
-            options.ConnectionFilter = new AuthenticationConnectionFilter(prevFilter);
+            var adapter = new AuthenticationConnectionFilter();
+            options.ConnectionAdapters.Add(adapter);
             return options;
         }
 

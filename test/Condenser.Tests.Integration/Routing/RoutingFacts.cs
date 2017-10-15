@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading.Tasks;
 using CondenserDotNet.Core.DataContracts;
 using CondenserDotNet.Core.Routing;
@@ -33,7 +33,7 @@ namespace Condenser.Tests.Integration.Routing
             context.Request.Method = "GET";
             context.Request.Path = "/search";
 
-            var routedService = router.GetServiceFromRoute(context.Request.Path, out string matchedPath);
+            var routedService = router.GetServiceFromRoute(context.Request.Path, out var matchedPath);
             await routedService.CallService(context);
 
             Assert.Equal(200, context.Response.StatusCode);
@@ -58,19 +58,19 @@ namespace Condenser.Tests.Integration.Routing
             context.Request.Method = "GET";
             context.Request.Path = "/search";
 
-            var routedService = router.GetServiceFromRoute(context.Request.Path, out string matchedPath);
+            var routedService = router.GetServiceFromRoute(context.Request.Path, out var matchedPath);
             await routedService.CallService(context);
             Assert.Equal(200, context.Response.StatusCode);
         }
 
         private CustomRouter BuildRouter()
         {
-            Func<ChildContainer<IService>> createNode = () =>
+            ChildContainer<IService> createNode()
             {
                 var randomRoutingStrategy = new RandomRoutingStrategy<IService>();
                 return new ChildContainer<IService>(new DefaultRouting<IService>(new[] { randomRoutingStrategy },
                     null));
-            };
+            }
             var data = new RoutingData(new RadixTree<IService>(createNode));
             return new CustomRouter(null, data, new IService[0]);
         }

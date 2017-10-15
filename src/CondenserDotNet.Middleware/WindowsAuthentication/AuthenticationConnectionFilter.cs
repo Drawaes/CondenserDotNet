@@ -1,29 +1,36 @@
-﻿using System;
+using System;
+using System.IO;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Server.Kestrel.Filter;
+using Microsoft.AspNetCore.Server.Kestrel.Core.Adapter.Internal;
 
 namespace CondenserDotNet.Middleware.WindowsAuthentication
 {
-    public class AuthenticationConnectionFilter : IConnectionFilter
+    public class AuthenticationConnectionFilter : IConnectionAdapter
     {
-        private IConnectionFilter _previous;
+        public bool IsHttps => false;
 
-        public AuthenticationConnectionFilter(IConnectionFilter previous) =>
-            _previous = previous ?? throw new ArgumentNullException();
-
-        public async Task OnConnectionAsync(ConnectionFilterContext context)
+        public Task<IAdaptedConnection> OnConnectionAsync(ConnectionAdapterContext context)
         {
-            await _previous.OnConnectionAsync(context);
-            var previousRequest = context.PrepareRequest;
-            var feature = new WindowsAuthFeature();
-            var wrapper = new WindowsAuthStreamWrapper(context.Connection, feature);
-            context.Connection = wrapper;
-            context.PrepareRequest = features =>
-            {
-                previousRequest?.Invoke(features);
-                features.Set(((WindowsAuthStreamWrapper)context.Connection).AuthFeature);
-            };
+            var authFeature = new WindowsAuthFeature();
+            context.Features.Set<IWindowsAuthFeature>(authFeature);
+            var adapted = new AuthenticationAdaptedConnection(context.ConnectionStream, authFeature);
+            return Task.FromResult<IAdaptedConnection>(adapted);
+        }
 
+        public class AuthenticationAdaptedConnection : IAdaptedConnection
+        {
+            private Stream _connectionStream;
+            private WindowsAuthFeature _windowsAuth;
+
+            public AuthenticationAdaptedConnection(Stream stream, WindowsAuthFeature authFeature)
+            {
+                _connectionStream = stream;
+                _windowsAuth = authFeature;
+            }
+
+            public Stream ConnectionStream => _connectionStream;
+
+            public void Dispose() => _windowsAuth.Dispose();
         }
     }
 }

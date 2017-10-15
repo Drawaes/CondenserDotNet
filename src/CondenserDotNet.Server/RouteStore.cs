@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using CondenserDotNet.Server.DataContracts;
@@ -31,7 +31,7 @@ namespace CondenserDotNet.Server
 
         public List<IService> GetServiceInstances(string serviceName)
         {
-            if (!_routingData.ServicesWithHealthChecks.TryGetValue(serviceName, out List<IService> services))
+            if (!_routingData.ServicesWithHealthChecks.TryGetValue(serviceName, out var services))
             {
                 services = Empty;
             }

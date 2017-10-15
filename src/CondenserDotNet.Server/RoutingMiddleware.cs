@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Logging;
@@ -23,7 +23,7 @@ namespace CondenserDotNet.Server
         {
             using (var scope = _logger?.BeginScope("Started request scope {path}", httpContext.Request.Path))
             {
-                var service = _routeData.Router.GetServiceFromRoute(httpContext.Request.Path, out string matchedPath);
+                var service = _routeData.Router.GetServiceFromRoute(httpContext.Request.Path, out var matchedPath);
                 if (service == null)
                 {
                     _logger?.LogInformation("No matching route for {path}", httpContext.Request.Path);

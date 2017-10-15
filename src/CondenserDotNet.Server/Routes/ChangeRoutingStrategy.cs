@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -43,7 +43,7 @@ namespace CondenserDotNet.Server.Routes
             }
             var queryDictionary = QueryHelpers.ParseQuery(query.Value);
 
-            if (queryDictionary.TryGetValue("strategy", out StringValues values))
+            if (queryDictionary.TryGetValue("strategy", out var values))
             {
                 var router = _provider.GetServices<IRoutingStrategy<IService>>()
                     .SingleOrDefault(x => x.Name.Equals(values[0], StringComparison.OrdinalIgnoreCase));

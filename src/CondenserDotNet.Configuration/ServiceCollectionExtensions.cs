@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CondenserDotNet.Configuration
@@ -7,25 +7,16 @@ namespace CondenserDotNet.Configuration
     {
         public static IServiceCollection ConfigureReloadable<TConfig>(this IServiceCollection self,
             IConfigurationRegistry registry)
-            where TConfig : class
-        {
-            return self.ConfigureReloadable<TConfig>(registry.Root, registry, typeof(TConfig).Name);
-        }
+            where TConfig : class => self.ConfigureReloadable<TConfig>(registry.Root, registry, typeof(TConfig).Name);
 
         public static IServiceCollection ConfigureReloadable<TConfig>(this IServiceCollection self,
             IConfigurationRegistry registry, string sectionName)
-            where TConfig : class
-        {
-            return self.ConfigureReloadable<TConfig>(registry.Root, registry, sectionName);
-        }
+            where TConfig : class => self.ConfigureReloadable<TConfig>(registry.Root, registry, sectionName);
 
 
         public static IServiceCollection ConfigureReloadable<TConfig>(this IServiceCollection self,
             IConfiguration configuration, IConfigurationRegistry registry)
-            where TConfig : class
-        {
-            return self.ConfigureReloadable<TConfig>(configuration, registry, typeof(TConfig).Name);
-        }
+            where TConfig : class => self.ConfigureReloadable<TConfig>(configuration, registry, typeof(TConfig).Name);
 
         public static IServiceCollection ConfigureReloadable<TConfig>(this IServiceCollection self,
             IConfiguration configuration, IConfigurationRegistry registry, string sectionName)

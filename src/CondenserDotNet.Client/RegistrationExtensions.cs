@@ -95,7 +95,7 @@ namespace CondenserDotNet.Client
                 for (var i = 0; i < s.Checks.Count; i++)
                 {
                     s.Checks[i].Name = $"service:{s.ID}:{i + 1}";
-                    if (serviceManager.DeregisterIfCriticalAfter != default(TimeSpan))
+                    if (serviceManager.DeregisterIfCriticalAfter != default)
                     {
                         s.Checks[i].DeregisterCriticalServiceAfter = (int)serviceManager.DeregisterIfCriticalAfter.TotalMilliseconds + "ms";
                     }
@@ -104,7 +104,7 @@ namespace CondenserDotNet.Client
             else if (s.Checks.Count == 1)
             {
                 s.Checks[0].Name = $"service:{s.ID}";
-                if (serviceManager.DeregisterIfCriticalAfter != default(TimeSpan))
+                if (serviceManager.DeregisterIfCriticalAfter != default)
                 {
                     s.Checks[0].DeregisterCriticalServiceAfter = (int)serviceManager.DeregisterIfCriticalAfter.TotalMilliseconds + "ms";
                 }

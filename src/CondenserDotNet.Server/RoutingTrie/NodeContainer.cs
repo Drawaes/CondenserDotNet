@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
@@ -53,7 +53,7 @@ namespace CondenserDotNet.Server.RoutingTrie
             {
                 var newPrefix = kv.Item1.Take(newKeyLength).ToArray();
                 var newTailPrefix = kv.Item1.Skip(newKeyLength).ToArray();
-                if (!newContainer.TryGetValue(newPrefix, out Node<T> newHeadNode))
+                if (!newContainer.TryGetValue(newPrefix, out var newHeadNode))
                 {
                     newHeadNode = new Node<T>(newPrefix, currentPath, KeyLength - newKeyLength, _factory);
                     newContainer.Add(newPrefix, newHeadNode);
@@ -84,7 +84,7 @@ namespace CondenserDotNet.Server.RoutingTrie
         {
             get
             {
-                if (TryGetValue(key, out Node<T> node))
+                if (TryGetValue(key, out var node))
                 {
                     return node;
                 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using CondenserDotNet.Core.Routing;
 using CondenserDotNet.Server.RoutingTrie;
@@ -17,11 +17,11 @@ namespace CondenserDotNet.Server
 
         public static RoutingData BuildDefault()
         {
-            Func<ChildContainer<IService>> factory = () =>
+            ChildContainer<IService> factory()
             {
                 var randomRoutingStrategy = new RandomRoutingStrategy<IService>();
                 return new ChildContainer<IService>(new DefaultRouting<IService>(new[] { randomRoutingStrategy }, null));
-            };
+            }
             return new RoutingData(new RadixTree<IService>(factory));
         }
 
@@ -29,7 +29,7 @@ namespace CondenserDotNet.Server
         {
             lock(_stats)
             {
-                if(!_stats.TryGetValue(serviceId,out ICurrentState value))
+                if(!_stats.TryGetValue(serviceId,out var value))
                 {
                     value = new CurrentState();
                     _stats.Add(serviceId, value);
