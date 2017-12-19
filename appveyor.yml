@@ -1,4 +1,4 @@
-﻿os: Visual Studio 2017
+os: Visual Studio 2017
 build: off
 
 environment:
@@ -8,7 +8,7 @@ environment:
     secure: x41DSerLXKgGVbKIokF+zuR3eNRVJXsgJA6j5yggnCB8/TTyYfa/2euNflfGzCot   
 
 install:
-  - cmd: curl -fsS -o consul.zip https://releases.hashicorp.com/consul/0.7.5/consul_0.7.5_windows_amd64.zip
+  - cmd: curl -fsS -o consul.zip https://releases.hashicorp.com/consul/1.0.2/consul_1.0.2_windows_amd64.zip
   - cmd: 7z x consul.zip -o"C:\Consul" -y > nul
   - ps: $MyProcess = Start-Process C:\Consul\consul.exe -ArgumentList "agent -server -log-level err -bootstrap-expect 1 -data-dir C:\Consul\Data -advertise=127.0.0.1" -PassThru
 
@@ -31,12 +31,12 @@ after_test:
   - pip install codecov
   - codecov -f "coverage.xml"
   - dotnet build -c Release
-  - dotnet pack -c Release src/CondenserDotNet.Client --version-suffix %suffix%
-  - dotnet pack -c Release src/CondenserDotNet.Server --version-suffix %suffix%
-  - dotnet pack -c Release src/CondenserDotNet.Core --version-suffix %suffix%
-  - dotnet pack -c Release src/CondenserDotNet.Configuration --version-suffix %suffix%
-  - dotnet pack -c Release src/CondenserDotNet.Middleware --version-suffix %suffix%
-  - dotnet pack -c Release src/CondenserDotNet.Server.Extensions --version-suffix %suffix%
+  - dotnet pack -c Release src/CondenserDotNet.Client
+  - dotnet pack -c Release src/CondenserDotNet.Server
+  - dotnet pack -c Release src/CondenserDotNet.Core
+  - dotnet pack -c Release src/CondenserDotNet.Configuration
+  - dotnet pack -c Release src/CondenserDotNet.Middleware
+  - dotnet pack -c Release src/CondenserDotNet.Server.Extensions
       
   
 artifacts:
