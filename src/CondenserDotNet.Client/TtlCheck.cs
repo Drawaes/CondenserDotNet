@@ -1,4 +1,4 @@
-﻿using System.Threading.Tasks;
+using System.Threading.Tasks;
 using CondenserDotNet.Client.DataContracts;
 
 namespace CondenserDotNet.Client
@@ -28,7 +28,7 @@ namespace CondenserDotNet.Client
                 return false;
             }
             //We are connected so lets report to the server
-            var response = await _parentManager.Client.GetAsync($"/v1/agent/check/pass/service:{_parentManager.ServiceId}");
+            var response = await _parentManager.Client.PutAsync($"/v1/agent/check/pass/service:{_parentManager.ServiceId}", null);
             if (response.IsSuccessStatusCode)
             {
                 return true;
@@ -42,7 +42,7 @@ namespace CondenserDotNet.Client
                 return false;
             }
             //We are connected so lets report to the server
-            var response = await _parentManager.Client.GetAsync($"/v1/agent/check/warn/service:{_parentManager.ServiceId}");
+            var response = await _parentManager.Client.PutAsync($"/v1/agent/check/warn/service:{_parentManager.ServiceId}", null);
             if (response.IsSuccessStatusCode)
             {
                 return true;
@@ -56,7 +56,7 @@ namespace CondenserDotNet.Client
                 return false;
             }
             //We are connected so lets report to the server
-            var response = await _parentManager.Client.GetAsync($"/v1/agent/check/fail/service:{_parentManager.ServiceId}");
+            var response = await _parentManager.Client.PutAsync($"/v1/agent/check/fail/service:{_parentManager.ServiceId}", null);
             if (response.IsSuccessStatusCode)
             {
                 return true;
