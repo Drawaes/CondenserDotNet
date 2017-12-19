@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Fixed the TTL to use Put rather than Get to match the API changes in Consul
+</PackageReleaseNotes>
+  </PropertyGroup>
+</Project>
