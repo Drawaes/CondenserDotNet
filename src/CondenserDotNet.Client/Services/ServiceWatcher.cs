@@ -31,7 +31,7 @@ namespace CondenserDotNet.Client.Services
             _logger = logger;
             _routingStrategy = routingStrategy;
             _url = $"{HttpUtils.ServiceHealthUrl}{serviceName}?passing&index=";
-            _logger.LogInformation("Started watching service with name {serviceName}", _serviceName);
+            _logger?.LogInformation("Started watching service with name {serviceName}", _serviceName);
             var ignore = WatcherLoop(client);
         }
 

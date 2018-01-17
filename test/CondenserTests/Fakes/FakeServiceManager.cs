@@ -5,6 +5,7 @@ using System.Text;
 using CondenserDotNet.Client.DataContracts;
 using System.Net.Http;
 using System.Threading;
+using Microsoft.Extensions.Logging;
 
 namespace CondenserTests.Fakes
 {
@@ -25,6 +26,8 @@ namespace CondenserTests.Fakes
         public int ServicePort { get; set; }
 
         public CancellationToken Cancelled => throw new NotImplementedException();
+
+        public ILogger Logger => null;
 
         public HttpClient Client => throw new NotImplementedException();
 
