@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
@@ -31,6 +31,7 @@ namespace CondenserDotNet.Client.Services
             _logger = logger;
             _routingStrategy = routingStrategy;
             _url = $"{HttpUtils.ServiceHealthUrl}{serviceName}?passing&index=";
+            _logger.LogInformation("Started watching service with name {serviceName}", _serviceName);
             var ignore = WatcherLoop(client);
         }
 
@@ -112,9 +113,9 @@ namespace CondenserDotNet.Client.Services
                     await Task.Delay(s_serviceReconnectDelay);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                _logger?.LogError(0, ex,"Exception in watcher loop for {serviceName}", _serviceName);
+                _logger?.LogError(0, ex, "Exception in watcher loop for {serviceName}", _serviceName);
             }
             finally
             {

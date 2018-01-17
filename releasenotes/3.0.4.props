@@ -1,0 +1,8 @@
+<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Added information logging when started watching for a service
+* Added information logging when a service registers
+</PackageReleaseNotes>
+  </PropertyGroup>
+</Project>

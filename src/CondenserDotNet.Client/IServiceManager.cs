@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using CondenserDotNet.Client.DataContracts;
+using Microsoft.Extensions.Logging;
 
 namespace CondenserDotNet.Client
 {
@@ -21,5 +22,6 @@ namespace CondenserDotNet.Client
         HealthConfiguration HealthConfig { get; }
         Service RegisteredService { get; set; }
         string ProtocolSchemeTag { get; set; }
+        ILogger Logger { get; }
     }
 }
