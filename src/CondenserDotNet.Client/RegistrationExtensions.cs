@@ -115,9 +115,9 @@ namespace CondenserDotNet.Client
             if (response.IsSuccessStatusCode)
             {
                 serviceManager.RegisteredService = s;
+                serviceManager.Logger?.LogInformation("Service with name {name} started at {address} on port {port}", s.Name, s.Address, s.Port);
                 return true;
             }
-            serviceManager.Logger?.LogInformation("Service with name {name} started at {address} on port {port}", s.Name, s.Address, s.Port);
             serviceManager.RegisteredService = null;
             return false;
         }

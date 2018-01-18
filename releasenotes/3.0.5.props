@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Fix the logging for service registration
+</PackageReleaseNotes>
+  </PropertyGroup>
+</Project>
