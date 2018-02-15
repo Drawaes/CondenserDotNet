@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Added the ability to specify arbitary custom tags
+</PackageReleaseNotes>
+  </PropertyGroup>
+</Project>
