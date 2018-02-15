@@ -13,6 +13,7 @@ namespace CondenserDotNet.Client
     public class ServiceManager : IServiceManager
     {
         private readonly List<string> _supportedUrls = new List<string>();
+        private readonly List<string> _customTags = new List<string>();
         private readonly CancellationTokenSource _cancel = new CancellationTokenSource();
         private bool _disposed;
         private ITtlCheck _ttlCheck;
@@ -35,6 +36,7 @@ namespace CondenserDotNet.Client
         }
 
         public List<string> SupportedUrls => _supportedUrls;
+        public List<string> CustomTags => _customTags;
         public ILogger Logger { get; }
         public HttpClient Client { get; }
         public HealthConfiguration HealthConfig { get; private set; } = new HealthConfiguration();

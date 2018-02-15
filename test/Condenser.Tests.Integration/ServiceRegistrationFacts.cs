@@ -22,6 +22,26 @@ namespace Condenser.Tests.Integration
                 Assert.True(registrationResult);
             }
         }
+
+        [Fact]
+        public async Task TestRegisterWithCustomTags()
+        {
+            var serviceName = Guid.NewGuid().ToString();
+            var opts = Options.Create(new ServiceManagerConfig() { ServicePort = 2222 });
+            using (var manager = new ServiceManager(opts))
+            {
+                manager.CustomTags.Add("CustomTag1");
+                manager.CustomTags.Add("CustomTag2");
+                var registrationResult = await manager.RegisterServiceAsync();
+                using (var serviceRegistry = new ServiceRegistry())
+                {
+                    var instance = await serviceRegistry.GetServiceInstanceAsync(serviceName);
+                    Assert.Contains("CustomTag1", instance.Tags);
+                    Assert.Contains("CustomTag2", instance.Tags);
+                }
+            }
+        }
+
         [Fact]
         public async Task TestRegisterAndSetPassTtl()
         {
@@ -36,6 +56,7 @@ namespace Condenser.Tests.Integration
                 Assert.True(ttlResult);
             }
         }
+
         [Fact]
         public async Task TestRegisterAndCheckRegistered()
         {
