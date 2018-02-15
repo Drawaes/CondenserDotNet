@@ -38,6 +38,8 @@ namespace CondenserTests.Fakes
         public Service RegisteredService { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public string ProtocolSchemeTag { get; set; }
 
+        public List<string> CustomTags => throw new NotImplementedException();
+
         public void Dispose() => throw new NotImplementedException();
     }
 }
