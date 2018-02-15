@@ -83,6 +83,8 @@ namespace CondenserDotNet.Client
             {
                 s.Tags.Add($"protocolScheme-{serviceManager.ProtocolSchemeTag}");
             }
+            s.Tags.AddRange(serviceManager.CustomTags);
+
             if (healthCheck != null)
             {
                 s.Checks.Add(healthCheck);
