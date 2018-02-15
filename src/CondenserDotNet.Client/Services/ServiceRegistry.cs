@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -44,7 +44,7 @@ namespace CondenserDotNet.Client.Services
         {
             lock (_watchedServices)
             {
-                if (!_watchedServices.TryGetValue(serviceName, out ServiceWatcher watcher))
+                if (!_watchedServices.TryGetValue(serviceName, out var watcher))
                 {
                     watcher = new ServiceWatcher(serviceName, _client
                         , new RandomRoutingStrategy<InformationServiceSet>(), _logger);
@@ -59,7 +59,7 @@ namespace CondenserDotNet.Client.Services
         {
             lock (_watchedServices)
             {
-                if (!_watchedServices.TryGetValue(serviceName, out ServiceWatcher watcher))
+                if (!_watchedServices.TryGetValue(serviceName, out var watcher))
                 {
                     watcher = new ServiceWatcher(serviceName, _client
                         , new RandomRoutingStrategy<InformationServiceSet>(), _logger);
@@ -73,7 +73,7 @@ namespace CondenserDotNet.Client.Services
         {
             lock (_watchedServices)
             {
-                if (!_watchedServices.TryGetValue(serviceName, out ServiceWatcher watcher))
+                if (!_watchedServices.TryGetValue(serviceName, out var watcher))
                 {
                     watcher = new ServiceWatcher(serviceName, _client
                         , new RandomRoutingStrategy<InformationServiceSet>(), _logger);

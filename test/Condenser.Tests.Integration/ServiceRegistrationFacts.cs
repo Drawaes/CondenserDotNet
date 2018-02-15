@@ -32,7 +32,9 @@ namespace Condenser.Tests.Integration
             {
                 manager.CustomTags.Add("CustomTag1");
                 manager.CustomTags.Add("CustomTag2");
-                var registrationResult = await manager.RegisterServiceAsync();
+                manager.AddTtlHealthCheck(10);
+                var registerResult = await manager.RegisterServiceAsync();
+                var ttlResult = await manager.TtlCheck.ReportPassingAsync();
                 using (var serviceRegistry = new ServiceRegistry())
                 {
                     var instance = await serviceRegistry.GetServiceInstanceAsync(serviceName);
