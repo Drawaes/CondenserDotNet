@@ -27,7 +27,7 @@ namespace Condenser.Tests.Integration
         public async Task TestRegisterWithCustomTags()
         {
             var serviceName = Guid.NewGuid().ToString();
-            var opts = Options.Create(new ServiceManagerConfig() { ServicePort = 2222 });
+            var opts = Options.Create(new ServiceManagerConfig() { ServicePort = 2222, ServiceName = serviceName });
             using (var manager = new ServiceManager(opts))
             {
                 manager.CustomTags.Add("CustomTag1");
