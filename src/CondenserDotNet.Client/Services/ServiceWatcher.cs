@@ -64,7 +64,7 @@ namespace CondenserDotNet.Client.Services
             var serviceInstance = _routingStrategy.RouteTo(instances)?.Service;
             if(serviceInstance == null)
             {
-                _logger.LogWarning("No service instance was found for service name {serviceName}", _serviceName);
+                _logger?.LogWarning("No service instance was found for service name {serviceName}", _serviceName);
             }
             return serviceInstance;
         }
