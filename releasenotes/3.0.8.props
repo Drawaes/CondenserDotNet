@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Added warning log if no instance was found by the service registry
+</PackageReleaseNotes>
+  </PropertyGroup>
+</Project>

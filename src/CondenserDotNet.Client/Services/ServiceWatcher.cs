@@ -61,7 +61,12 @@ namespace CondenserDotNet.Client.Services
             {
                 _logger?.LogWarning("Using old values for service {serviceList}", instances);
             }
-            return _routingStrategy.RouteTo(instances)?.Service;
+            var serviceInstance = _routingStrategy.RouteTo(instances)?.Service;
+            if(serviceInstance == null)
+            {
+                _logger.LogWarning("No service instance was found for service name {serviceName}", _serviceName);
+            }
+            return serviceInstance;
         }
 
         private async Task WatcherLoop(HttpClient client)
