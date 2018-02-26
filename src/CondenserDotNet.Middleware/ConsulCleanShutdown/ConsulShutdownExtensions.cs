@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using CondenserDotNet.Middleware.CleanShutdown;
@@ -16,10 +16,11 @@ namespace CondenserDotNet.Middleware.ConsulCleanShutdown
             return serviceCollection.AddCleanShutdown();
         }
 
-        public static IApplicationBuilder UseConsulShutdown(this IApplicationBuilder appBuilder)
+        public static IApplicationBuilder UseConsulShutdown(this IApplicationBuilder appBuilder, string shutdownMessage)
         {
             var appLifetime = appBuilder.ApplicationServices.GetService<IApplicationLifetime>();
             var shutdownService = appBuilder.ApplicationServices.GetService<ConsulShutdownService>();
+            shutdownService.ShutdownMessage = shutdownMessage;
             appLifetime.ApplicationStopping.Register(shutdownService.Stopping);
             appLifetime.ApplicationStarted.Register(shutdownService.Started);
             return appBuilder.UseCleanShutdown();
