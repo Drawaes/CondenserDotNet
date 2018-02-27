@@ -12,7 +12,7 @@ namespace CondenserDotNet.StatsD
     {
         protected readonly SemaphoreSlim _semaphoreSlim = new SemaphoreSlim(1);
         protected readonly byte[] _buffer;
-        protected readonly Memory<byte> _remainingBuffer;
+        //protected readonly Memory<byte> _remainingBuffer;
         protected readonly UdpClient _udpClient;
         
         private const byte _seperator = 0x3A; // :
@@ -20,14 +20,14 @@ namespace CondenserDotNet.StatsD
         public StatsDClient(int bufferSize)
         {
             _buffer = System.Buffers.ArrayPool<byte>.Shared.Rent(bufferSize);
-            _remainingBuffer = _buffer;
+            //_remainingBuffer = _buffer;
         }
                 
         public void SendMetric(MetricEntry metricEntry)
         {
-            var initialLength = _remainingBuffer.Length;
+            //var initialLength = _remainingBuffer.Length;
            // var length = Encoding.UTF8.GetByteCount(metricEntry.MetricName) + 1 + ;
-            var span = _remainingBuffer.Span;
+            //var span = _remainingBuffer.Span;
 
             //if(span.Length <= length)
             //{

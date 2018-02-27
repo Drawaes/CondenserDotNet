@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Added message to the shutdown message
+</PackageReleaseNotes>
+  </PropertyGroup>
+</Project>
