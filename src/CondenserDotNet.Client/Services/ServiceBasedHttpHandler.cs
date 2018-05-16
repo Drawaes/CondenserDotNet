@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,7 +9,11 @@ namespace CondenserDotNet.Client.Services
     {
         private readonly IServiceRegistry _serviceRegistry;
 
-        public ServiceBasedHttpHandler(IServiceRegistry serviceRegistry) => _serviceRegistry = serviceRegistry;
+        public ServiceBasedHttpHandler(IServiceRegistry serviceRegistry, int maxConnectionsPerServer)
+        {
+            _serviceRegistry = serviceRegistry;
+            MaxConnectionsPerServer = maxConnectionsPerServer;
+        }
 
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {

@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Added max server connections to the get httpclient handler
+</PackageReleaseNotes>
+  </PropertyGroup>
+</Project>

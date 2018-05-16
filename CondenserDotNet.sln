@@ -68,6 +68,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Release Notes", "Release No
 		releasenotes\2.8.1.props = releasenotes\2.8.1.props
 		releasenotes\3.0.0.props = releasenotes\3.0.0.props
 		releasenotes\3.0.1.props = releasenotes\3.0.1.props
+		releasenotes\3.0.11.props = releasenotes\3.0.11.props
 		releasenotes\3.0.4.props = releasenotes\3.0.4.props
 		releasenotes\3.0.5.props = releasenotes\3.0.5.props
 		releasenotes\3.0.6.props = releasenotes\3.0.6.props

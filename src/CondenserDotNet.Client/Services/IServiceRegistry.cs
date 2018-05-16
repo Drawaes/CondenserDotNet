@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using CondenserDotNet.Core.DataContracts;
 
@@ -10,6 +10,7 @@ namespace CondenserDotNet.Client.Services
         Task<Dictionary<string, string[]>> GetAvailableServicesWithTagsAsync();
         Task<InformationService> GetServiceInstanceAsync(string serviceName);
         ServiceBasedHttpHandler GetHttpHandler();
+        ServiceBasedHttpHandler GetHttpHandler(int maxConnectionsPerServer);
         WatcherState GetServiceCurrentState(string serviceName);
     }
 }
