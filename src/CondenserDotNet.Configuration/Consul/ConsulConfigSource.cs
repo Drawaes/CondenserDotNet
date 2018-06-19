@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CondenserDotNet.Core;
+using CondenserDotNet.Core.Consul;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
@@ -23,13 +24,13 @@ namespace CondenserDotNet.Configuration.Consul
         private readonly IKeyParser _parser;
         private ILogger _logger;
 
-        public ConsulConfigSource(IOptions<ConsulRegistryConfig> agentConfig, ILogger logger)
+        public ConsulConfigSource(IOptions<ConsulRegistryConfig> agentConfig, ILogger logger, IConsulAclProvider aclProvider = null)
         {
             _logger = logger;
             var agentInfo = agentConfig?.Value ?? new ConsulRegistryConfig();
             _parser = agentInfo.KeyParser;
 
-            _httpClient = HttpUtils.CreateClient(agentInfo.AgentAddress, agentInfo.AgentPort);
+            _httpClient = HttpUtils.CreateClient(aclProvider, agentInfo.AgentAddress, agentInfo.AgentPort);
         }
 
         private class WatchConsul

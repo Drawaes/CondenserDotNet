@@ -7,6 +7,7 @@ using CondenserDotNet.Core.DataContracts;
 using CondenserDotNet.Core.Routing;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Logging;
+using CondenserDotNet.Core.Consul;
 
 namespace CondenserDotNet.Client.Services
 {
@@ -16,10 +17,10 @@ namespace CondenserDotNet.Client.Services
         private readonly Dictionary<string, ServiceWatcher> _watchedServices = new Dictionary<string, ServiceWatcher>(StringComparer.OrdinalIgnoreCase);
         private readonly ILogger _logger;
 
-        public ServiceRegistry(Func<HttpClient> httpClientFactory = null, ILoggerFactory loggerFactory = null)
+        public ServiceRegistry(Func<HttpClient> httpClientFactory = null, ILoggerFactory loggerFactory = null, IConsulAclProvider aclProvider = null)
         {
             _logger = loggerFactory?.CreateLogger<ServiceRegistry>();
-            _client = httpClientFactory?.Invoke() ?? HttpUtils.CreateClient();
+            _client = httpClientFactory?.Invoke() ?? HttpUtils.CreateClient(aclProvider);
         }
 
         public async Task<IEnumerable<string>> GetAvailableServicesAsync()
