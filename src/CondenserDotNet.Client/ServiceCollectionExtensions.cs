@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net.Http;
 using CondenserDotNet.Client.Leadership;
 using CondenserDotNet.Client.Services;
@@ -13,6 +13,7 @@ namespace CondenserDotNet.Client
             self.AddSingleton<ILeaderRegistry, LeaderRegistry>();
             self.AddSingleton<IServiceRegistry, ServiceRegistry>();
             self.AddSingleton<IServiceManager, ServiceManager>();
+            self.AddTransient<ServiceRegistryDelegatingHandler>();
             return self;
         }
     }

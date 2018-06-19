@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Added http delegating handler
+</PackageReleaseNotes>
+  </PropertyGroup>
+</Project>
