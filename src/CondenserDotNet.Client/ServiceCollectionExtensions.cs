@@ -14,6 +14,7 @@ namespace CondenserDotNet.Client
             self.AddSingleton<IServiceRegistry, ServiceRegistry>();
             self.AddSingleton<IServiceManager, ServiceManager>();
             self.AddTransient<ServiceRegistryDelegatingHandler>();
+            self.AddTransient<ServiceRegistryNearestDelegatingHandler>();
             return self;
         }
     }

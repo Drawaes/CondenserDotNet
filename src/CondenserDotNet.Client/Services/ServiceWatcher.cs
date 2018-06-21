@@ -24,17 +24,25 @@ namespace CondenserDotNet.Client.Services
         private static int s_serviceReconnectDelay = 1500;
         private static int s_getServiceDelay = 3000;
         private Action<List<InformationServiceSet>> _listCallback;
+        private bool _isNearest;
 
-        internal ServiceWatcher(string serviceName, HttpClient client, IRoutingStrategy<InformationServiceSet> routingStrategy, ILogger logger)
+        internal ServiceWatcher(string serviceName, HttpClient client, IRoutingStrategy<InformationServiceSet> routingStrategy, ILogger logger, bool useNearest)
         {
+            _isNearest = useNearest;
             _serviceName = serviceName;
             _logger = logger;
             _routingStrategy = routingStrategy;
-            _url = $"{HttpUtils.ServiceHealthUrl}{serviceName}?passing&index=";
+            _url = $"{HttpUtils.ServiceHealthUrl}{serviceName}?passing=true";
+            if(_isNearest)
+            {
+                _url += "&near=_agent";
+            }
+            _url += "&index=";
             _logger?.LogInformation("Started watching service with name {serviceName}", _serviceName);
             var ignore = WatcherLoop(client);
         }
 
+        public bool IsNearest => _isNearest;
         public WatcherState State => _state;
 
         public void SetCallback(Action<List<InformationServiceSet>> callBack)
