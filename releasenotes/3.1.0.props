@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Added ability to get nearest service instance
+</PackageReleaseNotes>
+  </PropertyGroup>
+</Project>
