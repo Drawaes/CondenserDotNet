@@ -47,10 +47,23 @@ namespace CondenserDotNet.Client.Services
                 if (!_watchedServices.TryGetValue(serviceName, out var watcher))
                 {
                     watcher = new ServiceWatcher(serviceName, _client
-                        , new RandomRoutingStrategy<InformationServiceSet>(), _logger);
+                        , new RandomRoutingStrategy<InformationServiceSet>(), _logger, useNearest: false);
                     _watchedServices.Add(serviceName, watcher);
                 }
                 //We either have one or have made one now so lets carry on
+                return watcher.GetNextServiceInstanceAsync();
+            }
+        }
+
+        public Task<InformationService> GetNearestServiceInstanceAsync(string serviceName)
+        {
+            lock (_watchedServices)
+            {
+                if (!_watchedServices.TryGetValue(serviceName, out var watcher))
+                {
+                    watcher = new ServiceWatcher(serviceName, _client, new UseTopRouting<InformationServiceSet>(), _logger, useNearest: true);
+                    _watchedServices.Add(serviceName, watcher);
+                }
                 return watcher.GetNextServiceInstanceAsync();
             }
         }
@@ -62,7 +75,7 @@ namespace CondenserDotNet.Client.Services
                 if (!_watchedServices.TryGetValue(serviceName, out var watcher))
                 {
                     watcher = new ServiceWatcher(serviceName, _client
-                        , new RandomRoutingStrategy<InformationServiceSet>(), _logger);
+                        , new RandomRoutingStrategy<InformationServiceSet>(), _logger, useNearest: false);
                     _watchedServices.Add(serviceName, watcher);
                 }
                 watcher.SetCallback(callback);
@@ -76,7 +89,7 @@ namespace CondenserDotNet.Client.Services
                 if (!_watchedServices.TryGetValue(serviceName, out var watcher))
                 {
                     watcher = new ServiceWatcher(serviceName, _client
-                        , new RandomRoutingStrategy<InformationServiceSet>(), _logger);
+                        , new RandomRoutingStrategy<InformationServiceSet>(), _logger, useNearest: false);
                     _watchedServices.Add(serviceName, watcher);
                 }
                 return watcher.State;
