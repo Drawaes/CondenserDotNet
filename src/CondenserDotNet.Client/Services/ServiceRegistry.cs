@@ -47,8 +47,17 @@ namespace CondenserDotNet.Client.Services
                 if (!_watchedServices.TryGetValue(serviceName, out var watcher))
                 {
                     watcher = new ServiceWatcher(serviceName, _client
-                        , new RandomRoutingStrategy<InformationServiceSet>(), _logger, useNearest: false);
+                        , RandomRoutingStrategy<InformationServiceSet>.Default, _logger, useNearest: false);
                     _watchedServices.Add(serviceName, watcher);
+                }
+                else
+                {
+                    if(watcher.IsNearest)
+                    {
+                        watcher.IsNearest = false;
+                        watcher.RoutingStrategy = RandomRoutingStrategy<InformationServiceSet>.Default;
+                        _logger?.LogInformation("Changed service lookup type for service of {serviceName} from nearest to any random", serviceName);
+                    }
                 }
                 //We either have one or have made one now so lets carry on
                 return watcher.GetNextServiceInstanceAsync();
@@ -61,8 +70,17 @@ namespace CondenserDotNet.Client.Services
             {
                 if (!_watchedServices.TryGetValue(serviceName, out var watcher))
                 {
-                    watcher = new ServiceWatcher(serviceName, _client, new UseTopRouting<InformationServiceSet>(), _logger, useNearest: true);
+                    watcher = new ServiceWatcher(serviceName, _client, UseTopRouting<InformationServiceSet>.Default, _logger, useNearest: true);
                     _watchedServices.Add(serviceName, watcher);
+                }
+                else
+                {
+                    if(!watcher.IsNearest)
+                    {
+                        watcher.IsNearest = true;
+                        watcher.RoutingStrategy = UseTopRouting<InformationServiceSet>.Default;
+                        _logger.LogInformation("Changed service lookup type for service of {serviceName} from any random to nearest", serviceName);
+                    }
                 }
                 return watcher.GetNextServiceInstanceAsync();
             }

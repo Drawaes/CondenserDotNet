@@ -13,7 +13,7 @@ namespace CondenserDotNet.Client.Services
 {
     internal class ServiceWatcher : IDisposable
     {
-        private readonly IRoutingStrategy<InformationServiceSet> _routingStrategy;
+        private IRoutingStrategy<InformationServiceSet> _routingStrategy;
         private readonly ILogger _logger;
         private readonly string _serviceName;
         private readonly CancellationTokenSource _cancelationToken = new CancellationTokenSource();
@@ -33,7 +33,7 @@ namespace CondenserDotNet.Client.Services
             _logger = logger;
             _routingStrategy = routingStrategy;
             _url = $"{HttpUtils.ServiceHealthUrl}{serviceName}?passing=true";
-            if(_isNearest)
+            if (_isNearest)
             {
                 _url += "&near=_agent";
             }
@@ -42,8 +42,9 @@ namespace CondenserDotNet.Client.Services
             var ignore = WatcherLoop(client);
         }
 
-        public bool IsNearest => _isNearest;
+        public bool IsNearest { get => _isNearest; set => _isNearest = value; }
         public WatcherState State => _state;
+        public IRoutingStrategy<InformationServiceSet> RoutingStrategy { get => _routingStrategy; set => _routingStrategy = value; }
 
         public void SetCallback(Action<List<InformationServiceSet>> callBack)
         {
@@ -70,7 +71,7 @@ namespace CondenserDotNet.Client.Services
                 _logger?.LogWarning("Using old values for service {serviceList}", instances);
             }
             var serviceInstance = _routingStrategy.RouteTo(instances)?.Service;
-            if(serviceInstance == null)
+            if (serviceInstance == null)
             {
                 _logger?.LogWarning("No service instance was found for service name {serviceName}", _serviceName);
             }
