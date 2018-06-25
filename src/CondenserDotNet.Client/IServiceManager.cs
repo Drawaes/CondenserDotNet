@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
+using System.Threading.Tasks;
 using CondenserDotNet.Client.DataContracts;
 using Microsoft.Extensions.Logging;
 
@@ -10,6 +11,7 @@ namespace CondenserDotNet.Client
     public interface IServiceManager : IDisposable
     {
         string ServiceId { get; }
+        Task RegistrationTask { get; }
         string ServiceName { get; }
         TimeSpan DeregisterIfCriticalAfter { get; set; }
         bool IsRegistered { get; }
@@ -24,5 +26,7 @@ namespace CondenserDotNet.Client
         Service RegisteredService { get; set; }
         string ProtocolSchemeTag { get; set; }
         ILogger Logger { get; }
+
+        bool UpdateRegistrationTask(Task inboundTask);
     }
 }

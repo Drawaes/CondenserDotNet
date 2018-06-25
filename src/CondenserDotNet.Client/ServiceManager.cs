@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
+using System.Threading.Tasks;
 using CondenserDotNet.Client.DataContracts;
 using CondenserDotNet.Core;
 using Microsoft.AspNetCore.Hosting.Server;
@@ -17,6 +18,7 @@ namespace CondenserDotNet.Client
         private readonly CancellationTokenSource _cancel = new CancellationTokenSource();
         private bool _disposed;
         private ITtlCheck _ttlCheck;
+        private Task _registrationTask;
 
         public ServiceManager(IOptions<ServiceManagerConfig> optionsConfig, Func<HttpClient> httpClientFactory = null, ILoggerFactory logFactory = null, IServer server = null)
         {
@@ -50,6 +52,7 @@ namespace CondenserDotNet.Client
         public int ServicePort { get; }
         public CancellationToken Cancelled => _cancel.Token;
         public string ProtocolSchemeTag { get; set; }
+        public Task RegistrationTask => Volatile.Read(ref _registrationTask);
 
         public void Dispose()
         {
@@ -70,7 +73,13 @@ namespace CondenserDotNet.Client
                 _disposed = true;
             }
         }
-        
+
+        public bool UpdateRegistrationTask(Task inboundTask)
+        {
+            var originalValue = Interlocked.Exchange(ref _registrationTask, inboundTask);
+            return originalValue == null ? true : false;
+        }
+
         ~ServiceManager() => Dispose(false);
     }
 }

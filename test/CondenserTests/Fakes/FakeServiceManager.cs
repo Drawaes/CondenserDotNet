@@ -6,6 +6,7 @@ using CondenserDotNet.Client.DataContracts;
 using System.Net.Http;
 using System.Threading;
 using Microsoft.Extensions.Logging;
+using System.Threading.Tasks;
 
 namespace CondenserTests.Fakes
 {
@@ -40,6 +41,10 @@ namespace CondenserTests.Fakes
 
         public List<string> CustomTags => throw new NotImplementedException();
 
+        public Task RegistrationTask => throw new NotImplementedException();
+
         public void Dispose() => throw new NotImplementedException();
+
+        public bool UpdateRegistrationTask(Task inboundTask) => throw new NotImplementedException();
     }
 }

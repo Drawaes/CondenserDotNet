@@ -1,0 +1,8 @@
+<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Added source linking
+* Added check for registration before attempting leadership (get watcher becomes async)
+</PackageReleaseNotes>
+  </PropertyGroup>
+</Project>

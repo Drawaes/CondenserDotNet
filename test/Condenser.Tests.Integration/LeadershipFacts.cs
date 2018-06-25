@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using CondenserDotNet.Client;
@@ -10,8 +10,8 @@ namespace Condenser.Tests.Integration
 {
     public class LeadershipFacts
     {
-        private string leadershipKey;
-        private Guid key;
+        private readonly string leadershipKey;
+        private readonly Guid key;
 
         public LeadershipFacts()
         {
@@ -29,6 +29,16 @@ namespace Condenser.Tests.Integration
                     }));
 
         [Fact]
+        public async Task FailToGetLeadershipWhenNotRegistered()
+        {
+            using (var manager = GetConfig("Service1"))
+            {
+                var leadership = new LeaderRegistry(manager);
+                await Assert.ThrowsAsync<InvalidOperationException>(async () => await leadership.GetLeaderWatcherAsync("TestKey"));
+            }
+        }
+
+        [Fact]
         public async Task TestLeadershipIsBlocking()
         {
             using (var manager = GetConfig("Service1"))
@@ -41,8 +51,8 @@ namespace Condenser.Tests.Integration
                 var leader1 = new LeaderRegistry(manager);
                 var leader2 = new LeaderRegistry(manager2);
 
-                var watcher = leader1.GetLeaderWatcher(leadershipKey);
-                var watcher2 = leader2.GetLeaderWatcher(leadershipKey);
+                var watcher = await leader1.GetLeaderWatcherAsync(leadershipKey);
+                var watcher2 = await leader2.GetLeaderWatcherAsync(leadershipKey);
                 var counter = 0;
 
                 watcher.SetLeaderCallback(info => Interlocked.Increment(ref counter));
@@ -66,7 +76,7 @@ namespace Condenser.Tests.Integration
                 var registerResult = await manager.RegisterServiceAsync();
                 var ttlResult = await manager.TtlCheck.ReportPassingAsync();
                 var leaderRegistry = new LeaderRegistry(manager);
-                var watcher = leaderRegistry.GetLeaderWatcher(leadershipKey);
+                var watcher = await leaderRegistry.GetLeaderWatcherAsync(leadershipKey);
                 await watcher.GetLeadershipAsync();
                 var result = await watcher.GetCurrentLeaderAsync();
                 Assert.Equal(manager.ServiceId, result.ID);
@@ -85,13 +95,13 @@ namespace Condenser.Tests.Integration
                 await manager2.AddTtlHealthCheck(100).RegisterServiceAsync();
                 await manager2.TtlCheck.ReportPassingAsync();
 
-                var watcher1 = (new LeaderRegistry(manager)).GetLeaderWatcher(leadershipKey);
+                var watcher1 = await (new LeaderRegistry(manager)).GetLeaderWatcherAsync(leadershipKey);
                 await watcher1.GetLeadershipAsync();
                 var shouldNotBeLeader = true;
                 var resetEvent = new ManualResetEvent(false);
 
                 //Now that 1 is the leader lets try to join 2 into the party
-                var watcher2 = (new LeaderRegistry(manager2)).GetLeaderWatcher(leadershipKey);
+                var watcher2 = await (new LeaderRegistry(manager2)).GetLeaderWatcherAsync(leadershipKey);
                 var result = watcher2.GetLeadershipAsync().ContinueWith(t =>
                 {
                     Assert.False(shouldNotBeLeader);

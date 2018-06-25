@@ -1,16 +1,22 @@
 <Project>
-  <Import Project="version.props" />
-  <PropertyGroup>
-    <Product>Condenser API Router</Product>
-    <VersionSuffix Condition="'$(VersionSuffix)'!='' AND '$(BuildNumber)' != ''">$(VersionSuffix)-$(BuildNumber)</VersionSuffix>
-    <PackageLicenseUrl>https://github.com/Drawaes/CondenserDotNet/blob/master/LICENSE.md</PackageLicenseUrl>
-    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <RepositoryType>git</RepositoryType>
-    <RepositoryUrl>https://github.com/Drawaes/CondenserDotNet</RepositoryUrl>
-    <Copyright>Drawaes Consulting Limited</Copyright>
-    <Authors>Tim Seaward, Dean Shackley</Authors>
-    <PackageProjectUrl>https://drawaes.github.io/CondenserDocs/</PackageProjectUrl>
-    <DebugType>full</DebugType>
-    <PackageIconUrl>https://drawaes.github.io/CondenserDocs/assets/img/logo.png</PackageIconUrl>
-  </PropertyGroup>
+    <Import Project="version.props" />
+    <PropertyGroup>
+        <Product>Condenser API Router</Product>
+        <VersionSuffix Condition="'$(VersionSuffix)'!='' AND '$(BuildNumber)' != ''">$(VersionSuffix)-$(BuildNumber)</VersionSuffix>
+        <PackageLicenseUrl>https://github.com/Drawaes/CondenserDotNet/blob/master/LICENSE.md</PackageLicenseUrl>
+        <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+        <RepositoryType>git</RepositoryType>
+        <RepositoryUrl>https://github.com/Drawaes/CondenserDotNet</RepositoryUrl>
+        <PublishRepositoryUrl>true</PublishRepositoryUrl>
+        <EmbedUntrackedSources>true</EmbedUntrackedSources>
+        <AllowedOutputExtensionsInPackageBuildOutputFolder>$(AllowedOutputExtensionsInPackageBuildOutputFolder);.pdb</AllowedOutputExtensionsInPackageBuildOutputFolder>
+        <Copyright>Drawaes Consulting Limited</Copyright>
+        <Authors>Tim Seaward</Authors>
+        <PackageProjectUrl>https://drawaes.github.io/CondenserDocs/</PackageProjectUrl>
+        <DebugType>full</DebugType>
+        <PackageIconUrl>https://drawaes.github.io/CondenserDocs/assets/img/logo.png</PackageIconUrl>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-62925-02" PrivateAssets="All"/>
+    </ItemGroup>
 </Project>
