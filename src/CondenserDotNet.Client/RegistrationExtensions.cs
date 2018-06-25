@@ -64,7 +64,7 @@ namespace CondenserDotNet.Client
             return false;
         }
 
-        public static async Task<bool> RegisterServiceAsync(this IServiceManager serviceManager)
+        public static Task<bool> RegisterServiceAsync(this IServiceManager serviceManager)
         {
             var s = new Service()
             {
@@ -112,16 +112,24 @@ namespace CondenserDotNet.Client
                     s.Checks[0].DeregisterCriticalServiceAfter = (int)serviceManager.DeregisterIfCriticalAfter.TotalMilliseconds + "ms";
                 }
             }
-            var content = HttpUtils.GetStringContent(s);
-            var response = await serviceManager.Client.PutAsync("/v1/agent/service/register", content);
-            if (response.IsSuccessStatusCode)
+
+            var registrationTask = RegisterWithConsul();
+            serviceManager.UpdateRegistrationTask(registrationTask);
+            return registrationTask;
+
+            async Task<bool> RegisterWithConsul()
             {
-                serviceManager.RegisteredService = s;
-                serviceManager.Logger?.LogInformation("Service with name {name} started at {address} on port {port}", s.Name, s.Address, s.Port);
-                return true;
+                var content = HttpUtils.GetStringContent(s);
+                var response = await serviceManager.Client.PutAsync("/v1/agent/service/register", content);
+                if (response.IsSuccessStatusCode)
+                {
+                    serviceManager.RegisteredService = s;
+                    serviceManager.Logger?.LogInformation("Service with name {name} started at {address} on port {port}", s.Name, s.Address, s.Port);
+                    return true;
+                }
+                serviceManager.RegisteredService = null;
+                return false;
             }
-            serviceManager.RegisteredService = null;
-            return false;
         }
     }
 }

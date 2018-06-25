@@ -1,4 +1,6 @@
-﻿
+
+using System.Threading.Tasks;
+
 namespace CondenserDotNet.Client.Leadership
 {
     public interface ILeaderRegistry
@@ -8,6 +10,6 @@ namespace CondenserDotNet.Client.Leadership
         /// </summary>
         /// <param name="keyForLeadership">The full path to the leadership key</param>
         /// <returns></returns>
-        ILeaderWatcher GetLeaderWatcher(string keyForLeadership);
+        Task<ILeaderWatcher> GetLeaderWatcherAsync(string keyForLeadership);
     }
 }
