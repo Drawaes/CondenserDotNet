@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Added the ability to get the service callback to the IServiceRegistry interface
+</PackageReleaseNotes>
+  </PropertyGroup>
+</Project>
