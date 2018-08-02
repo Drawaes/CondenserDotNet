@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -15,8 +15,8 @@ namespace CondenserDotNet.Middleware.WindowsAuthentication
         private const string NegotiateToken = "Negotiate ";
         private const string WWWAuthenticateHeader = "WWW-Authenticate";
         private static readonly string[] _supportedTokens = new[] { "NTLM", "Negotiate" };
-        private RequestDelegate _next;
-        private ILogger<WindowsAuthenticationMiddleware> _logger;
+        private readonly RequestDelegate _next;
+        private readonly ILogger<WindowsAuthenticationMiddleware> _logger;
         private static readonly Task _cachedTask = Task.FromResult(0);
 
         public WindowsAuthenticationMiddleware(RequestDelegate next, ILoggerFactory loggerFactory)

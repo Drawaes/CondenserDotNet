@@ -40,7 +40,7 @@ namespace CondenserDotNet.Middleware.ProtocolSwitcher
 
         public class ProtocolSwitcherAdaptedConnection : IAdaptedConnection
         {
-            private Stream _adaptedConnection;
+            private readonly Stream _adaptedConnection;
 
             public Stream ConnectionStream => _adaptedConnection;
 

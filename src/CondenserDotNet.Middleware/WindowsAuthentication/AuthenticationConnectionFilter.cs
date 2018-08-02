@@ -19,7 +19,7 @@ namespace CondenserDotNet.Middleware.WindowsAuthentication
 
         public class AuthenticationAdaptedConnection : IAdaptedConnection
         {
-            private Stream _connectionStream;
+            private readonly Stream _connectionStream;
             private WindowsAuthFeature _windowsAuth;
 
             public AuthenticationAdaptedConnection(Stream stream, WindowsAuthFeature authFeature)
