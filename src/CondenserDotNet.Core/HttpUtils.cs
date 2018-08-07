@@ -6,6 +6,7 @@ using Newtonsoft.Json.Serialization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Net.Http;
+using CondenserDotNet.Core.Consul;
 
 namespace CondenserDotNet.Core
 {
@@ -31,26 +32,33 @@ namespace CondenserDotNet.Core
 
         public static StringContent GetStringContent<T>(T objectForContent) => new StringContent(JsonConvert.SerializeObject(objectForContent, JsonSettings), Encoding.UTF8, "application/json");
 
-        public static HttpClient CreateClient(string agentHost = null, int? agentPort = null)
+        public static HttpClient CreateClient(IConsulAclProvider aclProvider, string agentHost = null, int? agentPort = null)
         {
             var host = agentHost ?? DefaultHost;
             var port = agentPort ?? DefaultPort;
 
             var uri = new UriBuilder("http", host, port);
+            HttpClient client;
 #if NET452
             System.Net.ServicePointManager.DefaultConnectionLimit = 50;
-            return new HttpClient()
+            client = new HttpClient()
             {
                 BaseAddress = uri.Uri,
                 Timeout = DefaultTimeout
             };
 #else
-            return new HttpClient(new HttpClientHandler() { MaxConnectionsPerServer = 50 })
+            client = new HttpClient(new HttpClientHandler() { MaxConnectionsPerServer = 50 })
             {
                 BaseAddress = uri.Uri,
                 Timeout = DefaultTimeout
             };
 #endif
+            var token = aclProvider?.GetAclToken();
+            if(!string.IsNullOrEmpty(token))
+            {
+                client.DefaultRequestHeaders.Add("X-Consul-Token", token);
+            }
+            return client;
         }
 
         public static Task<T> GetObject<T>(this HttpContent content) =>

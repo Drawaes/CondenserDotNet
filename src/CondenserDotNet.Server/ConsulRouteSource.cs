@@ -3,6 +3,7 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using CondenserDotNet.Core;
+using CondenserDotNet.Core.Consul;
 using CondenserDotNet.Server.DataContracts;
 using Microsoft.Extensions.Logging;
 
@@ -19,9 +20,9 @@ namespace CondenserDotNet.Server
         static readonly HealthCheck[] EmptyChecks = new HealthCheck[0];
 
         public ConsulRouteSource(CondenserConfiguration config,
-            ILoggerFactory logger)
+            ILoggerFactory logger, IConsulAclProvider aclProvider = null)
         {
-            _client = HttpUtils.CreateClient(config.AgentAddress, config.AgentPort);
+            _client = HttpUtils.CreateClient(aclProvider, config.AgentAddress, config.AgentPort);
             _healthCheckUri = $"{HttpUtils.HealthAnyUrl}?index=";
             _serviceLookupUri = $"{HttpUtils.SingleServiceCatalogUrl}";
 
