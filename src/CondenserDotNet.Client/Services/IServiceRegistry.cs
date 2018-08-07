@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using CondenserDotNet.Core.DataContracts;
@@ -13,5 +14,6 @@ namespace CondenserDotNet.Client.Services
         ServiceBasedHttpHandler GetHttpHandler();
         ServiceBasedHttpHandler GetHttpHandler(int maxConnectionsPerServer);
         WatcherState GetServiceCurrentState(string serviceName);
+        void SetServiceListCallback(string serviceName, Action<List<InformationServiceSet>> callback);
     }
 }

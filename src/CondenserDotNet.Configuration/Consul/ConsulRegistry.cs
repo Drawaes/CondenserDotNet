@@ -20,9 +20,6 @@ namespace CondenserDotNet.Configuration.Consul
         private IConfigurationRoot _root;
         private readonly ConfigurationBuilder _builder = new ConfigurationBuilder();
 
-        public IConfigurationRoot Root => _root ?? (_root = _builder.Build());
-        public ConfigurationBuilder Builder => _builder;
-
         public ConsulRegistry(IOptions<ConsulRegistryConfig> agentConfig, ILoggerFactory loggerFactory = null)
         {
             _logger = loggerFactory?.CreateLogger<ConsulRegistry>();
@@ -40,16 +37,19 @@ namespace CondenserDotNet.Configuration.Consul
         /// This returns a flattened list of all the loaded keys
         /// </summary>
         public IEnumerable<string> AllKeys => _configKeys.SelectMany(x => x.Keys);
+        public IConfigSource ConfigSource => _source;
+        public IConfigurationRoot Root => _root ?? (_root = _builder.Build());
+        public ConfigurationBuilder Builder => _builder;
 
         /// <summary>
         /// This loads the keys from a path. They are not updated.
         /// </summary>
         /// <param name="keyPath"></param>
         /// <returns></returns>
-        public Task<bool> AddStaticKeyPathAsync(string keyPath)
+        public async Task<bool> AddStaticKeyPathAsync(string keyPath)
         {
             keyPath = _source.FormValidKey(keyPath);
-            return AddInitialKeyPathAsync(keyPath).ContinueWith(r => r.Result > -1);
+            return (await AddInitialKeyPathAsync(keyPath)) > -1;
         }
 
         private async Task<int> AddInitialKeyPathAsync(string keyPath)

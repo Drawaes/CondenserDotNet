@@ -77,6 +77,30 @@ namespace CondenserDotNet.Configuration.Consul
             }
         }
 
+        public async Task<(bool found, string value)> GetKeyAsync(string keyPath)
+        {
+            _logger?.LogTrace("Getting a single key from path {ConsulKeyPath}{keyPath}", ConsulKeyPath, keyPath);
+            try
+            {
+                var response = await _httpClient.GetAsync($"{ConsulKeyPath}{keyPath}");
+                if (!response.IsSuccessStatusCode)
+                {
+                    _logger?.LogWarning("We didn't get a successful response from consul code was {code}", response.StatusCode);
+                    return (false, null);
+                }
+
+                var content = await response.Content.ReadAsStringAsync();
+                var keys = JsonConvert.DeserializeObject<KeyValue[]>(content);
+                if (keys.Length != 1) return (false, null);
+                return (true, keys[0].Value);
+            }
+            catch (Exception exception)
+            {
+                _logger?.LogError(100, exception, "There was an exception getting the keys");
+                throw;
+            }
+        }
+
         public async Task<KeyOperationResult> TryWatchKeysAsync(string keyPath, object state)
         {
             _logger?.LogTrace("Starting to watch the keypath {keyPath}", keyPath);
