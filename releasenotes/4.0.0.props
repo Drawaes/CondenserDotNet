@@ -1,0 +1,9 @@
+<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Now with added ACL support
+* Support for a fixed ACL Token
+* Support to get a encrypted base64 key from consul and use a certificate to decrypt the ACL token for use
+</PackageReleaseNotes>
+  </PropertyGroup>
+</Project>
