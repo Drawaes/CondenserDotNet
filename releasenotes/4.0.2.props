@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Added padding option for certificate based ACL decryption
+</PackageReleaseNotes>
+  </PropertyGroup>
+</Project>
