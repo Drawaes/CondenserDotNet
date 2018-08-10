@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Bug fix for ACL from key path
+</PackageReleaseNotes>
+  </PropertyGroup>
+</Project>
