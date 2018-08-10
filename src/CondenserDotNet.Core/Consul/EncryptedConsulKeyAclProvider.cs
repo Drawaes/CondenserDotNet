@@ -16,7 +16,7 @@ namespace CondenserDotNet.Core.Consul
             if (encryptedKeyName.StartsWith("/")) encryptedKeyName = encryptedKeyName.Substring(1);
             using (var httpClient = HttpUtils.CreateClient(null))
             {
-                var keyValues = httpClient.GetStringAsync($"/v1/key/{encryptedKeyName}").Result;
+                var keyValues = httpClient.GetStringAsync($"/v1/kv/{encryptedKeyName}").Result;
                 var keys = JsonConvert.DeserializeObject<KeyValue[]>(keyValues);
                 if (keys.Length != 1) throw new ArgumentException($"Should only be a single key returned from query but had {keys.Length}");
                 var decryptedValue = encryptionCertifcate.GetRSAPrivateKey().DecryptValue(Convert.FromBase64String(keys[0].Value));
