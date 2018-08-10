@@ -1,5 +1,6 @@
 using System;
 using System.Net.Http;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using CondenserDotNet.Client.Leadership;
 using CondenserDotNet.Client.Services;
@@ -27,9 +28,9 @@ namespace CondenserDotNet.Client
             return self.AddConsulServices();
         }
 
-        public static IServiceCollection AddConsulServices(this IServiceCollection self, string encryptedAclTokenKey, X509Certificate2 encryptionCertifcate)
+        public static IServiceCollection AddConsulServices(this IServiceCollection self, string encryptedAclTokenKey, X509Certificate2 encryptionCertifcate, RSAEncryptionPadding padding)
         {
-            self.AddSingleton<IConsulAclProvider>(new EncryptedConsulKeyAclProvider(encryptedAclTokenKey, encryptionCertifcate));
+            self.AddSingleton<IConsulAclProvider>(new EncryptedConsulKeyAclProvider(encryptedAclTokenKey, encryptionCertifcate, padding));
             return self.AddConsulServices();
         }
     }
