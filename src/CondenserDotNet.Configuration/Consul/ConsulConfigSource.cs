@@ -22,9 +22,9 @@ namespace CondenserDotNet.Configuration.Consul
         private readonly HttpClient _httpClient;
         private readonly CancellationTokenSource _disposed = new CancellationTokenSource();
         private readonly IKeyParser _parser;
-        private ILogger _logger;
+        private readonly ILogger _logger;
 
-        public ConsulConfigSource(IOptions<ConsulRegistryConfig> agentConfig, ILogger logger, IConsulAclProvider aclProvider = null)
+        public ConsulConfigSource(IOptions<ConsulRegistryConfig> agentConfig, ILogger logger, IConsulAclProvider aclProvider)
         {
             _logger = logger;
             var agentInfo = agentConfig?.Value ?? new ConsulRegistryConfig();
@@ -137,8 +137,8 @@ namespace CondenserDotNet.Configuration.Consul
         private class KeyValueComparer : IEqualityComparer<KeyValue>
         {
             private string _keyPath;
-            private char _consulPath;
-            private char _corePath;
+            private readonly char _consulPath;
+            private readonly char _corePath;
 
             public KeyValueComparer(string keyPath, char consulPath, char corePath)
             {

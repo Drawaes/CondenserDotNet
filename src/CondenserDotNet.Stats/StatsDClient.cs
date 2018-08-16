@@ -17,12 +17,8 @@ namespace CondenserDotNet.StatsD
         
         private const byte _seperator = 0x3A; // :
 
-        public StatsDClient(int bufferSize)
-        {
-            _buffer = System.Buffers.ArrayPool<byte>.Shared.Rent(bufferSize);
-            //_remainingBuffer = _buffer;
-        }
-                
+        public StatsDClient(int bufferSize) => _buffer = System.Buffers.ArrayPool<byte>.Shared.Rent(bufferSize);//_remainingBuffer = _buffer;
+
         public void SendMetric(MetricEntry metricEntry)
         {
             //var initialLength = _remainingBuffer.Length;

@@ -6,7 +6,7 @@ namespace CondenserDotNet.Core.Consul
 {
     public class StaticConsulAclProvider : IConsulAclProvider
     {
-        private string _aclToken;
+        private readonly string _aclToken;
 
         public StaticConsulAclProvider(string aclToken) => _aclToken = aclToken;
 

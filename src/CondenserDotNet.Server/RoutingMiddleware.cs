@@ -10,7 +10,7 @@ namespace CondenserDotNet.Server
         private readonly RequestDelegate _next;
         private readonly ILogger _logger;
         private readonly RoutingHost _routeData;
-        private static Task _completedTask = Task.FromResult(0);
+        private static readonly Task _completedTask = Task.FromResult(0);
 
         public RoutingMiddleware(RequestDelegate next, ILoggerFactory loggerFactory, RoutingHost routeData)
         {

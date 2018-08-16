@@ -20,7 +20,7 @@ namespace Condenser.Tests.Integration
         public async Task TestRegister()
         {
             var keyname = Guid.NewGuid().ToString();
-            using (var configRegistry = new ConsulRegistry(null))
+            using (var configRegistry = new ConsulRegistry())
             {
                 await configRegistry.SetKeyAsync($"org/{keyname}/test1", _value1);
                 await configRegistry.SetKeyAsync($"org/{keyname}/test2", _value2);
@@ -57,7 +57,7 @@ namespace Condenser.Tests.Integration
         public async Task DontPickUpChangesFact()
         {
             var keyname = Guid.NewGuid().ToString();
-            using (var configRegistry = new ConsulRegistry(null))
+            using (var configRegistry = new ConsulRegistry())
             {
                 await configRegistry.SetKeyAsync($"org/{keyname}/test1", _value1);
 
@@ -74,7 +74,7 @@ namespace Condenser.Tests.Integration
         public async Task PickUpChangesFact()
         {
             var keyid = Guid.NewGuid().ToString();
-            using (var configRegistry = new ConsulRegistry(null))
+            using (var configRegistry = new ConsulRegistry())
             {
                 await configRegistry.SetKeyAsync($"org/{keyid}/test2", _value1);
                 await configRegistry.AddUpdatingPathAsync($"org/{keyid}/");
@@ -94,7 +94,7 @@ namespace Condenser.Tests.Integration
         {
             Console.WriteLine(nameof(GetCallbackForSpecificKey));
             var keyid = Guid.NewGuid().ToString();
-            using (var configRegistry = new ConsulRegistry(null))
+            using (var configRegistry = new ConsulRegistry())
             {
                 var e = new ManualResetEvent(false);
                 configRegistry.AddWatchOnSingleKey("test1", keyValue => e.Set());
@@ -115,7 +115,7 @@ namespace Condenser.Tests.Integration
         public async Task GetCallbackForKeyThatIsAdded()
         {
             var keyid = Guid.NewGuid().ToString();
-            using (var configRegistry = new ConsulRegistry(null))
+            using (var configRegistry = new ConsulRegistry())
             {
                 var e = new ManualResetEvent(false);
                 configRegistry.AddWatchOnSingleKey("test1", keyValue => e.Set());
@@ -137,7 +137,7 @@ namespace Condenser.Tests.Integration
         {
             Console.WriteLine(nameof(GetCallbackForAnyKey));
             var keyid = Guid.NewGuid().ToString();
-            using (var configRegistry = new ConsulRegistry(null))
+            using (var configRegistry = new ConsulRegistry())
             {
                 await configRegistry.SetKeyAsync($"org/{keyid}/test1", _value1);
 
@@ -160,7 +160,7 @@ namespace Condenser.Tests.Integration
         public async Task CanLoadUsingConsulConfigurationProvider()
         {
             var keyname = Guid.NewGuid().ToString();
-            using (var configRegistry = new ConsulRegistry(null))
+            using (var configRegistry = new ConsulRegistry())
             {
                 await configRegistry.SetKeyAsync($"org/{keyname}/test1", _value1);
                 await configRegistry.SetKeyAsync($"org/{keyname}/test2", _value2);

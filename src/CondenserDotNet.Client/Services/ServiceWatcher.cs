@@ -19,10 +19,10 @@ namespace CondenserDotNet.Client.Services
         private readonly CancellationTokenSource _cancelationToken = new CancellationTokenSource();
         private readonly TaskCompletionSource<bool> _completionSource = new TaskCompletionSource<bool>();
         private List<InformationServiceSet> _instances;
-        private string _url;
+        private readonly string _url;
         private WatcherState _state;
-        private static int s_serviceReconnectDelay = 1500;
-        private static int s_getServiceDelay = 3000;
+        private static readonly int s_serviceReconnectDelay = 1500;
+        private static readonly int s_getServiceDelay = 3000;
         private Action<List<InformationServiceSet>> _listCallback;
         private bool _isNearest;
 

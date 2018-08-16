@@ -1,4 +1,4 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using System.Threading;
 
 namespace CondenserDotNet.Middleware.CleanShutdown
@@ -6,8 +6,8 @@ namespace CondenserDotNet.Middleware.CleanShutdown
     public class CleanShutdownService
     {
         private readonly CountdownEvent _requestsOutstanding = new CountdownEvent(1);
-        private int _shutdownTimeout = 2000;
-        private ILogger _logger;
+        private readonly int _shutdownTimeout = 2000;
+        private readonly ILogger _logger;
 
         public CleanShutdownService(ILoggerFactory loggerFactory) => _logger = loggerFactory.CreateLogger<CleanShutdownService>();
         public void StartRequest() => _requestsOutstanding.AddCount();
