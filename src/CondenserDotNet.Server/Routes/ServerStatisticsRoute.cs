@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
@@ -33,9 +33,8 @@ namespace CondenserDotNet.Server.Routes
                     for (var i = 0; i < services.Length; i++)
                     {
                         var service = services[i];
-                        var usage = service as IUsageInfo;
 
-                        if (usage == null) continue;
+                        if (!(service is IUsageInfo usage)) continue;
 
                         double averageRequestTime = 0;
                         if (usage.Calls > 0)

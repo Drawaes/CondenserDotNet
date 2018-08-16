@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Added Acl Provider to the configuration registry
+</PackageReleaseNotes>
+  </PropertyGroup>
+</Project>

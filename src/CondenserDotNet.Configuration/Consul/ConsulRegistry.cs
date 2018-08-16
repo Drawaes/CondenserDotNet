@@ -19,16 +19,18 @@ namespace CondenserDotNet.Configuration.Consul
         private readonly ILogger _logger;
         private IConfigurationRoot _root;
         private readonly ConfigurationBuilder _builder = new ConfigurationBuilder();
+        private readonly Core.Consul.IConsulAclProvider _aclProvider;
 
-        public ConsulRegistry(IOptions<ConsulRegistryConfig> agentConfig, ILoggerFactory loggerFactory = null)
+        public ConsulRegistry(IOptions<ConsulRegistryConfig> agentConfig, ILoggerFactory loggerFactory = null, Core.Consul.IConsulAclProvider aclProvider = null)
         {
+            _aclProvider = aclProvider;
             _logger = loggerFactory?.CreateLogger<ConsulRegistry>();
-            _source = new ConsulConfigSource(agentConfig, _logger);
+            _source = new ConsulConfigSource(agentConfig, _logger, _aclProvider);
             _builder.AddConfigurationRegistry(this);
         }
 
-        public ConsulRegistry(ILoggerFactory loggerFactory = null)
-            :this(null, loggerFactory)
+        public ConsulRegistry(ILoggerFactory loggerFactory = null, Core.Consul.IConsulAclProvider aclProvider = null)
+            :this(null, loggerFactory, aclProvider)
         {
             
         }

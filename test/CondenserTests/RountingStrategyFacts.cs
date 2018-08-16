@@ -1,11 +1,11 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Xunit;
 
 namespace CondenserTests
 {
     public class RountingStrategyFacts
     {
-        private List<RoutedService> _services = new List<RoutedService>()
+        private readonly List<RoutedService> _services = new List<RoutedService>()
         {
             new RoutedService() { Id = 1 },
             new RoutedService() { Id = 2 },

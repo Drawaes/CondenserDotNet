@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 using System.Threading.Tasks;
 using CondenserDotNet.Server;
@@ -8,17 +8,11 @@ namespace CondenserTests.Fakes
 {
     public class FakeHealthRouter : ServiceBase
     {
-        public FakeHealthRouter(string route)
-        {
-            Routes = new[] { route };
-        }
+        public FakeHealthRouter(string route) => Routes = new[] { route };
 
         public override string[] Routes { get; }
         public override IPEndPoint IpEndPoint => throw new NotImplementedException();
 
-        public override Task CallService(HttpContext context)
-        {
-            return Task.FromResult(0);
-        }
+        public override Task CallService(HttpContext context) => Task.FromResult(0);
     }
 }
