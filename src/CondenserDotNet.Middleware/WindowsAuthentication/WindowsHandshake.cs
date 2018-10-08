@@ -1,7 +1,8 @@
-﻿using System;
+using System;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 using static Interop.Secur32;
+using static Interop.Kernel32;
 
 namespace CondenserDotNet.Middleware.WindowsAuthentication
 {
@@ -77,7 +78,7 @@ namespace CondenserDotNet.Middleware.WindowsAuthentication
                         Marshal.Copy((IntPtr)outBufferPtr, byteSpan, 0, byteSpan.Length);
                         returnToken = "Negotiate " + Convert.ToBase64String(byteSpan);
                     }
-                    QuerySecurityContextToken(ref _context, out IntPtr handle);
+                    QuerySecurityContextToken(ref _context, out var handle);
                     _identity = new WindowsIdentity(handle);
                     Interop.Kernel32.CloseHandle(handle);
                     return returnToken;
@@ -91,6 +92,7 @@ namespace CondenserDotNet.Middleware.WindowsAuthentication
             if (_context.HighPart != IntPtr.Zero || _context.LowPart != IntPtr.Zero)
             {
                 FreeCredentialsHandle(_context);
+                DeleteSecurityContext(_context);
                 _context = default(SecurityHandle);
             }
             GC.SuppressFinalize(this);

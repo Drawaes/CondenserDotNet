@@ -11,10 +11,6 @@ namespace CondenserDotNet.Middleware.ProtocolSwitcher
     {
         private bool _isHttp;
 
-        public ProtocolSwitchConnectionFilter()
-        {
-        }
-
         public bool IsHttps => _isHttp;
 
         public async Task<IAdaptedConnection> OnConnectionAsync(ConnectionAdapterContext context)
@@ -27,8 +23,11 @@ namespace CondenserDotNet.Middleware.ProtocolSwitcher
             back2Back.FirstByte = firstByte[0];
             if (firstByte[0] == 0x16)
             {
+                context.Features.Set<ITlsConnectionFeature>(new TlsConnectionFeature());
                 _isHttp = true;
             }
+
+            
             throw new NotImplementedException();
             //await _previous.OnConnectionAsync(context);
             //var previousRequest = context.PrepareRequest;
