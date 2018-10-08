@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Fixed Security Handle Leak in LASS
+</PackageReleaseNotes>
+  </PropertyGroup>
+</Project>
