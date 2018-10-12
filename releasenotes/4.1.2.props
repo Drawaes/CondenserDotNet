@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Increased timeout on service watcher
+</PackageReleaseNotes>
+  </PropertyGroup>
+</Project>
