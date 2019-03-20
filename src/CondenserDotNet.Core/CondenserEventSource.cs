@@ -6,9 +6,9 @@ using System.Text;
 namespace CondenserDotNet.Core
 {
     [EventSource(Name = "Condenser-Event-Source")]
-    internal sealed class CondenserEventSource:EventSource
+    public sealed class CondenserEventSource:EventSource
     {
-        internal static readonly CondenserEventSource Log = new CondenserEventSource();
+        public static readonly CondenserEventSource Log = new CondenserEventSource();
 
         [Event(1, Message = "Service-Watcher-Created")]
         public void ServiceWatcherCreated(string serviceName) => Log.WriteEvent(1, serviceName);

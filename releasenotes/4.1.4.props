@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Fix duplicate event sources
+</PackageReleaseNotes>
+  </PropertyGroup>
+</Project>
