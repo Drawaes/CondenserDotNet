@@ -33,6 +33,7 @@ namespace CondenserDotNet.Client.Leadership
             {
                 _currentLeaderEvent.Reset();
                 _electedLeaderEvent.Reset();
+                CondenserEventSource.Log.LeadershipSessionCreated();
                 var result = await _serviceManager.Client.PutAsync(HttpUtils.SessionCreateUrl, GetCreateSession());
                 if (!result.IsSuccessStatusCode)
                 {
@@ -48,9 +49,10 @@ namespace CondenserDotNet.Client.Leadership
         {
             while (true)
             {
-                //If we are here we don't know who is the leader
+                //If we are here we don't know who the leader is
                 _electedLeaderEvent.Reset();
                 _currentLeaderEvent.Reset();
+                CondenserEventSource.Log.LeadershipTryToLock(_keyToWatch);
                 var leaderResult = await _serviceManager.Client.PutAsync($"{KeyPath}{_keyToWatch}?acquire={_sessionId}", GetServiceInformation());
                 if (!leaderResult.IsSuccessStatusCode)
                 {
@@ -63,8 +65,10 @@ namespace CondenserDotNet.Client.Leadership
                 {
                     _electedLeaderEvent.Set(true);
                 }
-                for (var i = 0; i < 2; i++)
+                _consulIndex = leaderResult.GetConsulIndex();
+                for (var i = 0; i < 10; i++)
                 {
+                    CondenserEventSource.Log.LeadershipSessionGetStatus(_keyToWatch);
                     leaderResult = await _serviceManager.Client.GetAsync($"{KeyPath}{_keyToWatch}?index={_consulIndex}");
                     if (!leaderResult.IsSuccessStatusCode)
                     {
@@ -79,8 +83,8 @@ namespace CondenserDotNet.Client.Leadership
                         break;
                     }
                     var infoService = JsonConvert.DeserializeObject<InformationService>(kv[0].ValueFromBase64());
-                    _callback?.Invoke(infoService);
                     _currentLeaderEvent.Set(infoService);
+                    _callback?.Invoke(infoService);
                     if (Guid.Parse(kv[0].Session) == _sessionId)
                     {
                         _electedLeaderEvent.Set(true);

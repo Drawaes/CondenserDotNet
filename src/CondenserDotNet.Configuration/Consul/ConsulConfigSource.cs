@@ -30,6 +30,7 @@ namespace CondenserDotNet.Configuration.Consul
             var agentInfo = agentConfig?.Value ?? new ConsulRegistryConfig();
             _parser = agentInfo.KeyParser;
 
+            CondenserEventSource.Log.ConfigurationHttpClientCreated();
             _httpClient = HttpUtils.CreateClient(aclProvider, agentInfo.AgentAddress, agentInfo.AgentPort);
         }
 
@@ -47,7 +48,7 @@ namespace CondenserDotNet.Configuration.Consul
         {
             if (!keyPath.EndsWith(ConsulPath))
             {
-                keyPath = keyPath + ConsulPath;
+                keyPath += ConsulPath;
             }
             if (keyPath.StartsWith(ConsulPath))
             {
@@ -61,6 +62,7 @@ namespace CondenserDotNet.Configuration.Consul
             _logger?.LogTrace("Getting kv from path {ConsulKeyPath}{keyPath}", ConsulKeyPath, keyPath);
             try
             {
+                CondenserEventSource.Log.ConfigurationGetKeysRecursive(keyPath);
                 var response = await _httpClient.GetAsync($"{ConsulKeyPath}{keyPath}?recurse");
                 if (!response.IsSuccessStatusCode)
                 {
@@ -83,6 +85,7 @@ namespace CondenserDotNet.Configuration.Consul
             _logger?.LogTrace("Getting a single key from path {ConsulKeyPath}{keyPath}", ConsulKeyPath, keyPath);
             try
             {
+                CondenserEventSource.Log.ConfigurationGetKey(keyPath);
                 var response = await _httpClient.GetAsync($"{ConsulKeyPath}{keyPath}");
                 if (!response.IsSuccessStatusCode)
                 {
@@ -109,6 +112,7 @@ namespace CondenserDotNet.Configuration.Consul
             var url = $"{ConsulKeyPath}{keyPath}?recurse&wait=300s&index=";
             try
             {
+                CondenserEventSource.Log.ConfigurationWatchKey(keyPath);
                 var response = await _httpClient.GetAsync(url + consulState.ConsulIndex, _disposed.Token);
                 var newConsulIndex = response.GetConsulIndex();
 
@@ -177,6 +181,7 @@ namespace CondenserDotNet.Configuration.Consul
 
         public async Task<bool> TrySetKeyAsync(string keyPath, string value)
         {
+            CondenserEventSource.Log.ConfigurationSetKey(keyPath);
             var response = await _httpClient.PutAsync($"{ConsulKeyPath}{keyPath}", HttpUtils.GetStringContent(value));
             if (!response.IsSuccessStatusCode)
             {

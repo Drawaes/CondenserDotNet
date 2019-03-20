@@ -120,6 +120,7 @@ namespace CondenserDotNet.Client
             async Task<bool> RegisterWithConsul()
             {
                 var content = HttpUtils.GetStringContent(s);
+                CondenserEventSource.Log.ServiceRegistration();
                 var response = await serviceManager.Client.PutAsync("/v1/agent/service/register", content);
                 if (response.IsSuccessStatusCode)
                 {

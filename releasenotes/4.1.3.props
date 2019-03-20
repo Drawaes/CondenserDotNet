@@ -1,0 +1,9 @@
+<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Added Eventsources for getting statistics from configuration, registration and leadership
+* Added updating the consul index on the first call to leadership in the outer loop
+* Increased the loops that occur before a retry is requested in leadership (from 2 to 10)
+</PackageReleaseNotes>
+  </PropertyGroup>
+</Project>

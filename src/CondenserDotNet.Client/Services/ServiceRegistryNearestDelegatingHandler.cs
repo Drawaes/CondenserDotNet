@@ -9,7 +9,7 @@ namespace CondenserDotNet.Client.Services
 {
     public class ServiceRegistryNearestDelegatingHandler : DelegatingHandler
     {
-        private IServiceRegistry _serviceRegistry;
+        private readonly IServiceRegistry _serviceRegistry;
 
         public ServiceRegistryNearestDelegatingHandler(IServiceRegistry serviceRegistry) => _serviceRegistry = serviceRegistry;
 

@@ -8,7 +8,7 @@ namespace CondenserDotNet.Server
 {
     public class RoutingData
     {
-        private Dictionary<string, ICurrentState> _stats = new Dictionary<string, ICurrentState>();
+        private readonly Dictionary<string, ICurrentState> _stats = new Dictionary<string, ICurrentState>();
 
         public RoutingData(RadixTree<IService> tree) => Tree = tree;
 

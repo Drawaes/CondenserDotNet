@@ -34,6 +34,7 @@ namespace CondenserDotNet.Core
 
         public static HttpClient CreateClient(IConsulAclProvider aclProvider, string agentHost = null, int? agentPort = null)
         {
+            CondenserEventSource.Log.HttpClientCreated();
             var host = agentHost ?? DefaultHost;
             var port = agentPort ?? DefaultPort;
 

@@ -6,7 +6,6 @@ namespace CondenserDotNet.Client
     public class TtlCheck : ITtlCheck
     {
         private readonly IServiceManager _parentManager;
-        private readonly int _timeToLiveSeconds;
         private readonly HealthCheck _healthCheck;
 
         internal TtlCheck(IServiceManager parentManager, int timeToLiveSeconds)
@@ -16,7 +15,6 @@ namespace CondenserDotNet.Client
             {
                 TTL = $"{timeToLiveSeconds}s"
             };
-            _timeToLiveSeconds = timeToLiveSeconds;
         }
 
         public HealthCheck HealthCheck => _healthCheck;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using Microsoft.Extensions.Logging;
@@ -45,7 +45,7 @@ namespace CondenserDotNet.Server
         {
             lock (_lock)
             {
-                responseCode = responseCode / 100;
+                responseCode /= 100;
                 switch (responseCode)
                 {
                     case 5:
