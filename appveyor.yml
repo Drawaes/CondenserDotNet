@@ -50,7 +50,7 @@ deploy:
 - provider: NuGet
   server: https://www.myget.org/F/condenserdotnet/api/v2/package
   api_key:
-    secure: 5mBb0A2rlwk1Iq6FEo94XSORm9etc3xPn0oLZ8dIJ6Hmm1G7quqf+Bz6fm+ft+FK
+    secure: F4U6pELKG7NqzEZXyr7WmOySddam2tpYB1LqAPlJAKGT2WRukOZRtWk8ZBuZ+nzs
   skip_symbols: true
   on:
     branch: master
