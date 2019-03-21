@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Embedding Sources
+</PackageReleaseNotes>
+  </PropertyGroup>
+</Project>

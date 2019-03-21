@@ -28,6 +28,7 @@ namespace CondenserDotNet.Client.Leadership
             _keyToWatch = keyToWatch;
             _serviceManager = serviceManager;
             _sessionIdTask = GetSession();
+            var ignore = KeepLeadershipLoop();
         }
 
         private async Task<Guid> GetSession()

@@ -19,4 +19,10 @@
     <ItemGroup>
         <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0-beta-62925-02" PrivateAssets="All"/>
     </ItemGroup>
+
+    <Target Name="EmbedSources" BeforeTargets="CoreCompile">
+        <ItemGroup>
+            <EmbeddedFiles Include="@(Compile)" />
+        </ItemGroup>
+    </Target>
 </Project>
