@@ -53,7 +53,7 @@ namespace CondenserDotNet.Client.Leadership
                 _electedLeaderEvent.Reset();
                 _currentLeaderEvent.Reset();
                 CondenserEventSource.Log.LeadershipTryToLock(_keyToWatch);
-                var leaderResult = await _serviceManager.Client.PutAsync($"{KeyPath}{_keyToWatch}?acquire={_sessionId}", GetServiceInformation());
+                var leaderResult = await _serviceManager.Client.PutAsync($"{KeyPath}{_keyToWatch}?acquire={_sessionId}&index={_consulIndex}", GetServiceInformation());
                 if (!leaderResult.IsSuccessStatusCode)
                 {
                     //error so we need to get a new session
@@ -72,6 +72,8 @@ namespace CondenserDotNet.Client.Leadership
                     leaderResult = await _serviceManager.Client.GetAsync($"{KeyPath}{_keyToWatch}?index={_consulIndex}");
                     if (!leaderResult.IsSuccessStatusCode)
                     {
+                        _currentLeaderEvent.Reset();
+                        _electedLeaderEvent.Reset();
                         //error so return to create session
                         return;
                     }
