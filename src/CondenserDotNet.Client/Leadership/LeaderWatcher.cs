@@ -9,7 +9,7 @@ using Newtonsoft.Json;
 
 namespace CondenserDotNet.Client.Leadership
 {
-    public class LeaderWatcher : ILeaderWatcher
+    public class LeaderWatcherOld : ILeaderWatcher
     {
         private readonly AsyncManualResetEvent<InformationService> _currentLeaderEvent = new AsyncManualResetEvent<InformationService>();
         private readonly AsyncManualResetEvent<bool> _electedLeaderEvent = new AsyncManualResetEvent<bool>();
@@ -20,7 +20,7 @@ namespace CondenserDotNet.Client.Leadership
         private const string KeyPath = "/v1/kv/";
         private string _consulIndex = "0";
 
-        internal LeaderWatcher(IServiceManager serviceManager, string keyToWatch)
+        internal LeaderWatcherOld(IServiceManager serviceManager, string keyToWatch)
         {
             _serviceManager = serviceManager;
             _keyToWatch = keyToWatch;
@@ -53,7 +53,7 @@ namespace CondenserDotNet.Client.Leadership
                 _electedLeaderEvent.Reset();
                 _currentLeaderEvent.Reset();
                 CondenserEventSource.Log.LeadershipTryToLock(_keyToWatch);
-                var leaderResult = await _serviceManager.Client.PutAsync($"{KeyPath}{_keyToWatch}?acquire={_sessionId}&index={_consulIndex}", GetServiceInformation());
+                var leaderResult = await _serviceManager.Client.PutAsync($"{KeyPath}{_keyToWatch}?acquire={_sessionId}", GetServiceInformation());
                 if (!leaderResult.IsSuccessStatusCode)
                 {
                     //error so we need to get a new session

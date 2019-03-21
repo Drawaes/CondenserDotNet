@@ -7,7 +7,7 @@ namespace CondenserDotNet.Client.Leadership
     public class LeaderRegistry : ILeaderRegistry
     {
         private readonly IServiceManager _serviceManager;
-        private readonly Dictionary<string, LeaderWatcher> _leaderWatchers = new Dictionary<string, LeaderWatcher>(StringComparer.OrdinalIgnoreCase);
+        private readonly Dictionary<string, LeaderWatcherNew> _leaderWatchers = new Dictionary<string, LeaderWatcherNew>(StringComparer.OrdinalIgnoreCase);
 
         public LeaderRegistry(IServiceManager serviceManager) => _serviceManager = serviceManager;
 
@@ -23,7 +23,7 @@ namespace CondenserDotNet.Client.Leadership
             {
                 if (!_leaderWatchers.TryGetValue(keyForLeadership, out var returnValue))
                 {
-                    returnValue = new LeaderWatcher(_serviceManager, keyForLeadership);
+                    returnValue = new LeaderWatcherNew(_serviceManager, keyForLeadership);
                     _leaderWatchers[keyForLeadership] = returnValue;
                 }
                 return returnValue;

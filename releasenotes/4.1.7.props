@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Fix spinning on leadership election
+</PackageReleaseNotes>
+  </PropertyGroup>
+</Project>
