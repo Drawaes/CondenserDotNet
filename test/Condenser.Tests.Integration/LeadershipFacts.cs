@@ -83,6 +83,21 @@ namespace Condenser.Tests.Integration
             }
         }
 
+        //[Fact]
+        //public async Task TestHoldingLeadershipForAWhile()
+        //{
+        //    using (var manager = GetConfig("Service1"))
+        //    {
+        //        manager.AddTtlHealthCheck(100);
+        //        var registerResult = await manager.RegisterServiceAsync();
+        //        var ttlResult = await manager.TtlCheck.ReportPassingAsync();
+        //        var leaderRegistry = new LeaderRegistry(manager);
+        //        var watcher = await leaderRegistry.GetLeaderWatcherAsync(leadershipKey);
+        //        await watcher.GetLeadershipAsync();
+        //        await Task.Delay(50000);
+        //    }
+        //}
+
         [Fact]
         public async Task TestLeadershipFailOver()
         {
@@ -116,7 +131,8 @@ namespace Condenser.Tests.Integration
                 await manager.TtlCheck.ReportFailAsync();
 
                 //Now we wait, the leadership should fall over
-                Assert.True(resetEvent.WaitOne(5000));
+                var waitResult = resetEvent.WaitOne(5000);
+                Assert.True(waitResult);
 
                 //Now check that service 2 is the leader
                 var leader = await watcher2.GetCurrentLeaderAsync();
