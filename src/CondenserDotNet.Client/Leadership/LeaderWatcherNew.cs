@@ -21,7 +21,7 @@ namespace CondenserDotNet.Client.Leadership
         private Task<Guid> _sessionIdTask;
         private IServiceManager _serviceManager;
         private string _keyToWatch;
-        private AsyncManualResetEvent<InformationService> _currentInfoService;
+        private AsyncManualResetEvent<InformationService> _currentInfoService = new AsyncManualResetEvent<InformationService>();
         
         public LeaderWatcherNew(IServiceManager serviceManager, string keyToWatch)
         {
