@@ -12,7 +12,7 @@ using Newtonsoft.Json;
 
 namespace CondenserDotNet.Client.Leadership
 {
-    public class LeaderWatcherNew : ILeaderWatcher
+    public class LeaderWatcher : ILeaderWatcher
     {
         private readonly AsyncManualResetEvent<bool> _electedLeaderEvent = new AsyncManualResetEvent<bool>();
         private Action<InformationService> _callback;
@@ -23,8 +23,10 @@ namespace CondenserDotNet.Client.Leadership
         private string _keyToWatch;
         private AsyncManualResetEvent<InformationService> _currentInfoService = new AsyncManualResetEvent<InformationService>();
         
-        public LeaderWatcherNew(IServiceManager serviceManager, string keyToWatch)
+        public LeaderWatcher(IServiceManager serviceManager, string keyToWatch)
         {
+            _currentInfoService.Reset();
+            _electedLeaderEvent.Reset();
             _keyToWatch = keyToWatch;
             _serviceManager = serviceManager;
             _sessionIdTask = GetSession();
@@ -92,7 +94,7 @@ namespace CondenserDotNet.Client.Leadership
                 }
                 else
                 {
-                    _electedLeaderEvent.Set(false);
+                    _electedLeaderEvent.Reset();
                 }
                 await WaitForLeadershipChange();
             }
@@ -105,6 +107,13 @@ namespace CondenserDotNet.Client.Leadership
                 var leaderResult = await _serviceManager.Client.GetAsync($"{KeyPath}{_keyToWatch}?index={_consulIndex}");
                 if(!leaderResult.IsSuccessStatusCode)
                 {
+                    //Lock deleted
+                    if(leaderResult.StatusCode == System.Net.HttpStatusCode.NotFound)
+                    {
+                        _electedLeaderEvent.Reset();
+                        _currentInfoService.Reset();
+                        return;
+                    }
                     await Task.Delay(500);
                     continue;
                 }

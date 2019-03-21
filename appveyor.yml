@@ -1,4 +1,4 @@
-os: Visual Studio 2017
+os: Visual Studio 2019 Preview
 build: off
 
 environment:
@@ -8,7 +8,7 @@ environment:
     secure: x41DSerLXKgGVbKIokF+zuR3eNRVJXsgJA6j5yggnCB8/TTyYfa/2euNflfGzCot   
 
 install:
-  - cmd: curl -fsS -o consul.zip https://releases.hashicorp.com/consul/1.0.2/consul_1.0.2_windows_amd64.zip
+  - cmd: curl -fsS -o consul.zip https://releases.hashicorp.com/consul/1.4.4/consul_1.4.4_windows_amd64.zip
   - cmd: 7z x consul.zip -o"C:\Consul" -y > nul
   - ps: $MyProcess = Start-Process C:\Consul\consul.exe -ArgumentList "agent -server -log-level err -bootstrap-expect 1 -data-dir C:\Consul\Data -advertise=127.0.0.1" -PassThru
 
