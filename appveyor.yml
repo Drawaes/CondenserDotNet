@@ -1,4 +1,4 @@
-os: Visual Studio 2018
+os: Visual Studio 2019 Preview
 build: off
 
 environment:
