@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Added ability to skip service lookup for Delegating Handlers
+</PackageReleaseNotes>
+  </PropertyGroup>
+</Project>

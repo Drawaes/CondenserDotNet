@@ -16,6 +16,7 @@ namespace CondenserDotNet.Client.Services
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             var currentUri = request.RequestUri;
+            if (System.Net.IPAddress.TryParse(currentUri.Host, out _)) return await base.SendAsync(request, cancellationToken);
             var serviceInstance = await _serviceRegistry.GetServiceInstanceAsync(currentUri.Host);
             if (serviceInstance == null)
             {
