@@ -30,15 +30,24 @@ namespace CondenserDotNet.Configuration.Consul
         }
 
         public ConsulRegistry(ILoggerFactory loggerFactory = null, Core.Consul.IConsulAclProvider aclProvider = null)
-            :this(null, loggerFactory, aclProvider)
+            : this(null, loggerFactory, aclProvider)
         {
-            
+
         }
 
         /// <summary>
         /// This returns a flattened list of all the loaded keys
         /// </summary>
-        public IEnumerable<string> AllKeys => _configKeys.SelectMany(x => x.Keys);
+        public IEnumerable<string> AllKeys
+        {
+            get
+            {
+                lock (_configKeys)
+                {
+                    return _configKeys.SelectMany(x => x.Keys).ToArray();
+                }
+            }
+        }
         public IConfigSource ConfigSource => _source;
         public IConfigurationRoot Root => _root ?? (_root = _builder.Build());
         public ConfigurationBuilder Builder => _builder;
