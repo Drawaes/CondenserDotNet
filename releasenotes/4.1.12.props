@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Fix multi threading issue with "get all keys"
+</PackageReleaseNotes>
+  </PropertyGroup>
+</Project>
