@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\..\common.props" />
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -21,9 +21,9 @@
     <PackageReference Include="Microsoft.AspNetCore.Hosting.Server.Abstractions" Version="2.0.1" />
   </ItemGroup>
 
-  <ItemGroup>
+  <!--<ItemGroup>
     <PackageReference Include="System.Net.NameResolution" Version="4.3.0" />
     <PackageReference Include="System.Reflection" Version="4.3.0" />
-  </ItemGroup>
+  </ItemGroup>-->
 
 </Project>
