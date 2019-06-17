@@ -104,35 +104,37 @@ namespace CondenserDotNet.Client.Leadership
         {
             while(true)
             {
-                var leaderResult = await _serviceManager.Client.GetAsync($"{KeyPath}{_keyToWatch}?index={_consulIndex}");
-                if(!leaderResult.IsSuccessStatusCode)
+                using (var leaderResult = await _serviceManager.Client.GetAsync($"{KeyPath}{_keyToWatch}?index={_consulIndex}"))
                 {
-                    //Lock deleted
-                    if(leaderResult.StatusCode == System.Net.HttpStatusCode.NotFound)
+                    if (!leaderResult.IsSuccessStatusCode)
                     {
-                        _electedLeaderEvent.Reset();
+                        //Lock deleted
+                        if (leaderResult.StatusCode == System.Net.HttpStatusCode.NotFound)
+                        {
+                            _electedLeaderEvent.Reset();
+                            _currentInfoService.Reset();
+                            return;
+                        }
+                        await Task.Delay(500);
+                        continue;
+                    }
+                    var kv = JsonConvert.DeserializeObject<KeyValue[]>(await leaderResult.Content.ReadAsStringAsync());
+                    if (string.IsNullOrWhiteSpace(kv[0].Session))
+                    {
+                        //no one has leadership
                         _currentInfoService.Reset();
+                        _electedLeaderEvent.Reset();
                         return;
                     }
-                    await Task.Delay(500);
-                    continue;
-                }
-                var kv = JsonConvert.DeserializeObject<KeyValue[]>(await leaderResult.Content.ReadAsStringAsync());
-                if(string.IsNullOrWhiteSpace(kv[0].Session))
-                {
-                    //no one has leadership
-                    _currentInfoService.Reset();
-                    _electedLeaderEvent.Reset();
-                    return;
-                }
-                var infoService = JsonConvert.DeserializeObject<InformationService>(kv[0].ValueFromBase64());
-                _currentInfoService.Set(infoService);
-                _consulIndex = leaderResult.GetConsulIndex();
-                _callback?.Invoke(infoService);
-                if(await _sessionIdTask != new Guid(kv[0].Session))
-                {
-                    _electedLeaderEvent.Reset();
-                    return;
+                    var infoService = JsonConvert.DeserializeObject<InformationService>(kv[0].ValueFromBase64());
+                    _currentInfoService.Set(infoService);
+                    _consulIndex = leaderResult.GetConsulIndex();
+                    _callback?.Invoke(infoService);
+                    if (await _sessionIdTask != new Guid(kv[0].Session))
+                    {
+                        _electedLeaderEvent.Reset();
+                        return;
+                    }
                 }
             }
         }

@@ -33,9 +33,11 @@ namespace Condenser.Tests.Integration
                 {
                     UseDefaultCredentials = true
                 });
-                var result = await client.GetAsync($"http://localhost:55555");
-                var name = await result.Content.ReadAsStringAsync();
-                Assert.Equal(System.Security.Principal.WindowsIdentity.GetCurrent().Name, name);
+                using (var result = await client.GetAsync($"http://localhost:55555"))
+                {
+                    var name = await result.Content.ReadAsStringAsync();
+                    Assert.Equal(System.Security.Principal.WindowsIdentity.GetCurrent().Name, name);
+                }
             }
             finally
             {

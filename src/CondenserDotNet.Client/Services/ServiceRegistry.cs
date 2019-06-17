@@ -31,14 +31,16 @@ namespace CondenserDotNet.Client.Services
 
         public async Task<Dictionary<string, string[]>> GetAvailableServicesWithTagsAsync()
         {
-            var result = await _client.GetAsync(HttpUtils.ServiceCatalogUrl);
-            if (!result.IsSuccessStatusCode)
+            using (var result = await _client.GetAsync(HttpUtils.ServiceCatalogUrl))
             {
-                return null;
+                if (!result.IsSuccessStatusCode)
+                {
+                    return null;
+                }
+                var content = await result.Content.ReadAsStringAsync();
+                var serviceList = JsonConvert.DeserializeObject<Dictionary<string, string[]>>(content);
+                return serviceList;
             }
-            var content = await result.Content.ReadAsStringAsync();
-            var serviceList = JsonConvert.DeserializeObject<Dictionary<string, string[]>>(content);
-            return serviceList;
         }
 
         public Task<InformationService> GetServiceInstanceAsync(string serviceName)

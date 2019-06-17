@@ -89,29 +89,31 @@ namespace CondenserDotNet.Client.Services
                         var consulIndex = "0";
                         while (!_cancelationToken.Token.IsCancellationRequested)
                         {
-                            var result = await client.GetAsync(_url + consulIndex, _cancelationToken.Token);
-                            if (!result.IsSuccessStatusCode)
+                            using (var result = await client.GetAsync(_url + consulIndex, _cancelationToken.Token))
                             {
-                                if (_state == WatcherState.UsingLiveValues)
+                                if (!result.IsSuccessStatusCode)
                                 {
-                                    _state = WatcherState.UsingCachedValues;
+                                    if (_state == WatcherState.UsingLiveValues)
+                                    {
+                                        _state = WatcherState.UsingCachedValues;
+                                    }
+                                    await Task.Delay(1000);
+                                    continue;
                                 }
-                                await Task.Delay(1000);
+                                var newConsulIndex = result.GetConsulIndex();
+                                if (newConsulIndex == consulIndex)
+                                {
+                                    continue;
+                                }
+                                consulIndex = newConsulIndex;
+                                var content = await result.Content.ReadAsStringAsync();
+                                var instance = JsonConvert.DeserializeObject<List<InformationServiceSet>>(content);
+                                Volatile.Write(ref _instances, instance);
+                                _listCallback?.Invoke(instance);
+                                _state = WatcherState.UsingLiveValues;
+                                _completionSource.TrySetResult(true);
                                 continue;
                             }
-                            var newConsulIndex = result.GetConsulIndex();
-                            if (newConsulIndex == consulIndex)
-                            {
-                                continue;
-                            }
-                            consulIndex = newConsulIndex;
-                            var content = await result.Content.ReadAsStringAsync();
-                            var instance = JsonConvert.DeserializeObject<List<InformationServiceSet>>(content);
-                            Volatile.Write(ref _instances, instance);
-                            _listCallback?.Invoke(instance);
-                            _state = WatcherState.UsingLiveValues;
-                            _completionSource.TrySetResult(true);
-                            continue;
                         }
                     }
                     catch (Exception ex)
