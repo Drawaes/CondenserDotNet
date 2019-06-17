@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Fix potential leaks by ensuring HttpResponses are disposed correctly
+</PackageReleaseNotes>
+  </PropertyGroup>
+</Project>

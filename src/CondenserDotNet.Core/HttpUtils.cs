@@ -39,21 +39,11 @@ namespace CondenserDotNet.Core
             var port = agentPort ?? DefaultPort;
 
             var uri = new UriBuilder("http", host, port);
-            HttpClient client;
-#if NET452
-            System.Net.ServicePointManager.DefaultConnectionLimit = 50;
-            client = new HttpClient()
+            var client = new HttpClient(new HttpClientHandler() { MaxConnectionsPerServer = 50 })
             {
                 BaseAddress = uri.Uri,
                 Timeout = DefaultTimeout
             };
-#else
-            client = new HttpClient(new HttpClientHandler() { MaxConnectionsPerServer = 50 })
-            {
-                BaseAddress = uri.Uri,
-                Timeout = DefaultTimeout
-            };
-#endif
             var token = aclProvider?.GetAclToken();
             if(!string.IsNullOrEmpty(token))
             {
@@ -62,17 +52,17 @@ namespace CondenserDotNet.Core
             return client;
         }
 
-        public static Task<T> GetObject<T>(this HttpContent content) =>
-        content.ReadAsStringAsync().ContinueWith(sTask =>
+        public static async Task<T> GetObject<T>(this HttpContent content)
         {
-            return JsonConvert.DeserializeObject<T>(sTask.Result);
-        });
+            var result = await content.ReadAsStringAsync();
+            return JsonConvert.DeserializeObject<T>(result);
+        }
 
-        public static Task<T> GetAsync<T>(this HttpClient client, string uri) =>
-        client.GetStringAsync(uri).ContinueWith(resultTask =>
+        public static async Task<T> GetAsync<T>(this HttpClient client, string uri)
         {
-            return JsonConvert.DeserializeObject<T>(resultTask.Result);
-        });
+            var result = await client.GetStringAsync(uri);
+            return JsonConvert.DeserializeObject<T>(result);
+        }
 
         public static StringContent GetStringContent(string stringForContent)
         {

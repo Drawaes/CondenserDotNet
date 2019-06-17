@@ -69,33 +69,35 @@ namespace CondenserDotNet.Client.Leadership
                 for (var i = 0; i < 10; i++)
                 {
                     CondenserEventSource.Log.LeadershipSessionGetStatus(_keyToWatch);
-                    leaderResult = await _serviceManager.Client.GetAsync($"{KeyPath}{_keyToWatch}?index={_consulIndex}");
-                    if (!leaderResult.IsSuccessStatusCode)
+                    using (leaderResult = await _serviceManager.Client.GetAsync($"{KeyPath}{_keyToWatch}?index={_consulIndex}"))
                     {
-                        _currentLeaderEvent.Reset();
-                        _electedLeaderEvent.Reset();
-                        //error so return to create session
-                        return;
+                        if (!leaderResult.IsSuccessStatusCode)
+                        {
+                            _currentLeaderEvent.Reset();
+                            _electedLeaderEvent.Reset();
+                            //error so return to create session
+                            return;
+                        }
+                        var kv = JsonConvert.DeserializeObject<KeyValue[]>(await leaderResult.Content.ReadAsStringAsync());
+                        if (string.IsNullOrWhiteSpace(kv[0].Session))
+                        {
+                            _currentLeaderEvent.Reset();
+                            _electedLeaderEvent.Reset();
+                            break;
+                        }
+                        var infoService = JsonConvert.DeserializeObject<InformationService>(kv[0].ValueFromBase64());
+                        _currentLeaderEvent.Set(infoService);
+                        _callback?.Invoke(infoService);
+                        if (Guid.Parse(kv[0].Session) == _sessionId)
+                        {
+                            _electedLeaderEvent.Set(true);
+                        }
+                        else
+                        {
+                            _electedLeaderEvent.Reset();
+                        }
+                        _consulIndex = leaderResult.GetConsulIndex();
                     }
-                    var kv = JsonConvert.DeserializeObject<KeyValue[]>(await leaderResult.Content.ReadAsStringAsync());
-                    if (string.IsNullOrWhiteSpace(kv[0].Session))
-                    {
-                        _currentLeaderEvent.Reset();
-                        _electedLeaderEvent.Reset();
-                        break;
-                    }
-                    var infoService = JsonConvert.DeserializeObject<InformationService>(kv[0].ValueFromBase64());
-                    _currentLeaderEvent.Set(infoService);
-                    _callback?.Invoke(infoService);
-                    if (Guid.Parse(kv[0].Session) == _sessionId)
-                    {
-                        _electedLeaderEvent.Set(true);
-                    }
-                    else
-                    {
-                        _electedLeaderEvent.Reset();
-                    }
-                    _consulIndex = leaderResult.GetConsulIndex();
                 }
             }
         }

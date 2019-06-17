@@ -63,15 +63,17 @@ namespace CondenserDotNet.Configuration.Consul
             try
             {
                 CondenserEventSource.Log.ConfigurationGetKeysRecursive(keyPath);
-                var response = await _httpClient.GetAsync($"{ConsulKeyPath}{keyPath}?recurse");
-                if (!response.IsSuccessStatusCode)
+                using (var response = await _httpClient.GetAsync($"{ConsulKeyPath}{keyPath}?recurse"))
                 {
-                    _logger?.LogWarning("We didn't get a succesful response from consul code was {code}", response.StatusCode);
-                    return new KeyOperationResult() { Success = false, Dictionary = null };
-                }
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        _logger?.LogWarning("We didn't get a succesful response from consul code was {code}", response.StatusCode);
+                        return new KeyOperationResult() { Success = false, Dictionary = null };
+                    }
 
-                var dictionary = await BuildDictionaryAsync(keyPath, response);
-                return new KeyOperationResult() { Success = true, Dictionary = dictionary };
+                    var dictionary = await BuildDictionaryAsync(keyPath, response);
+                    return new KeyOperationResult() { Success = true, Dictionary = dictionary };
+                }
             }
             catch (Exception ex)
             {
@@ -86,17 +88,19 @@ namespace CondenserDotNet.Configuration.Consul
             try
             {
                 CondenserEventSource.Log.ConfigurationGetKey(keyPath);
-                var response = await _httpClient.GetAsync($"{ConsulKeyPath}{keyPath}");
-                if (!response.IsSuccessStatusCode)
+                using (var response = await _httpClient.GetAsync($"{ConsulKeyPath}{keyPath}"))
                 {
-                    _logger?.LogWarning("We didn't get a successful response from consul code was {code}", response.StatusCode);
-                    return (false, null);
-                }
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        _logger?.LogWarning("We didn't get a successful response from consul code was {code}", response.StatusCode);
+                        return (false, null);
+                    }
 
-                var content = await response.Content.ReadAsStringAsync();
-                var keys = JsonConvert.DeserializeObject<KeyValue[]>(content);
-                if (keys.Length != 1) return (false, null);
-                return (true, keys[0].Value);
+                    var content = await response.Content.ReadAsStringAsync();
+                    var keys = JsonConvert.DeserializeObject<KeyValue[]>(content);
+                    if (keys.Length != 1) return (false, null);
+                    return (true, keys[0].Value);
+                }
             }
             catch (Exception exception)
             {
@@ -113,23 +117,25 @@ namespace CondenserDotNet.Configuration.Consul
             try
             {
                 CondenserEventSource.Log.ConfigurationWatchKey(keyPath);
-                var response = await _httpClient.GetAsync(url + consulState.ConsulIndex, _disposed.Token);
-                var newConsulIndex = response.GetConsulIndex();
-
-                if (!response.IsSuccessStatusCode)
+                using (var response = await _httpClient.GetAsync(url + consulState.ConsulIndex, _disposed.Token))
                 {
-                    consulState.ConsulIndex = newConsulIndex;
-                    return default;
-                }
+                    var newConsulIndex = response.GetConsulIndex();
 
-                if (newConsulIndex == consulState.ConsulIndex)
-                {
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        consulState.ConsulIndex = newConsulIndex;
+                        return default;
+                    }
+
+                    if (newConsulIndex == consulState.ConsulIndex)
+                    {
+                        consulState.ConsulIndex = newConsulIndex;
+                        return default;
+                    }
                     consulState.ConsulIndex = newConsulIndex;
-                    return default;
+                    var dictionary = await BuildDictionaryAsync(keyPath, response);
+                    return new KeyOperationResult() { Success = true, Dictionary = dictionary };
                 }
-                consulState.ConsulIndex = newConsulIndex;
-                var dictionary = await BuildDictionaryAsync(keyPath, response);
-                return new KeyOperationResult() { Success = true, Dictionary = dictionary };
             }
             catch (Exception ex)
             {
