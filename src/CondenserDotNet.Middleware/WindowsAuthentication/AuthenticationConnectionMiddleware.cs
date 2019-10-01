@@ -5,25 +5,17 @@ using Microsoft.AspNetCore.Connections;
 
 namespace CondenserDotNet.Middleware.WindowsAuthentication
 {
-    public class AuthenticationConnectionFilter : ConnectionHandler
+    public class AuthenticationConnectionMiddleware : ConnectionHandler
     {
         private ConnectionDelegate _next;
 
-        public AuthenticationConnectionFilter(ConnectionDelegate next) => _next = next;
+        public AuthenticationConnectionMiddleware(ConnectionDelegate next) => _next = next;
 
         public override async Task OnConnectedAsync(ConnectionContext connection)
         {
-            var authFeature = new WindowsAuthFeature();
+            using var authFeature = new WindowsAuthFeature();
             connection.Features.Set<IWindowsAuthFeature>(authFeature);
-
-            try
-            {
-                await _next(connection);
-            }
-            finally
-            {
-                authFeature.Dispose();
-            }
+            await _next(connection);
         }
     }
 }
