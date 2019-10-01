@@ -25,18 +25,16 @@ test_script:
   
 after_test:
   # Build and pack source
-  - ps: iex ((Get-ChildItem ($env:USERPROFILE + '\.nuget\packages\OpenCover'))[0].FullName + '\tools\OpenCover.Console.exe' + ' -register:user -target:".\script\runtests.bat" -searchdirs:"..\test\Condenser.Tests.Integration\bin\Debug\netcoreapp1.1;..\test\CondenserTests\bin\debug\netcoreapp1.1" -oldstyle -output:coverage.xml -skipautoprops -hideskipped:All -returntargetcode -filter:"+[Condenser*]* -[*Test*]*"')
+  - ps: iex ((Get-ChildItem ($env:USERPROFILE + '\.nuget\packages\OpenCover'))[0].FullName + '\tools\OpenCover.Console.exe' + ' -register:user -target:".\script\runtests.bat" -searchdirs:"..\test\Condenser.Tests.Integration\bin\Debug\netcoreapp3.10;..\test\CondenserTests\bin\debug\netcoreapp3.0" -oldstyle -output:coverage.xml -skipautoprops -hideskipped:All -returntargetcode -filter:"+[Condenser*]* -[*Test*]*"')
   - ps: iex ((Get-ChildItem ($env:USERPROFILE + '\.nuget\packages\coveralls.io'))[0].FullName + '\tools\coveralls.net.exe' + ' --opencover coverage.xml')
   - "SET PATH=C:\\Python34;C:\\Python34\\Scripts;%PATH%"
   - pip install codecov
   - codecov -f "coverage.xml"
   - dotnet build -c Release
   - dotnet pack -c Release src/CondenserDotNet.Client
-  - dotnet pack -c Release src/CondenserDotNet.Server
   - dotnet pack -c Release src/CondenserDotNet.Core
   - dotnet pack -c Release src/CondenserDotNet.Configuration
   - dotnet pack -c Release src/CondenserDotNet.Middleware
-  - dotnet pack -c Release src/CondenserDotNet.Server.Extensions
       
   
 artifacts:
