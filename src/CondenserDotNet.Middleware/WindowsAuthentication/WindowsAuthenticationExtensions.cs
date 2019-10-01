@@ -10,7 +10,7 @@ namespace CondenserDotNet.Middleware.WindowsAuthentication
         {
             options.Use(next =>
             {
-                var middleware = new AuthenticationConnectionFilter(next);
+                var middleware = new AuthenticationConnectionMiddleware(next);
                 return middleware.OnConnectedAsync;
             });
             return options;

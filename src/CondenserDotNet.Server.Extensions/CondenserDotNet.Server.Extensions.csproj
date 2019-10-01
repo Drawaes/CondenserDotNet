@@ -8,7 +8,4 @@
   <PropertyGroup>
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CondenserDotNet.Server\CondenserDotNet.Server.csproj" />
-  </ItemGroup>
 </Project>
