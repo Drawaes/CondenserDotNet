@@ -8,8 +8,11 @@ namespace CondenserDotNet.Middleware.WindowsAuthentication
     {
         public static ListenOptions UseWindowsAuthentication(this ListenOptions options)
         {
-            var adapter = new AuthenticationConnectionFilter();
-            options.ConnectionAdapters.Add(adapter);
+            options.Use(next =>
+            {
+                var middleware = new AuthenticationConnectionFilter(next);
+                return middleware.OnConnectedAsync;
+            });
             return options;
         }
 
