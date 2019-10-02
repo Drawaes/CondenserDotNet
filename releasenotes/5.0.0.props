@@ -1,0 +1,9 @@
+<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Upgraded middleware package to Aspnet Core 3.0
+* Moved project to .net standard 2.1 and upgraded librarys
+* Removed unneeded package references
+</PackageReleaseNotes>
+  </PropertyGroup>
+</Project>
