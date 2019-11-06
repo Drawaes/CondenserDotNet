@@ -50,5 +50,7 @@ namespace CondenserTests.Fakes
         {
 
         }
+
+        public Task<bool> AddStaticKeyPathAsync(string keyPath, bool singleKey = false) => throw new NotImplementedException();
     }
 }

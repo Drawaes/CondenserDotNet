@@ -57,14 +57,25 @@ namespace CondenserDotNet.Configuration.Consul
         /// </summary>
         /// <param name="keyPath"></param>
         /// <returns></returns>
-        public async Task<bool> AddStaticKeyPathAsync(string keyPath)
+        public Task<bool> AddStaticKeyPathAsync(string keyPath) => AddStaticKeyPathAsync(keyPath, singleKey: false);
+
+        public async Task<bool> AddStaticKeyPathAsync(string keyPath, bool singleKey)
         {
-            keyPath = _source.FormValidKey(keyPath);
-            return (await AddInitialKeyPathAsync(keyPath)) > -1;
+            keyPath = _source.FormValidKey(keyPath, dontPreifxStart: singleKey);
+            return (await AddInitialKeyPathAsync(keyPath, singleKey)) > -1;
         }
 
-        private async Task<int> AddInitialKeyPathAsync(string keyPath)
+        private async Task<int> AddInitialKeyPathAsync(string keyPath, bool singleKey)
         {
+            if (singleKey)
+            {
+                var key = await _source.GetKeyAsync(keyPath);
+                var keyNameSplit = keyPath.Split('/');
+                var keyName = keyNameSplit[keyNameSplit.Length - 1];
+                var keyValue = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(key.value));
+                AddNewDictionaryToList(new Dictionary<string, string>() { [keyName] =  keyValue });
+            }
+
             var response = await _source.GetKeysAsync(keyPath);
 
             if (!response.Success)
@@ -83,7 +94,7 @@ namespace CondenserDotNet.Configuration.Consul
         public async Task AddUpdatingPathAsync(string keyPath)
         {
             keyPath = _source.FormValidKey(keyPath);
-            var initialDictionary = await AddInitialKeyPathAsync(keyPath);
+            var initialDictionary = await AddInitialKeyPathAsync(keyPath, singleKey: false);
             if (initialDictionary == -1)
             {
                 var newDictionary = new Dictionary<string, string>();

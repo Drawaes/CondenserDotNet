@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
@@ -10,6 +10,9 @@ namespace CondenserDotNet.Configuration
     {
         string this[string key] { get; }
         Task<bool> AddStaticKeyPathAsync(string keyPath);
+
+        Task<bool> AddStaticKeyPathAsync(string keyPath, bool singleKey = false);
+
         Task AddUpdatingPathAsync(string keyPath);
         void AddWatchOnEntireConfig(Action callback);
         void AddWatchOnSingleKey(string keyToWatch, Action<string> callback);
