@@ -15,7 +15,6 @@ install:
 before_test:
   - ECHO %APPVEYOR_REPO_COMMIT_MESSAGE%
   - dotnet --info
-  - VersionNumber.bat
   - dotnet restore
   
 test_script:
