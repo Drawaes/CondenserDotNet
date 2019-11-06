@@ -6,7 +6,7 @@ namespace CondenserDotNet.Configuration.Consul
     public interface IConfigSource
     {
         object CreateWatchState();
-        string FormValidKey(string keyPath);
+        string FormValidKey(string keyPath, bool dontPreifxStart = false);
         Task<KeyOperationResult> GetKeysAsync(string keyPath);
         Task<KeyOperationResult> TryWatchKeysAsync(string keyPath, object state);
         Task<(bool found, string value)> GetKeyAsync(string keyPath);
