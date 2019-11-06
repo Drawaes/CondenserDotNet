@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Added ability to get single key
+</PackageReleaseNotes>
+  </PropertyGroup>
+</Project>
