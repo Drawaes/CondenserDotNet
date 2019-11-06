@@ -44,9 +44,9 @@ namespace CondenserDotNet.Configuration.Consul
             ConsulIndex = "0"
         };
 
-        public string FormValidKey(string keyPath)
+        public string FormValidKey(string keyPath, bool dontPreifxStart)
         {
-            if (!keyPath.EndsWith(ConsulPath))
+            if (!keyPath.EndsWith(ConsulPath) && !dontPreifxStart)
             {
                 keyPath += ConsulPath;
             }
