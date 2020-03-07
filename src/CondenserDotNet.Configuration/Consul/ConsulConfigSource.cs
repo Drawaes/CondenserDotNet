@@ -63,7 +63,7 @@ namespace CondenserDotNet.Configuration.Consul
             try
             {
                 CondenserEventSource.Log.ConfigurationGetKeysRecursive(keyPath);
-                using (var response = await _httpClient.GetAsync($"{ConsulKeyPath}{keyPath}?recurse"))
+                using (var response = await _httpClient.GetAsync($"{ConsulKeyPath}{keyPath}?recurse").ConfigureAwait(false))
                 {
                     if (!response.IsSuccessStatusCode)
                     {
@@ -71,7 +71,7 @@ namespace CondenserDotNet.Configuration.Consul
                         return new KeyOperationResult() { Success = false, Dictionary = null };
                     }
 
-                    var dictionary = await BuildDictionaryAsync(keyPath, response);
+                    var dictionary = await BuildDictionaryAsync(keyPath, response).ConfigureAwait(false);
                     return new KeyOperationResult() { Success = true, Dictionary = dictionary };
                 }
             }
@@ -88,7 +88,7 @@ namespace CondenserDotNet.Configuration.Consul
             try
             {
                 CondenserEventSource.Log.ConfigurationGetKey(keyPath);
-                using (var response = await _httpClient.GetAsync($"{ConsulKeyPath}{keyPath}"))
+                using (var response = await _httpClient.GetAsync($"{ConsulKeyPath}{keyPath}").ConfigureAwait(false))
                 {
                     if (!response.IsSuccessStatusCode)
                     {
@@ -96,7 +96,7 @@ namespace CondenserDotNet.Configuration.Consul
                         return (false, null);
                     }
 
-                    var content = await response.Content.ReadAsStringAsync();
+                    var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                     var keys = JsonConvert.DeserializeObject<KeyValue[]>(content);
                     if (keys.Length != 1) return (false, null);
                     return (true, keys[0].Value);
@@ -117,7 +117,7 @@ namespace CondenserDotNet.Configuration.Consul
             try
             {
                 CondenserEventSource.Log.ConfigurationWatchKey(keyPath);
-                using (var response = await _httpClient.GetAsync(url + consulState.ConsulIndex, _disposed.Token))
+                using (var response = await _httpClient.GetAsync(url + consulState.ConsulIndex, _disposed.Token).ConfigureAwait(false))
                 {
                     var newConsulIndex = response.GetConsulIndex();
 
@@ -133,7 +133,7 @@ namespace CondenserDotNet.Configuration.Consul
                         return default;
                     }
                     consulState.ConsulIndex = newConsulIndex;
-                    var dictionary = await BuildDictionaryAsync(keyPath, response);
+                    var dictionary = await BuildDictionaryAsync(keyPath, response).ConfigureAwait(false);
                     return new KeyOperationResult() { Success = true, Dictionary = dictionary };
                 }
             }
@@ -170,7 +170,7 @@ namespace CondenserDotNet.Configuration.Consul
         private async Task<Dictionary<string, string>> BuildDictionaryAsync(string keyPath,
             HttpResponseMessage response)
         {
-            var content = await response.Content.ReadAsStringAsync();
+            var content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
             var keys = JsonConvert.DeserializeObject<KeyValue[]>(content);
 
             var parsedKeys = keys.SelectMany(k => _parser.Parse(k)).Distinct(new KeyValueComparer(keyPath, ConsulPath[0], CorePath));
@@ -188,7 +188,7 @@ namespace CondenserDotNet.Configuration.Consul
         public async Task<bool> TrySetKeyAsync(string keyPath, string value)
         {
             CondenserEventSource.Log.ConfigurationSetKey(keyPath);
-            var response = await _httpClient.PutAsync($"{ConsulKeyPath}{keyPath}", HttpUtils.GetStringContent(value));
+            using var response = await _httpClient.PutAsync($"{ConsulKeyPath}{keyPath}", HttpUtils.GetStringContent(value)).ConfigureAwait(false);
             if (!response.IsSuccessStatusCode)
             {
                 return false;

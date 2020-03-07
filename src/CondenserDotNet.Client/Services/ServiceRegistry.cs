@@ -25,7 +25,7 @@ namespace CondenserDotNet.Client.Services
 
         public async Task<IEnumerable<string>> GetAvailableServicesAsync()
         {
-            var all = await GetAvailableServicesWithTagsAsync();
+            var all = await GetAvailableServicesWithTagsAsync().ConfigureAwait(false);
             return all.Keys;
         }
 
@@ -37,7 +37,7 @@ namespace CondenserDotNet.Client.Services
                 {
                     return null;
                 }
-                var content = await result.Content.ReadAsStringAsync();
+                var content = await result.Content.ReadAsStringAsync().ConfigureAwait(false);
                 var serviceList = JsonConvert.DeserializeObject<Dictionary<string, string[]>>(content);
                 return serviceList;
             }

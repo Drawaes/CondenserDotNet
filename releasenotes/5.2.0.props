@@ -1,0 +1,7 @@
+<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Added ConfigureAwait(false) to support legacy asp.net
+</PackageReleaseNotes>
+  </PropertyGroup>
+</Project>

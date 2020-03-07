@@ -16,14 +16,14 @@ namespace CondenserDotNet.Client.Services
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             var currentUri = request.RequestUri;
-            if (System.Net.IPAddress.TryParse(currentUri.Host, out _)) return await base.SendAsync(request, cancellationToken);
-            var serviceInstance = await _serviceRegistry.GetServiceInstanceAsync(currentUri.Host);
+            if (System.Net.IPAddress.TryParse(currentUri.Host, out _)) return await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
+            var serviceInstance = await _serviceRegistry.GetServiceInstanceAsync(currentUri.Host).ConfigureAwait(false);
             if (serviceInstance == null)
             {
                 throw new NoServiceInstanceFoundException(currentUri.Host, null);
             }
             request.RequestUri = new Uri($"{currentUri.Scheme}://{serviceInstance.Address}:{serviceInstance.Port}{currentUri.PathAndQuery}");
-            return await base.SendAsync(request, cancellationToken);
+            return await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
         }
     }
 }

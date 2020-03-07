@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 
 namespace CondenserDotNet.Middleware.CleanShutdown
@@ -19,7 +19,7 @@ namespace CondenserDotNet.Middleware.CleanShutdown
             _shutdownService.StartRequest();
             try
             {
-                await _next.Invoke(httpContext);
+                await _next.Invoke(httpContext).ConfigureAwait(false);
             }
             finally
             {

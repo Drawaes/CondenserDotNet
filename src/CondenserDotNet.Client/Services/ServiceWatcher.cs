@@ -89,7 +89,7 @@ namespace CondenserDotNet.Client.Services
                         var consulIndex = "0";
                         while (!_cancelationToken.Token.IsCancellationRequested)
                         {
-                            using (var result = await client.GetAsync(_url + consulIndex, _cancelationToken.Token))
+                            using (var result = await client.GetAsync(_url + consulIndex, _cancelationToken.Token).ConfigureAwait(false))
                             {
                                 if (!result.IsSuccessStatusCode)
                                 {
@@ -97,7 +97,7 @@ namespace CondenserDotNet.Client.Services
                                     {
                                         _state = WatcherState.UsingCachedValues;
                                     }
-                                    await Task.Delay(1000);
+                                    await Task.Delay(1000).ConfigureAwait(false);
                                     continue;
                                 }
                                 var newConsulIndex = result.GetConsulIndex();
@@ -106,7 +106,7 @@ namespace CondenserDotNet.Client.Services
                                     continue;
                                 }
                                 consulIndex = newConsulIndex;
-                                var content = await result.Content.ReadAsStringAsync();
+                                var content = await result.Content.ReadAsStringAsync().ConfigureAwait(false);
                                 var instance = JsonConvert.DeserializeObject<List<InformationServiceSet>>(content);
                                 Volatile.Write(ref _instances, instance);
                                 _listCallback?.Invoke(instance);
@@ -126,7 +126,7 @@ namespace CondenserDotNet.Client.Services
                         _logger?.LogInformation("Cancelation requested exiting watcher");
                         return;
                     }
-                    await Task.Delay(s_serviceReconnectDelay);
+                    await Task.Delay(s_serviceReconnectDelay).ConfigureAwait(false);
                 }
             }
             catch (Exception ex)

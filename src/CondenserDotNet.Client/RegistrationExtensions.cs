@@ -55,7 +55,7 @@ namespace CondenserDotNet.Client
 
         public static async Task<bool> DeregisterServiceAsync(this IServiceManager serviceManager)
         {
-            var result = await serviceManager.Client.PutAsync($"/v1/agent/service/deregister/{serviceManager.ServiceId}", new System.Net.Http.StringContent(string.Empty));
+            var result = await serviceManager.Client.PutAsync($"/v1/agent/service/deregister/{serviceManager.ServiceId}", new System.Net.Http.StringContent(string.Empty)).ConfigureAwait(false);
             if(result.IsSuccessStatusCode)
             {
                 serviceManager.RegisteredService = null;
@@ -121,7 +121,7 @@ namespace CondenserDotNet.Client
             {
                 var content = HttpUtils.GetStringContent(s);
                 CondenserEventSource.Log.ServiceRegistration();
-                var response = await serviceManager.Client.PutAsync("/v1/agent/service/register", content);
+                var response = await serviceManager.Client.PutAsync("/v1/agent/service/register", content).ConfigureAwait(false);
                 if (response.IsSuccessStatusCode)
                 {
                     serviceManager.RegisteredService = s;

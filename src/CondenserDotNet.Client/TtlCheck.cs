@@ -26,7 +26,7 @@ namespace CondenserDotNet.Client
                 return false;
             }
             //We are connected so lets report to the server
-            var response = await _parentManager.Client.PutAsync($"/v1/agent/check/pass/service:{_parentManager.ServiceId}", null);
+            var response = await _parentManager.Client.PutAsync($"/v1/agent/check/pass/service:{_parentManager.ServiceId}", null).ConfigureAwait(false);
             if (response.IsSuccessStatusCode)
             {
                 return true;
@@ -40,7 +40,7 @@ namespace CondenserDotNet.Client
                 return false;
             }
             //We are connected so lets report to the server
-            var response = await _parentManager.Client.PutAsync($"/v1/agent/check/warn/service:{_parentManager.ServiceId}", null);
+            var response = await _parentManager.Client.PutAsync($"/v1/agent/check/warn/service:{_parentManager.ServiceId}", null).ConfigureAwait(false);
             if (response.IsSuccessStatusCode)
             {
                 return true;
@@ -54,7 +54,7 @@ namespace CondenserDotNet.Client
                 return false;
             }
             //We are connected so lets report to the server
-            var response = await _parentManager.Client.PutAsync($"/v1/agent/check/fail/service:{_parentManager.ServiceId}", null);
+            var response = await _parentManager.Client.PutAsync($"/v1/agent/check/fail/service:{_parentManager.ServiceId}", null).ConfigureAwait(false);
             if (response.IsSuccessStatusCode)
             {
                 return true;

@@ -62,21 +62,21 @@ namespace CondenserDotNet.Configuration.Consul
         public async Task<bool> AddStaticKeyPathAsync(string keyPath, bool singleKey)
         {
             keyPath = _source.FormValidKey(keyPath, dontPreifxStart: singleKey);
-            return (await AddInitialKeyPathAsync(keyPath, singleKey)) > -1;
+            return (await AddInitialKeyPathAsync(keyPath, singleKey).ConfigureAwait(false)) > -1;
         }
 
         private async Task<int> AddInitialKeyPathAsync(string keyPath, bool singleKey)
         {
             if (singleKey)
             {
-                var key = await _source.GetKeyAsync(keyPath);
+                var key = await _source.GetKeyAsync(keyPath).ConfigureAwait(false);
                 var keyNameSplit = keyPath.Split('/');
                 var keyName = keyNameSplit[keyNameSplit.Length - 1];
                 var keyValue = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(key.value));
                 AddNewDictionaryToList(new Dictionary<string, string>() { [keyName] =  keyValue });
             }
 
-            var response = await _source.GetKeysAsync(keyPath);
+            var response = await _source.GetKeysAsync(keyPath).ConfigureAwait(false);
 
             if (!response.Success)
             {
@@ -94,7 +94,7 @@ namespace CondenserDotNet.Configuration.Consul
         public async Task AddUpdatingPathAsync(string keyPath)
         {
             keyPath = _source.FormValidKey(keyPath);
-            var initialDictionary = await AddInitialKeyPathAsync(keyPath, singleKey: false);
+            var initialDictionary = await AddInitialKeyPathAsync(keyPath, singleKey: false).ConfigureAwait(false);
             if (initialDictionary == -1)
             {
                 var newDictionary = new Dictionary<string, string>();
@@ -112,7 +112,7 @@ namespace CondenserDotNet.Configuration.Consul
             {
                 while (true)
                 {
-                    var response = await _source.TryWatchKeysAsync(keyPath, state);
+                    var response = await _source.TryWatchKeysAsync(keyPath, state).ConfigureAwait(false);
 
                     if (!response.Success)
                     {
@@ -224,7 +224,7 @@ namespace CondenserDotNet.Configuration.Consul
         public async Task<bool> SetKeyAsync(string keyPath, string value)
         {
             keyPath = StripFrontAndBackSlashes(keyPath);
-            var response = await _source.TrySetKeyAsync(keyPath, value);
+            var response = await _source.TrySetKeyAsync(keyPath, value).ConfigureAwait(false);
 
             return response;
         }

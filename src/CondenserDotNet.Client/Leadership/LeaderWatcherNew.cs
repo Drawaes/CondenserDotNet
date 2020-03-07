@@ -38,13 +38,13 @@ namespace CondenserDotNet.Client.Leadership
             while (true)
             {
                 CondenserEventSource.Log.LeadershipSessionCreated();
-                var result = await _serviceManager.Client.PutAsync(HttpUtils.SessionCreateUrl, GetCreateSession());
+                var result = await _serviceManager.Client.PutAsync(HttpUtils.SessionCreateUrl, GetCreateSession()).ConfigureAwait(false);
                 if (!result.IsSuccessStatusCode)
                 {
                     await Task.Delay(1000);
                     continue;
                 }
-                return JsonConvert.DeserializeObject<SessionCreateResponse>(await result.Content.ReadAsStringAsync()).Id;
+                return JsonConvert.DeserializeObject<SessionCreateResponse>(await result.Content.ReadAsStringAsync().ConfigureAwait(false)).Id;
             }
         }
 
@@ -77,17 +77,17 @@ namespace CondenserDotNet.Client.Leadership
 
         private async Task KeepLeadershipLoop()
         {
-            var sessionId = await _sessionIdTask;
+            var sessionId = await _sessionIdTask.ConfigureAwait(false);
             while (true)
             {
-                var leaderResult = await _serviceManager.Client.PutAsync($"{KeyPath}{_keyToWatch}?acquire={sessionId}", GetServiceInformation());
+                var leaderResult = await _serviceManager.Client.PutAsync($"{KeyPath}{_keyToWatch}?acquire={sessionId}", GetServiceInformation()).ConfigureAwait(false);
                 if (!leaderResult.IsSuccessStatusCode)
                 {
                     //error so we need to get a new session
-                    await Task.Delay(500);
+                    await Task.Delay(500).ConfigureAwait(false);
                     continue;
                 }
-                var areWeLeader = bool.Parse(await leaderResult.Content.ReadAsStringAsync());
+                var areWeLeader = bool.Parse(await leaderResult.Content.ReadAsStringAsync().ConfigureAwait(false));
                 if(areWeLeader)
                 {
                     _electedLeaderEvent.Set(true);
@@ -96,7 +96,7 @@ namespace CondenserDotNet.Client.Leadership
                 {
                     _electedLeaderEvent.Reset();
                 }
-                await WaitForLeadershipChange();
+                await WaitForLeadershipChange().ConfigureAwait(false);
             }
         }
 
@@ -104,7 +104,7 @@ namespace CondenserDotNet.Client.Leadership
         {
             while(true)
             {
-                using (var leaderResult = await _serviceManager.Client.GetAsync($"{KeyPath}{_keyToWatch}?index={_consulIndex}"))
+                using (var leaderResult = await _serviceManager.Client.GetAsync($"{KeyPath}{_keyToWatch}?index={_consulIndex}").ConfigureAwait(false))
                 {
                     if (!leaderResult.IsSuccessStatusCode)
                     {
@@ -115,10 +115,10 @@ namespace CondenserDotNet.Client.Leadership
                             _currentInfoService.Reset();
                             return;
                         }
-                        await Task.Delay(500);
+                        await Task.Delay(500).ConfigureAwait(false);
                         continue;
                     }
-                    var kv = JsonConvert.DeserializeObject<KeyValue[]>(await leaderResult.Content.ReadAsStringAsync());
+                    var kv = JsonConvert.DeserializeObject<KeyValue[]>(await leaderResult.Content.ReadAsStringAsync().ConfigureAwait(false));
                     if (string.IsNullOrWhiteSpace(kv[0].Session))
                     {
                         //no one has leadership
@@ -130,7 +130,7 @@ namespace CondenserDotNet.Client.Leadership
                     _currentInfoService.Set(infoService);
                     _consulIndex = leaderResult.GetConsulIndex();
                     _callback?.Invoke(infoService);
-                    if (await _sessionIdTask != new Guid(kv[0].Session))
+                    if (await _sessionIdTask.ConfigureAwait(false) != new Guid(kv[0].Session))
                     {
                         _electedLeaderEvent.Reset();
                         return;
@@ -141,14 +141,14 @@ namespace CondenserDotNet.Client.Leadership
 
         public async Task<InformationService> GetCurrentLeaderAsync()
         {
-            await _sessionIdTask;
-            return await _currentInfoService.WaitAsync();
+            await _sessionIdTask.ConfigureAwait(false);
+            return await _currentInfoService.WaitAsync().ConfigureAwait(false);
         }
 
         public async Task GetLeadershipAsync()
         {
-            await _sessionIdTask;
-            await _electedLeaderEvent.WaitAsync();
+            await _sessionIdTask.ConfigureAwait(false);
+            await _electedLeaderEvent.WaitAsync().ConfigureAwait(false);
         }
 
         public void SetLeaderCallback(Action<InformationService> callback) => _callback = callback;

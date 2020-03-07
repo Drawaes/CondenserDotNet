@@ -18,7 +18,7 @@ namespace CondenserDotNet.Client.Leadership
             {
                 throw new InvalidOperationException($"You need to register your service before you can apply for leadership locks lock attempted {keyForLeadership}");
             }
-            await registrationTask;
+            await registrationTask.ConfigureAwait(false);
             lock (_leaderWatchers)
             {
                 if (!_leaderWatchers.TryGetValue(keyForLeadership, out var returnValue))

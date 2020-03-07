@@ -15,7 +15,7 @@ namespace CondenserDotNet.Middleware.WindowsAuthentication
         {
             using var authFeature = new WindowsAuthFeature();
             connection.Features.Set<IWindowsAuthFeature>(authFeature);
-            await _next(connection);
+            await _next(connection).ConfigureAwait(false);
         }
     }
 }

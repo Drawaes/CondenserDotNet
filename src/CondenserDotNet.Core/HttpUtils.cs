@@ -54,13 +54,13 @@ namespace CondenserDotNet.Core
 
         public static async Task<T> GetObject<T>(this HttpContent content)
         {
-            var result = await content.ReadAsStringAsync();
+            var result = await content.ReadAsStringAsync().ConfigureAwait(false);
             return JsonConvert.DeserializeObject<T>(result);
         }
 
         public static async Task<T> GetAsync<T>(this HttpClient client, string uri)
         {
-            var result = await client.GetStringAsync(uri);
+            var result = await client.GetStringAsync(uri).ConfigureAwait(false);
             return JsonConvert.DeserializeObject<T>(result);
         }
 

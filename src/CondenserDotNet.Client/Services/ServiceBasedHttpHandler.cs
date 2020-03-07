@@ -18,13 +18,13 @@ namespace CondenserDotNet.Client.Services
         protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             var currentUri = request.RequestUri;
-            var serviceInstance = await _serviceRegistry.GetServiceInstanceAsync(currentUri.Host);
+            var serviceInstance = await _serviceRegistry.GetServiceInstanceAsync(currentUri.Host).ConfigureAwait(false);
             if (serviceInstance == null)
             {
                 throw new NoServiceInstanceFoundException(currentUri.Host, null);
             }
             request.RequestUri = new Uri($"{currentUri.Scheme}://{serviceInstance.Address}:{serviceInstance.Port}{currentUri.PathAndQuery}");
-            return await base.SendAsync(request, cancellationToken);
+            return await base.SendAsync(request, cancellationToken).ConfigureAwait(false);
         }
     }
 }
