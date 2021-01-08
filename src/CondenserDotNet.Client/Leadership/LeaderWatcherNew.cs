@@ -22,7 +22,7 @@ namespace CondenserDotNet.Client.Leadership
         private IServiceManager _serviceManager;
         private string _keyToWatch;
         private AsyncManualResetEvent<InformationService> _currentInfoService = new AsyncManualResetEvent<InformationService>();
-        
+
         public LeaderWatcher(IServiceManager serviceManager, string keyToWatch)
         {
             _currentInfoService.Reset();
@@ -78,17 +78,25 @@ namespace CondenserDotNet.Client.Leadership
         private async Task KeepLeadershipLoop()
         {
             var sessionId = await _sessionIdTask.ConfigureAwait(false);
+            var errorCount = 0;
             while (true)
             {
                 var leaderResult = await _serviceManager.Client.PutAsync($"{KeyPath}{_keyToWatch}?acquire={sessionId}", GetServiceInformation()).ConfigureAwait(false);
                 if (!leaderResult.IsSuccessStatusCode)
                 {
+                    errorCount++;
                     //error so we need to get a new session
                     await Task.Delay(500).ConfigureAwait(false);
+                    if (errorCount > 3)
+                    {
+                        _sessionIdTask = GetSession();
+                        sessionId = await _sessionIdTask.ConfigureAwait(false);
+                        errorCount = 0;
+                    }
                     continue;
                 }
                 var areWeLeader = bool.Parse(await leaderResult.Content.ReadAsStringAsync().ConfigureAwait(false));
-                if(areWeLeader)
+                if (areWeLeader)
                 {
                     _electedLeaderEvent.Set(true);
                 }
@@ -102,7 +110,7 @@ namespace CondenserDotNet.Client.Leadership
 
         private async Task WaitForLeadershipChange()
         {
-            while(true)
+            while (true)
             {
                 using (var leaderResult = await _serviceManager.Client.GetAsync($"{KeyPath}{_keyToWatch}?index={_consulIndex}").ConfigureAwait(false))
                 {

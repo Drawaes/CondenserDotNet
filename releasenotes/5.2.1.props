@@ -1,0 +1,8 @@
+<Project>
+  <PropertyGroup>
+    <PackageReleaseNotes>
+* Added refresh session when leadership has 3 failures
+* Reset Consul Index on service lookup when there is a failure
+</PackageReleaseNotes>
+  </PropertyGroup>
+</Project>

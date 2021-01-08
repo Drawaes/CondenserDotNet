@@ -97,6 +97,7 @@ namespace CondenserDotNet.Client.Services
                                     {
                                         _state = WatcherState.UsingCachedValues;
                                     }
+                                    consulIndex = "0";
                                     await Task.Delay(1000).ConfigureAwait(false);
                                     continue;
                                 }

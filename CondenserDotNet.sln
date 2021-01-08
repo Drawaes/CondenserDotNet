@@ -83,10 +83,15 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Release Notes", "Release No
 		releasenotes\4.1.1.props = releasenotes\4.1.1.props
 		releasenotes\4.1.10.props = releasenotes\4.1.10.props
 		releasenotes\4.1.11.props = releasenotes\4.1.11.props
+		releasenotes\4.1.12.props = releasenotes\4.1.12.props
 		releasenotes\4.1.13.props = releasenotes\4.1.13.props
 		releasenotes\4.1.3.props = releasenotes\4.1.3.props
 		releasenotes\4.1.4.props = releasenotes\4.1.4.props
 		releasenotes\4.1.9.props = releasenotes\4.1.9.props
+		releasenotes\5.0.0.props = releasenotes\5.0.0.props
+		releasenotes\5.1.0.props = releasenotes\5.1.0.props
+		releasenotes\5.2.0.props = releasenotes\5.2.0.props
+		releasenotes\5.2.1.props = releasenotes\5.2.1.props
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CondenserDotNet.Middleware", "src\CondenserDotNet.Middleware\CondenserDotNet.Middleware.csproj", "{5DC8FA9E-4CB9-4F80-8AA9-7F4ABF8375B3}"
