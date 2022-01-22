@@ -36,7 +36,9 @@ namespace Condenser.Tests.Integration
                 using (var result = await client.GetAsync($"http://localhost:55555"))
                 {
                     var name = await result.Content.ReadAsStringAsync();
+#if NET6_0_WINDOWS
                     Assert.Equal(System.Security.Principal.WindowsIdentity.GetCurrent().Name, name);
+#endif
                 }
             }
             finally
@@ -53,6 +55,7 @@ namespace Condenser.Tests.Integration
                 app.Use(async (context, next) =>
                 {
                     await context.Response.WriteAsync(context.User.Identity.Name);
+                    await next.Invoke();
                     return;
                 });
             }
