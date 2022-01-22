@@ -25,7 +25,9 @@ namespace CondenserDotNet.Middleware.WindowsAuthentication
 
         public void Dispose()
         {
+#if NET6_0_WINDOWS
             Identity?.Dispose();
+#endif
             _handshake?.Dispose();
             Identity = null;
         }

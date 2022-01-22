@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace CondenserDotNet.Middleware.CleanShutdown
 {
@@ -14,7 +14,7 @@ namespace CondenserDotNet.Middleware.CleanShutdown
 
         public static IApplicationBuilder UseCleanShutdown(this IApplicationBuilder appBuilder)
         {
-            var appLifetime = appBuilder.ApplicationServices.GetService<IApplicationLifetime>();
+            var appLifetime = appBuilder.ApplicationServices.GetService<IHostApplicationLifetime>();
             var shutdownService = appBuilder.ApplicationServices.GetService<CleanShutdownService>();
             appLifetime.ApplicationStopping.Register(() => shutdownService.Shutdown());
             appBuilder.UseMiddleware<CleanShutdownMiddleware>();

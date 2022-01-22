@@ -10,7 +10,7 @@ namespace CondenserDotNet.Middleware.WindowsAuthentication
     {
         private SecurityHandle _context;
         private SecurityHandle _ntlmHandle;
-        private WindowsIdentity _identity;
+        private WindowsIdentity _identity = null;   //initialise to avoid not used warning.
         private readonly DateTime _dateStarted = DateTime.UtcNow;
         private static readonly ASC_REQ _requestType = ASC_REQ.ASC_REQ_CONFIDENTIALITY | ASC_REQ.ASC_REQ_REPLAY_DETECT
             | ASC_REQ.ASC_REQ_SEQUENCE_DETECT | ASC_REQ.ASC_REQ_CONNECTION;
@@ -79,7 +79,9 @@ namespace CondenserDotNet.Middleware.WindowsAuthentication
                         returnToken = "Negotiate " + Convert.ToBase64String(byteSpan);
                     }
                     QuerySecurityContextToken(ref _context, out var handle);
-                    _identity = new WindowsIdentity(handle);
+#if NET6_0_WINDOWS
+                    _identity = new WindowsIdentity(handle)
+#endif
                     Interop.Kernel32.CloseHandle(handle);
                     return returnToken;
                 }

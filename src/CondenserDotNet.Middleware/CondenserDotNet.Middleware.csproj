@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\..\common.props" />
   <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFrameworks>net6.0;net5.0;netcoreapp3.1</TargetFrameworks>
     <AssemblyName>CondenserDotNet.Middleware</AssemblyName>
     <PackageId>CondenserDotNet.Middleware</PackageId>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
